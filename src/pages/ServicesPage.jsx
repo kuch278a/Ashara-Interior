@@ -55,7 +55,7 @@ export default function ServicesPage({ onNavigate, onSelectProject }) {
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-70 scale-100"
           style={{
-            backgroundImage: `url('/our_service.jpg')`
+            backgroundImage: `url('./our_service.jpg')`
           }}
         ></div>
         

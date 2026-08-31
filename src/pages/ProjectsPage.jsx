@@ -6,7 +6,7 @@ export const PROJECTS_LIST = [
     title: 'Prosperity Party Office',
     category: 'GOVERNMENTAL',
     subtitle: 'GOVERNMENT SUB-OFFICE',
-    image: '/assets/p1_prosperity.png',
+    image: './assets/p1_prosperity.png',
     fallbackImage: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1800&q=90',
     description: 'Ashara Interiors was commissioned to design a grand presidential state suite and governmental convention headquarters. Integrating monumental Ethiopian historical references with contemporary civic transparency, the project features bespoke coffered timber acoustic domes, structural cantilevered glass staircases, and executive ceremonial boardrooms.',
     gallery: [
@@ -23,7 +23,7 @@ export const PROJECTS_LIST = [
     title: 'Ethiopia Federal Police',
     category: 'GOVERNMENTAL',
     subtitle: 'GOVERNMENTAL HEADQUARTERS',
-    image: '/assets/p2_police.png',
+    image: './assets/p2_police.png',
     fallbackImage: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1800&q=90',
     description: 'A modern, high-security civic campus combining robust raw industrial concrete finishes with acoustic modular panels, advanced climate automation, and efficient spatial routing for federal operations.',
     gallery: [
@@ -40,7 +40,7 @@ export const PROJECTS_LIST = [
     title: 'Fana Broadcasting Corporation',
     category: 'PRIVATE ORGANIZATION',
     subtitle: 'BROADCASTING & MEDIA ATELIER',
-    image: '/assets/p3_fana.png',
+    image: './assets/p3_fana.png',
     fallbackImage: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=85',
     description: 'A cutting-edge television and multimedia broadcast hub featuring circular parametric acoustic galleries, sound-isolated live recording suites, and sunlit collaborative editing studios.',
     gallery: [
@@ -57,7 +57,7 @@ export const PROJECTS_LIST = [
     title: 'United Beverages',
     category: 'PRIVATE CORPORATION',
     subtitle: 'CORPORATE HEAD OFFICE',
-    image: '/assets/p4_beverages.png',
+    image: './assets/p4_beverages.png',
     fallbackImage: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=85',
     description: 'A grand neoclassical corporate palace featuring double-height marble entrance colonnades, gilded brass details, and private executive lounges that embody prestige and longevity.',
     gallery: [

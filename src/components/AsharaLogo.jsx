@@ -5,7 +5,7 @@ export default function AsharaLogo({ className = 'text-ashara-teal', textClassNa
     <div className="flex items-center gap-5 select-none">
       {/* Official Ashara Fingerprint Mark */}
       <img
-        src={light ? '/client_logos/ashara_logo_white.png' : '/client_logos/ashara_logo_teal.png'}
+        src={light ? './client_logos/ashara_logo_white.png' : './client_logos/ashara_logo_teal.png'}
         alt="Ashara Interiors"
         style={{ height: size, width: 'auto' }}
         className="object-contain transition-transform duration-300 group-hover:scale-105"

@@ -4,27 +4,27 @@ const ROW_1_CLIENTS = [
   {
     name: 'Prosperity Party',
     amharic: 'ብልጽግና ፓርቲ',
-    image: '/client_logos/prosperity_party.png',
+    image: './client_logos/prosperity_party.png',
   },
   {
     name: 'Customs Commission',
     amharic: 'ጉምሩክ ኮሚሽን',
-    image: '/client_logos/customs_commission.png',
+    image: './client_logos/customs_commission.png',
   },
   {
     name: 'FBC Media',
     amharic: 'ፋና',
-    image: '/client_logos/fbc_media.png',
+    image: './client_logos/fbc_media.png',
   },
   {
     name: 'Ethiopian Press Agency',
     amharic: 'ኢፕድ',
-    image: '/client_logos/Ethiopian_Press_Agency.png',
+    image: './client_logos/Ethiopian_Press_Agency.png',
   },
   {
     name: 'Policy Studies Institute',
     amharic: 'የፖሊሲ ጥናት ኢንስቲትዩት',
-    image: '/client_logos/bw_policy_studies_institute.jpg',
+    image: './client_logos/bw_policy_studies_institute.jpg',
     isCard: true
   }
 ];
@@ -33,48 +33,48 @@ const ROW_2_CLIENTS = [
   {
     name: "Oromia President's Office",
     amharic: 'የኦሮሚያ ፕሬዝዳንት ጽህፈት ቤት',
-    image: '/client_logos/bw_oromia_president_office.jpg',
+    image: './client_logos/bw_oromia_president_office.jpg',
     isCircle: true
   },
   {
     name: 'Ministry of Revenues',
     amharic: 'የገቢዎች ሚኒስቴር',
-    image: '/client_logos/ministry_of_revenues.png',
+    image: './client_logos/ministry_of_revenues.png',
   },
   {
     name: 'Artificial Intelligence Institute',
     amharic: 'አርቲፊሻል ኢንተለጀንስ',
-    image: '/client_logos/eaii_institute.png',
+    image: './client_logos/eaii_institute.png',
   },
   {
     name: 'Addis Ababa Police',
     amharic: 'አዲስ አበባ ፖሊስ',
-    image: '/client_logos/addis_ababa_police.png',
+    image: './client_logos/addis_ababa_police.png',
   },
   {
     name: 'Oromia Police',
     amharic: 'Poolisii Oromiyaa',
-    image: '/client_logos/oromia_police.png',
+    image: './client_logos/oromia_police.png',
   }
 ];
 
 const ROW_3_CLIENTS = [
   {
     name: 'United Beverages',
-    image: '/client_logos/united_beverages.png',
+    image: './client_logos/united_beverages.png',
   },
   {
     name: 'Amibara Properties',
-    image: '/client_logos/amibara_properties.png',
+    image: './client_logos/amibara_properties.png',
   },
   {
     name: 'Hill Bottom Recreation',
-    image: '/client_logos/bw_hill_bottom.jpg',
+    image: './client_logos/bw_hill_bottom.jpg',
     isCard: true
   },
   {
     name: 'Mela Muziqa',
-    image: '/client_logos/bw_mela_muziqa.jpg',
+    image: './client_logos/bw_mela_muziqa.jpg',
     isCard: true
   }
 ];
