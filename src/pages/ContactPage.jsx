@@ -16,59 +16,59 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="bg-white min-h-[85vh] py-14 sm:py-20 px-6 sm:px-10 lg:px-16 animate-fade-in">
+    <div className="bg-white dark:bg-ashara-dark min-h-[85vh] py-14 sm:py-20 px-6 sm:px-10 lg:px-16 animate-fade-in transition-colors duration-300">
       <div className="max-w-5xl mx-auto space-y-12">
         
         {/* Intro Subtitle matching Figma Screen 1 */}
         <div className="text-center max-w-3xl mx-auto pt-4">
-          <p className="text-gray-700 text-lg sm:text-2xl font-light leading-relaxed tracking-tight">
+          <p className="text-gray-700 dark:text-gray-300 text-lg sm:text-2xl font-light leading-relaxed tracking-tight transition-colors duration-300">
             If you would like to discuss your project, schedule an appointment or arrange to view more of our extensive portfolio please contact us on the details below.
           </p>
         </div>
 
         {/* Clean Horizontal Divider Line */}
-        <div className="w-full h-[1px] bg-gray-900/90 my-10"></div>
+        <div className="w-full h-[1px] bg-gray-900/90 dark:bg-white/10 my-10 transition-colors duration-300"></div>
 
         {/* 2-Column Section: Contact (Left) & Enquiries (Right) */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-20 items-start pt-4">
           
           {/* Left Column: Contact */}
           <div className="md:col-span-5 space-y-8">
-            <h2 className="font-serif text-3xl sm:text-4xl text-ashara-charcoal font-normal tracking-wide">
+            <h2 className="font-serif text-3xl sm:text-4xl text-ashara-charcoal dark:text-white font-normal tracking-wide transition-colors duration-300">
               Contact
             </h2>
 
-            <div className="space-y-5 text-[13px] sm:text-sm text-gray-800 font-light">
+            <div className="space-y-5 text-[13px] sm:text-sm text-gray-800 dark:text-gray-300 font-light">
               
               {/* Telephone */}
               <div className="flex items-start gap-3.5">
-                <Phone className="w-4 h-4 text-gray-700 mt-1 shrink-0 stroke-[1.5]" />
+                <Phone className="w-4 h-4 text-gray-700 dark:text-ashara-gold mt-1 shrink-0 stroke-[1.5]" />
                 <p className="leading-snug">
-                  Telephone <span className="font-normal text-ashara-charcoal">+251 91 219 5768</span>
+                  Telephone <span className="font-normal text-ashara-charcoal dark:text-white">+251 91 219 5768</span>
                 </p>
               </div>
 
               {/* Email */}
               <div className="flex items-start gap-3.5">
-                <Mail className="w-4 h-4 text-gray-700 mt-1 shrink-0 stroke-[1.5]" />
+                <Mail className="w-4 h-4 text-gray-700 dark:text-ashara-gold mt-1 shrink-0 stroke-[1.5]" />
                 <p className="leading-snug">
-                  Email <a href="mailto:Mikasadessalegn@gmail.com" className="hover:text-ashara-teal transition">Mikasadessalegn@gmail.com</a>
+                  Email <a href="mailto:Mikasadessalegn@gmail.com" className="hover:text-ashara-teal dark:hover:text-ashara-gold transition">Mikasadessalegn@gmail.com</a>
                 </p>
               </div>
 
               {/* WhatsApp */}
               <div className="flex items-start gap-3.5">
-                <MessageSquare className="w-4 h-4 text-gray-700 mt-1 shrink-0 stroke-[1.5]" />
+                <MessageSquare className="w-4 h-4 text-gray-700 dark:text-ashara-gold mt-1 shrink-0 stroke-[1.5]" />
                 <p className="leading-snug">
-                  WhatsApp <a href="https://wa.me/251907636463" target="_blank" rel="noopener noreferrer" className="hover:text-ashara-teal transition">+251 90 763 6463</a>
+                  WhatsApp <a href="https://wa.me/251907636463" target="_blank" rel="noopener noreferrer" className="hover:text-ashara-teal dark:hover:text-ashara-gold transition">+251 90 763 6463</a>
                 </p>
               </div>
 
               {/* Location Address */}
               <div className="flex items-start gap-3.5 pt-2">
-                <MapPin className="w-4 h-4 text-gray-700 mt-1 shrink-0 stroke-[1.5]" />
-                <div className="leading-relaxed text-gray-700">
-                  <p className="font-medium text-ashara-charcoal">Ashara Interiors</p>
+                <MapPin className="w-4 h-4 text-gray-700 dark:text-ashara-gold mt-1 shrink-0 stroke-[1.5]" />
+                <div className="leading-relaxed text-gray-700 dark:text-gray-400">
+                  <p className="font-medium text-ashara-charcoal dark:text-white">Ashara Interiors</p>
                   <p>Megenagna</p>
                   <p>Infront of Ethio Ceramics</p>
                   <p>Bete Sahlite-Mihret Building, 4th Floor</p>
@@ -81,17 +81,17 @@ export default function ContactPage() {
 
           {/* Right Column: Enquiries Form */}
           <div className="md:col-span-7 space-y-8">
-            <h2 className="font-serif text-3xl sm:text-4xl text-ashara-charcoal font-normal tracking-wide">
+            <h2 className="font-serif text-3xl sm:text-4xl text-ashara-charcoal dark:text-white font-normal tracking-wide transition-colors duration-300">
               Enquiries
             </h2>
 
             {submitted ? (
-              <div className="bg-[#EBF2F2] p-8 border border-ashara-teal/30 text-center space-y-4 shadow-sm animate-fade-in">
-                <div className="w-12 h-12 bg-ashara-teal text-white rounded-full flex items-center justify-center mx-auto">
+              <div className="bg-[#EBF2F2] dark:bg-white/5 p-8 border border-ashara-teal/30 dark:border-ashara-gold/20 text-center space-y-4 shadow-sm animate-fade-in">
+                <div className="w-12 h-12 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark rounded-full flex items-center justify-center mx-auto">
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
-                <h3 className="font-serif text-2xl text-ashara-charcoal">Enquiry Submitted</h3>
-                <p className="text-xs sm:text-sm text-gray-600 max-w-sm mx-auto font-light leading-relaxed">
+                <h3 className="font-serif text-2xl text-ashara-charcoal dark:text-white">Enquiry Submitted</h3>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 max-w-sm mx-auto font-light leading-relaxed">
                   Thank you, <strong>{form.fullName || 'Valued Client'}</strong>. Our studio team in Addis Ababa will review your requirements and respond promptly.
                 </p>
                 <button
@@ -99,7 +99,7 @@ export default function ContactPage() {
                     setSubmitted(false);
                     setForm({ fullName: '', email: '', telephone: '', enquiry: '' });
                   }}
-                  className="px-6 py-2 bg-ashara-teal text-white text-xs uppercase tracking-wider font-medium hover:bg-ashara-teal-hover transition"
+                  className="px-6 py-2 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-xs uppercase tracking-wider font-medium hover:bg-ashara-teal-hover dark:hover:bg-ashara-gold/80 transition"
                 >
                   Send Another Enquiry
                 </button>
@@ -115,7 +115,7 @@ export default function ContactPage() {
                     placeholder="Full Name"
                     value={form.fullName}
                     onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-                    className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 border border-gray-300 text-xs sm:text-sm placeholder-gray-500 text-ashara-charcoal focus:outline-none focus:border-ashara-teal focus:bg-white transition"
+                    className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-charcoal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition"
                   />
                 </div>
 
@@ -128,7 +128,7 @@ export default function ContactPage() {
                       placeholder="Email Address"
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 border border-gray-300 text-xs sm:text-sm placeholder-gray-500 text-ashara-charcoal focus:outline-none focus:border-ashara-teal focus:bg-white transition"
+                      className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-charcoal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition"
                     />
                   </div>
                   <div>
@@ -137,7 +137,7 @@ export default function ContactPage() {
                       placeholder="Telephone"
                       value={form.telephone}
                       onChange={(e) => setForm({ ...form, telephone: e.target.value })}
-                      className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 border border-gray-300 text-xs sm:text-sm placeholder-gray-500 text-ashara-charcoal focus:outline-none focus:border-ashara-teal focus:bg-white transition"
+                      className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-charcoal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition"
                     />
                   </div>
                 </div>
@@ -150,7 +150,7 @@ export default function ContactPage() {
                     placeholder="Tell us about your enquiry - New construction / renovation / remodel."
                     value={form.enquiry}
                     onChange={(e) => setForm({ ...form, enquiry: e.target.value })}
-                    className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 border border-gray-300 text-xs sm:text-sm placeholder-gray-500 text-ashara-charcoal focus:outline-none focus:border-ashara-teal focus:bg-white transition resize-none"
+                    className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-charcoal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition resize-none"
                   ></textarea>
                 </div>
 
@@ -158,7 +158,7 @@ export default function ContactPage() {
                 <div className="flex justify-end pt-2">
                   <button
                     type="submit"
-                    className="px-8 py-3.5 bg-ashara-teal text-white text-[11px] uppercase tracking-[0.2em] font-semibold hover:bg-ashara-teal-hover transition duration-200 shadow-sm"
+                    className="px-8 py-3.5 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-[11px] uppercase tracking-[0.2em] font-semibold hover:bg-ashara-teal-hover dark:hover:bg-ashara-gold/80 transition duration-200 shadow-sm"
                   >
                     SUBMIT ENQUIRY
                   </button>

@@ -37,7 +37,7 @@ export default function ServicesPage({ onNavigate }) {
   };
 
   return (
-    <div className="bg-white animate-fade-in pb-24">
+    <div className="bg-white dark:bg-ashara-dark animate-fade-in pb-24 transition-colors duration-300">
       
       {/* 1. HERO: "How We Work" Dark Cathedral Arch Banner matching Figma Image 2 */}
       <section className="relative w-full min-h-[540px] sm:min-h-[620px] flex items-center justify-center bg-black overflow-hidden px-6 py-20 text-center">
@@ -45,7 +45,7 @@ export default function ServicesPage({ onNavigate }) {
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-70 scale-100"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1548625361-16a9a7a67926?auto=format&fit=crop&w=1800&q=90')`
+            backgroundImage: `url('/our_service.jpg')`
           }}
         ></div>
         
@@ -66,12 +66,12 @@ export default function ServicesPage({ onNavigate }) {
 
       {/* 2. "How We Can Help" Section with Numbered Accordion */}
       <section className="max-w-3xl mx-auto px-6 sm:px-10 pt-20 sm:pt-28 space-y-12">
-        <h2 className="font-serif text-3xl sm:text-4xl text-center text-ashara-charcoal font-normal tracking-wide">
+        <h2 className="font-serif text-3xl sm:text-4xl text-center text-ashara-charcoal dark:text-white font-normal tracking-wide transition-colors duration-300">
           How We Can Help
         </h2>
 
         {/* Accordion List matching Figma Screen 2 */}
-        <div className="border-t border-gray-300 divide-y divide-gray-300">
+        <div className="border-t border-gray-300 dark:border-white/10 divide-y divide-gray-300 dark:divide-white/10">
           {ACCORDION_ITEMS.map((item) => {
             const isOpen = openIndex === item.id;
             return (
@@ -81,21 +81,21 @@ export default function ServicesPage({ onNavigate }) {
                   className="w-full flex items-center justify-between text-left py-2 group focus:outline-none"
                 >
                   <div className="flex items-baseline gap-2">
-                    <span className="font-serif text-xl sm:text-2xl text-ashara-charcoal font-medium">
+                    <span className="font-serif text-xl sm:text-2xl text-ashara-charcoal dark:text-gray-300 font-medium transition-colors duration-300">
                       {item.number}
                     </span>
-                    <span className="font-serif text-xl sm:text-2xl text-ashara-charcoal font-medium group-hover:text-ashara-teal transition">
+                    <span className="font-serif text-xl sm:text-2xl text-ashara-charcoal dark:text-white font-medium group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition duration-300">
                       {item.title}
                     </span>
                   </div>
                   
-                  <span className="text-gray-600 group-hover:text-ashara-charcoal transition p-1">
+                  <span className="text-gray-600 dark:text-gray-400 group-hover:text-ashara-charcoal dark:group-hover:text-white transition p-1">
                     {isOpen ? <Minus className="w-4 h-4 stroke-[1.5]" /> : <Plus className="w-4 h-4 stroke-[1.5]" />}
                   </span>
                 </button>
 
                 {isOpen && (
-                  <div className="pt-2 pb-4 text-xs sm:text-[13px] text-gray-700 font-light leading-relaxed max-w-2xl animate-fade-in pl-6 sm:pl-7">
+                  <div className="pt-2 pb-4 text-xs sm:text-[13px] text-gray-700 dark:text-gray-300 font-light leading-relaxed max-w-2xl animate-fade-in pl-6 sm:pl-7">
                     <p>{item.content}</p>
                   </div>
                 )}
@@ -108,7 +108,7 @@ export default function ServicesPage({ onNavigate }) {
         <div className="text-center pt-4">
           <button
             onClick={() => onNavigate('contact')}
-            className="inline-block px-10 py-3 border border-gray-900 text-ashara-charcoal text-[11px] uppercase tracking-[0.2em] font-medium hover:bg-ashara-teal hover:text-white hover:border-ashara-teal transition duration-300 shadow-2xs"
+            className="inline-block px-10 py-3 border border-gray-900 dark:border-white/20 text-ashara-charcoal dark:text-white text-[11px] uppercase tracking-[0.2em] font-medium hover:bg-ashara-teal dark:hover:bg-ashara-gold hover:text-white dark:hover:text-ashara-dark hover:border-ashara-teal dark:hover:border-ashara-gold transition duration-300 shadow-2xs"
           >
             ENQUIRE NOW
           </button>
@@ -120,11 +120,11 @@ export default function ServicesPage({ onNavigate }) {
         
         {/* Heading with Divider Lines */}
         <div className="flex items-center justify-center gap-6 sm:gap-10">
-          <div className="h-[1px] bg-gray-300 flex-1 max-w-[240px]"></div>
-          <h3 className="font-serif text-2xl sm:text-3xl text-ashara-charcoal tracking-wide">
+          <div className="h-[1px] bg-gray-300 dark:bg-white/10 flex-1 max-w-[240px]"></div>
+          <h3 className="font-serif text-2xl sm:text-3xl text-ashara-charcoal dark:text-white tracking-wide transition-colors duration-300">
             Recent Projects
           </h3>
-          <div className="h-[1px] bg-gray-300 flex-1 max-w-[240px]"></div>
+          <div className="h-[1px] bg-gray-300 dark:bg-white/10 flex-1 max-w-[240px]"></div>
         </div>
 
         {/* 2 Project Cards Grid */}
@@ -135,7 +135,7 @@ export default function ServicesPage({ onNavigate }) {
             onClick={() => onNavigate('projects')}
             className="group cursor-pointer space-y-3"
           >
-            <div className="aspect-[4/3] overflow-hidden bg-gray-100 shadow-xs">
+            <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs">
               <img
                 src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=85"
                 alt="Amibara Properties"
@@ -143,10 +143,10 @@ export default function ServicesPage({ onNavigate }) {
               />
             </div>
             <div>
-              <h4 className="font-serif text-xl sm:text-2xl text-ashara-charcoal group-hover:text-ashara-teal transition">
+              <h4 className="font-serif text-xl sm:text-2xl text-ashara-charcoal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition duration-300">
                 Amibara Properties
               </h4>
-              <p className="text-[10px] uppercase tracking-[0.25em] text-gray-500 font-medium mt-0.5">
+              <p className="text-[10px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400 font-medium mt-0.5">
                 PRIVATE COMPANY
               </p>
             </div>
@@ -157,7 +157,7 @@ export default function ServicesPage({ onNavigate }) {
             onClick={() => onNavigate('projects')}
             className="group cursor-pointer space-y-3"
           >
-            <div className="aspect-[4/3] overflow-hidden bg-gray-100 shadow-xs">
+            <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs">
               <img
                 src="https://images.unsplash.com/photo-1519643381401-22c77e60520e?auto=format&fit=crop&w=1200&q=85"
                 alt="Ministry of Revenues"
@@ -165,10 +165,10 @@ export default function ServicesPage({ onNavigate }) {
               />
             </div>
             <div>
-              <h4 className="font-serif text-xl sm:text-2xl text-ashara-charcoal group-hover:text-ashara-teal transition">
+              <h4 className="font-serif text-xl sm:text-2xl text-ashara-charcoal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition duration-300">
                 Minstry of Revenues
               </h4>
-              <p className="text-[10px] uppercase tracking-[0.25em] text-gray-500 font-medium mt-0.5">
+              <p className="text-[10px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400 font-medium mt-0.5">
                 GOVERNMENTAL
               </p>
             </div>
@@ -180,7 +180,7 @@ export default function ServicesPage({ onNavigate }) {
         <div className="text-center pt-6">
           <button
             onClick={() => onNavigate('projects')}
-            className="text-[10.5px] uppercase tracking-[0.28em] font-semibold text-gray-800 hover:text-ashara-teal transition border-b border-gray-400 pb-0.5"
+            className="text-[10.5px] uppercase tracking-[0.28em] font-semibold text-gray-800 dark:text-gray-200 hover:text-ashara-teal dark:hover:text-ashara-gold transition border-b border-gray-400 dark:border-white/20 pb-0.5"
           >
             VIEW ALL PROJECTS
           </button>

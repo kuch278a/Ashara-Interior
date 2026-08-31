@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 
@@ -13,6 +13,23 @@ import ProjectDetailPage from './pages/ProjectDetailPage';
 export default function App() {
   const [activePage, setActivePage] = useState('home'); // 'home' | 'projects' | 'services' | 'about' | 'contact' | 'project-detail'
   const [selectedProject, setSelectedProject] = useState(PROJECTS_LIST[0]);
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('theme') || 'light';
+  });
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+  };
 
   const handleNavigate = (page) => {
     setActivePage(page);
@@ -26,10 +43,15 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-ashara-charcoal font-sans antialiased selection:bg-ashara-teal selection:text-white">
+    <div className="min-h-screen flex flex-col bg-white text-ashara-charcoal dark:bg-ashara-dark dark:text-ashara-sand font-sans antialiased transition-colors duration-300">
       
       {/* 1. Figma Header Navigation Bar */}
-      <Navbar activePage={activePage} setActivePage={handleNavigate} />
+      <Navbar 
+        activePage={activePage} 
+        setActivePage={handleNavigate} 
+        theme={theme} 
+        toggleTheme={toggleTheme} 
+      />
 
       {/* 2. Main Page View Router */}
       <main className="flex-1">

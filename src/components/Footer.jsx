@@ -14,12 +14,12 @@ export const SOCIAL_LINKS = {
 
 export default function Footer({ onNavigate }) {
   return (
-    <footer className="bg-ashara-teal text-white pt-16 pb-10 px-6 sm:px-10 lg:px-16 mt-auto">
-      <div className="max-w-7xl mx-auto space-y-12">
-        
+    <footer className="bg-ashara-teal text-white pt-10 pb-6 px-6 sm:px-10 lg:px-16 mt-auto">
+      <div className="max-w-7xl mx-auto space-y-10">
+
         {/* Main Footer Row matching Figma */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-14 items-start">
-          
+
           {/* 1. Left: Brand Logo in White */}
           <div className="md:col-span-3">
             <button
@@ -27,7 +27,7 @@ export default function Footer({ onNavigate }) {
               className="text-left focus:outline-none hover:opacity-90 transition"
               aria-label="Ashara Interiors Home"
             >
-              <AsharaLogo size={56} light={true} className="text-white" textClassName="text-white" />
+              <AsharaLogo size={96} light={true} className="text-white" textClassName="text-white" />
             </button>
           </div>
 
@@ -61,26 +61,26 @@ export default function Footer({ onNavigate }) {
           {/* 4. Right: Navigation & Live Social Media Accounts */}
           <div className="md:col-span-3 flex flex-col justify-between space-y-6">
             <nav className="flex flex-col space-y-2 text-[11px] uppercase tracking-[0.2em] font-medium text-white/90">
-              <button 
-                onClick={() => onNavigate('projects')} 
+              <button
+                onClick={() => onNavigate('projects')}
                 className="text-left hover:text-white transition"
               >
                 PROJECTS
               </button>
-              <button 
-                onClick={() => onNavigate('services')} 
+              <button
+                onClick={() => onNavigate('services')}
                 className="text-left hover:text-white transition"
               >
                 OUR SERVICES
               </button>
-              <button 
-                onClick={() => onNavigate('about')} 
+              <button
+                onClick={() => onNavigate('about')}
                 className="text-left hover:text-white transition"
               >
                 ABOUT US
               </button>
-              <button 
-                onClick={() => onNavigate('contact')} 
+              <button
+                onClick={() => onNavigate('contact')}
                 className="text-left hover:text-white transition"
               >
                 CONTACT
@@ -90,7 +90,7 @@ export default function Footer({ onNavigate }) {
             {/* Live Social Media Links with new tab behavior */}
             <div className="flex items-center gap-4 text-white/90">
               {/* Facebook */}
-              <a 
+              <a
                 href={SOCIAL_LINKS.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -101,7 +101,7 @@ export default function Footer({ onNavigate }) {
               </a>
 
               {/* Instagram */}
-              <a 
+              <a
                 href={SOCIAL_LINKS.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -112,7 +112,7 @@ export default function Footer({ onNavigate }) {
               </a>
 
               {/* TikTok */}
-              <a 
+              <a
                 href={SOCIAL_LINKS.tiktok}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -125,7 +125,7 @@ export default function Footer({ onNavigate }) {
               </a>
 
               {/* LinkedIn */}
-              <a 
+              <a
                 href={SOCIAL_LINKS.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"

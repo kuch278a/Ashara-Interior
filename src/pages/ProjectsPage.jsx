@@ -66,7 +66,7 @@ export default function ProjectsPage({ onNavigate, onSelectProject }) {
   };
 
   return (
-    <div className="bg-white animate-fade-in pb-24">
+    <div className="bg-white dark:bg-ashara-dark animate-fade-in pb-24 transition-colors duration-300">
       
       {/* 1. TERRACOTTA HERO BANNER matching Figma Image 3 */}
       <section className="relative bg-ashara-terracotta text-white overflow-hidden py-24 sm:py-32 px-6 lg:px-12 text-center">
@@ -94,11 +94,11 @@ export default function ProjectsPage({ onNavigate, onSelectProject }) {
         
         {/* Header with Divider Lines */}
         <div className="flex items-center justify-center gap-6 sm:gap-10">
-          <div className="h-[1px] bg-gray-300 flex-1 max-w-[240px]"></div>
-          <h2 className="font-serif text-3xl sm:text-4xl text-ashara-charcoal tracking-wide">
+          <div className="h-[1px] bg-gray-300 dark:bg-white/10 flex-1 max-w-[240px]"></div>
+          <h2 className="font-serif text-3xl sm:text-4xl text-ashara-charcoal dark:text-white tracking-wide transition-colors duration-300">
             Projects
           </h2>
-          <div className="h-[1px] bg-gray-300 flex-1 max-w-[240px]"></div>
+          <div className="h-[1px] bg-gray-300 dark:bg-white/10 flex-1 max-w-[240px]"></div>
         </div>
 
         {/* 2x3 Project Cards Grid */}
@@ -110,7 +110,7 @@ export default function ProjectsPage({ onNavigate, onSelectProject }) {
               className="group cursor-pointer space-y-3.5"
             >
               {/* Project Image Container */}
-              <div className="aspect-[4/3] overflow-hidden bg-gray-100 shadow-xs relative">
+              <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs relative">
                 <img
                   src={item.image}
                   onError={(e) => {
@@ -124,10 +124,10 @@ export default function ProjectsPage({ onNavigate, onSelectProject }) {
 
               {/* Title & Category Subtitle */}
               <div>
-                <h3 className="font-serif text-2xl sm:text-[26px] text-ashara-charcoal group-hover:text-ashara-teal transition">
+                <h3 className="font-serif text-2xl sm:text-[26px] text-ashara-charcoal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition duration-300">
                   {item.title}
                 </h3>
-                <p className="text-[9.5px] sm:text-[10px] uppercase tracking-[0.28em] text-gray-500 font-semibold mt-1">
+                <p className="text-[9.5px] sm:text-[10px] uppercase tracking-[0.28em] text-gray-500 dark:text-gray-400 font-semibold mt-1">
                   {item.category}
                 </p>
               </div>

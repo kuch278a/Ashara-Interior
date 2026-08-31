@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const ROW_1_CLIENTS = [
   {
@@ -19,24 +19,25 @@ const ROW_1_CLIENTS = [
   {
     name: 'Ethiopian Press Agency',
     amharic: 'ኢፕድ',
-    image: '/client_logos/ethiopian_press_agency.png',
+    image: '/client_logos/bw_ethiopian_press_agency.jpg',
   },
   {
-    name: 'Education Assoc',
-    amharic: 'ደራስያን ማህበር',
-    isSvg: true
+    name: 'Policy Studies Institute',
+    amharic: 'የፖሊሲ ጥናት ኢንስቲትዩት',
+    image: '/client_logos/bw_policy_studies_institute.jpg',
   }
 ];
 
 const ROW_2_CLIENTS = [
   {
-    name: 'Industrial Dev',
-    isSvg: true
+    name: "Oromia President's Office",
+    amharic: 'የኦሮሚያ ፕሬዝዳንት ጽህፈት ቤት',
+    image: '/client_logos/bw_oromia_president_office.jpg',
   },
   {
     name: 'Ministry of Revenues',
     amharic: 'የገቢዎች ሚኒስቴር',
-    image: '/client_logos/ministry_of_revenues.png',
+    image: '/client_logos/bw_ministry_of_revenues.jpg',
   },
   {
     name: 'Artificial Intelligence Institute',
@@ -58,19 +59,19 @@ const ROW_2_CLIENTS = [
 const ROW_3_CLIENTS = [
   {
     name: 'United Beverages',
-    image: '/client_logos/united_beverages.png',
+    image: '/client_logos/united_beverages.jpg',
   },
   {
     name: 'Amibara Properties',
-    image: '/client_logos/amibara_properties.png',
+    image: '/client_logos/amibara_properties.jpg',
   },
   {
     name: 'Hill Bottom Recreation',
-    image: '/client_logos/hill_bottom.png',
+    image: '/client_logos/bw_hill_bottom.jpg',
   },
   {
     name: 'Mela Muziqa',
-    image: '/client_logos/mela_muziqa.png',
+    image: '/client_logos/bw_mela_muziqa.jpg',
   }
 ];
 
@@ -80,7 +81,7 @@ export default function ClientsSection() {
       
       {/* 1. OUR CLIENTS SECTION: Monochrome Black by default, Vibrant Color on Hover */}
       <section className="max-w-6xl mx-auto px-6 sm:px-10 text-center space-y-14">
-        <h3 className="font-serif text-3xl sm:text-4xl text-ashara-charcoal font-normal tracking-wide">
+        <h3 className="font-serif text-3xl sm:text-4xl text-ashara-charcoal dark:text-white font-normal tracking-wide transition-colors duration-300">
           Our Clients
         </h3>
 
@@ -92,24 +93,15 @@ export default function ClientsSection() {
             {ROW_1_CLIENTS.map((item, idx) => (
               <div 
                 key={idx} 
-                className="flex flex-col items-center justify-center p-2 group cursor-default transition-transform duration-400"
+                className="flex flex-col items-center justify-center p-2 group cursor-default transition-all duration-400"
               >
-                {item.isSvg ? (
-                  <svg className="w-20 h-20 text-gray-900 group-hover:text-ashara-teal group-hover:scale-110 transition-all duration-400" viewBox="0 0 100 100" fill="currentColor">
-                    <path d="M50 48 L22 36 V68 L50 80 L78 68 V36 Z" fill="none" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" />
-                    <line x1="50" y1="48" x2="50" y2="80" stroke="currentColor" strokeWidth="3" />
-                    <circle cx="50" cy="24" r="5" />
-                    <path d="M42 34 C46 30 54 30 58 34 L50 42 Z" />
-                  </svg>
-                ) : (
-                  <div className="h-20 sm:h-24 w-28 sm:w-36 flex items-center justify-center">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="max-h-20 sm:max-h-24 max-w-full object-contain grayscale contrast-125 opacity-80 group-hover:grayscale-0 group-hover:contrast-100 group-hover:opacity-100 group-hover:scale-110 transition-all duration-400 ease-out"
-                    />
-                  </div>
-                )}
+                <div className="h-20 sm:h-24 w-28 sm:w-36 flex items-center justify-center">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="max-h-20 sm:max-h-24 max-w-full object-contain grayscale contrast-125 opacity-80 group-hover:grayscale-0 group-hover:contrast-100 group-hover:opacity-100 group-hover:scale-110 transition-all duration-400 ease-out dark:invert dark:opacity-70 dark:group-hover:invert-0 dark:group-hover:opacity-100"
+                  />
+                </div>
               </div>
             ))}
           </div>
@@ -119,24 +111,15 @@ export default function ClientsSection() {
             {ROW_2_CLIENTS.map((item, idx) => (
               <div 
                 key={idx} 
-                className="flex flex-col items-center justify-center p-2 group cursor-default transition-transform duration-400"
+                className="flex flex-col items-center justify-center p-2 group cursor-default transition-all duration-400"
               >
-                {item.isSvg ? (
-                  <svg className="w-20 h-20 text-gray-900 group-hover:text-ashara-teal group-hover:scale-110 transition-all duration-400" viewBox="0 0 100 100" fill="currentColor">
-                    <circle cx="50" cy="50" r="44" stroke="currentColor" strokeWidth="3" fill="none" />
-                    <circle cx="50" cy="50" r="36" stroke="currentColor" strokeWidth="2" strokeDasharray="6 3" fill="none" />
-                    <path d="M48 68 V52 C44 48 34 46 30 42 C30 36 42 34 50 34 C58 34 70 36 70 42 C66 46 56 48 52 52 V68 Z" />
-                    <line x1="28" y1="68" x2="72" y2="68" stroke="currentColor" strokeWidth="3" />
-                  </svg>
-                ) : (
-                  <div className="h-20 sm:h-24 w-24 sm:w-28 flex items-center justify-center">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="max-h-20 sm:max-h-24 max-w-full object-contain grayscale contrast-125 opacity-80 group-hover:grayscale-0 group-hover:contrast-100 group-hover:opacity-100 group-hover:scale-110 transition-all duration-400 ease-out"
-                    />
-                  </div>
-                )}
+                <div className="h-20 sm:h-24 w-24 sm:w-28 flex items-center justify-center">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="max-h-20 sm:max-h-24 max-w-full object-contain grayscale contrast-125 opacity-80 group-hover:grayscale-0 group-hover:contrast-100 group-hover:opacity-100 group-hover:scale-110 transition-all duration-400 ease-out dark:invert dark:opacity-70 dark:group-hover:invert-0 dark:group-hover:opacity-100"
+                  />
+                </div>
               </div>
             ))}
           </div>
@@ -146,13 +129,13 @@ export default function ClientsSection() {
             {ROW_3_CLIENTS.map((item, idx) => (
               <div 
                 key={idx} 
-                className="flex items-center justify-center p-2 group cursor-default transition-transform duration-400"
+                className="flex items-center justify-center p-2 group cursor-default transition-all duration-400"
               >
                 <div className="h-16 sm:h-20 w-36 sm:w-44 flex items-center justify-center">
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="max-h-16 sm:max-h-20 max-w-full object-contain grayscale contrast-125 opacity-80 group-hover:grayscale-0 group-hover:contrast-100 group-hover:opacity-100 group-hover:scale-110 transition-all duration-400 ease-out"
+                    className="max-h-16 sm:max-h-20 max-w-full object-contain grayscale contrast-125 opacity-80 group-hover:grayscale-0 group-hover:contrast-100 group-hover:opacity-100 group-hover:scale-110 transition-all duration-400 ease-out dark:invert dark:opacity-70 dark:group-hover:invert-0 dark:group-hover:opacity-100"
                   />
                 </div>
               </div>
@@ -166,27 +149,27 @@ export default function ClientsSection() {
       <section className="max-w-3xl mx-auto px-6 text-center space-y-6">
         
         {/* Top Quotation Mark in Soft Teal */}
-        <div className="text-ashara-teal/60 text-6xl sm:text-7xl font-serif leading-none select-none flex justify-center">
+        <div className="text-ashara-teal/60 dark:text-ashara-gold/60 text-6xl sm:text-7xl font-serif leading-none select-none flex justify-center transition-colors duration-300">
           “
         </div>
         
         {/* Testimonial Body in Italic Serif / Cursive Script */}
-        <blockquote className="font-serif italic text-2xl sm:text-3xl lg:text-[32px] text-gray-800 leading-relaxed font-light px-2 sm:px-6">
+        <blockquote className="font-serif italic text-2xl sm:text-3xl lg:text-[32px] text-gray-800 dark:text-gray-200 leading-relaxed font-light px-2 sm:px-6 transition-colors duration-300">
           “Ashara Interiors transformed our office space beyond our expectations. Their attention to detail and ability to deliver a luxurious, functional design within an incredibly tight deadline was remarkable.”
         </blockquote>
 
         {/* Attribution matching Figma */}
         <div className="space-y-0.5 pt-2">
-          <p className="text-[10.5px] sm:text-[11px] uppercase tracking-[0.26em] font-semibold text-ashara-charcoal">
+          <p className="text-[10.5px] sm:text-[11px] uppercase tracking-[0.26em] font-semibold text-ashara-charcoal dark:text-white transition-colors duration-300">
             DEPUTY PRESIDENT'S OFFICE,
           </p>
-          <p className="text-[10px] sm:text-[10.5px] uppercase tracking-[0.3em] font-normal text-gray-600">
+          <p className="text-[10px] sm:text-[10.5px] uppercase tracking-[0.3em] font-normal text-gray-600 dark:text-gray-400 transition-colors duration-300">
             PROSPERITY PARTY HEADQUARTERS
           </p>
         </div>
 
         {/* Bottom Quotation Mark in Soft Teal */}
-        <div className="text-ashara-teal/60 text-6xl sm:text-7xl font-serif leading-none select-none flex justify-center pt-2">
+        <div className="text-ashara-teal/60 dark:text-ashara-gold/60 text-6xl sm:text-7xl font-serif leading-none select-none flex justify-center pt-2 transition-colors duration-300">
           ”
         </div>
 

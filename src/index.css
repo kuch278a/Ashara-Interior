@@ -7,18 +7,28 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    color-scheme: light;
+    color-scheme: light dark;
+  }
+  
+  html.dark {
+    color-scheme: dark;
   }
   
   body {
-    background-color: #FFFFFF;
-    color: #1A1816;
+    @apply font-sans bg-white text-ashara-charcoal dark:bg-ashara-dark dark:text-ashara-sand transition-colors duration-300;
     overflow-x: hidden;
   }
 
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+
+  input, textarea, select, button {
+    font-family: inherit;
+  }
+
   ::selection {
-    background-color: #1E4E4E;
-    color: #FFFFFF;
+    @apply bg-ashara-teal text-white dark:bg-ashara-gold dark:text-ashara-dark;
   }
 }
 

@@ -129,7 +129,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
   const activeProject = HERO_SLIDES[currentSlide];
 
   return (
-    <div className="bg-white animate-fade-in space-y-16 sm:space-y-24 pb-24">
+    <div className="bg-white dark:bg-ashara-dark animate-fade-in space-y-16 sm:space-y-24 pb-24 transition-colors duration-300">
       
       {/* 1. HERO BANNER: Clean luxury carousel with subtle on-hover arrows only */}
       <section className="w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 pt-4">
@@ -195,11 +195,11 @@ export default function HomePage({ onNavigate, onSelectProject }) {
 
       {/* 2. PHILOSOPHY QUOTE SECTION matching Figma */}
       <section className="max-w-4xl mx-auto px-6 text-center space-y-3 pt-4 sm:pt-8">
-        <p className="text-[9.5px] sm:text-[10px] uppercase tracking-[0.32em] text-ashara-teal font-semibold">
+        <p className="text-[9.5px] sm:text-[10px] uppercase tracking-[0.32em] text-ashara-teal dark:text-ashara-gold font-semibold transition-colors duration-300">
           PHILOSOPHY
         </p>
         
-        <blockquote className="font-serif italic text-2xl sm:text-4xl lg:text-[40px] text-ashara-charcoal leading-relaxed font-light py-2">
+        <blockquote className="font-serif italic text-2xl sm:text-4xl lg:text-[40px] text-ashara-charcoal dark:text-ashara-sand leading-relaxed font-light py-2 transition-colors duration-300">
           “Design with passion, authenticity, and positivity to create spaces that inspire and uplift the soul.”
         </blockquote>
       </section>
@@ -209,11 +209,11 @@ export default function HomePage({ onNavigate, onSelectProject }) {
         
         {/* Header with Divider Lines */}
         <div className="flex items-center justify-center gap-6 sm:gap-10">
-          <div className="h-[1px] bg-gray-300 flex-1 max-w-[240px]"></div>
-          <h2 className="font-serif text-3xl sm:text-4xl text-ashara-charcoal tracking-wide">
+          <div className="h-[1px] bg-gray-300 dark:bg-white/10 flex-1 max-w-[240px]"></div>
+          <h2 className="font-serif text-3xl sm:text-4xl text-ashara-charcoal dark:text-white tracking-wide transition-colors duration-300">
             Our Works
           </h2>
-          <div className="h-[1px] bg-gray-300 flex-1 max-w-[240px]"></div>
+          <div className="h-[1px] bg-gray-300 dark:bg-white/10 flex-1 max-w-[240px]"></div>
         </div>
 
         {/* 2x2 Grid with Solid Teal Bottom Label Cards */}
@@ -222,7 +222,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
             <div
               key={item.id}
               onClick={() => handleCardClick(item)}
-              className="group relative cursor-pointer aspect-[4/3] overflow-hidden bg-gray-100 shadow-sm hover:shadow-md transition-all duration-500"
+              className="group relative cursor-pointer aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500"
             >
               {/* Photo */}
               <img
@@ -232,7 +232,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
               />
 
               {/* Bottom Teal Label Box matching Figma */}
-              <div className="absolute inset-x-0 bottom-0 bg-ashara-teal/90 backdrop-blur-[2px] p-5 sm:p-6 text-white transition-all duration-300">
+              <div className="absolute inset-x-0 bottom-0 bg-ashara-teal/90 dark:bg-ashara-teal/95 backdrop-blur-[2px] p-5 sm:p-6 text-white transition-all duration-300">
                 <span className="text-[8.5px] sm:text-[9px] uppercase tracking-[0.28em] text-white/80 font-medium block">
                   {item.tag}
                 </span>
@@ -248,7 +248,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
         <div className="text-center pt-4">
           <button
             onClick={() => onNavigate('projects')}
-            className="text-[10.5px] uppercase tracking-[0.28em] font-semibold text-gray-800 hover:text-ashara-teal transition border-b border-gray-400 pb-0.5"
+            className="text-[10.5px] uppercase tracking-[0.28em] font-semibold text-gray-800 dark:text-gray-200 hover:text-ashara-teal dark:hover:text-ashara-gold transition border-b border-gray-400 dark:border-white/20 pb-0.5"
           >
             VIEW ALL PROJECTS
           </button>
