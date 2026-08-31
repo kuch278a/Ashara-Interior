@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, Sun, Moon } from 'lucide-react';
+import { Menu, X, Lightbulb, Moon } from 'lucide-react';
 import AsharaLogo from './AsharaLogo';
 
 export default function Navbar({ activePage, setActivePage, theme, toggleTheme }) {
@@ -61,13 +61,18 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
             })}
           </nav>
 
-          {/* Luxury Dark Mode Toggle */}
+          {/* Luxury Light/Dark Mode Toggle */}
           <button
             onClick={toggleTheme}
             className="p-2.5 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-ashara-teal dark:hover:text-ashara-gold transition duration-300 focus:outline-none"
-            aria-label="Toggle Dark Mode"
+            aria-label={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
           >
-            {theme === 'dark' ? <Sun className="w-[18px] h-[18px]" /> : <Moon className="w-[18px] h-[18px]" />}
+            {theme === 'dark' ? (
+              <Lightbulb className="w-[18px] h-[18px]" />
+            ) : (
+              <Moon className="w-[18px] h-[18px]" />
+            )}
           </button>
 
           {/* Mobile Hamburger Toggle */}
