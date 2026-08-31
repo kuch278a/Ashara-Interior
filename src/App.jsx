@@ -9,6 +9,7 @@ import ServicesPage from './pages/ServicesPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import ProjectDetailPage from './pages/ProjectDetailPage';
+import BlogPage from './pages/BlogPage';
 
 export default function App() {
   const [activePage, setActivePage] = useState('home'); // 'home' | 'projects' | 'services' | 'about' | 'contact' | 'project-detail'
@@ -64,21 +65,26 @@ export default function App() {
         )}
         
         {activePage === 'services' && (
-          <ServicesPage onNavigate={handleNavigate} />
+          <ServicesPage onNavigate={handleNavigate} onSelectProject={handleSelectProject} />
         )}
 
         {activePage === 'about' && (
-          <AboutPage onNavigate={handleNavigate} />
+          <AboutPage onNavigate={handleNavigate} onSelectProject={handleSelectProject} />
         )}
 
         {activePage === 'contact' && (
           <ContactPage onNavigate={handleNavigate} />
         )}
 
+        {activePage === 'blog' && (
+          <BlogPage />
+        )}
+
         {activePage === 'project-detail' && (
           <ProjectDetailPage 
             project={selectedProject} 
             onNavigate={handleNavigate} 
+            onSelectProject={handleSelectProject}
           />
         )}
       </main>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, Minus } from 'lucide-react';
+import { PROJECTS_LIST } from './ProjectsPage';
 
 const ACCORDION_ITEMS = [
   {
@@ -18,22 +19,31 @@ const ACCORDION_ITEMS = [
     id: 3,
     number: '3.',
     title: 'House Redesign',
-    content: 'We have a deep understanding of heritage buildings and a fascination for new spaces that embody classical elements. New or old, we always follow traditional principles giving them an eclectic edge. We work with some great architects and have access to some outstanding creatives.'
+    content: 'Transforming existing residential architecture through structural re-modelling, spatial flow optimization, bespoke joinery, and harmonized lighting schemas.'
   },
   {
     id: 4,
     number: '4.',
-    title: 'Furniture Design',
-    content: 'Custom artisanal millwork, bespoke woodwork, architectural lighting, and curated collectible furnishings fabricated with master craftsmen.'
+    title: 'Design Consultancy',
+    content: 'Strategic acoustic appraisals, luxury FF&E procurement advisory, lighting design consultations, and spatial branding for institutions and corporations.'
   }
 ];
 
-export default function ServicesPage({ onNavigate }) {
+export default function ServicesPage({ onNavigate, onSelectProject }) {
   // In Figma, item 3 is expanded by default
   const [openIndex, setOpenIndex] = useState(3);
 
   const toggleAccordion = (id) => {
     setOpenIndex(openIndex === id ? null : id);
+  };
+
+  const handleProjectClick = (projId) => {
+    const proj = PROJECTS_LIST.find((p) => p.id === projId) || PROJECTS_LIST[0];
+    if (onSelectProject) {
+      onSelectProject(proj);
+    } else {
+      onNavigate('projects');
+    }
   };
 
   return (
@@ -70,33 +80,39 @@ export default function ServicesPage({ onNavigate }) {
           How We Can Help
         </h2>
 
-        {/* Accordion List matching Figma Screen 2 */}
-        <div className="border-t border-gray-300 dark:border-white/10 divide-y divide-gray-300 dark:divide-white/10">
+        {/* Accordion List */}
+        <div className="divide-y divide-gray-200 dark:divide-white/10">
           {ACCORDION_ITEMS.map((item) => {
             const isOpen = openIndex === item.id;
             return (
-              <div key={item.id} className="py-4">
+              <div key={item.id} className="py-6 transition duration-200">
                 <button
                   onClick={() => toggleAccordion(item.id)}
-                  className="w-full flex items-center justify-between text-left py-2 group focus:outline-none"
+                  className="w-full flex items-center justify-between text-left group"
                 >
-                  <div className="flex items-baseline gap-2">
-                    <span className="font-serif text-xl sm:text-2xl text-ashara-charcoal dark:text-gray-300 font-medium transition-colors duration-300">
+                  <div className="flex items-baseline gap-4 sm:gap-6">
+                    <span className="font-serif text-xl sm:text-2xl text-ashara-charcoal dark:text-white font-light transition-colors duration-300">
                       {item.number}
                     </span>
-                    <span className="font-serif text-xl sm:text-2xl text-ashara-charcoal dark:text-white font-medium group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition duration-300">
+                    <span className="font-serif text-xl sm:text-2xl text-ashara-charcoal dark:text-white font-normal group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition-colors duration-300">
                       {item.title}
                     </span>
                   </div>
-                  
-                  <span className="text-gray-600 dark:text-gray-400 group-hover:text-ashara-charcoal dark:group-hover:text-white transition p-1">
-                    {isOpen ? <Minus className="w-4 h-4 stroke-[1.5]" /> : <Plus className="w-4 h-4 stroke-[1.5]" />}
+                  <span className="text-gray-400 group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition-colors duration-200">
+                    {isOpen ? (
+                      <Minus className="w-5 h-5 transition-transform duration-300" />
+                    ) : (
+                      <Plus className="w-5 h-5 transition-transform duration-300" />
+                    )}
                   </span>
                 </button>
 
+                {/* Animated Body Content */}
                 {isOpen && (
-                  <div className="pt-2 pb-4 text-xs sm:text-[13px] text-gray-700 dark:text-gray-300 font-light leading-relaxed max-w-2xl animate-fade-in pl-6 sm:pl-7">
-                    <p>{item.content}</p>
+                  <div className="pt-4 pl-8 sm:pl-11 pr-4 animate-fade-in">
+                    <p className="text-xs sm:text-[13px] leading-relaxed text-gray-600 dark:text-gray-300 font-light transition-colors duration-300">
+                      {item.content}
+                    </p>
                   </div>
                 )}
               </div>
@@ -115,8 +131,15 @@ export default function ServicesPage({ onNavigate }) {
         </div>
       </section>
 
-      {/* 3. "Recent Projects" Section matching Figma */}
-      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pt-24 sm:pt-32 space-y-12">
+      {/* 3. Quote Banner matching Figma Image 2 */}
+      <section className="max-w-4xl mx-auto px-6 py-20 text-center">
+        <blockquote className="font-serif italic text-2xl sm:text-3xl lg:text-4xl text-ashara-charcoal dark:text-white leading-relaxed font-light transition-colors duration-300">
+          “Simplicity is the ultimate sophistication.”
+        </blockquote>
+      </section>
+
+      {/* 4. "Recent Projects" Section matching Figma Image 2 */}
+      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pt-8 space-y-12">
         
         {/* Heading with Divider Lines */}
         <div className="flex items-center justify-center gap-6 sm:gap-10">
@@ -132,7 +155,7 @@ export default function ServicesPage({ onNavigate }) {
           
           {/* Card 1: Amibara Properties */}
           <div 
-            onClick={() => onNavigate('projects')}
+            onClick={() => handleProjectClick(5)}
             className="group cursor-pointer space-y-3"
           >
             <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs">
@@ -154,7 +177,7 @@ export default function ServicesPage({ onNavigate }) {
 
           {/* Card 2: Minstry of Revenues */}
           <div 
-            onClick={() => onNavigate('projects')}
+            onClick={() => handleProjectClick(6)}
             className="group cursor-pointer space-y-3"
           >
             <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs">

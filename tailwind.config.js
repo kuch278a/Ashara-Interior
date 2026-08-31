@@ -36,6 +36,11 @@ export default {
       boxShadow: {
         'luxury': '0 20px 40px -15px rgba(30, 78, 78, 0.08)',
         'luxury-lg': '0 30px 60px -20px rgba(30, 78, 78, 0.15)',
+      },
+      scale: {
+        '102': '1.02',
+        '103': '1.03',
+        '104': '1.04',
       }
     },
   },

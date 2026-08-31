@@ -80,6 +80,12 @@ export default function Footer({ onNavigate }) {
                 ABOUT US
               </button>
               <button
+                onClick={() => onNavigate('blog')}
+                className="text-left hover:text-white transition"
+              >
+                BLOG
+              </button>
+              <button
                 onClick={() => onNavigate('contact')}
                 className="text-left hover:text-white transition"
               >

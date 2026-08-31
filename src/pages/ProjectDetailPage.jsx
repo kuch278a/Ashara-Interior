@@ -1,13 +1,29 @@
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
+import { PROJECTS_LIST } from './ProjectsPage';
 
-export default function ProjectDetailPage({ onNavigate, project }) {
-  // Fallback project details
-  const activeProject = project || {
-    id: 1,
-    title: 'Prosperity Party Office',
-    subtitle: 'GOVERNMENT SUB-OFFICE',
-    description: 'Ashara Interiors was commissioned to design a grand presidential state suite and governmental convention headquarters. Integrating monumental Ethiopian historical references with contemporary civic transparency, the project features bespoke coffered timber acoustic domes, structural cantilevered glass staircases, and executive ceremonial boardrooms.'
+export default function ProjectDetailPage({ onNavigate, onSelectProject, project }) {
+  // Fallback to the first project if none is active
+  const activeProject = project || PROJECTS_LIST[0];
+
+  const gallery = activeProject.gallery || [
+    activeProject.image || activeProject.fallbackImage,
+    'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=90',
+    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85',
+    'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=85',
+    'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=85',
+    'https://images.unsplash.com/photo-1548625361-16a9a7a67926?auto=format&fit=crop&w=1200&q=85',
+    'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1800&q=90'
+  ];
+
+  // Dynamic recommendations: Other projects from the list
+  const recommendations = PROJECTS_LIST.filter((p) => p.id !== activeProject.id).slice(0, 2);
+
+  const handleRecommendationClick = (recProject) => {
+    if (onSelectProject) {
+      onSelectProject(recProject);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -24,11 +40,15 @@ export default function ProjectDetailPage({ onNavigate, project }) {
         </button>
       </div>
 
-      {/* 1. HERO: Historic Manor / Palace Facade matching Figma Image 5 */}
+      {/* 1. HERO: Main Project Showcase Image */}
       <section className="w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
         <div className="relative w-full aspect-[16/9] sm:aspect-[21/10] max-h-[640px] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-sm">
           <img
-            src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1800&q=90"
+            src={activeProject.image || activeProject.fallbackImage}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = activeProject.fallbackImage || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1800&q=90';
+            }}
             alt={activeProject.title}
             className="w-full h-full object-cover"
           />
@@ -45,7 +65,7 @@ export default function ProjectDetailPage({ onNavigate, project }) {
               {activeProject.title}
             </h1>
             <p className="text-[10px] uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400 font-semibold transition-colors duration-300">
-              {activeProject.subtitle || 'GOVERNMENT SUB-OFFICE'}
+              {activeProject.subtitle || activeProject.category || 'GOVERNMENT SUB-OFFICE'}
             </p>
           </div>
 
@@ -59,70 +79,70 @@ export default function ProjectDetailPage({ onNavigate, project }) {
         </div>
       </section>
 
-      {/* 3. FULL-WIDTH FEATURE: Golden Fluted Acoustic Dome Ceiling */}
+      {/* 3. FULL-WIDTH FEATURE: Feature Gallery Image 1 */}
       <section className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-6">
         <div className="relative w-full aspect-[16/9] sm:aspect-[21/10] max-h-[580px] overflow-hidden bg-black shadow-md">
           <img
-            src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=90"
-            alt="Golden Fluted Dome Ceiling"
+            src={gallery[0] || activeProject.fallbackImage}
+            alt={`${activeProject.title} Detail 1`}
             className="w-full h-full object-cover hover:scale-102 transition-transform duration-700"
           />
         </div>
       </section>
 
-      {/* 4. 2-COLUMN IMAGE GRID: Modern Stairs + Executive Boardroom */}
+      {/* 4. 2-COLUMN IMAGE GRID: Gallery Images 2 & 3 */}
       <section className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
           <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs">
             <img
-              src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85"
-              alt="Floating Glass Balcony Stairs"
+              src={gallery[1] || activeProject.fallbackImage}
+              alt={`${activeProject.title} Detail 2`}
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
             />
           </div>
           <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs">
             <img
-              src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=85"
-              alt="Executive Conference Boardroom"
+              src={gallery[2] || activeProject.fallbackImage}
+              alt={`${activeProject.title} Detail 3`}
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
             />
           </div>
         </div>
       </section>
 
-      {/* 5. QUOTE BANNER: Daniel Mesfin Quote matching Figma Image 5 */}
+      {/* 5. QUOTE BANNER: Sophia / Daniel Mesfin Quote matching Figma Image 5 */}
       <section className="max-w-4xl mx-auto px-6 py-12 text-center">
         <blockquote className="font-serif italic text-2xl sm:text-3xl lg:text-4xl text-ashara-charcoal dark:text-white leading-relaxed font-light transition-colors duration-300">
           “Design with passion, authenticity, and positivity to create spaces that inspire and uplift the soul.”
         </blockquote>
       </section>
 
-      {/* 6. 2-COLUMN IMAGE GRID: Textured Concrete Hall + Baroque Nave */}
+      {/* 6. 2-COLUMN IMAGE GRID: Gallery Images 4 & 5 */}
       <section className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
           <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs">
             <img
-              src="https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=85"
-              alt="Monumental Concrete Hall"
+              src={gallery[3] || activeProject.fallbackImage}
+              alt={`${activeProject.title} Detail 4`}
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
             />
           </div>
           <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs">
             <img
-              src="https://images.unsplash.com/photo-1548625361-16a9a7a67926?auto=format&fit=crop&w=1200&q=85"
-              alt="Cathedral Baroque Nave"
+              src={gallery[4] || activeProject.fallbackImage}
+              alt={`${activeProject.title} Detail 5`}
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
             />
           </div>
         </div>
       </section>
 
-      {/* 7. FULL-WIDTH IMAGE: Modern Cafeteria / Canteen */}
+      {/* 7. FULL-WIDTH IMAGE: Gallery Image 6 */}
       <section className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-6">
         <div className="relative w-full aspect-[16/9] sm:aspect-[21/10] max-h-[580px] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-sm">
           <img
-            src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1800&q=90"
-            alt="Atelier Canteen & Collaborative Dining"
+            src={gallery[5] || gallery[0]}
+            alt={`${activeProject.title} Detail 6`}
             className="w-full h-full object-cover"
           />
         </div>
@@ -152,51 +172,33 @@ export default function ProjectDetailPage({ onNavigate, project }) {
 
         {/* 2 Project Recommendation Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 lg:gap-12">
-          
-          {/* Card 1: Amibara Properties */}
-          <div 
-            onClick={() => onNavigate('projects')}
-            className="group cursor-pointer space-y-3"
-          >
-            <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs">
-              <img
-                src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85"
-                alt="Amibara Properties"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
+          {recommendations.map((rec) => (
+            <div 
+              key={rec.id}
+              onClick={() => handleRecommendationClick(rec)}
+              className="group cursor-pointer space-y-3"
+            >
+              <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs">
+                <img
+                  src={rec.image}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = rec.fallbackImage;
+                  }}
+                  alt={rec.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+              </div>
+              <div>
+                <h4 className="font-serif text-xl sm:text-2xl text-ashara-charcoal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition duration-300">
+                  {rec.title}
+                </h4>
+                <p className="text-[10px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400 font-medium mt-0.5">
+                  {rec.category || rec.subtitle}
+                </p>
+              </div>
             </div>
-            <div>
-              <h4 className="font-serif text-xl sm:text-2xl text-ashara-charcoal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition duration-300">
-                Amibara Properties
-              </h4>
-              <p className="text-[10px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400 font-medium mt-0.5">
-                PRIVATE COMPANY
-              </p>
-            </div>
-          </div>
-
-          {/* Card 2: Minstry of Revenues */}
-          <div 
-            onClick={() => onNavigate('projects')}
-            className="group cursor-pointer space-y-3"
-          >
-            <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs">
-              <img
-                src="https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=1200&q=85"
-                alt="Ministry of Revenues"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-            </div>
-            <div>
-              <h4 className="font-serif text-xl sm:text-2xl text-ashara-charcoal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition duration-300">
-                Minstry of Revenues
-              </h4>
-              <p className="text-[10px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400 font-medium mt-0.5">
-                GOVERNMENTAL
-              </p>
-            </div>
-          </div>
-
+          ))}
         </div>
 
       </section>

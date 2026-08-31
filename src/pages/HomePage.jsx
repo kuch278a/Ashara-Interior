@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import ClientsSection from '../components/ClientsSection';
+import { PROJECTS_LIST } from './ProjectsPage';
 
 const HERO_SLIDES = [
   {
-    id: 1,
+    id: 2,
     tag: 'GOVERNMENTAL',
     title: 'Ethiopia Federal Police',
     image: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1800&q=90',
@@ -12,7 +13,7 @@ const HERO_SLIDES = [
     description: 'A modern, high-security civic campus combining robust raw industrial concrete finishes with acoustic modular panels, advanced climate automation, and efficient spatial routing for federal operations.'
   },
   {
-    id: 2,
+    id: 1,
     tag: 'GOVERNMENT SUB-OFFICE',
     title: 'Prosperity Party Office',
     image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1800&q=90',
@@ -46,7 +47,7 @@ const HERO_SLIDES = [
   {
     id: 6,
     tag: 'GOVERNMENTAL',
-    title: 'Ministry of Revenues',
+    title: 'Minstry of Revenues',
     image: 'https://images.unsplash.com/photo-1548625361-16a9a7a67926?auto=format&fit=crop&w=1800&q=90',
     subtitle: 'MINISTRY CIVIC COMPLEX',
     description: 'A monumental civic dome auditorium incorporating geodesic timber space trusses, ambient indirect circadian lighting, and custom acoustical plasterwork designed for national assemblies.'
@@ -77,7 +78,8 @@ export default function HomePage({ onNavigate, onSelectProject }) {
   };
 
   const handleHeroClick = () => {
-    const project = HERO_SLIDES[currentSlide];
+    const slide = HERO_SLIDES[currentSlide];
+    const project = PROJECTS_LIST.find((p) => p.id === slide.id) || slide;
     if (onSelectProject) {
       onSelectProject(project);
     }
@@ -95,19 +97,19 @@ export default function HomePage({ onNavigate, onSelectProject }) {
     },
     {
       id: 2,
-      tag: 'PRIVATE',
-      title: 'Fana Broadcasting Corporation',
-      image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85',
-      subtitle: 'BROADCASTING & MEDIA ATELIER',
-      description: 'A cutting-edge television and multimedia broadcast hub featuring circular parametric acoustic galleries, sound-isolated live recording suites, and sunlit collaborative editing studios.'
-    },
-    {
-      id: 3,
       tag: 'GOVERNMENTAL',
       title: 'Ethiopia Federal Police',
       image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=85',
       subtitle: 'GOVERNMENTAL HEADQUARTERS',
       description: 'A modern, high-security civic campus combining robust raw industrial concrete finishes with acoustic modular panels, advanced climate automation, and efficient spatial routing for federal operations.'
+    },
+    {
+      id: 3,
+      tag: 'PRIVATE',
+      title: 'Fana Broadcasting Corporation',
+      image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85',
+      subtitle: 'BROADCASTING & MEDIA ATELIER',
+      description: 'A cutting-edge television and multimedia broadcast hub featuring circular parametric acoustic galleries, sound-isolated live recording suites, and sunlit collaborative editing studios.'
     },
     {
       id: 4,
@@ -120,8 +122,9 @@ export default function HomePage({ onNavigate, onSelectProject }) {
   ];
 
   const handleCardClick = (work) => {
+    const project = PROJECTS_LIST.find((p) => p.id === work.id) || work;
     if (onSelectProject) {
-      onSelectProject(work);
+      onSelectProject(project);
     }
     onNavigate('project-detail');
   };
@@ -139,38 +142,61 @@ export default function HomePage({ onNavigate, onSelectProject }) {
           onMouseLeave={() => setIsPaused(false)}
           className="group relative cursor-pointer w-full aspect-[16/10] sm:aspect-[21/11] max-h-[700px] overflow-hidden bg-black shadow-md select-none"
         >
-          {/* Slides with smooth crossfade */}
-          {HERO_SLIDES.map((slide, idx) => {
-            const isActive = idx === currentSlide;
-            return (
+          {/* Sliding Track (Rolling Carousel) */}
+          <div 
+            className="flex w-full h-full transition-transform duration-700 ease-out"
+            style={{ transform: `translate3d(-${currentSlide * 100}%, 0, 0)` }}
+          >
+            {HERO_SLIDES.map((slide) => (
               <div
                 key={slide.id}
-                className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                  isActive ? 'opacity-100 z-0' : 'opacity-0 pointer-events-none'
-                }`}
+                className="w-full h-full shrink-0 relative"
               >
                 <img
                   src={slide.image}
                   alt={slide.title}
-                  className={`w-full h-full object-cover transition-transform duration-1000 ease-out ${
-                    isActive ? 'scale-100' : 'scale-105'
-                  }`}
+                  className="w-full h-full object-cover"
                 />
               </div>
-            );
-          })}
+            ))}
+          </div>
 
           {/* Luxury Gradient Overlay matching Figma */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none z-10"></div>
 
           {/* Bottom-Left Overlay Text matching Figma exactly */}
-          <div className="absolute bottom-8 left-8 sm:bottom-12 sm:left-12 text-white space-y-1.5 z-20 transition-all duration-500">
-            <span className="text-[9.5px] sm:text-[10px] uppercase tracking-[0.3em] text-white/80 font-medium block animate-fade-in">
+          <div 
+            key={currentSlide}
+            className="absolute bottom-8 left-8 sm:bottom-12 sm:left-12 text-white space-y-1.5 z-20 animate-fade-in"
+          >
+            <span className="text-[9.5px] sm:text-[10px] uppercase tracking-[0.3em] text-white/80 font-medium block">
               {activeProject.tag}
             </span>
             <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-light text-white tracking-normal leading-tight">
               {activeProject.title}
             </h1>
+          </div>
+
+          {/* Rolling Slide Indicators (Dots/Pills) */}
+          <div className="absolute bottom-8 right-8 sm:bottom-12 sm:right-12 z-20 flex items-center gap-2 select-none">
+            {HERO_SLIDES.map((_, idx) => {
+              const isActive = idx === currentSlide;
+              return (
+                <button
+                  key={idx}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentSlide(idx);
+                  }}
+                  className={`h-1.5 transition-all duration-300 rounded-full focus:outline-none ${
+                    isActive 
+                      ? 'w-7 bg-ashara-gold' 
+                      : 'w-2 bg-white/50 hover:bg-white'
+                  }`}
+                  aria-label={`Go to slide ${idx + 1}`}
+                />
+              );
+            })}
           </div>
 
           {/* Left Arrow Navigation Button (Visible on Hover Only) */}

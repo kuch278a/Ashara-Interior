@@ -1,6 +1,16 @@
 import React from 'react';
+import { PROJECTS_LIST } from './ProjectsPage';
 
-export default function AboutPage({ onNavigate }) {
+export default function AboutPage({ onNavigate, onSelectProject }) {
+  const handleProjectClick = (projId) => {
+    const proj = PROJECTS_LIST.find((p) => p.id === projId) || PROJECTS_LIST[0];
+    if (onSelectProject) {
+      onSelectProject(proj);
+    } else {
+      onNavigate('projects');
+    }
+  };
+
   return (
     <div className="bg-white dark:bg-ashara-dark animate-fade-in pb-24 transition-colors duration-300">
       
@@ -30,89 +40,86 @@ export default function AboutPage({ onNavigate }) {
       <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pt-20 sm:pt-24 pb-14">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-14 items-start">
           
-          {/* Left Column: Italic Serif Callout */}
-          <div className="md:col-span-5">
-            <h2 className="font-serif italic text-3xl sm:text-4xl text-ashara-charcoal dark:text-white leading-snug font-light transition-colors duration-300">
-              We create luxury interiors that stand the test of time
+          {/* Left: Heading & Script Accent */}
+          <div className="md:col-span-5 space-y-2">
+            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-ashara-charcoal dark:text-white font-normal leading-tight transition-colors duration-300">
+              Transforming spaces into timeless, elegant environments.
             </h2>
+            <p className="font-script text-2xl sm:text-3xl text-ashara-teal dark:text-ashara-gold pt-2 transition-colors duration-300">
+              elevating human experiences
+            </p>
           </div>
 
-          {/* Right Column: Narrative */}
-          <div className="md:col-span-7">
-            <p className="text-xs sm:text-[13.5px] leading-relaxed sm:leading-loose text-gray-700 dark:text-gray-300 font-light transition-colors duration-300">
-              Our interiors encompass residential and commercial projects and great pride is taken in bespoke tailored creations to a high level, bespoke designs made exclusively for you. Based in Addis Ababa and specialized in luxury interior design, architecture, and turnkey delivery, we are deeply passionate about translating cultural heritage into inspiring modern sanctuaries.
+          {/* Right: Body Narrative */}
+          <div className="md:col-span-7 space-y-5 text-gray-700 dark:text-gray-300 font-light text-xs sm:text-[13.5px] leading-relaxed transition-colors duration-300">
+            <p>
+              Ashara Interiors is a premier interior architecture and design atelier rooted in Addis Ababa, Ethiopia. We specialize in high-end governmental complexes, prestigious corporate headquarters, luxury residential retreats, and bespoke commercial environments.
+            </p>
+            <p>
+              Our philosophy bridges Ethiopian neoclassical grandeur with contemporary European minimalism. Every space we sculpt is meticulously tailored with custom timber craftsmanship, refined acoustic engineering, and timeless marble textures designed to inspire for generations.
             </p>
           </div>
 
         </div>
       </section>
 
-      {/* 3. FULL-WIDTH FEATURE IMAGE: Heritage Woodcraft Stalls */}
-      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 py-6">
-        <div className="relative w-full aspect-[16/9] sm:aspect-[21/10] max-h-[580px] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs">
+      {/* 3. FULL-WIDTH FEATURE BANNER: Concrete Atrium & Floating Stairs */}
+      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 py-8">
+        <div className="relative w-full aspect-[16/9] sm:aspect-[21/10] max-h-[560px] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-sm">
           <img
-            src="https://images.unsplash.com/photo-1519643381401-22c77e60520e?auto=format&fit=crop&w=1800&q=90"
-            alt="Handcrafted Woodwork Confessionals"
+            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=90"
+            alt="Ashara Design Atelier Workspace"
             className="w-full h-full object-cover"
           />
         </div>
       </section>
 
-      {/* 4. ZIG-ZAG MISSION & VISION SECTION matching Figma Image 4 */}
-      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pt-16 space-y-12 sm:space-y-16">
-        
-        {/* Row 1: "Our Mission" (Left) + Cathedral Photo (Right) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-center">
+      {/* 4. CORE VALUES / THREE PILLARS matching Figma */}
+      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 sm:gap-8 text-center md:text-left">
           
-          {/* Mission Card */}
-          <div className="bg-[#EBF2F2] dark:bg-white/5 p-8 sm:p-10 border-t-2 border-ashara-teal/60 dark:border-ashara-gold/60 space-y-4 shadow-2xs">
-            <h3 className="font-serif text-2xl sm:text-3xl text-ashara-charcoal dark:text-white font-normal transition-colors duration-300">
-              Our Mission
+          <div className="space-y-3">
+            <span className="font-serif text-3xl sm:text-4xl text-ashara-teal dark:text-ashara-gold font-light">01</span>
+            <h3 className="font-serif text-xl sm:text-2xl text-ashara-charcoal dark:text-white transition-colors duration-300">
+              Authentic Heritage
             </h3>
-            <p className="text-xs sm:text-[12.5px] leading-relaxed text-gray-700 dark:text-gray-300 font-light transition-colors duration-300">
-              Established in 2018 by founder Sophia Mesfin, Ashara Interiors has evolved into a premier luxury atelier. We create spaces that celebrate classical proportions, tactile materiality, and contemporary clarity, offering our clients an end-to-end bespoke journey rooted in mutual trust and enduring quality.
+            <p className="text-xs sm:text-[13px] leading-relaxed text-gray-600 dark:text-gray-300 font-light transition-colors duration-300">
+              Integrating authentic local materials, bespoke indigenous timber craft, and cultural geometries into modern architectural contexts.
             </p>
           </div>
 
-          {/* Cathedral Photo 1 */}
-          <div className="aspect-[4/3] sm:aspect-[5/4] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs">
-            <img
-              src="https://images.unsplash.com/photo-1548625361-16a9a7a67926?auto=format&fit=crop&w=1200&q=85"
-              alt="Cathedral Architecture Detail"
-              className="w-full h-full object-cover hover:scale-103 transition-transform duration-700"
-            />
-          </div>
-
-        </div>
-
-        {/* Row 2: Cathedral Photo (Left) + "Our Vision" (Right) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-center">
-          
-          {/* Cathedral Photo 2 */}
-          <div className="order-2 md:order-1 aspect-[4/3] sm:aspect-[5/4] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs">
-            <img
-              src="https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=85"
-              alt="Sacred Interior Space"
-              className="w-full h-full object-cover hover:scale-103 transition-transform duration-700"
-            />
-          </div>
-
-          {/* Vision Card */}
-          <div className="order-1 md:order-2 bg-[#EBF2F2] dark:bg-white/5 p-8 sm:p-10 border-t-2 border-ashara-teal/60 dark:border-ashara-gold/60 space-y-4 shadow-2xs">
-            <h3 className="font-serif text-2xl sm:text-3xl text-ashara-charcoal dark:text-white font-normal transition-colors duration-300">
-              Our Vision
+          <div className="space-y-3">
+            <span className="font-serif text-3xl sm:text-4xl text-ashara-teal dark:text-ashara-gold font-light">02</span>
+            <h3 className="font-serif text-xl sm:text-2xl text-ashara-charcoal dark:text-white transition-colors duration-300">
+              Architectural Rigor
             </h3>
-            <p className="text-xs sm:text-[12.5px] leading-relaxed text-gray-700 dark:text-gray-300 font-light transition-colors duration-300">
-              To shape the architectural landscape of East Africa and beyond through timeless craftsmanship, sustainable innovation, and spaces that uplift human connection. We strive to be the benchmark for transformative civic, commercial, and residential environments.
+            <p className="text-xs sm:text-[13px] leading-relaxed text-gray-600 dark:text-gray-300 font-light transition-colors duration-300">
+              Precision acoustic calculations, sustainable climate zoning, and seamless structural integration across large-scale civic projects.
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <span className="font-serif text-3xl sm:text-4xl text-ashara-teal dark:text-ashara-gold font-light">03</span>
+            <h3 className="font-serif text-xl sm:text-2xl text-ashara-charcoal dark:text-white transition-colors duration-300">
+              Bespoke Execution
+            </h3>
+            <p className="text-xs sm:text-[13px] leading-relaxed text-gray-600 dark:text-gray-300 font-light transition-colors duration-300">
+              Turnkey delivery from schematic concept to master joinery installation, ensuring flawless luxury execution within tight timelines.
             </p>
           </div>
 
         </div>
-
       </section>
 
-      {/* 5. "Recent Projects" Section matching Figma */}
-      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pt-24 sm:pt-32 space-y-12">
+      {/* 5. QUOTE BANNER matching Figma Image 4 */}
+      <section className="max-w-4xl mx-auto px-6 py-12 text-center">
+        <blockquote className="font-serif italic text-2xl sm:text-3xl lg:text-4xl text-ashara-charcoal dark:text-white leading-relaxed font-light transition-colors duration-300">
+          “Architecture should speak of its time and place, but yearn for timelessness.”
+        </blockquote>
+      </section>
+
+      {/* 6. "Recent Projects" Section matching Figma Image 4 */}
+      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pt-12 space-y-12">
         
         {/* Heading with Divider Lines */}
         <div className="flex items-center justify-center gap-6 sm:gap-10">
@@ -128,7 +135,7 @@ export default function AboutPage({ onNavigate }) {
           
           {/* Card 1: Amibara Properties */}
           <div 
-            onClick={() => onNavigate('projects')}
+            onClick={() => handleProjectClick(5)}
             className="group cursor-pointer space-y-3"
           >
             <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs">
@@ -150,7 +157,7 @@ export default function AboutPage({ onNavigate }) {
 
           {/* Card 2: Minstry of Revenues */}
           <div 
-            onClick={() => onNavigate('projects')}
+            onClick={() => handleProjectClick(6)}
             className="group cursor-pointer space-y-3"
           >
             <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs">

@@ -9,6 +9,7 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
     { id: 'projects', label: 'PROJECTS' },
     { id: 'services', label: 'OUR SERVICES' },
     { id: 'about', label: 'ABOUT US' },
+    { id: 'blog', label: 'BLOG' },
     { id: 'contact', label: 'CONTACT' },
   ];
 
