@@ -114,7 +114,7 @@ export default function ProjectsPage({ onNavigate, onSelectProject }) {
   };
 
   return (
-    <div className="bg-white dark:bg-ashara-dark animate-fade-in pb-24 transition-colors duration-300">
+    <div className="bg-transparent animate-fade-in pb-24 transition-colors duration-300">
       
       {/* 1. TERRACOTTA HERO BANNER matching Figma Image 3 */}
       <section className="relative bg-ashara-terracotta text-white overflow-hidden py-24 sm:py-32 px-6 lg:px-12 text-center">

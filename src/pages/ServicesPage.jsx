@@ -47,7 +47,7 @@ export default function ServicesPage({ onNavigate, onSelectProject }) {
   };
 
   return (
-    <div className="bg-white dark:bg-ashara-dark animate-fade-in pb-24 transition-colors duration-300">
+    <div className="bg-transparent animate-fade-in pb-24 transition-colors duration-300">
       
       {/* 1. HERO: "How We Work" Dark Cathedral Arch Banner matching Figma Image 2 */}
       <section className="relative w-full min-h-[540px] sm:min-h-[620px] flex items-center justify-center bg-black overflow-hidden px-6 py-20 text-center">

@@ -15,8 +15,17 @@
   }
   
   body {
-    @apply font-sans bg-white text-ashara-charcoal dark:bg-ashara-dark dark:text-ashara-sand transition-colors duration-300;
+    @apply font-sans text-ashara-charcoal dark:text-ashara-sand transition-colors duration-300;
+    background-color: #E8EDF2;
+    background-image: url('/bg_pattern.svg');
+    background-repeat: repeat;
     overflow-x: hidden;
+  }
+
+  html.dark body {
+    background-color: #0A1525;
+    background-image: url('/bg_pattern_dark.svg');
+    background-repeat: repeat;
   }
 
   h1, h2, h3, h4, h5, h6 {

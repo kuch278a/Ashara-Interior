@@ -132,7 +132,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
   const activeProject = HERO_SLIDES[currentSlide];
 
   return (
-    <div className="bg-white dark:bg-ashara-dark animate-fade-in space-y-16 sm:space-y-24 pb-24 transition-colors duration-300">
+    <div className="bg-transparent animate-fade-in space-y-16 sm:space-y-24 pb-24 transition-colors duration-300">
       
       {/* 1. HERO BANNER: Clean luxury carousel with subtle on-hover arrows only */}
       <section className="w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 pt-4">

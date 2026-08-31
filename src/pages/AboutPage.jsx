@@ -12,7 +12,7 @@ export default function AboutPage({ onNavigate, onSelectProject }) {
   };
 
   return (
-    <div className="bg-white dark:bg-ashara-dark animate-fade-in pb-24 transition-colors duration-300">
+    <div className="bg-transparent animate-fade-in pb-24 transition-colors duration-300">
       
       {/* 1. HERO: Glass Facade & Sky Banner matching Figma Image 4 */}
       <section className="relative w-full min-h-[460px] sm:min-h-[540px] flex items-center justify-center bg-gray-900 overflow-hidden px-6 py-20 text-center">
