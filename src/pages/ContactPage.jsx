@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Phone, Mail, MessageSquare, MapPin, CheckCircle2 } from 'lucide-react';
 
-export default function ContactPage() {
+export default function ContactPage({ isSection = false }) {
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({
     fullName: '',
@@ -16,12 +16,18 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="bg-white dark:bg-ashara-dark min-h-[85vh] py-14 sm:py-20 px-6 sm:px-10 lg:px-16 animate-fade-in transition-colors duration-300">
-      <div className="max-w-5xl mx-auto space-y-12">
+    <div className="bg-transparent py-12 sm:py-16 px-6 sm:px-10 lg:px-16 animate-fade-in transition-colors duration-300">
+      <div className="max-w-5xl mx-auto space-y-10">
         
         {/* Intro Subtitle matching Figma Screen 1 */}
-        <div className="text-center max-w-3xl mx-auto pt-4">
-          <p className="text-gray-700 dark:text-gray-300 text-lg sm:text-2xl font-light leading-relaxed tracking-tight transition-colors duration-300">
+        <div className="text-center max-w-3xl mx-auto pt-2">
+          <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.32em] text-ashara-teal dark:text-ashara-gold font-semibold mb-3">
+            GET IN TOUCH
+          </p>
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-ashara-charcoal dark:text-white font-normal tracking-wide transition-colors duration-300 mb-4">
+            Connect with Ashara
+          </h2>
+          <p className="text-gray-700 dark:text-gray-300 text-sm sm:text-lg font-light leading-relaxed tracking-tight transition-colors duration-300">
             If you would like to discuss your project, schedule an appointment or arrange to view more of our extensive portfolio please contact us on the details below.
           </p>
         </div>

@@ -29,7 +29,7 @@ const ACCORDION_ITEMS = [
   }
 ];
 
-export default function ServicesPage({ onNavigate, onSelectProject }) {
+export default function ServicesPage({ onNavigate, onSelectProject, isSection = false }) {
   // In Figma, item 3 is expanded by default
   const [openIndex, setOpenIndex] = useState(3);
 
@@ -41,16 +41,16 @@ export default function ServicesPage({ onNavigate, onSelectProject }) {
     const proj = PROJECTS_LIST.find((p) => p.id === projId) || PROJECTS_LIST[0];
     if (onSelectProject) {
       onSelectProject(proj);
-    } else {
+    } else if (onNavigate) {
       onNavigate('projects');
     }
   };
 
   return (
-    <div className="bg-transparent animate-fade-in pb-24 transition-colors duration-300">
+    <div className="bg-transparent animate-fade-in transition-colors duration-300">
       
       {/* 1. HERO: "How We Work" Dark Cathedral Arch Banner matching Figma Image 2 */}
-      <section className="relative w-full min-h-[540px] sm:min-h-[620px] flex items-center justify-center bg-black overflow-hidden px-6 py-20 text-center">
+      <section className="relative w-full min-h-[500px] sm:min-h-[560px] flex items-center justify-center bg-black overflow-hidden px-6 py-20 text-center">
         {/* Background Image */}
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-70 scale-100"
@@ -64,21 +64,24 @@ export default function ServicesPage({ onNavigate, onSelectProject }) {
 
         {/* Hero Content */}
         <div className="relative z-10 max-w-3xl mx-auto space-y-6 text-white px-4">
-          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal tracking-wide text-white">
+          <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.32em] text-ashara-gold font-semibold">
+            SERVICES & EXPERTISE
+          </p>
+          <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal tracking-wide text-white">
             How We Work
-          </h1>
+          </h2>
           
           <p className="text-xs sm:text-[13.5px] leading-relaxed sm:leading-loose text-white/90 font-light tracking-wide max-w-2xl mx-auto">
-            Ashara Interiors is an interior design, architecture, and build company passionate about creating inspiring spaces that radiate positivity and reflect our clients' unique identities. Specializing in governmental bureaus, commercial spaces, hotels, residential projects, and cultural landmarks, we offer comprehensive services ranging from stand-alone interior design to complete turnkey solutions. On larger projects, we seamlessly integrate with your existing team of architects and contractors, or provide end-to-end project management from concept to completion.
+            Ashara Interiors is an interior design, architecture, and build company passionate about creating inspiring spaces that radiate positivity and reflect our clients' unique identities. Specializing in governmental bureaus, commercial spaces, hotels, residential projects, and cultural landmarks, we offer comprehensive services ranging from stand-alone interior design to complete turnkey solutions.
           </p>
         </div>
       </section>
 
       {/* 2. "How We Can Help" Section with Numbered Accordion */}
-      <section className="max-w-3xl mx-auto px-6 sm:px-10 pt-20 sm:pt-28 space-y-12">
-        <h2 className="font-serif text-3xl sm:text-4xl text-center text-ashara-charcoal dark:text-white font-normal tracking-wide transition-colors duration-300">
+      <section className="max-w-3xl mx-auto px-6 sm:px-10 pt-16 sm:pt-24 space-y-12">
+        <h3 className="font-serif text-3xl sm:text-4xl text-center text-ashara-charcoal dark:text-white font-normal tracking-wide transition-colors duration-300">
           How We Can Help
-        </h2>
+        </h3>
 
         {/* Accordion List */}
         <div className="divide-y divide-gray-200 dark:divide-white/10">
@@ -150,50 +153,46 @@ export default function ServicesPage({ onNavigate, onSelectProject }) {
           <div className="h-[1px] bg-gray-300 dark:bg-white/10 flex-1 max-w-[240px]"></div>
         </div>
 
-        {/* 2 Project Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 lg:gap-12">
+        {/* 2 Project Cards Grid with Solid Teal Label Box */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
           
           {/* Card 1: Amibara Properties */}
           <div 
             onClick={() => handleProjectClick(5)}
-            className="group cursor-pointer space-y-3"
+            className="group relative cursor-pointer aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500"
           >
-            <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs">
-              <img
-                src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=85"
-                alt="Amibara Properties"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-            </div>
-            <div>
-              <h4 className="font-serif text-xl sm:text-2xl text-ashara-charcoal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition duration-300">
+            <img
+              src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=85"
+              alt="Amibara Properties"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+            />
+            <div className="absolute inset-x-0 bottom-0 bg-ashara-teal/95 dark:bg-ashara-teal/95 backdrop-blur-[2px] p-5 sm:p-6 text-white transition-all duration-300">
+              <span className="text-[8.5px] sm:text-[9px] uppercase tracking-[0.28em] text-white/80 font-medium block">
+                PRIVATE COMPANY
+              </span>
+              <h4 className="font-serif text-xl sm:text-2xl font-normal mt-0.5 text-white">
                 Amibara Properties
               </h4>
-              <p className="text-[10px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400 font-medium mt-0.5">
-                PRIVATE COMPANY
-              </p>
             </div>
           </div>
 
           {/* Card 2: Minstry of Revenues */}
           <div 
             onClick={() => handleProjectClick(6)}
-            className="group cursor-pointer space-y-3"
+            className="group relative cursor-pointer aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500"
           >
-            <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs">
-              <img
-                src="https://images.unsplash.com/photo-1519643381401-22c77e60520e?auto=format&fit=crop&w=1200&q=85"
-                alt="Ministry of Revenues"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-            </div>
-            <div>
-              <h4 className="font-serif text-xl sm:text-2xl text-ashara-charcoal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition duration-300">
+            <img
+              src="https://images.unsplash.com/photo-1519643381401-22c77e60520e?auto=format&fit=crop&w=1200&q=85"
+              alt="Ministry of Revenues"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+            />
+            <div className="absolute inset-x-0 bottom-0 bg-ashara-teal/95 dark:bg-ashara-teal/95 backdrop-blur-[2px] p-5 sm:p-6 text-white transition-all duration-300">
+              <span className="text-[8.5px] sm:text-[9px] uppercase tracking-[0.28em] text-white/80 font-medium block">
+                GOVERNMENTAL
+              </span>
+              <h4 className="font-serif text-xl sm:text-2xl font-normal mt-0.5 text-white">
                 Minstry of Revenues
               </h4>
-              <p className="text-[10px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400 font-medium mt-0.5">
-                GOVERNMENTAL
-              </p>
             </div>
           </div>
 

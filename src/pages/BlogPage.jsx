@@ -46,20 +46,20 @@ const BLOG_POSTS = [
   }
 ];
 
-export default function BlogPage() {
+export default function BlogPage({ isSection = false }) {
   const [selectedPost, setSelectedPost] = useState(null);
 
   return (
-    <div className="bg-white dark:bg-ashara-dark min-h-screen pb-24 transition-colors duration-300 animate-fade-in">
+    <div className="bg-transparent transition-colors duration-300 animate-fade-in">
       
       {/* 1. HERO BANNER: Neoclassical Editorial Title */}
-      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pt-16 pb-12 sm:pb-16 text-center space-y-4">
+      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pt-12 sm:pt-16 pb-10 text-center space-y-3">
         <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.32em] text-ashara-teal dark:text-ashara-gold font-semibold">
           THE ASHARA JOURNAL
         </p>
-        <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-ashara-charcoal dark:text-white font-normal tracking-wide transition-colors duration-300">
+        <h2 className="font-serif text-3xl sm:text-5xl lg:text-6xl text-ashara-charcoal dark:text-white font-normal tracking-wide transition-colors duration-300">
           Insights & Monograph
-        </h1>
+        </h2>
         <div className="w-16 h-[2px] bg-ashara-teal dark:bg-ashara-gold mx-auto mt-4"></div>
       </section>
 

@@ -62,6 +62,12 @@ export default function Footer({ onNavigate }) {
           <div className="md:col-span-3 flex flex-col justify-between space-y-6">
             <nav className="flex flex-col space-y-2 text-[11px] uppercase tracking-[0.2em] font-medium text-white/90">
               <button
+                onClick={() => onNavigate('home')}
+                className="text-left hover:text-white transition"
+              >
+                HOME
+              </button>
+              <button
                 onClick={() => onNavigate('projects')}
                 className="text-left hover:text-white transition"
               >

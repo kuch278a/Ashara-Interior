@@ -1,21 +1,21 @@
 import React from 'react';
 import { PROJECTS_LIST } from './ProjectsPage';
 
-export default function AboutPage({ onNavigate, onSelectProject }) {
+export default function AboutPage({ onNavigate, onSelectProject, isSection = false }) {
   const handleProjectClick = (projId) => {
     const proj = PROJECTS_LIST.find((p) => p.id === projId) || PROJECTS_LIST[0];
     if (onSelectProject) {
       onSelectProject(proj);
-    } else {
+    } else if (onNavigate) {
       onNavigate('projects');
     }
   };
 
   return (
-    <div className="bg-transparent animate-fade-in pb-24 transition-colors duration-300">
+    <div className="bg-transparent animate-fade-in transition-colors duration-300">
       
       {/* 1. HERO: Glass Facade & Sky Banner matching Figma Image 4 */}
-      <section className="relative w-full min-h-[460px] sm:min-h-[540px] flex items-center justify-center bg-gray-900 overflow-hidden px-6 py-20 text-center">
+      <section className="relative w-full min-h-[420px] sm:min-h-[480px] flex items-center justify-center bg-gray-900 overflow-hidden px-6 py-20 text-center">
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-85"
           style={{
@@ -130,50 +130,46 @@ export default function AboutPage({ onNavigate, onSelectProject }) {
           <div className="h-[1px] bg-gray-300 dark:bg-white/10 flex-1 max-w-[240px]"></div>
         </div>
 
-        {/* 2 Project Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 lg:gap-12">
+        {/* 2 Project Cards with Solid Teal Label Box */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
           
           {/* Card 1: Amibara Properties */}
           <div 
             onClick={() => handleProjectClick(5)}
-            className="group cursor-pointer space-y-3"
+            className="group relative cursor-pointer aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500"
           >
-            <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs">
-              <img
-                src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=85"
-                alt="Amibara Properties"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-            </div>
-            <div>
-              <h4 className="font-serif text-xl sm:text-2xl text-ashara-charcoal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition duration-300">
+            <img
+              src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=85"
+              alt="Amibara Properties"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+            />
+            <div className="absolute inset-x-0 bottom-0 bg-ashara-teal/95 dark:bg-ashara-teal/95 backdrop-blur-[2px] p-5 sm:p-6 text-white transition-all duration-300">
+              <span className="text-[8.5px] sm:text-[9px] uppercase tracking-[0.28em] text-white/80 font-medium block">
+                PRIVATE COMPANY
+              </span>
+              <h4 className="font-serif text-xl sm:text-2xl font-normal mt-0.5 text-white">
                 Amibara Properties
               </h4>
-              <p className="text-[10px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400 font-medium mt-0.5">
-                PRIVATE COMPANY
-              </p>
             </div>
           </div>
 
           {/* Card 2: Minstry of Revenues */}
           <div 
             onClick={() => handleProjectClick(6)}
-            className="group cursor-pointer space-y-3"
+            className="group relative cursor-pointer aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500"
           >
-            <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs">
-              <img
-                src="https://images.unsplash.com/photo-1519643381401-22c77e60520e?auto=format&fit=crop&w=1200&q=85"
-                alt="Ministry of Revenues"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-            </div>
-            <div>
-              <h4 className="font-serif text-xl sm:text-2xl text-ashara-charcoal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition duration-300">
+            <img
+              src="https://images.unsplash.com/photo-1519643381401-22c77e60520e?auto=format&fit=crop&w=1200&q=85"
+              alt="Ministry of Revenues"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+            />
+            <div className="absolute inset-x-0 bottom-0 bg-ashara-teal/95 dark:bg-ashara-teal/95 backdrop-blur-[2px] p-5 sm:p-6 text-white transition-all duration-300">
+              <span className="text-[8.5px] sm:text-[9px] uppercase tracking-[0.28em] text-white/80 font-medium block">
+                GOVERNMENTAL
+              </span>
+              <h4 className="font-serif text-xl sm:text-2xl font-normal mt-0.5 text-white">
                 Minstry of Revenues
               </h4>
-              <p className="text-[10px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400 font-medium mt-0.5">
-                GOVERNMENTAL
-              </p>
             </div>
           </div>
 

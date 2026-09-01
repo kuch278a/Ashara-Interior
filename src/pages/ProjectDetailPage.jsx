@@ -170,32 +170,30 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
           <div className="h-[1px] bg-gray-300 dark:bg-white/10 flex-1 max-w-[240px]"></div>
         </div>
 
-        {/* 2 Project Recommendation Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 lg:gap-12">
+        {/* 2 Project Recommendation Cards with Solid Teal Label Box */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
           {recommendations.map((rec) => (
             <div 
               key={rec.id}
               onClick={() => handleRecommendationClick(rec)}
-              className="group cursor-pointer space-y-3"
+              className="group relative cursor-pointer aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500"
             >
-              <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs">
-                <img
-                  src={rec.image}
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = rec.fallbackImage;
-                  }}
-                  alt={rec.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-              </div>
-              <div>
-                <h4 className="font-serif text-xl sm:text-2xl text-ashara-charcoal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition duration-300">
+              <img
+                src={rec.image}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = rec.fallbackImage;
+                }}
+                alt={rec.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+              />
+              <div className="absolute inset-x-0 bottom-0 bg-ashara-teal/95 dark:bg-ashara-teal/95 backdrop-blur-[2px] p-5 sm:p-6 text-white transition-all duration-300">
+                <span className="text-[8.5px] sm:text-[9px] uppercase tracking-[0.28em] text-white/80 font-medium block">
+                  {rec.category || rec.subtitle}
+                </span>
+                <h4 className="font-serif text-xl sm:text-2xl font-normal mt-0.5 text-white">
                   {rec.title}
                 </h4>
-                <p className="text-[10px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400 font-medium mt-0.5">
-                  {rec.category || rec.subtitle}
-                </p>
               </div>
             </div>
           ))}

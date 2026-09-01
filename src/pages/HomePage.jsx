@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronDown, ArrowUp } from 'lucide-react';
 import ClientsSection from '../components/ClientsSection';
 import { PROJECTS_LIST } from './ProjectsPage';
+import ServicesPage from './ServicesPage';
+import AboutPage from './AboutPage';
+import BlogPage from './BlogPage';
+import ContactPage from './ContactPage';
 
 const HERO_SLIDES = [
   {
@@ -57,6 +61,7 @@ const HERO_SLIDES = [
 export default function HomePage({ onNavigate, onSelectProject }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   // Auto-switch slides every 5.5s unless hovered
   useEffect(() => {
@@ -66,6 +71,23 @@ export default function HomePage({ onNavigate, onSelectProject }) {
     }, 5500);
     return () => clearInterval(interval);
   }, [isPaused]);
+
+  // Show "Back to Top" button on scroll down
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 450) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const nextSlide = (e) => {
     e.stopPropagation();
@@ -83,7 +105,9 @@ export default function HomePage({ onNavigate, onSelectProject }) {
     if (onSelectProject) {
       onSelectProject(project);
     }
-    onNavigate('project-detail');
+    if (onNavigate) {
+      onNavigate('project-detail');
+    }
   };
 
   const works = [
@@ -93,7 +117,6 @@ export default function HomePage({ onNavigate, onSelectProject }) {
       title: 'Prosperity Party Office',
       image: 'https://images.unsplash.com/photo-1548625361-16a9a7a67926?auto=format&fit=crop&w=1200&q=85',
       subtitle: 'GOVERNMENT SUB-OFFICE',
-      description: 'Ashara Interiors was commissioned to design a grand presidential state suite and governmental convention headquarters. Integrating monumental Ethiopian historical references with contemporary civic transparency, the project features bespoke coffered timber acoustic domes, structural cantilevered glass staircases, and executive ceremonial boardrooms.'
     },
     {
       id: 2,
@@ -101,7 +124,6 @@ export default function HomePage({ onNavigate, onSelectProject }) {
       title: 'Ethiopia Federal Police',
       image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=85',
       subtitle: 'GOVERNMENTAL HEADQUARTERS',
-      description: 'A modern, high-security civic campus combining robust raw industrial concrete finishes with acoustic modular panels, advanced climate automation, and efficient spatial routing for federal operations.'
     },
     {
       id: 3,
@@ -109,7 +131,6 @@ export default function HomePage({ onNavigate, onSelectProject }) {
       title: 'Fana Broadcasting Corporation',
       image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85',
       subtitle: 'BROADCASTING & MEDIA ATELIER',
-      description: 'A cutting-edge television and multimedia broadcast hub featuring circular parametric acoustic galleries, sound-isolated live recording suites, and sunlit collaborative editing studios.'
     },
     {
       id: 4,
@@ -117,7 +138,6 @@ export default function HomePage({ onNavigate, onSelectProject }) {
       title: 'United Beverages',
       image: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=85',
       subtitle: 'CORPORATE HEAD OFFICE',
-      description: 'A grand neoclassical corporate palace featuring double-height marble entrance colonnades, gilded brass details, and private executive lounges that embody prestige and longevity.'
     }
   ];
 
@@ -126,13 +146,15 @@ export default function HomePage({ onNavigate, onSelectProject }) {
     if (onSelectProject) {
       onSelectProject(project);
     }
-    onNavigate('project-detail');
+    if (onNavigate) {
+      onNavigate('project-detail');
+    }
   };
 
   const activeProject = HERO_SLIDES[currentSlide];
 
   return (
-    <div className="bg-transparent animate-fade-in space-y-16 sm:space-y-24 pb-24 transition-colors duration-300">
+    <div className="bg-transparent animate-fade-in space-y-20 sm:space-y-32 pb-24 transition-colors duration-300 relative">
       
       {/* 1. HERO BANNER: Clean luxury carousel with subtle on-hover arrows only */}
       <section className="w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 pt-4">
@@ -216,6 +238,18 @@ export default function HomePage({ onNavigate, onSelectProject }) {
           >
             <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
+
+          {/* Luxury Scroll Down Cue */}
+          <div 
+            onClick={(e) => {
+              e.stopPropagation();
+              const el = document.getElementById('home-works');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="absolute bottom-3 inset-x-0 mx-auto w-fit z-20 flex flex-col items-center gap-0.5 text-white/70 hover:text-white transition cursor-pointer"
+          >
+            <ChevronDown className="w-4 h-4 animate-bounce text-ashara-gold" />
+          </div>
         </div>
       </section>
 
@@ -230,8 +264,8 @@ export default function HomePage({ onNavigate, onSelectProject }) {
         </blockquote>
       </section>
 
-      {/* 3. "OUR WORKS" 2x2 GRID SECTION matching Figma Image */}
-      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 space-y-12">
+      {/* 3. "OUR WORKS" 2x2 GRID SECTION with Signature Teal/Green Bottom Label Boxes */}
+      <section id="home-works" className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 space-y-12">
         
         {/* Header with Divider Lines */}
         <div className="flex items-center justify-center gap-6 sm:gap-10">
@@ -242,7 +276,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
           <div className="h-[1px] bg-gray-300 dark:bg-white/10 flex-1 max-w-[240px]"></div>
         </div>
 
-        {/* 2x2 Grid with Solid Teal Bottom Label Cards */}
+        {/* 2x2 Grid with Solid Teal Bottom Label Cards matching User's Screenshot */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
           {works.map((item) => (
             <div
@@ -257,8 +291,8 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
               />
 
-              {/* Bottom Teal Label Box matching Figma */}
-              <div className="absolute inset-x-0 bottom-0 bg-ashara-teal/90 dark:bg-ashara-teal/95 backdrop-blur-[2px] p-5 sm:p-6 text-white transition-all duration-300">
+              {/* Signature Solid Forest Teal/Green Bottom Label Box matching Figma & Screenshot */}
+              <div className="absolute inset-x-0 bottom-0 bg-ashara-teal/95 dark:bg-ashara-teal/95 backdrop-blur-[2px] p-5 sm:p-6 text-white transition-all duration-300">
                 <span className="text-[8.5px] sm:text-[9px] uppercase tracking-[0.28em] text-white/80 font-medium block">
                   {item.tag}
                 </span>
@@ -270,7 +304,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
           ))}
         </div>
 
-        {/* View All Projects Link */}
+        {/* View All Projects Button */}
         <div className="text-center pt-4">
           <button
             onClick={() => onNavigate('projects')}
@@ -282,8 +316,48 @@ export default function HomePage({ onNavigate, onSelectProject }) {
 
       </section>
 
-      {/* 4. OUR CLIENTS & TESTIMONIAL SECTION */}
+      {/* 4. SERVICES SECTION (How We Work & Interactive Accordion) */}
+      <section className="border-t border-gray-100 dark:border-white/5 pt-10">
+        <ServicesPage 
+          onNavigate={onNavigate} 
+          onSelectProject={onSelectProject} 
+          isSection={true} 
+        />
+      </section>
+
+      {/* 5. ABOUT US SECTION (Studio story, atelier, & 3 Core Value Pillars) */}
+      <section className="border-t border-gray-100 dark:border-white/5 pt-10">
+        <AboutPage 
+          onNavigate={onNavigate} 
+          onSelectProject={onSelectProject} 
+          isSection={true} 
+        />
+      </section>
+
+      {/* 6. THE ASHARA JOURNAL / BLOG SECTION */}
+      <section className="border-t border-gray-100 dark:border-white/5 pt-10">
+        <BlogPage isSection={true} />
+      </section>
+
+      {/* 7. OUR CLIENTS & TESTIMONIAL SECTION */}
       <ClientsSection />
+
+      {/* 8. CONTACT & CONSULTATION ENQUIRY FORM */}
+      <section className="border-t border-gray-100 dark:border-white/5 pt-10">
+        <ContactPage isSection={true} />
+      </section>
+
+      {/* Floating "Back to Top" Button */}
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-6 right-6 z-40 p-3 bg-ashara-teal/90 hover:bg-ashara-teal dark:bg-ashara-gold/90 dark:hover:bg-ashara-gold text-white dark:text-ashara-dark rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-110 focus:outline-none animate-fade-in"
+          aria-label="Scroll back to top"
+          title="Back to Top"
+        >
+          <ArrowUp className="w-5 h-5" />
+        </button>
+      )}
 
     </div>
   );

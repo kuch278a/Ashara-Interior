@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Menu, X, Lightbulb, Moon } from 'lucide-react';
 import AsharaLogo from './AsharaLogo';
 
@@ -6,6 +6,7 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
+    { id: 'home', label: 'HOME' },
     { id: 'projects', label: 'PROJECTS' },
     { id: 'services', label: 'OUR SERVICES' },
     { id: 'about', label: 'ABOUT US' },
@@ -98,17 +99,20 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
           >
             HOME
           </button>
-          {navLinks.map((link) => (
-            <button
-              key={link.id}
-              onClick={() => handleNavClick(link.id)}
-              className={`block w-full text-left py-2.5 text-xs uppercase tracking-[0.2em] font-medium transition ${
-                activePage === link.id ? 'text-ashara-teal dark:text-ashara-gold font-bold' : 'text-gray-600 dark:text-gray-300'
-              }`}
-            >
-              {link.label}
-            </button>
-          ))}
+          {navLinks.map((link) => {
+            const isActive = activePage === link.id || (activePage === 'project-detail' && link.id === 'projects');
+            return (
+              <button
+                key={link.id}
+                onClick={() => handleNavClick(link.id)}
+                className={`block w-full text-left py-2.5 text-xs uppercase tracking-[0.2em] font-medium transition ${
+                  isActive ? 'text-ashara-teal dark:text-ashara-gold font-bold' : 'text-gray-600 dark:text-gray-300'
+                }`}
+              >
+                {link.label}
+              </button>
+            );
+          })}
         </div>
       )}
     </header>
