@@ -1,0 +1,38 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ──────────────────────────────────────────────
+    // PROJECTS — Public can read, only admins can write
+    // ──────────────────────────────────────────────
+    match /projects/{projectId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // ──────────────────────────────────────────────
+    // BLOG POSTS — Public can read, only admins can write
+    // ──────────────────────────────────────────────
+    match /blog_posts/{postId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // ──────────────────────────────────────────────
+    // CONSULTATIONS — Public can create (contact form),
+    // only admins can read/update/delete
+    // ──────────────────────────────────────────────
+    match /consultations/{leadId} {
+      allow create: if true;
+      allow read, update, delete: if request.auth != null;
+    }
+
+    // ──────────────────────────────────────────────
+    // DEFAULT — Deny everything else
+    // ──────────────────────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
