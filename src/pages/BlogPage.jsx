@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Calendar, Clock, ArrowRight, X } from 'lucide-react';
 
-const BLOG_POSTS = [
+export const BLOG_POSTS = [
   {
     id: 1,
     title: 'The Art of Bespoke Timber Craftsmanship in Addis Ababa',

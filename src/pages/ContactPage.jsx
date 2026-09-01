@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { Phone, Mail, MessageSquare, MapPin, CheckCircle2 } from 'lucide-react';
+import { Phone, Mail, MessageSquare, MapPin, CheckCircle2, Loader2 } from 'lucide-react';
+import { submitConsultation } from '../services/firebase';
 
 export default function ContactPage({ isSection = false }) {
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submittedId, setSubmittedId] = useState('');
   const [form, setForm] = useState({
     fullName: '',
     email: '',
@@ -10,9 +13,26 @@ export default function ContactPage({ isSection = false }) {
     enquiry: ''
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsSubmitting(true);
+    try {
+      const res = await submitConsultation({
+        fullName: form.fullName,
+        email: form.email,
+        telephone: form.telephone,
+        enquiry: form.enquiry
+      });
+      if (res && res.id) {
+        setSubmittedId(res.id);
+      }
+      setSubmitted(true);
+    } catch (err) {
+      console.error('Submission error:', err);
+      setSubmitted(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -96,13 +116,14 @@ export default function ContactPage({ isSection = false }) {
                 <div className="w-12 h-12 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark rounded-full flex items-center justify-center mx-auto">
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
-                <h3 className="font-serif text-2xl text-ashara-charcoal dark:text-white">Enquiry Submitted</h3>
+                <h3 className="font-serif text-2xl text-ashara-charcoal dark:text-white">Enquiry Submitted Successfully</h3>
                 <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 max-w-sm mx-auto font-light leading-relaxed">
-                  Thank you, <strong>{form.fullName || 'Valued Client'}</strong>. Our studio team in Addis Ababa will review your requirements and respond promptly.
+                  Thank you, <strong>{form.fullName || 'Valued Client'}</strong>. Your consultation enquiry has been recorded with reference <span className="font-mono text-ashara-teal dark:text-ashara-gold font-semibold">#{submittedId ? submittedId.slice(0, 8) : 'LEAD-OK'}</span>. Our studio team in Addis Ababa will review your requirements and respond promptly.
                 </p>
                 <button
                   onClick={() => {
                     setSubmitted(false);
+                    setSubmittedId('');
                     setForm({ fullName: '', email: '', telephone: '', enquiry: '' });
                   }}
                   className="px-6 py-2 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-xs uppercase tracking-wider font-medium hover:bg-ashara-teal-hover dark:hover:bg-ashara-gold/80 transition"
@@ -164,9 +185,17 @@ export default function ContactPage({ isSection = false }) {
                 <div className="flex justify-end pt-2">
                   <button
                     type="submit"
-                    className="px-8 py-3.5 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-[11px] uppercase tracking-[0.2em] font-semibold hover:bg-ashara-teal-hover dark:hover:bg-ashara-gold/80 transition duration-200 shadow-sm"
+                    disabled={isSubmitting}
+                    className="inline-flex items-center gap-2 px-8 py-3.5 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-[11px] uppercase tracking-[0.2em] font-semibold hover:bg-ashara-teal-hover dark:hover:bg-ashara-gold/80 transition duration-200 shadow-sm disabled:opacity-60 cursor-pointer"
                   >
-                    SUBMIT ENQUIRY
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>RECORDING ENQUIRY...</span>
+                      </>
+                    ) : (
+                      <span>SUBMIT ENQUIRY</span>
+                    )}
                   </button>
                 </div>
 

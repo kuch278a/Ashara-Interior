@@ -10,6 +10,7 @@ import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import ProjectDetailPage from './pages/ProjectDetailPage';
 import BlogPage from './pages/BlogPage';
+import AdminPortal from './pages/AdminPortal';
 
 export default function App() {
   const [activePage, setActivePage] = useState('home'); // 'home' | 'projects' | 'services' | 'about' | 'contact' | 'project-detail'
@@ -78,6 +79,10 @@ export default function App() {
 
         {activePage === 'blog' && (
           <BlogPage />
+        )}
+
+        {activePage === 'admin' && (
+          <AdminPortal onNavigate={handleNavigate} />
         )}
 
         {activePage === 'project-detail' && (

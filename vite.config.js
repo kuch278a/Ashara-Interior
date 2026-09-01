@@ -6,5 +6,14 @@ export default defineConfig({
   base: './',
   server: {
     port: 3000
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          firebase: ['firebase/app', 'firebase/firestore', 'firebase/auth', 'firebase/storage']
+        }
+      }
+    }
   }
 });
