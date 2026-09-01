@@ -221,7 +221,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
 
           {/* Rolling Slide Indicators with Live Progress Timer */}
           <div className="absolute bottom-8 right-8 sm:bottom-12 sm:right-12 z-20 flex items-center gap-2 select-none">
-            {HERO_SLIDES.map((_, idx) => {
+            {slides.map((_, idx) => {
               const isActive = idx === currentSlide;
               return (
                 <button
