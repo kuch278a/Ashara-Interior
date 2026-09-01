@@ -6,7 +6,7 @@ import ServicesPage from './ServicesPage';
 import AboutPage from './AboutPage';
 import BlogPage from './BlogPage';
 import ContactPage from './ContactPage';
-import { getDynamicProjects } from '../services/firebase';
+import { getDynamicProjects } from '../services/firebaseService';
 
 const DEFAULT_HERO_SLIDES = [
   {

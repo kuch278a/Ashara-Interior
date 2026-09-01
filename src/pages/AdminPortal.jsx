@@ -32,7 +32,7 @@ import {
   isFirebaseConfigured,
   loginAdminUser,
   logoutAdminUser
-} from '../services/firebase';
+} from '../services/firebaseService';
 
 export default function AdminPortal({ onNavigate }) {
   const [adminUser, setAdminUser] = useState(() => {

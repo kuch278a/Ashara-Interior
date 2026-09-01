@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, ArrowRight, X } from 'lucide-react';
-import { getDynamicBlogPosts } from '../services/firebase';
+import { getDynamicBlogPosts } from '../services/firebaseService';
 import { DEFAULT_BLOG_POSTS } from '../data/defaultData';
 
 export default function BlogPage({ isSection = false }) {

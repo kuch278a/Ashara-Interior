@@ -1,0 +1,229 @@
+================================================================================
+                    SOFTWARE DEVELOPMENT & DESIGN CONTRACT
+                         MASTER SERVICES AGREEMENT
+================================================================================
+
+EFFECTIVE DATE: [Date, e.g., September 1, 2026]
+
+BETWEEN:
+
+1. THE CLIENT:
+   Ashara Interiors ("Client")
+   Address: [Studio Address / City, Ethiopia]
+   Email: [info@asharainteriors.com]
+   Representative: [Client Contact Name / Title]
+
+AND
+
+2. THE SERVICE PROVIDER:
+   [Developer / Agency Name] ("Developer / Contractor")
+   Address: [Developer / Agency Address]
+   Email: [developer@example.com]
+   Representative: [Developer Name / Title]
+
+(Collectively referred to as the "Parties" and individually as a "Party".)
+
+--------------------------------------------------------------------------------
+RECITALS
+--------------------------------------------------------------------------------
+WHEREAS, the Client desires to design, build, and deploy a bespoke luxury web 
+platform and administrative content management system ("Ashara Interiors Web 
+Platform"); and
+
+WHEREAS, the Developer has the required professional expertise, technical skills, 
+and resources to deliver the services described herein;
+
+NOW, THEREFORE, in consideration of the mutual covenants contained herein, the 
+Parties agree as follows:
+
+================================================================================
+1. SCOPE OF SERVICES & DELIVERABLES
+================================================================================
+The Developer agrees to develop, test, and deploy the web application and 
+administrative portal according to the following specifications:
+
+1.1. Client-Facing Public Experience
+  a) Navigation & Page Architecture:
+     - Continuous multi-section scroll home page layout.
+     - Single-page isolated views for Home, Projects, Services, About Us, 
+       Blog, and Contact.
+     - Fixed real-time scroll progress indicator and adaptive backdrop-blur navbar.
+     - Default luxury Dark Mode (#0A1525 sapphire, #1E4E4E teal, #C5A880 gold) 
+       with Light Mode toggle capability.
+  b) Hero Carousel Showcase:
+     - Multi-slide architectural showcase with automatic 5.5s progress countdown, 
+       keyboard navigation, and mobile touch swipe controls.
+  c) Curated Portfolio & Case Studies:
+     - Categorized project grid with real-time filtering (Governmental, 
+       Corporate, Hospitality, Commercial, Residential).
+     - Dedicated project detail view with project metadata, full galleries, 
+       and architectural narratives.
+  d) Services & Methodology:
+     - 4-tier interactive accordion (Conceptualization, 3D Spatial Visualization, 
+       Material Curation, Turnkey Execution).
+  e) Editorial Journal (The Ashara Journal):
+     - Architectural essays and thought-leadership articles with an interactive 
+       reading modal.
+  f) Client & Partner Matrix:
+     - Interactive grid presenting official client logos and governmental seals.
+  g) Consultation Booking & Inquiries:
+     - Validated consultation booking form capturing client requirements, 
+       scope, budget, and timeline.
+     - WhatsApp, phone, email, and location integration.
+
+1.2. Administrative Portal (Internal CMS)
+  - Secure Firebase email/password authentication for authorized studio staff.
+  - Inquiries Dashboard: Real-time management and status tracking of consultation leads.
+  - Portfolio Management: Add, edit, reorder, or delete projects and manage media assets.
+  - Journal/Blog Management: Draft, edit, and publish architectural articles.
+  - Resilience & Offline Handling: Graceful fallback to local storage / default datasets.
+
+1.3. Technical Stack & Infrastructure
+  - Frontend: React 18, Vite 5, Tailwind CSS 3, Lucide React, Google Fonts.
+  - Backend/Cloud: Google Firebase (Firestore, Storage, Authentication).
+  - CI/CD: Automated deployment pipeline via GitHub Actions to GitHub Pages / hosting.
+
+================================================================================
+2. OUT-OF-SCOPE (EXCLUSIONS)
+================================================================================
+The following items are explicitly excluded from this contract and may be 
+quoted separately under a new Statement of Work (SOW):
+- Direct e-commerce shopping cart and online payment gateway for furniture sales.
+- 3D WebGL / Virtual Reality / interactive 360-degree walkthrough engines.
+- Multi-language localization (i18n / Amharic translation integration).
+- Real-time client construction milestone dashboards and live site cameras.
+- Ongoing post-launch content writing or professional photography production.
+
+================================================================================
+3. PROJECT PHASES, MILESTONES & TIMELINE
+================================================================================
+Estimated Total Project Duration: [e.g., 6 to 8 Weeks] from Effective Date.
+
+- Phase 1: Architectural UI/UX Design & Design System Setup (Weeks 1–2)
+  - Deliverable: Tailwind theme configuration, typography, color palette, wireframes.
+- Phase 2: Public Frontend Web Development (Weeks 3–4)
+  - Deliverable: Home continuous scroll, isolated page routes, hero carousel, 
+    portfolio filtering, and services accordion.
+- Phase 3: CMS & Backend Integration (Weeks 5–6)
+  - Deliverable: Firebase Firestore, Authentication, Storage, Admin Portal, 
+    and consultation form handlers.
+- Phase 4: Quality Assurance, UAT & Production Deployment (Weeks 7–8)
+  - Deliverable: Cross-browser & mobile testing, performance tuning, CI/CD setup, 
+    and final production deployment.
+
+================================================================================
+4. COMPENSATION & PAYMENT TERMS
+================================================================================
+4.1. Total Contract Value: [Insert Total Amount, e.g., $X,XXX USD / ETB X,XXX]
+
+4.2. Payment Schedule:
+  - Milestone 1 (Deposit / Inception): 30% upon signing of this Agreement.
+  - Milestone 2 (Frontend Prototype Review): 30% upon completion of Phase 2.
+  - Milestone 3 (Backend & CMS Integration): 20% upon completion of Phase 3.
+  - Milestone 4 (Final Deployment & Sign-off): 20% upon successful deployment and UAT.
+
+4.3. Payment Method & Invoicing:
+  - Invoices are payable within [10 / 14] business days from issuance.
+  - Payments shall be made via [Bank Transfer / Wire / Specified Payment Gateway].
+
+================================================================================
+5. CLIENT RESPONSIBILITIES
+================================================================================
+The Client agrees to:
+- Provide brand guidelines, high-resolution logos, project photos, and copy text 
+  in a timely manner.
+- Designate a single point of contact for feedback and milestone approvals.
+- Provide required access credentials (domain registrar, Firebase account, hosting) 
+  within [3] business days of request.
+- Review deliverables within [5] business days of submission for acceptance.
+
+================================================================================
+6. ACCEPTANCE TESTING & CHANGE ORDERS
+================================================================================
+6.1. Acceptance Testing:
+  Upon delivery of each milestone, the Client shall have [5] business days ("Review 
+  Period") to test and verify compliance with specifications. If no written notice 
+  of defects is received within this period, the deliverable is deemed accepted.
+
+6.2. Change Orders:
+  Any request by the Client for features or changes outside Section 1 shall be 
+  submitted in writing. The Developer will provide a Change Order detailing the 
+  additional cost and schedule impact. Work on modifications will commence only 
+  after mutual written approval.
+
+================================================================================
+7. INTELLECTUAL PROPERTY & OWNERSHIP
+================================================================================
+7.1. Work Product Ownership:
+  Upon receipt of full payment, the Developer assigns to the Client all rights, 
+  title, and interest in and to the custom codebase, graphics, and specific UI 
+  designs created under this Agreement.
+
+7.2. Pre-existing & Open-Source Tools:
+  The Developer retains rights to general utility libraries, reusable modules, 
+  and third-party open-source dependencies (e.g., React, Tailwind CSS, Lucide icons), 
+  which are licensed under their respective standard licenses (e.g., MIT).
+
+7.3. Portfolio Rights:
+  The Developer reserves the right to display the completed website design and 
+  screenshots in their professional portfolio and marketing materials.
+
+================================================================================
+8. CONFIDENTIALITY
+================================================================================
+Each Party agrees to keep confidential all proprietary information, business 
+strategies, customer lists, and non-public technical data disclosed by the other 
+Party during the term of this Agreement.
+
+================================================================================
+9. WARRANTY, BUG FIXING & MAINTENANCE
+================================================================================
+9.1. Warranty Period:
+  The Developer provides a [30 / 60]-day warranty period following final 
+  production deployment to correct any reproducible software bugs or defects 
+  resulting from the Developer's code at no extra charge.
+
+9.2. Exclusions:
+  The warranty does not cover issues caused by third-party service outages 
+  (Firebase, GitHub, domain DNS), unauthorized client modifications to code, 
+  or browser updates post-deployment.
+
+================================================================================
+10. TERMINATION
+================================================================================
+Either Party may terminate this Agreement:
+- For convenience with [14] days written notice. In such case, the Client shall 
+  pay for all work completed up to the termination date.
+- Immediately for material breach if the breaching party fails to cure the breach 
+  within [10] days of written notice.
+
+================================================================================
+11. GOVERNING LAW & DISPUTE RESOLUTION
+================================================================================
+This Agreement shall be governed by and construed in accordance with the laws of 
+[Jurisdiction / e.g., Ethiopia / Federal Democratic Republic of Ethiopia]. 
+Any dispute arising from this Agreement shall first be negotiated in good faith, 
+and if unresolved, submitted to binding arbitration or the competent courts of 
+[Jurisdiction City].
+
+================================================================================
+12. SIGNATURES & EXECUTION
+================================================================================
+IN WITNESS WHEREOF, the Parties have executed this Agreement by their duly 
+authorized representatives as of the Effective Date.
+
+
+FOR THE CLIENT:                          FOR THE DEVELOPER:
+Ashara Interiors                         [Developer / Company Name]
+
+
+Signature:  ________________________     Signature:  ________________________
+
+Name:       ________________________     Name:       ________________________
+
+Title:      ________________________     Title:       ________________________
+
+Date:       ________________________     Date:       ________________________
+
+================================================================================
+

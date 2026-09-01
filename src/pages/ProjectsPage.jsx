@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getDynamicProjects } from '../services/firebase';
+import { getDynamicProjects } from '../services/firebaseService';
 import { DEFAULT_PROJECTS_LIST } from '../data/defaultData';
 
 export default function ProjectsPage({ onNavigate, onSelectProject, isSection = false }) {
