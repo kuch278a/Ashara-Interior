@@ -18,8 +18,7 @@ import {
   onAuthStateChanged 
 } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
-import { PROJECTS_LIST } from '../pages/ProjectsPage';
-import { BLOG_POSTS } from '../pages/BlogPage';
+import { DEFAULT_PROJECTS_LIST, DEFAULT_BLOG_POSTS } from '../data/defaultData';
 
 // Firebase configuration from environment variables or live studio keys
 const firebaseConfig = {
@@ -131,7 +130,7 @@ export async function getDynamicProjects() {
 
   // Return local storage or default project list
   const stored = localStorage.getItem('ashara_projects');
-  return stored ? JSON.parse(stored) : PROJECTS_LIST;
+  return stored ? JSON.parse(stored) : DEFAULT_PROJECTS_LIST;
 }
 
 /**
@@ -200,7 +199,7 @@ export async function getDynamicBlogPosts() {
   }
 
   const stored = localStorage.getItem('ashara_blog_posts');
-  return stored ? JSON.parse(stored) : BLOG_POSTS;
+  return stored ? JSON.parse(stored) : DEFAULT_BLOG_POSTS;
 }
 
 /**
