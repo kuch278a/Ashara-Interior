@@ -15,7 +15,7 @@ export default function App() {
   const [activePage, setActivePage] = useState('home'); // 'home' | 'projects' | 'services' | 'about' | 'contact' | 'project-detail'
   const [selectedProject, setSelectedProject] = useState(PROJECTS_LIST[0]);
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('theme') || 'light';
+    return sessionStorage.getItem('theme') || 'dark';
   });
 
   useEffect(() => {
@@ -25,7 +25,7 @@ export default function App() {
     } else {
       root.classList.remove('dark');
     }
-    localStorage.setItem('theme', theme);
+    sessionStorage.setItem('theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {
