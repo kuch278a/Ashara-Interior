@@ -20,7 +20,7 @@ const HERO_SLIDES = [
     id: 1,
     tag: 'GOVERNMENT SUB-OFFICE',
     title: 'Prosperity Party Office',
-    image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1800&q=90',
+    image: './assets/p1_prosperity.png',
     subtitle: 'GOVERNMENT SUB-OFFICE',
     description: 'Ashara Interiors was commissioned to design a grand presidential state suite and governmental convention headquarters. Integrating monumental Ethiopian historical references with contemporary civic transparency, the project features bespoke coffered timber acoustic domes, structural cantilevered glass staircases, and executive ceremonial boardrooms.'
   },
@@ -146,7 +146,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
       id: 1,
       tag: 'GOVERNMENTAL',
       title: 'Prosperity Party Office',
-      image: 'https://images.unsplash.com/photo-1548625361-16a9a7a67926?auto=format&fit=crop&w=1200&q=85',
+      image: './assets/p1_prosperity.png',
       subtitle: 'GOVERNMENT SUB-OFFICE',
     },
     {
