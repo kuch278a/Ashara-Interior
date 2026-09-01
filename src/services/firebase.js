@@ -229,3 +229,53 @@ export async function saveBlogPost(postData) {
   localStorage.setItem('ashara_blog_posts', JSON.stringify(posts));
   return { success: true, id, isLive: false };
 }
+
+// ----------------------------------------------------
+// 4. AUTHENTICATION HELPERS
+// ----------------------------------------------------
+
+export async function loginAdminUser(email, password) {
+  const cleanEmail = email.trim().toLowerCase();
+  const cleanPass = password.trim();
+
+  // Studio master passcode for instant login
+  if (
+    (cleanEmail === 'admin@ashara.com' || cleanEmail === 'admin' || cleanEmail === 'mikasadessalegn@gmail.com') &&
+    (cleanPass === 'ashara2025' || cleanPass === 'ashara@2025' || cleanPass === 'admin123')
+  ) {
+    const adminUser = { email: cleanEmail, name: 'Ashara Studio Director' };
+    sessionStorage.setItem('ashara_admin_auth', JSON.stringify(adminUser));
+    return { success: true, user: adminUser };
+  }
+
+  // Firebase Auth (if user configured in Firebase Console)
+  if (isFirebaseConfigured && auth) {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      sessionStorage.setItem('ashara_admin_auth', JSON.stringify({ email: userCredential.user.email }));
+      return { success: true, user: userCredential.user };
+    } catch (error) {
+      return { success: false, error: 'Incorrect email or password. You can also use master passcode "ashara2025".' };
+    }
+  }
+
+  // Default master fallback
+  if (cleanPass === 'ashara2025' || cleanPass === 'admin123') {
+    const adminUser = { email: cleanEmail || 'admin@ashara.com', name: 'Ashara Admin' };
+    sessionStorage.setItem('ashara_admin_auth', JSON.stringify(adminUser));
+    return { success: true, user: adminUser };
+  }
+
+  return { success: false, error: 'Invalid email or passcode. Master passcode is "ashara2025".' };
+}
+
+export async function logoutAdminUser() {
+  if (isFirebaseConfigured && auth) {
+    try {
+      await signOut(auth);
+    } catch (e) {}
+  }
+  sessionStorage.removeItem('ashara_admin_auth');
+  return { success: true };
+}
+

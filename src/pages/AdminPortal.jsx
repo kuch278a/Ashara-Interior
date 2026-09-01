@@ -15,7 +15,12 @@ import {
   ExternalLink,
   Save,
   X,
-  AlertCircle
+  AlertCircle,
+  Lock,
+  Eye,
+  EyeOff,
+  LogOut,
+  Loader2
 } from 'lucide-react';
 import { 
   getConsultations, 
@@ -24,17 +29,30 @@ import {
   deleteProject, 
   getDynamicBlogPosts, 
   saveBlogPost, 
-  isFirebaseConfigured 
+  isFirebaseConfigured,
+  loginAdminUser,
+  logoutAdminUser
 } from '../services/firebase';
 
 export default function AdminPortal({ onNavigate }) {
-  const [activeTab, setActiveTab] = useState('leads'); // 'leads' | 'projects' | 'blog' | 'settings'
-  
-  // Data States
+  const [adminUser, setAdminUser] = useState(() => {
+    const saved = sessionStorage.getItem('ashara_admin_auth');
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  // Login Form States
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [loginError, setLoginError] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  // Portal Tab & Data States
+  const [activeTab, setActiveTab] = useState('leads'); // 'leads' | 'projects' | 'blog'
   const [leads, setLeads] = useState([]);
   const [projects, setProjects] = useState([]);
   const [blogPosts, setBlogPosts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [notification, setNotification] = useState('');
 
   // Form Modal States
@@ -44,8 +62,35 @@ export default function AdminPortal({ onNavigate }) {
   const [isBlogModalOpen, setIsBlogModalOpen] = useState(false);
 
   useEffect(() => {
-    loadAllData();
-  }, []);
+    if (adminUser) {
+      loadAllData();
+    }
+  }, [adminUser]);
+
+  const handleLoginSubmit = async (e) => {
+    e.preventDefault();
+    setLoginError('');
+    setIsLoggingIn(true);
+    try {
+      const res = await loginAdminUser(loginEmail, loginPassword);
+      if (res.success) {
+        setAdminUser(res.user);
+      } else {
+        setLoginError(res.error || 'Invalid credentials');
+      }
+    } catch (err) {
+      setLoginError('Authentication failed. Please try again.');
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    await logoutAdminUser();
+    setAdminUser(null);
+    setLoginEmail('');
+    setLoginPassword('');
+  };
 
   const loadAllData = async () => {
     setIsLoading(true);
@@ -100,6 +145,110 @@ export default function AdminPortal({ onNavigate }) {
     await loadAllData();
   };
 
+  // ----------------------------------------------------
+  // 1. UNAUTHENTICATED: LUXURY ADMIN LOGIN SCREEN
+  // ----------------------------------------------------
+  if (!adminUser) {
+    return (
+      <div className="min-h-[85vh] flex items-center justify-center py-16 px-6 sm:px-10 animate-fade-in">
+        <div className="w-full max-w-md bg-white dark:bg-ashara-charcoal border border-gray-200 dark:border-white/10 shadow-2xl p-8 sm:p-10 space-y-8 rounded-xs">
+          
+          {/* Header & Emblem */}
+          <div className="text-center space-y-3">
+            <div className="w-12 h-12 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark rounded-full flex items-center justify-center mx-auto shadow-md">
+              <Lock className="w-5 h-5 stroke-[1.8]" />
+            </div>
+            <p className="text-[9.5px] uppercase tracking-[0.35em] text-ashara-teal dark:text-ashara-gold font-semibold">
+              MANAGEMENT ATELIER
+            </p>
+            <h2 className="font-serif text-3xl text-ashara-charcoal dark:text-white font-normal">
+              Admin Access
+            </h2>
+            <p className="text-xs text-gray-500 dark:text-gray-400 font-light">
+              Restricted portal for Ashara Interiors studio directors and client lead management.
+            </p>
+          </div>
+
+          {/* Login Form */}
+          <form onSubmit={handleLoginSubmit} className="space-y-4">
+            {loginError && (
+              <div className="p-3 bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{loginError}</span>
+              </div>
+            )}
+
+            <div>
+              <label className="block text-[10px] uppercase tracking-wider font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
+                Admin Email / Username
+              </label>
+              <input
+                type="text"
+                required
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
+                placeholder="admin@ashara.com"
+                className="w-full px-4 py-3 bg-[#EBF2F2]/60 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm text-ashara-charcoal dark:text-white placeholder-gray-400 focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold transition"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[10px] uppercase tracking-wider font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
+                Passcode / Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  placeholder="••••••••••••"
+                  className="w-full px-4 py-3 bg-[#EBF2F2]/60 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm text-ashara-charcoal dark:text-white placeholder-gray-400 focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold transition pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoggingIn}
+              className="w-full mt-2 py-3.5 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-[11px] uppercase tracking-[0.2em] font-semibold hover:bg-ashara-teal-hover dark:hover:bg-ashara-gold/80 transition duration-200 shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+            >
+              {isLoggingIn ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>AUTHENTICATING...</span>
+                </>
+              ) : (
+                <span>SIGN IN TO ATELIER</span>
+              )}
+            </button>
+          </form>
+
+          {/* Quick Return & Hint */}
+          <div className="pt-4 border-t border-gray-100 dark:border-white/5 text-center space-y-2">
+            <button
+              onClick={() => onNavigate('home')}
+              className="text-xs text-gray-500 hover:text-ashara-teal dark:hover:text-ashara-gold uppercase tracking-wider font-medium transition"
+            >
+              ← Return to Public Website
+            </button>
+          </div>
+
+        </div>
+      </div>
+    );
+  }
+
+  // ----------------------------------------------------
+  // 2. AUTHENTICATED: STUDIO ADMIN MANAGEMENT PORTAL
+  // ----------------------------------------------------
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-ashara-dark py-10 px-6 sm:px-10 lg:px-16 animate-fade-in transition-colors duration-300">
       <div className="max-w-7xl mx-auto space-y-8">
@@ -126,11 +275,22 @@ export default function AdminPortal({ onNavigate }) {
           </div>
 
           <div className="flex items-center gap-3">
+            <span className="hidden md:inline-block text-xs font-mono text-gray-500 dark:text-gray-400">
+              {adminUser.email || 'Director'}
+            </span>
             <button
               onClick={() => onNavigate('home')}
               className="px-4 py-2 border border-gray-300 dark:border-white/20 text-xs uppercase tracking-wider font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition"
             >
-              Back to Site
+              View Site
+            </button>
+            <button
+              onClick={handleLogout}
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-rose-600/10 border border-rose-600/20 text-rose-600 dark:text-rose-400 text-xs uppercase tracking-wider font-semibold hover:bg-rose-600 hover:text-white transition"
+              title="Sign Out"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Sign Out</span>
             </button>
           </div>
         </div>
