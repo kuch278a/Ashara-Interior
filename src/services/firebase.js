@@ -21,14 +21,14 @@ import { getStorage } from 'firebase/storage';
 import { PROJECTS_LIST } from '../pages/ProjectsPage';
 import { BLOG_POSTS } from '../pages/BlogPage';
 
-// Firebase configuration from environment variables
+// Firebase configuration from environment variables or live studio keys
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || '',
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || '',
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || '',
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || ''
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyAzwyBN57odWyljEAn-UPoRIzOraaQt1aE',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'ashara-interiors.firebaseapp.com',
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'ashara-interiors',
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'ashara-interiors.firebasestorage.app',
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '901960368658',
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:901960368658:web:9cbbc190d6bde547324ecb'
 };
 
 // Check if live Firebase credentials are provided
