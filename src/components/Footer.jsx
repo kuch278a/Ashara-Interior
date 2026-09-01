@@ -151,15 +151,9 @@ export default function Footer({ onNavigate }) {
 
         </div>
 
-        {/* Bottom Copyright Center matching Figma with Admin Portal entry */}
-        <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-[10px] sm:text-[11px] text-white/70 font-light">
+        {/* Bottom Copyright Center */}
+        <div className="pt-8 border-t border-white/10 flex items-center justify-center text-[10px] sm:text-[11px] text-white/70 font-light">
           <p>©Ashara Interiors 2025</p>
-          <button
-            onClick={() => onNavigate('admin')}
-            className="text-white/50 hover:text-white transition uppercase tracking-widest text-[9.5px] font-mono"
-          >
-            STUDIO ADMIN PORTAL →
-          </button>
         </div>
 
       </div>
