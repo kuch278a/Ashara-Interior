@@ -12,12 +12,42 @@ import ProjectDetailPage from './pages/ProjectDetailPage';
 import BlogPage from './pages/BlogPage';
 import AdminPortal from './pages/AdminPortal';
 
+function getInitialPage() {
+  const hash = window.location.hash.replace(/^#\/?/, '').toLowerCase();
+  if (['admin', 'projects', 'services', 'about', 'contact', 'blog'].includes(hash)) {
+    return hash;
+  }
+  const searchParams = new URLSearchParams(window.location.search);
+  const pageParam = searchParams.get('page') || (searchParams.has('admin') ? 'admin' : null);
+  if (pageParam && ['admin', 'projects', 'services', 'about', 'contact', 'blog'].includes(pageParam.toLowerCase())) {
+    return pageParam.toLowerCase();
+  }
+  const path = window.location.pathname.toLowerCase();
+  if (path.endsWith('/admin') || path.endsWith('/admin/')) {
+    return 'admin';
+  }
+  return 'home';
+}
+
 export default function App() {
-  const [activePage, setActivePage] = useState('home'); // 'home' | 'projects' | 'services' | 'about' | 'contact' | 'project-detail'
+  const [activePage, setActivePage] = useState(getInitialPage); // 'home' | 'projects' | 'services' | 'about' | 'contact' | 'blog' | 'admin' | 'project-detail'
   const [selectedProject, setSelectedProject] = useState(PROJECTS_LIST[0]);
   const [theme, setTheme] = useState(() => {
     return sessionStorage.getItem('theme') || 'dark';
   });
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const page = getInitialPage();
+      setActivePage(page);
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener('popstate', handleHashChange);
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('popstate', handleHashChange);
+    };
+  }, []);
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -35,6 +65,11 @@ export default function App() {
 
   const handleNavigate = (page) => {
     setActivePage(page);
+    if (page === 'home') {
+      history.pushState(null, '', window.location.pathname);
+    } else {
+      window.location.hash = page;
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
