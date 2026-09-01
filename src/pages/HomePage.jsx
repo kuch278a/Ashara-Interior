@@ -51,8 +51,8 @@ const HERO_SLIDES = [
   {
     id: 6,
     tag: 'GOVERNMENTAL',
-    title: 'Minstry of Revenues',
-    image: 'https://images.unsplash.com/photo-1548625361-16a9a7a67926?auto=format&fit=crop&w=1800&q=90',
+    title: 'Ministry of Revenues',
+    image: './assets/p6_revenues.png',
     subtitle: 'MINISTRY CIVIC COMPLEX',
     description: 'A monumental civic dome auditorium incorporating geodesic timber space trusses, ambient indirect circadian lighting, and custom acoustical plasterwork designed for national assemblies.'
   }

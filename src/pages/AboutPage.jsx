@@ -153,13 +153,13 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
             </div>
           </div>
 
-          {/* Card 2: Minstry of Revenues */}
+          {/* Card 2: Ministry of Revenues */}
           <div 
             onClick={() => handleProjectClick(6)}
             className="group relative cursor-pointer aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500"
           >
             <img
-              src="https://images.unsplash.com/photo-1519643381401-22c77e60520e?auto=format&fit=crop&w=1200&q=85"
+              src="./assets/p6_revenues.png"
               alt="Ministry of Revenues"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
             />
@@ -168,7 +168,7 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
                 GOVERNMENTAL
               </span>
               <h4 className="font-serif text-xl sm:text-2xl font-normal mt-0.5 text-white">
-                Minstry of Revenues
+                Ministry of Revenues
               </h4>
             </div>
           </div>

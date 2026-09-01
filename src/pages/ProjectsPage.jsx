@@ -88,19 +88,19 @@ export const PROJECTS_LIST = [
   },
   {
     id: 6,
-    title: 'Minstry of Revenues',
+    title: 'Ministry of Revenues',
     category: 'GOVERNMENTAL',
     subtitle: 'MINISTRY CIVIC COMPLEX',
-    image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=85',
-    fallbackImage: 'https://images.unsplash.com/photo-1548625361-16a9a7a67926?auto=format&fit=crop&w=1800&q=90',
+    image: './assets/p6_revenues.png',
+    fallbackImage: './client_logos/ministry_of_revenues_hero.jpg',
     description: 'A monumental civic dome auditorium incorporating geodesic timber space trusses, ambient indirect circadian lighting, and custom acoustical plasterwork designed for national assemblies.',
     gallery: [
-      'https://images.unsplash.com/photo-1548625361-16a9a7a67926?auto=format&fit=crop&w=1800&q=90',
+      './client_logos/ministry_of_revenues_hero.jpg',
+      './client_logos/ministry_of_revenues_auditorium.jpg',
+      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=90',
       'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=85',
       'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=85',
-      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85',
-      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=85',
-      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1800&q=90'
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85'
     ]
   }
 ];
