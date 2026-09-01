@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { getDynamicProjects } from '../services/firebase';
 
 export const PROJECTS_LIST = [
   {
@@ -106,13 +107,22 @@ export const PROJECTS_LIST = [
 ];
 
 export default function ProjectsPage({ onNavigate, onSelectProject, isSection = false }) {
+  const [projects, setProjects] = useState(PROJECTS_LIST);
   const [selectedFilter, setSelectedFilter] = useState('ALL');
+
+  useEffect(() => {
+    getDynamicProjects().then((data) => {
+      if (data && data.length > 0) {
+        setProjects(data);
+      }
+    });
+  }, []);
 
   const categories = ['ALL', 'GOVERNMENTAL', 'PRIVATE ORGANIZATION', 'PRIVATE CORPORATION', 'PRIVATE COMPANY'];
 
   const filteredProjects = selectedFilter === 'ALL'
-    ? PROJECTS_LIST
-    : PROJECTS_LIST.filter((p) => p.category === selectedFilter);
+    ? projects
+    : projects.filter((p) => (p.category || p.tag) === selectedFilter);
 
   const handleProjectClick = (project) => {
     if (onSelectProject) {

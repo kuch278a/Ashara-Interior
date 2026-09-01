@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, ArrowRight, X } from 'lucide-react';
+import { getDynamicBlogPosts } from '../services/firebase';
 
 export const BLOG_POSTS = [
   {
@@ -47,7 +48,16 @@ export const BLOG_POSTS = [
 ];
 
 export default function BlogPage({ isSection = false }) {
+  const [posts, setPosts] = useState(BLOG_POSTS);
   const [selectedPost, setSelectedPost] = useState(null);
+
+  useEffect(() => {
+    getDynamicBlogPosts().then((data) => {
+      if (data && data.length > 0) {
+        setPosts(data);
+      }
+    });
+  }, []);
 
   return (
     <div className="bg-transparent transition-colors duration-300 animate-fade-in">
@@ -66,7 +76,7 @@ export default function BlogPage({ isSection = false }) {
       {/* 2. FEATURED ARTICLES (2-Column Grid) */}
       <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pb-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-          {BLOG_POSTS.slice(0, 2).map((post) => (
+          {posts.slice(0, 2).map((post) => (
             <div 
               key={post.id}
               onClick={() => setSelectedPost(post)}
@@ -106,13 +116,13 @@ export default function BlogPage({ isSection = false }) {
       </section>
 
       {/* 3. MORE STORIES */}
-      {BLOG_POSTS.length > 2 && (
+      {posts.length > 2 && (
         <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pt-10 border-t border-gray-200 dark:border-white/10">
           <h3 className="font-serif text-2xl sm:text-3xl text-ashara-charcoal dark:text-white mb-8 tracking-wide transition-colors duration-300">
             More Stories
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
-            {BLOG_POSTS.slice(2).map((post) => (
+            {posts.slice(2).map((post) => (
               <div 
                 key={post.id}
                 onClick={() => setSelectedPost(post)}

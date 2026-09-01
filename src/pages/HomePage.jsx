@@ -6,8 +6,9 @@ import ServicesPage from './ServicesPage';
 import AboutPage from './AboutPage';
 import BlogPage from './BlogPage';
 import ContactPage from './ContactPage';
+import { getDynamicProjects } from '../services/firebase';
 
-const HERO_SLIDES = [
+const DEFAULT_HERO_SLIDES = [
   {
     id: 2,
     tag: 'GOVERNMENTAL',
@@ -59,19 +60,30 @@ const HERO_SLIDES = [
 ];
 
 export default function HomePage({ onNavigate, onSelectProject }) {
+  const [slides, setSlides] = useState(DEFAULT_HERO_SLIDES);
+  const [featuredWorks, setFeaturedWorks] = useState(PROJECTS_LIST.slice(0, 4));
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
 
+  useEffect(() => {
+    getDynamicProjects().then((data) => {
+      if (data && data.length > 0) {
+        setSlides(data);
+        setFeaturedWorks(data.slice(0, 4));
+      }
+    });
+  }, []);
+
   // Auto-switch slides every 5.5s unless hovered
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || slides.length === 0) return;
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 5500);
     return () => clearInterval(interval);
-  }, [isPaused, currentSlide]);
+  }, [isPaused, currentSlide, slides.length]);
 
   // Keyboard navigation for hero slider (Left/Right Arrow keys)
   useEffect(() => {
@@ -105,12 +117,12 @@ export default function HomePage({ onNavigate, onSelectProject }) {
 
   const nextSlide = (e) => {
     if (e) e.stopPropagation();
-    setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
   };
 
   const prevSlide = (e) => {
     if (e) e.stopPropagation();
-    setCurrentSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
   // Touch swipe support for mobile carousel
@@ -131,8 +143,8 @@ export default function HomePage({ onNavigate, onSelectProject }) {
   };
 
   const handleHeroClick = () => {
-    const slide = HERO_SLIDES[currentSlide];
-    const project = PROJECTS_LIST.find((p) => p.id === slide.id) || slide;
+    const slide = slides[currentSlide] || DEFAULT_HERO_SLIDES[0];
+    const project = PROJECTS_LIST.find((p) => String(p.id) === String(slide.id)) || slide;
     if (onSelectProject) {
       onSelectProject(project);
     }
@@ -141,39 +153,10 @@ export default function HomePage({ onNavigate, onSelectProject }) {
     }
   };
 
-  const works = [
-    {
-      id: 1,
-      tag: 'GOVERNMENTAL',
-      title: 'Prosperity Party Office',
-      image: './assets/p1_prosperity.png',
-      subtitle: 'GOVERNMENT SUB-OFFICE',
-    },
-    {
-      id: 2,
-      tag: 'GOVERNMENTAL',
-      title: 'Ethiopia Federal Police',
-      image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=85',
-      subtitle: 'GOVERNMENTAL HEADQUARTERS',
-    },
-    {
-      id: 3,
-      tag: 'PRIVATE',
-      title: 'Fana Broadcasting Corporation',
-      image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85',
-      subtitle: 'BROADCASTING & MEDIA ATELIER',
-    },
-    {
-      id: 4,
-      tag: 'COMMERCIAL',
-      title: 'United Beverages',
-      image: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=85',
-      subtitle: 'CORPORATE HEAD OFFICE',
-    }
-  ];
+  const works = featuredWorks;
 
   const handleCardClick = (work) => {
-    const project = PROJECTS_LIST.find((p) => p.id === work.id) || work;
+    const project = PROJECTS_LIST.find((p) => String(p.id) === String(work.id)) || work;
     if (onSelectProject) {
       onSelectProject(project);
     }
@@ -182,7 +165,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
     }
   };
 
-  const activeProject = HERO_SLIDES[currentSlide];
+  const activeProject = slides[currentSlide] || DEFAULT_HERO_SLIDES[0];
 
   return (
     <div className="bg-transparent animate-fade-in space-y-20 sm:space-y-32 pb-24 transition-colors duration-300 relative">
@@ -202,7 +185,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
             className="flex w-full h-full transition-transform duration-700 ease-out"
             style={{ transform: `translate3d(-${currentSlide * 100}%, 0, 0)` }}
           >
-            {HERO_SLIDES.map((slide) => (
+            {slides.map((slide) => (
               <div
                 key={slide.id}
                 className="w-full h-full shrink-0 relative"
@@ -211,6 +194,10 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                   src={slide.image}
                   alt={slide.title}
                   className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-1000 ease-out"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = slide.fallbackImage || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85';
+                  }}
                 />
               </div>
             ))}
