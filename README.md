@@ -3,7 +3,7 @@
 > **Curated Luxury Interior Architecture & Design**  
 > A premier, responsive web application showcasing Ethiopian governmental headquarters, executive presidential suites, broadcasting hubs, corporate palaces, and bespoke interior architecture.
 
-🔗 **Live Website**: [https://kuch278a.github.io/Ashara-Interior/](https://kuch278a.github.io/Ashara-Interior/)
+🔗 **Live Website**: [https://kuch278a.github.io/Ashara-Interior](https://kuch278a.github.io/Ashara-Interior)
 
 ---
 
@@ -184,7 +184,7 @@ on:
 ```
 
 ### Live Production URL:
-👉 **[https://kuch278a.github.io/Ashara-Interior/](https://kuch278a.github.io/Ashara-Interior/)**
+👉 **[https://kuch278a.github.io/Ashara-Interior](https://kuch278a.github.io/Ashara-Interior)**
 
 ### How to Deploy Updates:
 Whenever you make changes, commit and push to `main`:
