@@ -179,12 +179,12 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
         </div>
 
         {/* 2x3 Project Cards Grid with Figma Teal/Green Bottom Label Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 pt-4">
+        <div key={selectedFilter} className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 pt-4 animate-fade-in">
           {filteredProjects.map((item) => (
             <div
               key={item.id}
               onClick={() => handleProjectClick(item)}
-              className="group relative cursor-pointer aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500"
+              className="group relative cursor-pointer aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-2xl hover:-translate-y-2 active:scale-[0.98] transition-all duration-500 ease-out"
             >
               {/* Photo */}
               <img
@@ -194,11 +194,11 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
                   e.target.src = item.fallbackImage;
                 }}
                 alt={item.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
               />
 
               {/* Signature Solid Forest Teal/Green Bottom Label Box matching Figma */}
-              <div className="absolute inset-x-0 bottom-0 bg-ashara-teal/95 dark:bg-ashara-teal/95 backdrop-blur-[2px] p-5 sm:p-6 text-white transition-all duration-300">
+              <div className="absolute inset-x-0 bottom-0 bg-ashara-teal/95 dark:bg-ashara-teal/95 backdrop-blur-[2px] p-5 sm:p-6 text-white transition-all duration-300 group-hover:bg-ashara-teal">
                 <span className="text-[8.5px] sm:text-[9px] uppercase tracking-[0.28em] text-white/80 font-medium block">
                   {item.category || item.tag}
                 </span>

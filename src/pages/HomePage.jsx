@@ -62,6 +62,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [touchStart, setTouchStart] = useState(null);
 
   // Auto-switch slides every 5.5s unless hovered
   useEffect(() => {
@@ -70,7 +71,20 @@ export default function HomePage({ onNavigate, onSelectProject }) {
       setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
     }, 5500);
     return () => clearInterval(interval);
-  }, [isPaused]);
+  }, [isPaused, currentSlide]);
+
+  // Keyboard navigation for hero slider (Left/Right Arrow keys)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'ArrowRight') {
+        setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+      } else if (e.key === 'ArrowLeft') {
+        setCurrentSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Show "Back to Top" button on scroll down
   useEffect(() => {
@@ -90,13 +104,30 @@ export default function HomePage({ onNavigate, onSelectProject }) {
   };
 
   const nextSlide = (e) => {
-    e.stopPropagation();
+    if (e) e.stopPropagation();
     setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
   };
 
   const prevSlide = (e) => {
-    e.stopPropagation();
+    if (e) e.stopPropagation();
     setCurrentSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
+  };
+
+  // Touch swipe support for mobile carousel
+  const handleTouchStart = (e) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = (e) => {
+    if (!touchStart) return;
+    const touchEnd = e.changedTouches[0].clientX;
+    const distance = touchStart - touchEnd;
+    if (distance > 50) {
+      nextSlide();
+    } else if (distance < -50) {
+      prevSlide();
+    }
+    setTouchStart(null);
   };
 
   const handleHeroClick = () => {
@@ -156,13 +187,15 @@ export default function HomePage({ onNavigate, onSelectProject }) {
   return (
     <div className="bg-transparent animate-fade-in space-y-20 sm:space-y-32 pb-24 transition-colors duration-300 relative">
       
-      {/* 1. HERO BANNER: Clean luxury carousel with subtle on-hover arrows only */}
+      {/* 1. HERO BANNER: Clean luxury carousel with subtle on-hover arrows, swipe & timer bar */}
       <section className="w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 pt-4">
         <div 
           onClick={handleHeroClick}
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
-          className="group relative cursor-pointer w-full aspect-[16/10] sm:aspect-[21/11] max-h-[700px] overflow-hidden bg-black shadow-md select-none"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          className="group relative cursor-pointer w-full aspect-[16/10] sm:aspect-[21/11] max-h-[700px] overflow-hidden bg-black shadow-lg select-none rounded-xs"
         >
           {/* Sliding Track (Rolling Carousel) */}
           <div 
@@ -177,7 +210,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                 <img
                   src={slide.image}
                   alt={slide.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-1000 ease-out"
                 />
               </div>
             ))}
@@ -199,7 +232,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
             </h1>
           </div>
 
-          {/* Rolling Slide Indicators (Dots/Pills) */}
+          {/* Rolling Slide Indicators with Live Progress Timer */}
           <div className="absolute bottom-8 right-8 sm:bottom-12 sm:right-12 z-20 flex items-center gap-2 select-none">
             {HERO_SLIDES.map((_, idx) => {
               const isActive = idx === currentSlide;
@@ -210,13 +243,23 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                     e.stopPropagation();
                     setCurrentSlide(idx);
                   }}
-                  className={`h-1.5 transition-all duration-300 rounded-full focus:outline-none ${
+                  className={`h-1.5 transition-all duration-300 rounded-full focus:outline-none overflow-hidden relative ${
                     isActive 
-                      ? 'w-7 bg-ashara-gold' 
-                      : 'w-2 bg-white/50 hover:bg-white'
+                      ? 'w-8 bg-white/30' 
+                      : 'w-2 bg-white/40 hover:bg-white'
                   }`}
                   aria-label={`Go to slide ${idx + 1}`}
-                />
+                >
+                  {isActive && (
+                    <div 
+                      key={`timer-${currentSlide}-${isPaused}`}
+                      className={`h-full bg-ashara-gold rounded-full ${
+                        isPaused ? 'w-full' : 'animate-progress-fill'
+                      }`}
+                      style={{ animationDuration: '5.5s' }}
+                    />
+                  )}
+                </button>
               );
             })}
           </div>
@@ -225,7 +268,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
           <button
             onClick={prevSlide}
             aria-label="Previous Project"
-            className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-black/30 hover:bg-ashara-teal/80 text-white backdrop-blur-md transition-all duration-300 opacity-0 group-hover:opacity-100 focus:opacity-100"
+            className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-black/40 hover:bg-ashara-teal text-white backdrop-blur-md transition-all duration-300 opacity-0 group-hover:opacity-100 focus:opacity-100 hover:scale-110 active:scale-95"
           >
             <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
@@ -234,7 +277,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
           <button
             onClick={nextSlide}
             aria-label="Next Project"
-            className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-black/30 hover:bg-ashara-teal/80 text-white backdrop-blur-md transition-all duration-300 opacity-0 group-hover:opacity-100 focus:opacity-100"
+            className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-black/40 hover:bg-ashara-teal text-white backdrop-blur-md transition-all duration-300 opacity-0 group-hover:opacity-100 focus:opacity-100 hover:scale-110 active:scale-95"
           >
             <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
@@ -246,7 +289,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
               const el = document.getElementById('home-works');
               if (el) el.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="absolute bottom-3 inset-x-0 mx-auto w-fit z-20 flex flex-col items-center gap-0.5 text-white/70 hover:text-white transition cursor-pointer"
+            className="absolute bottom-3 inset-x-0 mx-auto w-fit z-20 flex flex-col items-center gap-0.5 text-white/70 hover:text-white transition cursor-pointer hover:scale-105 active:scale-95"
           >
             <ChevronDown className="w-4 h-4 animate-bounce text-ashara-gold" />
           </div>
@@ -282,17 +325,17 @@ export default function HomePage({ onNavigate, onSelectProject }) {
             <div
               key={item.id}
               onClick={() => handleCardClick(item)}
-              className="group relative cursor-pointer aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500"
+              className="group relative cursor-pointer aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-2xl hover:-translate-y-2 active:scale-[0.98] transition-all duration-500 ease-out"
             >
               {/* Photo */}
               <img
                 src={item.image}
                 alt={item.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
               />
 
               {/* Signature Solid Forest Teal/Green Bottom Label Box matching Figma & Screenshot */}
-              <div className="absolute inset-x-0 bottom-0 bg-ashara-teal/95 dark:bg-ashara-teal/95 backdrop-blur-[2px] p-5 sm:p-6 text-white transition-all duration-300">
+              <div className="absolute inset-x-0 bottom-0 bg-ashara-teal/95 dark:bg-ashara-teal/95 backdrop-blur-[2px] p-5 sm:p-6 text-white transition-all duration-300 group-hover:bg-ashara-teal">
                 <span className="text-[8.5px] sm:text-[9px] uppercase tracking-[0.28em] text-white/80 font-medium block">
                   {item.tag}
                 </span>

@@ -3,7 +3,7 @@ import { Facebook, Instagram, Linkedin } from 'lucide-react';
 import AsharaLogo from './AsharaLogo';
 
 // Configurable Company Social Links
-export const SOCIAL_LINKS = {
+const SOCIAL_LINKS = {
   facebook: 'https://www.facebook.com/asharainteriors',
   instagram: 'https://www.instagram.com/asharainteriors',
   tiktok: 'https://www.tiktok.com/@asharainteriors',

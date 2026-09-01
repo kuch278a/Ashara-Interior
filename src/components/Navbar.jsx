@@ -4,6 +4,8 @@ import AsharaLogo from './AsharaLogo';
 
 export default function Navbar({ activePage, setActivePage, theme, toggleTheme }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const navLinks = [
     { id: 'home', label: 'HOME' },
@@ -14,13 +16,37 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
     { id: 'contact', label: 'CONTACT' },
   ];
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const currentScroll = window.scrollY;
+      if (totalScroll > 0) {
+        setScrollProgress((currentScroll / totalScroll) * 100);
+      }
+      setIsScrolled(currentScroll > 20);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const handleNavClick = (id) => {
     setActivePage(id);
     setMobileMenuOpen(false);
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 dark:bg-ashara-dark/95 backdrop-blur-md transition-all duration-300 border-b border-gray-100/80 dark:border-white/5">
+    <header className={`sticky top-0 z-50 transition-all duration-300 ${
+      isScrolled 
+        ? 'bg-white/95 dark:bg-ashara-dark/95 backdrop-blur-md shadow-xs border-b border-gray-200/70 dark:border-white/10' 
+        : 'bg-white/90 dark:bg-ashara-dark/90 backdrop-blur-sm border-b border-gray-100/80 dark:border-white/5'
+    }`}>
+      {/* Real-time Scroll Progress Indicator Bar */}
+      <div 
+        className="absolute top-0 left-0 h-[2.5px] bg-gradient-to-r from-ashara-teal via-ashara-gold to-ashara-terracotta z-50 transition-all duration-150 ease-out pointer-events-none"
+        style={{ width: `${scrollProgress}%` }}
+      />
+
       <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 h-28 flex items-center justify-between">
         
         {/* Brand Logo: Clicking Logo goes to Home */}
