@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { getDynamicProjects } from '../services/firebase';
 import { DEFAULT_PROJECTS_LIST } from '../data/defaultData';
 
-export const PROJECTS_LIST = DEFAULT_PROJECTS_LIST;
-
 export default function ProjectsPage({ onNavigate, onSelectProject, isSection = false }) {
-  const [projects, setProjects] = useState(PROJECTS_LIST);
+  const [projects, setProjects] = useState(DEFAULT_PROJECTS_LIST);
   const [selectedFilter, setSelectedFilter] = useState('ALL');
 
   useEffect(() => {

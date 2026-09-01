@@ -1,10 +1,10 @@
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { PROJECTS_LIST } from './ProjectsPage';
+import { DEFAULT_PROJECTS_LIST } from '../data/defaultData';
 
 export default function ProjectDetailPage({ onNavigate, onSelectProject, project }) {
   // Fallback to the first project if none is active
-  const activeProject = project || PROJECTS_LIST[0];
+  const activeProject = project || DEFAULT_PROJECTS_LIST[0];
 
   const gallery = activeProject.gallery || [
     activeProject.image || activeProject.fallbackImage,
@@ -17,7 +17,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
   ];
 
   // Dynamic recommendations: Other projects from the list
-  const recommendations = PROJECTS_LIST.filter((p) => p.id !== activeProject.id).slice(0, 2);
+  const recommendations = DEFAULT_PROJECTS_LIST.filter((p) => p.id !== activeProject.id).slice(0, 2);
 
   const handleRecommendationClick = (recProject) => {
     if (onSelectProject) {

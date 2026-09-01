@@ -3,10 +3,8 @@ import { Calendar, Clock, ArrowRight, X } from 'lucide-react';
 import { getDynamicBlogPosts } from '../services/firebase';
 import { DEFAULT_BLOG_POSTS } from '../data/defaultData';
 
-export const BLOG_POSTS = DEFAULT_BLOG_POSTS;
-
 export default function BlogPage({ isSection = false }) {
-  const [posts, setPosts] = useState(BLOG_POSTS);
+  const [posts, setPosts] = useState(DEFAULT_BLOG_POSTS);
   const [selectedPost, setSelectedPost] = useState(null);
 
   useEffect(() => {

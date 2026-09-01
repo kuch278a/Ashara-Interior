@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, ChevronDown, ArrowUp } from 'lucide-react';
 import ClientsSection from '../components/ClientsSection';
-import { PROJECTS_LIST } from './ProjectsPage';
+import { DEFAULT_PROJECTS_LIST } from '../data/defaultData';
 import ServicesPage from './ServicesPage';
 import AboutPage from './AboutPage';
 import BlogPage from './BlogPage';
@@ -61,7 +61,7 @@ const DEFAULT_HERO_SLIDES = [
 
 export default function HomePage({ onNavigate, onSelectProject }) {
   const [slides, setSlides] = useState(DEFAULT_HERO_SLIDES);
-  const [featuredWorks, setFeaturedWorks] = useState(PROJECTS_LIST.slice(0, 4));
+  const [featuredWorks, setFeaturedWorks] = useState(DEFAULT_PROJECTS_LIST.slice(0, 4));
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -144,7 +144,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
 
   const handleHeroClick = () => {
     const slide = slides[currentSlide] || DEFAULT_HERO_SLIDES[0];
-    const project = PROJECTS_LIST.find((p) => String(p.id) === String(slide.id)) || slide;
+    const project = DEFAULT_PROJECTS_LIST.find((p) => String(p.id) === String(slide.id)) || slide;
     if (onSelectProject) {
       onSelectProject(project);
     }
@@ -156,7 +156,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
   const works = featuredWorks;
 
   const handleCardClick = (work) => {
-    const project = PROJECTS_LIST.find((p) => String(p.id) === String(work.id)) || work;
+    const project = DEFAULT_PROJECTS_LIST.find((p) => String(p.id) === String(work.id)) || work;
     if (onSelectProject) {
       onSelectProject(project);
     }

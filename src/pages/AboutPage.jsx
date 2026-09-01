@@ -1,9 +1,9 @@
 import React from 'react';
-import { PROJECTS_LIST } from './ProjectsPage';
+import { DEFAULT_PROJECTS_LIST } from '../data/defaultData';
 
 export default function AboutPage({ onNavigate, onSelectProject, isSection = false }) {
   const handleProjectClick = (projId) => {
-    const proj = PROJECTS_LIST.find((p) => p.id === projId) || PROJECTS_LIST[0];
+    const proj = DEFAULT_PROJECTS_LIST.find((p) => p.id === projId) || DEFAULT_PROJECTS_LIST[0];
     if (onSelectProject) {
       onSelectProject(proj);
     } else if (onNavigate) {

@@ -4,8 +4,9 @@ import Footer from './components/Footer';
 
 // Pages
 import HomePage from './pages/HomePage';
-import ProjectsPage, { PROJECTS_LIST } from './pages/ProjectsPage';
+import ProjectsPage from './pages/ProjectsPage';
 import ServicesPage from './pages/ServicesPage';
+import { DEFAULT_PROJECTS_LIST } from './data/defaultData';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import ProjectDetailPage from './pages/ProjectDetailPage';
@@ -31,7 +32,7 @@ function getInitialPage() {
 
 export default function App() {
   const [activePage, setActivePage] = useState(getInitialPage); // 'home' | 'projects' | 'services' | 'about' | 'contact' | 'blog' | 'admin' | 'project-detail'
-  const [selectedProject, setSelectedProject] = useState(PROJECTS_LIST[0]);
+  const [selectedProject, setSelectedProject] = useState(DEFAULT_PROJECTS_LIST[0]);
   const [theme, setTheme] = useState(() => {
     return sessionStorage.getItem('theme') || 'dark';
   });
