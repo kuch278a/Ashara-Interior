@@ -3481,4 +3481,4 @@ ${this.customData.serverResponse}`:this.message=this._baseMessage}}var Ht;(funct
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */function HT(r,{instanceIdentifier:e}){const t=r.getProvider("app").getImmediate(),n=r.getProvider("auth-internal"),s=r.getProvider("app-check-internal");return new MT(t,n,s,e,ir)}function UT(){Zn(new Rn(Ed,HT,"PUBLIC").setMultipleInstances(!0)),Nt(_h,Dh,""),Nt(_h,Dh,"esm2020")}UT();export{fB as a,YT as b,oA as c,aA as d,zT as e,eA as f,jT as g,rA as h,Dg as i,sA as j,iA as k,tA as l,WE as m,nA as n,ZT as o,XT as q,QT as s};
+ */function HT(r,{instanceIdentifier:e}){const t=r.getProvider("app").getImmediate(),n=r.getProvider("auth-internal"),s=r.getProvider("app-check-internal");return new MT(t,n,s,e,ir)}function UT(){Zn(new Rn(Ed,HT,"PUBLIC").setMultipleInstances(!0)),Nt(_h,Dh,""),Nt(_h,Dh,"esm2020")}UT();export{fB as a,YT as b,oA as c,aA as d,eA as e,zT as f,jT as g,rA as h,Dg as i,sA as j,iA as k,tA as l,WE as m,nA as n,ZT as o,XT as q,QT as s};
