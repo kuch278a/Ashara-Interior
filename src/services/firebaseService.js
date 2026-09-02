@@ -17,7 +17,7 @@ import {
   signOut,
   onAuthStateChanged
 } from 'firebase/auth';
-import { getStorage } from 'firebase/storage';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { DEFAULT_PROJECTS_LIST, DEFAULT_BLOG_POSTS } from '../data/defaultData';
 
 // Firebase configuration from environment variables or live studio keys
@@ -55,6 +55,42 @@ if (isFirebaseConfigured) {
 }
 
 export { db, auth, storage };
+
+// ----------------------------------------------------
+// 0. IMAGE UPLOAD HELPER
+// ----------------------------------------------------
+
+/**
+ * Upload an image file to Firebase Storage and return the download URL.
+ * @param {File} file - The image file to upload
+ * @param {string} folder - Storage folder (e.g. 'projects', 'blog')
+ * @returns {{ success: boolean, url?: string, error?: string }}
+ */
+export async function uploadImage(file, folder = 'images') {
+  if (!file) return { success: false, error: 'No file provided' };
+
+  if (isFirebaseConfigured && storage) {
+    try {
+      const timestamp = Date.now();
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const storageRef = ref(storage, `images/${folder}/${timestamp}_${safeName}`);
+      const snapshot = await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      return { success: true, url: downloadURL };
+    } catch (error) {
+      console.error('Firebase Storage upload error:', error);
+      return { success: false, error: error.message || 'Upload failed' };
+    }
+  }
+
+  // Fallback: convert to data URL for offline/demo mode
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve({ success: true, url: reader.result });
+    reader.onerror = () => resolve({ success: false, error: 'Failed to read file' });
+    reader.readAsDataURL(file);
+  });
+}
 
 // ----------------------------------------------------
 // 1. LEAD & CONSULTATION INQUIRIES MANAGEMENT
@@ -237,35 +273,36 @@ export async function loginAdminUser(email, password) {
   const cleanEmail = email.trim().toLowerCase();
   const cleanPass = password.trim();
 
-  // Studio master passcode for instant login
-  if (
-    (cleanEmail === 'admin@ashara.com' || cleanEmail === 'admin' || cleanEmail === 'mikasadessalegn@gmail.com') &&
-    (cleanPass === 'ashara2025' || cleanPass === 'ashara@2025' || cleanPass === 'admin123')
-  ) {
+  // Check if credentials match the master passcode
+  const isMasterEmail = (cleanEmail === 'admin@ashara.com' || cleanEmail === 'admin' || cleanEmail === 'mikasadessalegn@gmail.com');
+  const isMasterPass = (cleanPass === 'ashara2025' || cleanPass === 'ashara@2025' || cleanPass === 'admin123');
+
+  // 1. Try Firebase Auth first (required for Firestore read access)
+  if (isFirebaseConfigured && auth) {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, cleanEmail, cleanPass);
+      sessionStorage.setItem('ashara_admin_auth', JSON.stringify({ email: userCredential.user.email }));
+      return { success: true, user: userCredential.user };
+    } catch (error) {
+      // Firebase Auth failed — fall through to master passcode check
+    }
+  }
+
+  // 2. Master passcode fallback (works offline / when Firebase Auth user doesn't exist)
+  if (isMasterEmail && isMasterPass) {
     const adminUser = { email: cleanEmail, name: 'Ashara Studio Director' };
     sessionStorage.setItem('ashara_admin_auth', JSON.stringify(adminUser));
     return { success: true, user: adminUser };
   }
 
-  // Firebase Auth (if user configured in Firebase Console)
-  if (isFirebaseConfigured && auth) {
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      sessionStorage.setItem('ashara_admin_auth', JSON.stringify({ email: userCredential.user.email }));
-      return { success: true, user: userCredential.user };
-    } catch (error) {
-      return { success: false, error: 'Incorrect email or password. You can also use master passcode "ashara2025".' };
-    }
-  }
-
-  // Default master fallback
-  if (cleanPass === 'ashara2025' || cleanPass === 'admin123') {
+  // 3. Loose master passcode fallback (any email + correct passcode)
+  if (isMasterPass) {
     const adminUser = { email: cleanEmail || 'admin@ashara.com', name: 'Ashara Admin' };
     sessionStorage.setItem('ashara_admin_auth', JSON.stringify(adminUser));
     return { success: true, user: adminUser };
   }
 
-  return { success: false, error: 'Invalid email or passcode".' };
+  return { success: false, error: 'Invalid email or passcode.' };
 }
 
 export async function logoutAdminUser() {

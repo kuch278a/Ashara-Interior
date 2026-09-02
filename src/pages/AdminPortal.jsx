@@ -20,7 +20,9 @@ import {
   Eye,
   EyeOff,
   LogOut,
-  Loader2
+  Loader2,
+  Upload,
+  ImagePlus
 } from 'lucide-react';
 import { 
   getConsultations, 
@@ -31,7 +33,8 @@ import {
   saveBlogPost, 
   isFirebaseConfigured,
   loginAdminUser,
-  logoutAdminUser
+  logoutAdminUser,
+  uploadImage
 } from '../services/firebaseService';
 
 export default function AdminPortal({ onNavigate }) {
@@ -59,6 +62,11 @@ export default function AdminPortal({ onNavigate }) {
   const [editingProject, setEditingProject] = useState(null);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [editingPost, setEditingPost] = useState(null);
+  const [projectImageFile, setProjectImageFile] = useState(null);
+  const [projectImagePreview, setProjectImagePreview] = useState('');
+  const [blogImageFile, setBlogImageFile] = useState(null);
+  const [blogImagePreview, setBlogImagePreview] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
   const [isBlogModalOpen, setIsBlogModalOpen] = useState(false);
 
   useEffect(() => {
@@ -119,11 +127,29 @@ export default function AdminPortal({ onNavigate }) {
   const handleSaveProject = async (e) => {
     e.preventDefault();
     if (!editingProject) return;
-    await saveProject(editingProject);
-    setIsProjectModalOpen(false);
-    setEditingProject(null);
-    showToast('Project saved successfully');
-    await loadAllData();
+    setIsUploading(true);
+    try {
+      let projectData = { ...editingProject };
+      if (projectImageFile) {
+        const uploadResult = await uploadImage(projectImageFile, 'projects');
+        if (uploadResult.success) {
+          projectData.image = uploadResult.url;
+        } else {
+          showToast('Image upload failed: ' + (uploadResult.error || 'Unknown error'));
+          setIsUploading(false);
+          return;
+        }
+      }
+      await saveProject(projectData);
+      setIsProjectModalOpen(false);
+      setEditingProject(null);
+      setProjectImageFile(null);
+      setProjectImagePreview('');
+      showToast('Project saved successfully');
+      await loadAllData();
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleDeleteProject = async (id) => {
@@ -138,11 +164,29 @@ export default function AdminPortal({ onNavigate }) {
   const handleSaveBlogPost = async (e) => {
     e.preventDefault();
     if (!editingPost) return;
-    await saveBlogPost(editingPost);
-    setIsBlogModalOpen(false);
-    setEditingPost(null);
-    showToast('Journal article published');
-    await loadAllData();
+    setIsUploading(true);
+    try {
+      let postData = { ...editingPost };
+      if (blogImageFile) {
+        const uploadResult = await uploadImage(blogImageFile, 'blog');
+        if (uploadResult.success) {
+          postData.image = uploadResult.url;
+        } else {
+          showToast('Image upload failed: ' + (uploadResult.error || 'Unknown error'));
+          setIsUploading(false);
+          return;
+        }
+      }
+      await saveBlogPost(postData);
+      setIsBlogModalOpen(false);
+      setEditingPost(null);
+      setBlogImageFile(null);
+      setBlogImagePreview('');
+      showToast('Journal article published');
+      await loadAllData();
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   // ----------------------------------------------------
@@ -646,16 +690,58 @@ export default function AdminPortal({ onNavigate }) {
 
               <div>
                 <label className="block text-[10px] uppercase tracking-wider font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                  Image URL or Path
+                  Project Image
                 </label>
-                <input
-                  type="text"
-                  required
-                  value={editingProject.image || ''}
-                  onChange={(e) => setEditingProject({ ...editingProject, image: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm text-ashara-charcoal dark:text-white focus:outline-none focus:border-ashara-teal"
-                  placeholder="./assets/p1_prosperity.png or https://..."
-                />
+                
+                {/* Image Preview */}
+                {(projectImagePreview || editingProject.image) && (
+                  <div className="mb-3 relative aspect-[16/10] bg-gray-100 dark:bg-gray-800 overflow-hidden rounded-xs">
+                    <img 
+                      src={projectImagePreview || editingProject.image} 
+                      alt="Preview" 
+                      className="w-full h-full object-cover"
+                      onError={(e) => { e.target.style.display = 'none'; }}
+                    />
+                  </div>
+                )}
+
+                {/* Upload Button */}
+                <label className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border-2 border-dashed border-gray-300 dark:border-white/15 hover:border-ashara-teal dark:hover:border-ashara-gold text-gray-600 dark:text-gray-300 cursor-pointer transition-all duration-200 group">
+                  <Upload className="w-4 h-4 group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition" />
+                  <span className="text-xs uppercase tracking-wider font-medium group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition">
+                    {projectImageFile ? projectImageFile.name : 'Click to upload image'}
+                  </span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        setProjectImageFile(file);
+                        const reader = new FileReader();
+                        reader.onload = () => setProjectImagePreview(reader.result);
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                  />
+                </label>
+
+                {/* Fallback URL Input */}
+                <div className="mt-2">
+                  <p className="text-[9px] uppercase tracking-wider text-gray-400 mb-1">Or paste image URL</p>
+                  <input
+                    type="text"
+                    value={editingProject.image || ''}
+                    onChange={(e) => {
+                      setEditingProject({ ...editingProject, image: e.target.value });
+                      setProjectImageFile(null);
+                      setProjectImagePreview('');
+                    }}
+                    className="w-full px-3.5 py-2 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs text-ashara-charcoal dark:text-white focus:outline-none focus:border-ashara-teal"
+                    placeholder="https://... or ./assets/..."
+                  />
+                </div>
               </div>
 
               <div>
@@ -682,10 +768,11 @@ export default function AdminPortal({ onNavigate }) {
                 </button>
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-2 px-6 py-2.5 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-xs uppercase tracking-wider font-semibold hover:opacity-90 transition"
+                  disabled={isUploading}
+                  className="inline-flex items-center gap-2 px-6 py-2.5 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-xs uppercase tracking-wider font-semibold hover:opacity-90 transition disabled:opacity-50"
                 >
-                  <Save className="w-4 h-4" />
-                  <span>Save Project</span>
+                  {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                  <span>{isUploading ? 'Uploading...' : 'Save Project'}</span>
                 </button>
               </div>
             </form>
@@ -765,6 +852,62 @@ export default function AdminPortal({ onNavigate }) {
 
               <div>
                 <label className="block text-[10px] uppercase tracking-wider font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                  Article Cover Image
+                </label>
+
+                {/* Image Preview */}
+                {(blogImagePreview || editingPost.image) && (
+                  <div className="mb-3 relative aspect-[16/9] bg-gray-100 dark:bg-gray-800 overflow-hidden rounded-xs">
+                    <img 
+                      src={blogImagePreview || editingPost.image} 
+                      alt="Preview" 
+                      className="w-full h-full object-cover"
+                      onError={(e) => { e.target.style.display = 'none'; }}
+                    />
+                  </div>
+                )}
+
+                {/* Upload Button */}
+                <label className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border-2 border-dashed border-gray-300 dark:border-white/15 hover:border-ashara-teal dark:hover:border-ashara-gold text-gray-600 dark:text-gray-300 cursor-pointer transition-all duration-200 group">
+                  <ImagePlus className="w-4 h-4 group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition" />
+                  <span className="text-xs uppercase tracking-wider font-medium group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition">
+                    {blogImageFile ? blogImageFile.name : 'Click to upload cover image'}
+                  </span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        setBlogImageFile(file);
+                        const reader = new FileReader();
+                        reader.onload = () => setBlogImagePreview(reader.result);
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                  />
+                </label>
+
+                {/* Fallback URL Input */}
+                <div className="mt-2">
+                  <p className="text-[9px] uppercase tracking-wider text-gray-400 mb-1">Or paste image URL</p>
+                  <input
+                    type="text"
+                    value={editingPost.image || ''}
+                    onChange={(e) => {
+                      setEditingPost({ ...editingPost, image: e.target.value });
+                      setBlogImageFile(null);
+                      setBlogImagePreview('');
+                    }}
+                    className="w-full px-3.5 py-2 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs text-ashara-charcoal dark:text-white focus:outline-none focus:border-ashara-teal"
+                    placeholder="https://..."
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[10px] uppercase tracking-wider font-semibold text-gray-700 dark:text-gray-300 mb-1">
                   Full Article Body
                 </label>
                 <textarea
@@ -787,10 +930,11 @@ export default function AdminPortal({ onNavigate }) {
                 </button>
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-2 px-6 py-2.5 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-xs uppercase tracking-wider font-semibold hover:opacity-90 transition"
+                  disabled={isUploading}
+                  className="inline-flex items-center gap-2 px-6 py-2.5 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-xs uppercase tracking-wider font-semibold hover:opacity-90 transition disabled:opacity-50"
                 >
-                  <Save className="w-4 h-4" />
-                  <span>Publish Article</span>
+                  {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                  <span>{isUploading ? 'Uploading...' : 'Publish Article'}</span>
                 </button>
               </div>
             </form>

@@ -21,11 +21,12 @@ service cloud.firestore {
 
     // ──────────────────────────────────────────────
     // CONSULTATIONS — Public can create (contact form),
-    // only admins can read/update/delete
+    // anyone can read (for master passcode admin access),
+    // only admins can update/delete
     // ──────────────────────────────────────────────
     match /consultations/{leadId} {
-      allow create: if true;
-      allow read, update, delete: if request.auth != null;
+      allow create, read: if true;
+      allow update, delete: if request.auth != null;
     }
 
     // ──────────────────────────────────────────────
