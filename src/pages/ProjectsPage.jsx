@@ -92,6 +92,8 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
               {/* Photo */}
               <img
                 src={item.image}
+                loading="lazy"
+                decoding="async"
                 onError={(e) => {
                   e.target.onerror = null;
                   e.target.src = item.fallbackImage;

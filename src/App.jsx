@@ -1,17 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-
-// Pages
-import HomePage from './pages/HomePage';
-import ProjectsPage from './pages/ProjectsPage';
-import ServicesPage from './pages/ServicesPage';
 import { DEFAULT_PROJECTS_LIST } from './data/defaultData';
-import AboutPage from './pages/AboutPage';
-import ContactPage from './pages/ContactPage';
-import ProjectDetailPage from './pages/ProjectDetailPage';
-import BlogPage from './pages/BlogPage';
-import AdminPortal from './pages/AdminPortal';
+
+// Lazy-loaded Pages for instant initial load and optimal code-splitting
+const HomePage = lazy(() => import('./pages/HomePage'));
+const ProjectsPage = lazy(() => import('./pages/ProjectsPage'));
+const ServicesPage = lazy(() => import('./pages/ServicesPage'));
+const AboutPage = lazy(() => import('./pages/AboutPage'));
+const ContactPage = lazy(() => import('./pages/ContactPage'));
+const ProjectDetailPage = lazy(() => import('./pages/ProjectDetailPage'));
+const BlogPage = lazy(() => import('./pages/BlogPage'));
+const AdminPortal = lazy(() => import('./pages/AdminPortal'));
+
+// Minimal elegant fallback for route transitions
+function PageLoadingFallback() {
+  return (
+    <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-4 py-20">
+      <div className="w-8 h-8 border-2 border-ashara-teal/30 dark:border-ashara-gold/30 border-t-ashara-teal dark:border-t-ashara-gold rounded-full animate-spin"></div>
+      <span className="text-[10px] tracking-[0.3em] uppercase text-gray-500 dark:text-gray-400 font-sans">
+        Loading...
+      </span>
+    </div>
+  );
+}
 
 function getInitialPage() {
   const hash = window.location.hash.replace(/^#\/?/, '').toLowerCase();
@@ -105,43 +117,45 @@ export default function App() {
         toggleTheme={toggleTheme} 
       />
 
-      {/* 2. Main Page View Router */}
+      {/* 2. Main Page View Router with Suspense */}
       <main className="flex-1">
-        {activePage === 'home' && (
-          <HomePage onNavigate={handleNavigate} onSelectProject={handleSelectProject} />
-        )}
+        <Suspense fallback={<PageLoadingFallback />}>
+          {activePage === 'home' && (
+            <HomePage onNavigate={handleNavigate} onSelectProject={handleSelectProject} />
+          )}
 
-        {activePage === 'projects' && (
-          <ProjectsPage onNavigate={handleNavigate} onSelectProject={handleSelectProject} />
-        )}
-        
-        {activePage === 'services' && (
-          <ServicesPage onNavigate={handleNavigate} onSelectProject={handleSelectProject} />
-        )}
+          {activePage === 'projects' && (
+            <ProjectsPage onNavigate={handleNavigate} onSelectProject={handleSelectProject} />
+          )}
+          
+          {activePage === 'services' && (
+            <ServicesPage onNavigate={handleNavigate} onSelectProject={handleSelectProject} />
+          )}
 
-        {activePage === 'about' && (
-          <AboutPage onNavigate={handleNavigate} onSelectProject={handleSelectProject} />
-        )}
+          {activePage === 'about' && (
+            <AboutPage onNavigate={handleNavigate} onSelectProject={handleSelectProject} />
+          )}
 
-        {activePage === 'contact' && (
-          <ContactPage onNavigate={handleNavigate} />
-        )}
+          {activePage === 'contact' && (
+            <ContactPage onNavigate={handleNavigate} />
+          )}
 
-        {activePage === 'blog' && (
-          <BlogPage />
-        )}
+          {activePage === 'blog' && (
+            <BlogPage />
+          )}
 
-        {activePage === 'admin' && (
-          <AdminPortal onNavigate={handleNavigate} />
-        )}
+          {activePage === 'admin' && (
+            <AdminPortal onNavigate={handleNavigate} />
+          )}
 
-        {activePage === 'project-detail' && (
-          <ProjectDetailPage 
-            project={selectedProject} 
-            onNavigate={handleNavigate} 
-            onSelectProject={handleSelectProject}
-          />
-        )}
+          {activePage === 'project-detail' && (
+            <ProjectDetailPage 
+              project={selectedProject} 
+              onNavigate={handleNavigate} 
+              onSelectProject={handleSelectProject}
+            />
+          )}
+        </Suspense>
       </main>
 
       {/* 3. Figma Solid Deep Forest Teal Footer */}

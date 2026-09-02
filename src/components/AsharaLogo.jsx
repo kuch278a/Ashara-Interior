@@ -7,6 +7,7 @@ export default function AsharaLogo({ className = 'text-ashara-teal', textClassNa
       <img
         src={light ? './client_logos/ashara_logo_white.png' : './client_logos/ashara_logo_teal.png'}
         alt="Ashara Interiors"
+        decoding="async"
         style={{ height: size, width: 'auto' }}
         className="object-contain transition-transform duration-300 group-hover:scale-105"
         onError={(e) => {

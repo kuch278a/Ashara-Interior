@@ -45,6 +45,8 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
         <div className="relative w-full aspect-[16/9] sm:aspect-[21/10] max-h-[640px] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-sm">
           <img
             src={activeProject.image || activeProject.fallbackImage}
+            fetchPriority="high"
+            decoding="async"
             onError={(e) => {
               e.target.onerror = null;
               e.target.src = activeProject.fallbackImage || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1800&q=90';
@@ -85,6 +87,8 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
           <img
             src={gallery[0] || activeProject.fallbackImage}
             alt={`${activeProject.title} Detail 1`}
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover hover:scale-102 transition-transform duration-700"
           />
         </div>
@@ -97,6 +101,8 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
             <img
               src={gallery[1] || activeProject.fallbackImage}
               alt={`${activeProject.title} Detail 2`}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
             />
           </div>
@@ -104,6 +110,8 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
             <img
               src={gallery[2] || activeProject.fallbackImage}
               alt={`${activeProject.title} Detail 3`}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
             />
           </div>
@@ -124,6 +132,8 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
             <img
               src={gallery[3] || activeProject.fallbackImage}
               alt={`${activeProject.title} Detail 4`}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
             />
           </div>
@@ -131,6 +141,8 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
             <img
               src={gallery[4] || activeProject.fallbackImage}
               alt={`${activeProject.title} Detail 5`}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
             />
           </div>
@@ -143,6 +155,8 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
           <img
             src={gallery[5] || gallery[0]}
             alt={`${activeProject.title} Detail 6`}
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover"
           />
         </div>
@@ -180,6 +194,8 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
             >
               <img
                 src={rec.image}
+                loading="lazy"
+                decoding="async"
                 onError={(e) => {
                   e.target.onerror = null;
                   e.target.src = rec.fallbackImage;

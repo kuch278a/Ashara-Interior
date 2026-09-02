@@ -42,6 +42,8 @@ export default function BlogPage({ isSection = false }) {
                 <img
                   src={post.image}
                   alt={post.title}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover group-hover:scale-104 transition-transform duration-700 ease-out"
                 />
                 <span className="absolute top-4 left-4 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-[9px] uppercase tracking-[0.2em] font-semibold px-3 py-1 shadow-xs">
@@ -88,6 +90,8 @@ export default function BlogPage({ isSection = false }) {
                   <img
                     src={post.image}
                     alt={post.title}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-104 transition-transform duration-700 ease-out"
                   />
                 </div>

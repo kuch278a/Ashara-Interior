@@ -103,6 +103,8 @@ export default function ClientsSection() {
                   <img
                     src={item.image}
                     alt={item.name}
+                    loading="lazy"
+                    decoding="async"
                     className="max-h-20 sm:max-h-24 max-w-full object-contain grayscale contrast-125 opacity-80 group-hover:grayscale-0 group-hover:contrast-100 group-hover:opacity-100 group-hover:scale-110 transition-all duration-400 ease-out dark:grayscale-0 dark:opacity-100 dark:contrast-100 dark:group-hover:scale-110"
                   />
                 </div>
@@ -121,6 +123,8 @@ export default function ClientsSection() {
                   <img
                     src={item.image}
                     alt={item.name}
+                    loading="lazy"
+                    decoding="async"
                     className="max-h-20 sm:max-h-24 max-w-full object-contain grayscale contrast-125 opacity-80 group-hover:grayscale-0 group-hover:contrast-100 group-hover:opacity-100 group-hover:scale-110 transition-all duration-400 ease-out dark:grayscale-0 dark:opacity-100 dark:contrast-100 dark:group-hover:scale-110"
                   />
                 </div>
@@ -139,6 +143,8 @@ export default function ClientsSection() {
                   <img
                     src={item.image}
                     alt={item.name}
+                    loading="lazy"
+                    decoding="async"
                     className="max-h-16 sm:max-h-20 max-w-full object-contain grayscale contrast-125 opacity-80 group-hover:grayscale-0 group-hover:contrast-100 group-hover:opacity-100 group-hover:scale-110 transition-all duration-400 ease-out dark:grayscale-0 dark:opacity-100 dark:contrast-100 dark:group-hover:scale-110"
                   />
                 </div>

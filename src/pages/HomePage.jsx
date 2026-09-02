@@ -88,15 +88,16 @@ export default function HomePage({ onNavigate, onSelectProject }) {
   // Keyboard navigation for hero slider (Left/Right Arrow keys)
   useEffect(() => {
     const handleKeyDown = (e) => {
+      if (slides.length === 0) return;
       if (e.key === 'ArrowRight') {
-        setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+        setCurrentSlide((prev) => (prev + 1) % slides.length);
       } else if (e.key === 'ArrowLeft') {
-        setCurrentSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
+        setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [slides.length]);
 
   // Show "Back to Top" button on scroll down
   useEffect(() => {
@@ -179,7 +180,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
             className="flex w-full h-full transition-transform duration-700 ease-out"
             style={{ transform: `translate3d(-${currentSlide * 100}%, 0, 0)` }}
           >
-            {slides.map((slide) => (
+            {slides.map((slide, idx) => (
               <div
                 key={slide.id}
                 className="w-full h-full shrink-0 relative"
@@ -187,6 +188,9 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                 <img
                   src={slide.image}
                   alt={slide.title}
+                  loading={idx === 0 ? 'eager' : 'lazy'}
+                  decoding="async"
+                  fetchPriority={idx === 0 ? 'high' : 'auto'}
                   className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-1000 ease-out"
                   onError={(e) => {
                     e.target.onerror = null;
@@ -312,6 +316,8 @@ export default function HomePage({ onNavigate, onSelectProject }) {
               <img
                 src={item.image}
                 alt={item.title}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
               />
 
