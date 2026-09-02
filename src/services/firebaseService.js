@@ -1,21 +1,21 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { 
-  getFirestore, 
-  collection, 
-  addDoc, 
-  getDocs, 
-  doc, 
-  setDoc, 
-  deleteDoc, 
-  query, 
-  orderBy, 
-  serverTimestamp 
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  setDoc,
+  deleteDoc,
+  query,
+  orderBy,
+  serverTimestamp
 } from 'firebase/firestore';
-import { 
-  getAuth, 
-  signInWithEmailAndPassword, 
-  signOut, 
-  onAuthStateChanged 
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
 } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
 import { DEFAULT_PROJECTS_LIST, DEFAULT_BLOG_POSTS } from '../data/defaultData';
@@ -32,8 +32,8 @@ const firebaseConfig = {
 
 // Check if live Firebase credentials are provided
 export const isFirebaseConfigured = Boolean(
-  firebaseConfig.apiKey && 
-  firebaseConfig.projectId && 
+  firebaseConfig.apiKey &&
+  firebaseConfig.projectId &&
   !firebaseConfig.apiKey.includes('your_')
 );
 
@@ -265,14 +265,14 @@ export async function loginAdminUser(email, password) {
     return { success: true, user: adminUser };
   }
 
-  return { success: false, error: 'Invalid email or passcode. Master passcode is "ashara2025".' };
+  return { success: false, error: 'Invalid email or passcode".' };
 }
 
 export async function logoutAdminUser() {
   if (isFirebaseConfigured && auth) {
     try {
       await signOut(auth);
-    } catch (e) {}
+    } catch (e) { }
   }
   sessionStorage.removeItem('ashara_admin_auth');
   return { success: true };
