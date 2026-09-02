@@ -24,9 +24,6 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
     if (onSelectProject) {
       onSelectProject(project);
     }
-    if (onNavigate) {
-      onNavigate('project-detail');
-    }
   };
 
   return (

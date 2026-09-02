@@ -15,12 +15,12 @@ import AdminPortal from './pages/AdminPortal';
 
 function getInitialPage() {
   const hash = window.location.hash.replace(/^#\/?/, '').toLowerCase();
-  if (['admin', 'projects', 'services', 'about', 'contact', 'blog'].includes(hash)) {
+  if (['admin', 'projects', 'services', 'about', 'contact', 'blog', 'project-detail'].includes(hash)) {
     return hash;
   }
   const searchParams = new URLSearchParams(window.location.search);
   const pageParam = searchParams.get('page') || (searchParams.has('admin') ? 'admin' : null);
-  if (pageParam && ['admin', 'projects', 'services', 'about', 'contact', 'blog'].includes(pageParam.toLowerCase())) {
+  if (pageParam && ['admin', 'projects', 'services', 'about', 'contact', 'blog', 'project-detail'].includes(pageParam.toLowerCase())) {
     return pageParam.toLowerCase();
   }
   const path = window.location.pathname.toLowerCase();
@@ -77,6 +77,7 @@ export default function App() {
   const handleSelectProject = (project) => {
     setSelectedProject(project);
     setActivePage('project-detail');
+    window.location.hash = 'project-detail';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 

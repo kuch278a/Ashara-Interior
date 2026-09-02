@@ -148,9 +148,6 @@ export default function HomePage({ onNavigate, onSelectProject }) {
     if (onSelectProject) {
       onSelectProject(project);
     }
-    if (onNavigate) {
-      onNavigate('project-detail');
-    }
   };
 
   const works = featuredWorks;
@@ -159,9 +156,6 @@ export default function HomePage({ onNavigate, onSelectProject }) {
     const project = DEFAULT_PROJECTS_LIST.find((p) => String(p.id) === String(work.id)) || work;
     if (onSelectProject) {
       onSelectProject(project);
-    }
-    if (onNavigate) {
-      onNavigate('project-detail');
     }
   };
 
