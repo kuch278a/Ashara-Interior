@@ -117,14 +117,6 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
       {/* Mobile Dropdown Menu */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-white dark:bg-ashara-charcoal border-b border-gray-200 dark:border-white/5 px-6 py-6 space-y-4 animate-fade-in shadow-lg">
-          <button
-            onClick={() => handleNavClick('home')}
-            className={`block w-full text-left py-2.5 text-xs uppercase tracking-[0.2em] font-medium transition ${
-              activePage === 'home' ? 'text-ashara-teal dark:text-ashara-gold font-bold' : 'text-gray-600 dark:text-gray-300'
-            }`}
-          >
-            HOME
-          </button>
           {navLinks.map((link) => {
             const isActive = activePage === link.id || (activePage === 'project-detail' && link.id === 'projects');
             return (
