@@ -50,6 +50,19 @@ export default function App() {
     };
   }, []);
 
+  // Dismiss the HTML loading screen once React has mounted
+  useEffect(() => {
+    const loader = document.getElementById('ashara-loader');
+    if (loader) {
+      // Small delay so the loading animation is visible briefly
+      const timer = setTimeout(() => {
+        loader.classList.add('fade-out');
+        setTimeout(() => loader.remove(), 600);
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   useEffect(() => {
     const root = window.document.documentElement;
     if (theme === 'dark') {
