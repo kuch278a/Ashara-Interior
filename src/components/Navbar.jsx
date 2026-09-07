@@ -61,7 +61,7 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
               className="object-contain transition-transform duration-300 group-hover:scale-105"
               style={{ height: '54px', width: 'auto' }}
               onError={(e) => {
-                e.target.src = './assets/adobek_logo_transparent.png';
+                e.target.src = './assets/ashara_logo_transparent.png';
               }}
             />
           </div>
