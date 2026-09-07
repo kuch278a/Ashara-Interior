@@ -50,20 +50,21 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
     <div className="bg-transparent animate-fade-in transition-colors duration-300">
       
       {/* 1. HERO: "How We Work" Dark Cathedral Arch Banner matching Figma Image 2 */}
-      <section className="relative w-full min-h-[500px] sm:min-h-[560px] flex items-center justify-center bg-black overflow-hidden px-6 py-20 text-center">
-        {/* Background Image */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center opacity-70 scale-100"
-          style={{
-            backgroundImage: `url('./our_service.jpg')`
-          }}
-        ></div>
-        
-        {/* Dark Vignette Overlay */}
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-[0.5px]"></div>
+      <section className="w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 pt-4">
+        <div className="relative w-full min-h-[480px] sm:min-h-[540px] flex items-center justify-center bg-black overflow-hidden px-6 py-20 text-center rounded-2xl sm:rounded-3xl shadow-lg border border-black/5 dark:border-white/10">
+          {/* Background Image */}
+          <div 
+            className="absolute inset-0 bg-cover bg-center opacity-70 scale-100"
+            style={{
+              backgroundImage: `url('./our_service.jpg')`
+            }}
+          ></div>
+          
+          {/* Dark Vignette Overlay */}
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-[0.5px]"></div>
 
-        {/* Hero Content */}
-        <div className="relative z-10 max-w-3xl mx-auto space-y-6 text-white px-4">
+          {/* Hero Content */}
+          <div className="relative z-10 max-w-3xl mx-auto space-y-6 text-white px-4">
           <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.32em] text-ashara-gold font-semibold">
             SERVICES & EXPERTISE
           </p>
@@ -75,7 +76,8 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
             Ashara Interiors is an interior design, architecture, and build company passionate about creating inspiring spaces that radiate positivity and reflect our clients' unique identities. Specializing in governmental bureaus, commercial spaces, hotels, residential projects, and cultural landmarks, we offer comprehensive services ranging from stand-alone interior design to complete turnkey solutions.
           </p>
         </div>
-      </section>
+      </div>
+    </section>
 
       {/* 2. "How We Can Help" Section with Numbered Accordion */}
       <section className="max-w-3xl mx-auto px-6 sm:px-10 pt-16 sm:pt-24 space-y-12">
@@ -159,7 +161,7 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
           {/* Card 1: Amibara Properties */}
           <div 
             onClick={() => handleProjectClick(5)}
-            className="group relative cursor-pointer aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500"
+            className="group relative cursor-pointer aspect-[4/3] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500 border border-black/5 dark:border-white/10"
           >
             <img
               src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=85"
@@ -179,7 +181,7 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
           {/* Card 2: Ministry of Revenues */}
           <div 
             onClick={() => handleProjectClick(6)}
-            className="group relative cursor-pointer aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500"
+            className="group relative cursor-pointer aspect-[4/3] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500 border border-black/5 dark:border-white/10"
           >
             <img
               src="./assets/p6_revenues.png"

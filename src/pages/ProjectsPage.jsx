@@ -69,7 +69,7 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
               <button
                 key={cat}
                 onClick={() => setSelectedFilter(cat)}
-                className={`px-4 py-1.5 text-[9.5px] sm:text-[10px] uppercase tracking-[0.2em] font-medium transition-all duration-300 border ${
+                className={`px-5 py-2 text-[9.5px] sm:text-[10px] uppercase tracking-[0.2em] font-medium transition-all duration-300 border rounded-full ${
                   isActive
                     ? 'bg-ashara-teal text-white border-ashara-teal dark:bg-ashara-gold dark:text-ashara-dark dark:border-ashara-gold shadow-xs'
                     : 'bg-transparent text-gray-600 dark:text-gray-400 border-gray-200 dark:border-white/10 hover:border-ashara-teal dark:hover:border-ashara-gold hover:text-ashara-teal dark:hover:text-ashara-gold'
@@ -87,7 +87,7 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
             <div
               key={item.id}
               onClick={() => handleProjectClick(item)}
-              className="group relative cursor-pointer aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-2xl hover:-translate-y-2 active:scale-[0.98] transition-all duration-500 ease-out"
+              className="group relative cursor-pointer aspect-[4/3] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-2xl hover:-translate-y-2 active:scale-[0.98] transition-all duration-500 ease-out border border-black/5 dark:border-white/10"
             >
               {/* Photo */}
               <img

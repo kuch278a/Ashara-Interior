@@ -42,7 +42,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
 
       {/* 1. HERO: Main Project Showcase Image */}
       <section className="w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
-        <div className="relative w-full aspect-[16/9] sm:aspect-[21/10] max-h-[640px] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-sm">
+        <div className="relative w-full aspect-[16/9] sm:aspect-[21/10] max-h-[640px] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-sm border border-black/5 dark:border-white/10">
           <img
             src={activeProject.image || activeProject.fallbackImage}
             fetchPriority="high"
@@ -83,7 +83,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
 
       {/* 3. FULL-WIDTH FEATURE: Feature Gallery Image 1 */}
       <section className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-6">
-        <div className="relative w-full aspect-[16/9] sm:aspect-[21/10] max-h-[580px] overflow-hidden bg-black shadow-md">
+        <div className="relative w-full aspect-[16/9] sm:aspect-[21/10] max-h-[580px] overflow-hidden rounded-2xl sm:rounded-3xl bg-black shadow-md border border-black/5 dark:border-white/10">
           <img
             src={gallery[0] || activeProject.fallbackImage}
             alt={`${activeProject.title} Detail 1`}
@@ -97,7 +97,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
       {/* 4. 2-COLUMN IMAGE GRID: Gallery Images 2 & 3 */}
       <section className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
-          <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs">
+          <div className="aspect-[4/3] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-xs border border-black/5 dark:border-white/10">
             <img
               src={gallery[1] || activeProject.fallbackImage}
               alt={`${activeProject.title} Detail 2`}
@@ -106,7 +106,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
             />
           </div>
-          <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs">
+          <div className="aspect-[4/3] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-xs border border-black/5 dark:border-white/10">
             <img
               src={gallery[2] || activeProject.fallbackImage}
               alt={`${activeProject.title} Detail 3`}
@@ -128,7 +128,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
       {/* 6. 2-COLUMN IMAGE GRID: Gallery Images 4 & 5 */}
       <section className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
-          <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs">
+          <div className="aspect-[4/3] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-xs border border-black/5 dark:border-white/10">
             <img
               src={gallery[3] || activeProject.fallbackImage}
               alt={`${activeProject.title} Detail 4`}
@@ -137,7 +137,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
             />
           </div>
-          <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs">
+          <div className="aspect-[4/3] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-xs border border-black/5 dark:border-white/10">
             <img
               src={gallery[4] || activeProject.fallbackImage}
               alt={`${activeProject.title} Detail 5`}
@@ -151,7 +151,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
 
       {/* 7. FULL-WIDTH IMAGE: Gallery Image 6 */}
       <section className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-6">
-        <div className="relative w-full aspect-[16/9] sm:aspect-[21/10] max-h-[580px] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-sm">
+        <div className="relative w-full aspect-[16/9] sm:aspect-[21/10] max-h-[580px] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-sm border border-black/5 dark:border-white/10">
           <img
             src={gallery[5] || gallery[0]}
             alt={`${activeProject.title} Detail 6`}
@@ -190,7 +190,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
             <div 
               key={rec.id}
               onClick={() => handleRecommendationClick(rec)}
-              className="group relative cursor-pointer aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500"
+              className="group relative cursor-pointer aspect-[4/3] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500 border border-black/5 dark:border-white/10"
             >
               <img
                 src={rec.image}

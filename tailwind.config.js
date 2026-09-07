@@ -31,6 +31,17 @@ export default {
           charcoal: '#1A1816',
           dark: '#0A1525',
           gold: '#C5A880',
+        },
+        terion: {
+          charcoal: '#1A1816',
+          orange: '#DF6D27',
+          'orange-hover': '#C85C1B',
+          stone: '#78716C',
+          gray: '#9CA3AF',
+          muted: '#A8A29E',
+          bg: '#F5F4F0',
+          border: '#E2DCD5',
+          'card-dark': '#0D1724',
         }
       },
       boxShadow: {

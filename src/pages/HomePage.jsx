@@ -173,7 +173,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
           onMouseLeave={() => setIsPaused(false)}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
-          className="group relative cursor-pointer w-full aspect-[16/10] sm:aspect-[21/11] max-h-[700px] overflow-hidden bg-black shadow-lg select-none rounded-xs"
+          className="group relative cursor-pointer w-full aspect-[16/10] sm:aspect-[21/11] max-h-[700px] overflow-hidden bg-black shadow-lg select-none rounded-2xl sm:rounded-3xl border border-black/5 dark:border-white/10"
         >
           {/* Sliding Track (Rolling Carousel) */}
           <div 
@@ -310,7 +310,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
             <div
               key={item.id}
               onClick={() => handleCardClick(item)}
-              className="group relative cursor-pointer aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-2xl hover:-translate-y-2 active:scale-[0.98] transition-all duration-500 ease-out"
+              className="group relative cursor-pointer aspect-[4/3] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-2xl hover:-translate-y-2 active:scale-[0.98] transition-all duration-500 ease-out border border-black/5 dark:border-white/10"
             >
               {/* Photo */}
               <img

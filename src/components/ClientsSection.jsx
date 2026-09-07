@@ -99,7 +99,7 @@ export default function ClientsSection() {
                 key={idx} 
                 className="flex flex-col items-center justify-center p-2 group cursor-default transition-all duration-400"
               >
-                <div className={`h-20 sm:h-24 w-28 sm:w-36 flex items-center justify-center ${item.isCard ? 'bg-white/90 dark:bg-white rounded-lg p-2 shadow-2xs' : ''}`}>
+                <div className={`h-20 sm:h-24 w-28 sm:w-36 flex items-center justify-center ${item.isCard ? 'bg-white/90 dark:bg-white rounded-2xl border border-black/5 dark:border-white/10 p-2 shadow-2xs' : ''}`}>
                   <img
                     src={item.image}
                     alt={item.name}
@@ -119,7 +119,7 @@ export default function ClientsSection() {
                 key={idx} 
                 className="flex flex-col items-center justify-center p-2 group cursor-default transition-all duration-400"
               >
-                <div className={`h-20 sm:h-24 w-24 sm:w-28 flex items-center justify-center ${item.isCircle ? 'rounded-full overflow-hidden bg-white shadow-2xs' : ''}`}>
+                <div className={`h-20 sm:h-24 w-24 sm:w-28 flex items-center justify-center ${item.isCircle ? 'rounded-full overflow-hidden bg-white shadow-2xs border border-black/5 dark:border-white/10' : ''}`}>
                   <img
                     src={item.image}
                     alt={item.name}
@@ -139,7 +139,7 @@ export default function ClientsSection() {
                 key={idx} 
                 className="flex items-center justify-center p-2 group cursor-default transition-all duration-400"
               >
-                <div className={`h-16 sm:h-20 w-36 sm:w-44 flex items-center justify-center ${item.isCard ? 'bg-white/90 dark:bg-white rounded-lg p-2 shadow-2xs' : ''}`}>
+                <div className={`h-16 sm:h-20 w-36 sm:w-44 flex items-center justify-center ${item.isCard ? 'bg-white/90 dark:bg-white rounded-2xl border border-black/5 dark:border-white/10 p-2 shadow-2xs' : ''}`}>
                   <img
                     src={item.image}
                     alt={item.name}

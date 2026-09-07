@@ -15,24 +15,26 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
     <div className="bg-transparent animate-fade-in transition-colors duration-300">
       
       {/* 1. HERO: Glass Facade & Sky Banner matching Figma Image 4 */}
-      <section className="relative w-full min-h-[420px] sm:min-h-[480px] flex items-center justify-center bg-gray-900 overflow-hidden px-6 py-20 text-center">
-        <div 
-          className="absolute inset-0 bg-cover bg-center opacity-85"
-          style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1800&q=90')`
-          }}
-        ></div>
-        
-        <div className="absolute inset-0 bg-sky-950/20 backdrop-blur-[0.5px]"></div>
+      <section className="w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 pt-4">
+        <div className="relative w-full min-h-[420px] sm:min-h-[480px] flex items-center justify-center bg-gray-900 overflow-hidden px-6 py-20 text-center rounded-2xl sm:rounded-3xl shadow-lg border border-black/5 dark:border-white/10">
+          <div 
+            className="absolute inset-0 bg-cover bg-center opacity-85"
+            style={{
+              backgroundImage: `url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1800&q=90')`
+            }}
+          ></div>
+          
+          <div className="absolute inset-0 bg-sky-950/20 backdrop-blur-[0.5px]"></div>
 
-        {/* Hero Title Overlay */}
-        <div className="relative z-10 space-y-2 text-ashara-charcoal">
-          <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.32em] text-ashara-teal dark:text-ashara-gold font-semibold">
-            OUR COMPANY
-          </p>
-          <h1 className="font-serif text-4xl sm:text-6xl text-ashara-charcoal dark:text-white font-normal tracking-wide transition-colors duration-300">
-            About Us
-          </h1>
+          {/* Hero Title Overlay */}
+          <div className="relative z-10 space-y-2 text-ashara-charcoal">
+            <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.32em] text-ashara-teal dark:text-ashara-gold font-semibold">
+              OUR COMPANY
+            </p>
+            <h1 className="font-serif text-4xl sm:text-6xl text-ashara-charcoal dark:text-white font-normal tracking-wide transition-colors duration-300">
+              About Us
+            </h1>
+          </div>
         </div>
       </section>
 
@@ -65,7 +67,7 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
 
       {/* 3. FULL-WIDTH FEATURE BANNER: Concrete Atrium & Floating Stairs */}
       <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 py-8">
-        <div className="relative w-full aspect-[16/9] sm:aspect-[21/10] max-h-[560px] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-sm">
+        <div className="relative w-full aspect-[16/9] sm:aspect-[21/10] max-h-[560px] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-sm border border-black/5 dark:border-white/10">
           <img
             src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=90"
             alt="Ashara Design Atelier Workspace"
@@ -136,7 +138,7 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
           {/* Card 1: Amibara Properties */}
           <div 
             onClick={() => handleProjectClick(5)}
-            className="group relative cursor-pointer aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500"
+            className="group relative cursor-pointer aspect-[4/3] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500 border border-black/5 dark:border-white/10"
           >
             <img
               src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=85"
@@ -158,7 +160,7 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
           {/* Card 2: Ministry of Revenues */}
           <div 
             onClick={() => handleProjectClick(6)}
-            className="group relative cursor-pointer aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500"
+            className="group relative cursor-pointer aspect-[4/3] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500 border border-black/5 dark:border-white/10"
           >
             <img
               src="./assets/p6_revenues.png"

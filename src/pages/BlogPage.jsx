@@ -38,7 +38,7 @@ export default function BlogPage({ isSection = false }) {
               onClick={() => setSelectedPost(post)}
               className="group cursor-pointer space-y-4"
             >
-              <div className="aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs relative">
+              <div className="aspect-[16/10] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-xs relative border border-black/5 dark:border-white/10">
                 <img
                   src={post.image}
                   alt={post.title}
@@ -46,7 +46,7 @@ export default function BlogPage({ isSection = false }) {
                   decoding="async"
                   className="w-full h-full object-cover group-hover:scale-104 transition-transform duration-700 ease-out"
                 />
-                <span className="absolute top-4 left-4 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-[9px] uppercase tracking-[0.2em] font-semibold px-3 py-1 shadow-xs">
+                <span className="absolute top-4 left-4 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-[9px] uppercase tracking-[0.2em] font-semibold px-3 py-1 rounded-full shadow-xs">
                   Featured
                 </span>
               </div>
@@ -86,7 +86,7 @@ export default function BlogPage({ isSection = false }) {
                 onClick={() => setSelectedPost(post)}
                 className="group cursor-pointer space-y-3"
               >
-                <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xs">
+                <div className="aspect-[4/3] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-xs border border-black/5 dark:border-white/10">
                   <img
                     src={post.image}
                     alt={post.title}
@@ -121,7 +121,7 @@ export default function BlogPage({ isSection = false }) {
         >
           <div 
             onClick={(e) => e.stopPropagation()}
-            className="bg-white dark:bg-ashara-dark w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl relative border border-gray-100 dark:border-white/5 transition-colors duration-300"
+            className="bg-white dark:bg-ashara-dark w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl relative rounded-2xl sm:rounded-3xl border border-gray-100 dark:border-white/5 transition-colors duration-300"
           >
             
             {/* Close Button */}
@@ -134,7 +134,7 @@ export default function BlogPage({ isSection = false }) {
             </button>
 
             {/* Article Image Header */}
-            <div className="w-full aspect-[21/9] overflow-hidden bg-gray-100 dark:bg-ashara-charcoal">
+            <div className="w-full aspect-[21/9] overflow-hidden rounded-t-2xl sm:rounded-t-3xl bg-gray-100 dark:bg-ashara-charcoal">
               <img
                 src={selectedPost.image}
                 alt={selectedPost.title}
