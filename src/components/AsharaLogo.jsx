@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function AsharaLogo({ className = 'text-ashara-teal', textClassName = 'text-ashara-charcoal', size = 80, light = false }) {
+export default function AsharaLogo({ className = 'text-ashara-teal', textClassName = 'text-ashara-charcoal', size = 70, light = false }) {
   return (
     <div className="flex items-center gap-5 select-none">
       {/* Official Ashara Fingerprint Mark */}
@@ -14,7 +14,7 @@ export default function AsharaLogo({ className = 'text-ashara-teal', textClassNa
           e.target.style.display = 'none';
         }}
       />
-      
+
       <div className="flex flex-col justify-center">
         <span className={`font-sans font-bold tracking-[0.24em] text-[25px] sm:text-[28px] uppercase leading-none ${textClassName}`}>
           Ashara
