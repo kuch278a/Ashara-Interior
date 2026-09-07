@@ -8,6 +8,19 @@ import BlogPage from './BlogPage';
 import ContactPage from './ContactPage';
 import { getDynamicProjects } from '../services/firebaseService';
 
+// ==========================================
+// HERO CAROUSEL SETTINGS
+// Adjust these values to change the size of the Hero Banner
+// ==========================================
+const HERO_SETTINGS = {
+  // Container width (e.g., "max-w-5xl", "max-w-6xl", "max-w-7xl", "max-w-full")
+  maxWidth: "max-w-7xl",
+  // Aspect ratio (e.g., "aspect-[16/9] sm:aspect-[21/9]", "aspect-video")
+  aspectRatio: "aspect-[16/9] sm:aspect-[21/9]",
+  // Maximum height limit (e.g., "max-h-[500px]", "max-h-[700px]")
+  maxHeight: "max-h-[600px]"
+};
+
 const DEFAULT_HERO_SLIDES = [
   {
     id: 2,
@@ -164,19 +177,20 @@ export default function HomePage({ onNavigate, onSelectProject }) {
 
   return (
     <div className="bg-transparent animate-fade-in space-y-20 sm:space-y-32 pb-24 transition-colors duration-300 relative">
-      
+
       {/* 1. HERO BANNER: Clean luxury carousel with subtle on-hover arrows, swipe & timer bar */}
-      <section className="w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 pt-4">
-        <div 
+      <section className={`w-full ${HERO_SETTINGS.maxWidth} mx-auto px-6 sm:px-10 lg:px-16 pt-4`}>
+        <div
           onClick={handleHeroClick}
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
-          className="group relative cursor-pointer w-full aspect-[16/10] sm:aspect-[21/11] max-h-[700px] overflow-hidden bg-black shadow-lg select-none rounded-2xl sm:rounded-3xl border border-black/5 dark:border-white/10"
+          className={`group relative cursor-pointer w-full ${HERO_SETTINGS.aspectRatio}
+           ${HERO_SETTINGS.maxHeight} overflow-hidden bg-black shadow-lg select-none rounded-2xl sm:rounded-3xl border border-black/5 dark:border-white/10`}
         >
           {/* Sliding Track (Rolling Carousel) */}
-          <div 
+          <div
             className="flex w-full h-full transition-transform duration-700 ease-out"
             style={{ transform: `translate3d(-${currentSlide * 100}%, 0, 0)` }}
           >
@@ -205,7 +219,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none z-10"></div>
 
           {/* Bottom-Left Overlay Text matching Figma exactly */}
-          <div 
+          <div
             key={currentSlide}
             className="absolute bottom-8 left-8 sm:bottom-12 sm:left-12 text-white space-y-1.5 z-20 animate-fade-in"
           >
@@ -228,19 +242,17 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                     e.stopPropagation();
                     setCurrentSlide(idx);
                   }}
-                  className={`h-1.5 transition-all duration-300 rounded-full focus:outline-none overflow-hidden relative ${
-                    isActive 
-                      ? 'w-8 bg-white/30' 
-                      : 'w-2 bg-white/40 hover:bg-white'
-                  }`}
+                  className={`h-1.5 transition-all duration-300 rounded-full focus:outline-none overflow-hidden relative ${isActive
+                    ? 'w-8 bg-white/30'
+                    : 'w-2 bg-white/40 hover:bg-white'
+                    }`}
                   aria-label={`Go to slide ${idx + 1}`}
                 >
                   {isActive && (
-                    <div 
+                    <div
                       key={`timer-${currentSlide}-${isPaused}`}
-                      className={`h-full bg-ashara-gold rounded-full ${
-                        isPaused ? 'w-full' : 'animate-progress-fill'
-                      }`}
+                      className={`h-full bg-ashara-gold rounded-full ${isPaused ? 'w-full' : 'animate-progress-fill'
+                        }`}
                       style={{ animationDuration: '5.5s' }}
                     />
                   )}
@@ -268,7 +280,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
           </button>
 
           {/* Luxury Scroll Down Cue */}
-          <div 
+          <div
             onClick={(e) => {
               e.stopPropagation();
               const el = document.getElementById('home-works');
@@ -286,7 +298,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
         <p className="text-[9.5px] sm:text-[10px] uppercase tracking-[0.32em] text-ashara-teal dark:text-ashara-gold font-semibold transition-colors duration-300">
           PHILOSOPHY
         </p>
-        
+
         <blockquote className="font-serif italic text-2xl sm:text-4xl lg:text-[40px] text-ashara-charcoal dark:text-ashara-sand leading-relaxed font-light py-2 transition-colors duration-300">
           “Design with passion, authenticity, and positivity to create spaces that inspire and uplift the soul.”
         </blockquote>
@@ -294,7 +306,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
 
       {/* 3. "OUR WORKS" 2x2 GRID SECTION with Signature Teal/Green Bottom Label Boxes */}
       <section id="home-works" className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 space-y-12">
-        
+
         {/* Header with Divider Lines */}
         <div className="flex items-center justify-center gap-6 sm:gap-10">
           <div className="h-[1px] bg-gray-300 dark:bg-white/10 flex-1 max-w-[240px]"></div>
@@ -348,19 +360,19 @@ export default function HomePage({ onNavigate, onSelectProject }) {
 
       {/* 4. SERVICES SECTION (How We Work & Interactive Accordion) */}
       <section className="border-t border-gray-100 dark:border-white/5 pt-10">
-        <ServicesPage 
-          onNavigate={onNavigate} 
-          onSelectProject={onSelectProject} 
-          isSection={true} 
+        <ServicesPage
+          onNavigate={onNavigate}
+          onSelectProject={onSelectProject}
+          isSection={true}
         />
       </section>
 
       {/* 5. ABOUT US SECTION (Studio story, atelier, & 3 Core Value Pillars) */}
       <section className="border-t border-gray-100 dark:border-white/5 pt-10">
-        <AboutPage 
-          onNavigate={onNavigate} 
-          onSelectProject={onSelectProject} 
-          isSection={true} 
+        <AboutPage
+          onNavigate={onNavigate}
+          onSelectProject={onSelectProject}
+          isSection={true}
         />
       </section>
 

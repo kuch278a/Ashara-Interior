@@ -83,7 +83,7 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
               <button
                 key={link.id}
                 onClick={() => handleNavClick(link.id)}
-                className={`px-4 py-1.5 rounded-full text-[12px] font-medium transition-all duration-200 ${
+                className={`px-4 py-1.5 rounded-full text-[13px] font-medium transition-all duration-200 ${
                   isActive
                     ? 'bg-terion-charcoal text-white dark:bg-white dark:text-terion-charcoal shadow-sm'
                     : 'text-terion-stone dark:text-terion-gray hover:text-terion-charcoal dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10'
@@ -131,7 +131,7 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
               <button
                 key={link.id}
                 onClick={() => handleNavClick(link.id)}
-                className={`block w-full text-left px-4 py-2.5 rounded-xl text-[12px] font-medium transition-all duration-200 ${
+                className={`block w-full text-left px-4 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200 ${
                   isActive
                     ? 'bg-terion-charcoal text-white dark:bg-white dark:text-terion-charcoal shadow-sm font-semibold'
                     : 'text-terion-stone dark:text-terion-gray hover:text-terion-charcoal dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10'
