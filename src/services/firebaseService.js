@@ -14,11 +14,13 @@ import {
 import {
   getAuth,
   signInWithEmailAndPassword,
+  signInAnonymously,
   signOut,
   onAuthStateChanged
 } from 'firebase/auth';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getStorage, ref, uploadBytes, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { DEFAULT_PROJECTS_LIST, DEFAULT_BLOG_POSTS } from '../data/defaultData';
+import { compressImage } from '../utils/imageOptimizer';
 
 // Firebase configuration from environment variables or live studio keys
 const firebaseConfig = {
@@ -61,33 +63,108 @@ export { db, auth, storage };
 // ----------------------------------------------------
 
 /**
- * Upload an image file to Firebase Storage and return the download URL.
+ * Upload an image file with automatic client-side compression,
+ * real-time progress callbacks, and resilient timeout fallback.
  * @param {File} file - The image file to upload
  * @param {string} folder - Storage folder (e.g. 'projects', 'blog')
- * @returns {{ success: boolean, url?: string, error?: string }}
+ * @param {Function} [onProgress] - Optional progress callback ({ stage, percent })
+ * @returns {{ success: boolean, url?: string, isCloud?: boolean, isFallback?: boolean, error?: string }}
  */
-export async function uploadImage(file, folder = 'images') {
+export async function uploadImage(file, folder = 'images', onProgress = null) {
   if (!file) return { success: false, error: 'No file provided' };
 
+  // 1. Client-side compression to prevent uploading multi-megabyte raw photos
+  if (onProgress) onProgress({ stage: 'compressing', percent: 15 });
+
+  let fileToUpload = file;
+  let fallbackDataUrl = '';
+
+  try {
+    const compression = await compressImage(file);
+    if (compression.file) fileToUpload = compression.file;
+    if (compression.dataUrl) fallbackDataUrl = compression.dataUrl;
+  } catch (err) {
+    console.warn('[Storage] Compression failed, proceeding with original:', err);
+  }
+
+  if (onProgress) onProgress({ stage: 'uploading', percent: 30 });
+
+  // 2. Attempt Firebase Storage upload if configured
   if (isFirebaseConfigured && storage) {
     try {
+      // Ensure user has auth context if Anonymous Auth is available
+      if (auth && !auth.currentUser) {
+        try {
+          await signInAnonymously(auth);
+        } catch (authErr) {
+          // Silent catch — Firebase project might have Anonymous Auth disabled
+        }
+      }
+
       const timestamp = Date.now();
-      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const safeName = (fileToUpload.name || 'image.jpg').replace(/[^a-zA-Z0-9._-]/g, '_');
       const storageRef = ref(storage, `images/${folder}/${timestamp}_${safeName}`);
-      const snapshot = await uploadBytes(storageRef, file);
-      const downloadURL = await getDownloadURL(snapshot.ref);
-      return { success: true, url: downloadURL };
+
+      const uploadTask = uploadBytesResumable(storageRef, fileToUpload, {
+        contentType: fileToUpload.type || 'image/jpeg'
+      });
+
+      // Wrap in 12-second timeout so it NEVER hangs indefinitely
+      const uploadPromise = new Promise((resolve, reject) => {
+        uploadTask.on(
+          'state_changed',
+          (snapshot) => {
+            if (snapshot.totalBytes > 0) {
+              const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 70);
+              if (onProgress) {
+                onProgress({ stage: 'uploading', percent: 30 + progress });
+              }
+            }
+          },
+          (error) => {
+            reject(error);
+          },
+          async () => {
+            try {
+              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+              if (onProgress) onProgress({ stage: 'done', percent: 100 });
+              resolve({ success: true, url: downloadURL, isCloud: true });
+            } catch (err) {
+              reject(err);
+            }
+          }
+        );
+      });
+
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => {
+          try {
+            uploadTask.cancel();
+          } catch (e) {}
+          reject(new Error('Storage upload timeout: exceeded 12 seconds'));
+        }, 12000);
+      });
+
+      return await Promise.race([uploadPromise, timeoutPromise]);
     } catch (error) {
-      console.error('Firebase Storage upload error:', error);
-      return { success: false, error: error.message || 'Upload failed' };
+      console.warn('[Storage] Cloud storage failed or timed out. Using instant high-definition local fallback:', error);
+      // Fall through to instant data URL fallback!
     }
   }
 
-  // Fallback: convert to data URL for offline/demo mode
+  // 3. Instant local data URL fallback: guaranteed to work offline or when cloud storage is blocked
+  if (fallbackDataUrl) {
+    if (onProgress) onProgress({ stage: 'done', percent: 100 });
+    return { success: true, url: fallbackDataUrl, isFallback: true };
+  }
+
   return new Promise((resolve) => {
     const reader = new FileReader();
-    reader.onload = () => resolve({ success: true, url: reader.result });
-    reader.onerror = () => resolve({ success: false, error: 'Failed to read file' });
+    reader.onload = () => {
+      if (onProgress) onProgress({ stage: 'done', percent: 100 });
+      resolve({ success: true, url: reader.result, isFallback: true });
+    };
+    reader.onerror = () => resolve({ success: false, error: 'Failed to read image file' });
     reader.readAsDataURL(file);
   });
 }
@@ -263,6 +340,43 @@ export async function saveBlogPost(postData) {
   }
   localStorage.setItem('ashara_blog_posts', JSON.stringify(posts));
   return { success: true, id, isLive: false };
+}
+
+/**
+ * Delete a blog post from CMS
+ */
+export async function deleteBlogPost(postId) {
+  const id = String(postId);
+  if (isFirebaseConfigured && db) {
+    try {
+      await deleteDoc(doc(db, 'blog_posts', id));
+    } catch (error) {
+      console.error('Firestore delete blog post error:', error);
+    }
+  }
+
+  const posts = await getDynamicBlogPosts();
+  const filtered = posts.filter(p => String(p.id) !== id);
+  localStorage.setItem('ashara_blog_posts', JSON.stringify(filtered));
+  return { success: true };
+}
+
+/**
+ * Update consultation inquiry status ('new' | 'contacted' | 'completed')
+ */
+export async function updateConsultationStatus(leadId, newStatus) {
+  if (isFirebaseConfigured && db) {
+    try {
+      await setDoc(doc(db, 'consultations', String(leadId)), { status: newStatus }, { merge: true });
+    } catch (error) {
+      console.error('Firestore update consultation status error:', error);
+    }
+  }
+
+  const localList = JSON.parse(localStorage.getItem('ashara_consultations') || '[]');
+  const updated = localList.map(item => String(item.id) === String(leadId) ? { ...item, status: newStatus } : item);
+  localStorage.setItem('ashara_consultations', JSON.stringify(updated));
+  return { success: true };
 }
 
 // ----------------------------------------------------
