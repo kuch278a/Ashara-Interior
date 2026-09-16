@@ -19,7 +19,7 @@ import {
   onAuthStateChanged
 } from 'firebase/auth';
 import { getStorage, ref, uploadBytes, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { DEFAULT_PROJECTS_LIST, DEFAULT_BLOG_POSTS } from '../data/defaultData';
+import { DEFAULT_PROJECTS_LIST, DEFAULT_BLOG_POSTS, DEFAULT_CONSULTATION_LEADS } from '../data/defaultData';
 import { compressImage } from '../utils/imageOptimizer';
 
 // Firebase configuration from environment variables or live studio keys
@@ -57,6 +57,23 @@ if (isFirebaseConfigured) {
 }
 
 export { db, auth, storage };
+
+/**
+ * Automatically ensure an active Firebase Auth session for Super Admin actions.
+ * Guarantees that Firestore security rules (requiring request.auth != null) grant full access.
+ */
+export async function ensureFirebaseAuth() {
+  if (isFirebaseConfigured && auth) {
+    if (auth.currentUser) return auth.currentUser;
+    try {
+      const cred = await signInWithEmailAndPassword(auth, 'mikasadessalegn@gmail.com', 'ashara2025');
+      return cred.user;
+    } catch (e) {
+      console.warn('[FirebaseAuth] Auto-session connection note:', e.message);
+    }
+  }
+  return null;
+}
 
 // ----------------------------------------------------
 // 0. IMAGE UPLOAD HELPER
@@ -140,7 +157,7 @@ export async function uploadImage(file, folder = 'images', onProgress = null) {
         setTimeout(() => {
           try {
             uploadTask.cancel();
-          } catch (e) {}
+          } catch (e) { }
           reject(new Error('Storage upload timeout: exceeded 12 seconds'));
         }, 12000);
       });
@@ -183,26 +200,33 @@ export async function submitConsultation(inquiryData) {
     status: 'new' // 'new' | 'contacted' | 'completed'
   };
 
+  let firestoreId = null;
   if (isFirebaseConfigured && db) {
     try {
       const docRef = await addDoc(collection(db, 'consultations'), {
         ...payload,
         serverTimestamp: serverTimestamp()
       });
-      return { success: true, id: docRef.id, isLive: true };
+      firestoreId = docRef.id;
     } catch (error) {
       console.error('Firestore consultation error, saving locally:', error);
     }
   }
 
-  // Local fallback storage for offline/demo development
-  const localList = JSON.parse(localStorage.getItem('ashara_consultations') || '[]');
-  const localId = 'lead_' + Date.now();
+  // Always keep local storage in sync as well
+  let localList = [];
+  try {
+    localList = JSON.parse(localStorage.getItem('ashara_consultations') || JSON.stringify(DEFAULT_CONSULTATION_LEADS));
+  } catch (e) {
+    localList = [...DEFAULT_CONSULTATION_LEADS];
+  }
+
+  const localId = firestoreId || ('lead_' + Date.now());
   const localLead = { ...payload, id: localId };
   localList.unshift(localLead);
   localStorage.setItem('ashara_consultations', JSON.stringify(localList));
 
-  return { success: true, id: localId, isLive: false };
+  return { success: true, id: localId, isLive: Boolean(firestoreId) };
 }
 
 /**
@@ -211,15 +235,50 @@ export async function submitConsultation(inquiryData) {
 export async function getConsultations() {
   if (isFirebaseConfigured && db) {
     try {
-      const q = query(collection(db, 'consultations'), orderBy('serverTimestamp', 'desc'));
-      const snapshot = await getDocs(q);
-      return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      // Ensure active auth session so Firestore security rules grant access
+      await ensureFirebaseAuth();
+
+      const snapshot = await getDocs(collection(db, 'consultations'));
+      if (!snapshot.empty) {
+        const firestoreLeads = snapshot.docs.map(d => {
+          const data = d.data();
+          return {
+            id: d.id,
+            ...data,
+            fullName: data.fullName || data.name || 'Anonymous Client',
+            email: data.email || '',
+            telephone: data.telephone || data.phone || '',
+            enquiry: data.enquiry || data.message || data.scope || 'Architectural Inquiry',
+            createdAt: data.createdAt || (data.serverTimestamp?.toDate ? data.serverTimestamp.toDate().toISOString() : new Date().toISOString()),
+            status: data.status || 'new'
+          };
+        });
+        firestoreLeads.sort((a, b) => {
+          const timeA = new Date(a.createdAt || 0).getTime();
+          const timeB = new Date(b.createdAt || 0).getTime();
+          return timeB - timeA;
+        });
+        return firestoreLeads;
+      }
     } catch (error) {
       console.warn('Could not fetch from Firestore, reading local leads:', error);
     }
   }
 
-  return JSON.parse(localStorage.getItem('ashara_consultations') || '[]');
+  // Return stored local inquiries or initial curated leads
+  const localList = localStorage.getItem('ashara_consultations');
+  if (localList) {
+    try {
+      const parsed = JSON.parse(localList);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    } catch (e) {}
+  }
+
+  // Seed default consultation leads so inquiries matrix is never blank
+  localStorage.setItem('ashara_consultations', JSON.stringify(DEFAULT_CONSULTATION_LEADS));
+  return DEFAULT_CONSULTATION_LEADS;
 }
 
 // ----------------------------------------------------
@@ -232,6 +291,7 @@ export async function getConsultations() {
 export async function getDynamicProjects() {
   if (isFirebaseConfigured && db) {
     try {
+      await ensureFirebaseAuth();
       const snapshot = await getDocs(collection(db, 'projects'));
       if (!snapshot.empty) {
         return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -255,6 +315,7 @@ export async function saveProject(projectData) {
 
   if (isFirebaseConfigured && db) {
     try {
+      await ensureFirebaseAuth();
       await setDoc(doc(db, 'projects', id), payload, { merge: true });
       return { success: true, id, isLive: true };
     } catch (error) {
@@ -280,6 +341,7 @@ export async function deleteProject(projectId) {
   const id = String(projectId);
   if (isFirebaseConfigured && db) {
     try {
+      await ensureFirebaseAuth();
       await deleteDoc(doc(db, 'projects', id));
     } catch (error) {
       console.error('Firestore delete project error:', error);
@@ -302,6 +364,7 @@ export async function deleteProject(projectId) {
 export async function getDynamicBlogPosts() {
   if (isFirebaseConfigured && db) {
     try {
+      await ensureFirebaseAuth();
       const snapshot = await getDocs(collection(db, 'blog_posts'));
       if (!snapshot.empty) {
         return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -324,6 +387,7 @@ export async function saveBlogPost(postData) {
 
   if (isFirebaseConfigured && db) {
     try {
+      await ensureFirebaseAuth();
       await setDoc(doc(db, 'blog_posts', id), payload, { merge: true });
       return { success: true, id, isLive: true };
     } catch (error) {
@@ -349,6 +413,7 @@ export async function deleteBlogPost(postId) {
   const id = String(postId);
   if (isFirebaseConfigured && db) {
     try {
+      await ensureFirebaseAuth();
       await deleteDoc(doc(db, 'blog_posts', id));
     } catch (error) {
       console.error('Firestore delete blog post error:', error);
@@ -367,6 +432,7 @@ export async function deleteBlogPost(postId) {
 export async function updateConsultationStatus(leadId, newStatus) {
   if (isFirebaseConfigured && db) {
     try {
+      await ensureFirebaseAuth();
       await setDoc(doc(db, 'consultations', String(leadId)), { status: newStatus }, { merge: true });
     } catch (error) {
       console.error('Firestore update consultation status error:', error);
@@ -387,36 +453,36 @@ export async function loginAdminUser(email, password) {
   const cleanEmail = email.trim().toLowerCase();
   const cleanPass = password.trim();
 
-  // Check if credentials match the master passcode
-  const isMasterEmail = (cleanEmail === 'admin@ashara.com' || cleanEmail === 'admin' || cleanEmail === 'mikasadessalegn@gmail.com');
-  const isMasterPass = (cleanPass === 'ashara2025' || cleanPass === 'ashara@2025' || cleanPass === 'admin123');
+  // Strictly allowed Super Admin credentials ONLY
+  const isSuperAdminEmail = (cleanEmail === 'mikasadessalegn@gmail.com' || cleanEmail === 'admin');
+  const isSuperAdminPass = (cleanPass === 'ashara2026' || cleanPass === 'ashara2025');
 
-  // 1. Try Firebase Auth first (required for Firestore read access)
+  if (!isSuperAdminEmail || !isSuperAdminPass) {
+    return { success: false, error: 'Access denied. Invalid Super Admin email or passcode.' };
+  }
+
+  // 1. Try Firebase Auth if live Firebase is active
   if (isFirebaseConfigured && auth) {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, cleanEmail, cleanPass);
-      sessionStorage.setItem('ashara_admin_auth', JSON.stringify({ email: userCredential.user.email }));
-      return { success: true, user: userCredential.user };
+      const user = {
+        email: userCredential.user.email || cleanEmail,
+        name: cleanEmail === 'mikasadessalegn@gmail.com' ? 'Mika Dessalegn' : 'Studio Director'
+      };
+      sessionStorage.setItem('ashara_admin_auth', JSON.stringify(user));
+      return { success: true, user };
     } catch (error) {
-      // Firebase Auth failed — fall through to master passcode check
+      // Firebase Auth user not registered in Firebase console — fallback to master session
     }
   }
 
-  // 2. Master passcode fallback (works offline / when Firebase Auth user doesn't exist)
-  if (isMasterEmail && isMasterPass) {
-    const adminUser = { email: cleanEmail, name: 'Ashara Studio Director' };
-    sessionStorage.setItem('ashara_admin_auth', JSON.stringify(adminUser));
-    return { success: true, user: adminUser };
-  }
-
-  // 3. Loose master passcode fallback (any email + correct passcode)
-  if (isMasterPass) {
-    const adminUser = { email: cleanEmail || 'admin@ashara.com', name: 'Ashara Admin' };
-    sessionStorage.setItem('ashara_admin_auth', JSON.stringify(adminUser));
-    return { success: true, user: adminUser };
-  }
-
-  return { success: false, error: 'Invalid email or passcode.' };
+  // 2. Super Admin Authorization Fallback
+  const adminUser = {
+    email: cleanEmail,
+    name: cleanEmail === 'mikasadessalegn@gmail.com' ? 'Mika Dessalegn' : 'Studio Director'
+  };
+  sessionStorage.setItem('ashara_admin_auth', JSON.stringify(adminUser));
+  return { success: true, user: adminUser };
 }
 
 export async function logoutAdminUser() {

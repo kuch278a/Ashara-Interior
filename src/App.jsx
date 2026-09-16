@@ -158,8 +158,8 @@ export default function App() {
         </Suspense>
       </main>
 
-      {/* 3. Figma Solid Deep Forest Teal Footer */}
-      <Footer onNavigate={handleNavigate} />
+      {/* 3. Figma Solid Deep Forest Teal Footer (hidden on admin portal) */}
+      {activePage !== 'admin' && <Footer onNavigate={handleNavigate} />}
 
     </div>
   );

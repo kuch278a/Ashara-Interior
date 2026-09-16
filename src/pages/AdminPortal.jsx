@@ -58,10 +58,21 @@ import {
 import AsharaLogo from '../components/AsharaLogo';
 
 export default function AdminPortal({ onNavigate }) {
-  // Authentication State
+  // Authentication State (Strict Super Admin Validation)
   const [adminUser, setAdminUser] = useState(() => {
-    const saved = sessionStorage.getItem('ashara_admin_auth');
-    return saved ? JSON.parse(saved) : null;
+    try {
+      const saved = sessionStorage.getItem('ashara_admin_auth');
+      if (!saved) return null;
+      const parsed = JSON.parse(saved);
+      const email = (parsed?.email || '').toLowerCase();
+      if (email === 'admin' || email === 'mikasadessalegn@gmail.com') {
+        return parsed;
+      }
+      sessionStorage.removeItem('ashara_admin_auth');
+      return null;
+    } catch (e) {
+      return null;
+    }
   });
 
   // Login Form States
@@ -434,7 +445,7 @@ export default function AdminPortal({ onNavigate }) {
                   required
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
-                  placeholder="admin@ashara.com"
+                  placeholder="admin or mikasadessalegn@gmail.com"
                   className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm text-ashara-charcoal dark:text-white placeholder-gray-400 rounded-xs focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold transition shadow-inner"
                 />
               </div>

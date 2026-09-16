@@ -147,3 +147,42 @@ export const DEFAULT_BLOG_POSTS = [
     ]
   }
 ];
+
+export const DEFAULT_CONSULTATION_LEADS = [
+  {
+    id: 'lead_01',
+    fullName: 'Dr. Workneh Gebeyehu',
+    email: 'w.gebeyehu@igad-diplomacy.org',
+    telephone: '+251 91 123 4567',
+    enquiry: 'Requesting an architectural consultation for an executive suite and conference hall acoustic redesign in Addis Ababa. We need monumental coffered timber ceiling details and diplomatic VIP hospitality lounges.',
+    createdAt: new Date(Date.now() - 2 * 3600 * 1000).toISOString(),
+    status: 'new'
+  },
+  {
+    id: 'lead_02',
+    fullName: 'Selamawit Tadesse',
+    email: 'selam.tadesse@boleluxury.com',
+    telephone: '+251 90 763 6463',
+    enquiry: 'We recently acquired a 450 sqm penthouse in Bole Atlas. Seeking bespoke interior architecture, custom Ethiopian walnut paneling, circadian ambient lighting, and imported Italian terrazzo finishes.',
+    createdAt: new Date(Date.now() - 8 * 3600 * 1000).toISOString(),
+    status: 'new'
+  },
+  {
+    id: 'lead_03',
+    fullName: 'Abebe Kebede',
+    email: 'akebede@cbe-banking.et',
+    telephone: '+251 92 345 6789',
+    enquiry: 'Commercial Bank executive boardroom renovation. Need integrated biometric security entries, motorized acoustic partition walls, and custom solid brass reception desks for 3 branch headquarters.',
+    createdAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
+    status: 'contacted'
+  },
+  {
+    id: 'lead_04',
+    fullName: 'Dawit Haile',
+    email: 'dawit.haile@midroc-invest.com',
+    telephone: '+251 91 456 7890',
+    enquiry: 'Headquarters atrium and sky-lounge interior architecture completed in concept stage. Requesting tender proposal review for full turnkey construction and acoustic plaster finishes.',
+    createdAt: new Date(Date.now() - 48 * 3600 * 1000).toISOString(),
+    status: 'completed'
+  }
+];
