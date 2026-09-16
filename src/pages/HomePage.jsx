@@ -6,11 +6,11 @@ import ServicesPage from './ServicesPage';
 import AboutPage from './AboutPage';
 import BlogPage from './BlogPage';
 import ContactPage from './ContactPage';
-import { getDynamicProjects } from '../services/firebaseService';
+import { getInitialProjects, subscribeToProjects } from '../services/firebaseService';
 
 // ==========================================
 // HERO CAROUSEL SETTINGS
-// Adjust these values to change the size of the Hero Banner
+// Adjust these values to change the size and speed of the Hero Banner
 // ==========================================
 const HERO_SETTINGS = {
   // Container width (e.g., "max-w-5xl", "max-w-6xl", "max-w-7xl", "max-w-full")
@@ -18,7 +18,13 @@ const HERO_SETTINGS = {
   // Aspect ratio (e.g., "aspect-[16/9] sm:aspect-[21/9]", "aspect-video")
   aspectRatio: "aspect-[16/9] sm:aspect-[21/9]",
   // Maximum height limit (e.g., "max-h-[500px]", "max-h-[700px]")
-  maxHeight: "max-h-[600px]"
+  maxHeight: "max-h-[600px]",
+  // Slide auto-switch interval in milliseconds (3000ms = 3.0 seconds for snappy changes)
+  slideInterval: 3000,
+  // Slide transition duration (e.g. "duration-500", "duration-700")
+  transitionDuration: "duration-500",
+  // Pause on hover (set to false so the carousel does not freeze indefinitely when cursor is on the banner)
+  pauseOnHover: false
 };
 
 const DEFAULT_HERO_SLIDES = [
@@ -73,28 +79,33 @@ const DEFAULT_HERO_SLIDES = [
 ];
 
 export default function HomePage({ onNavigate, onSelectProject }) {
-  const [slides, setSlides] = useState(DEFAULT_HERO_SLIDES);
-  const [featuredWorks, setFeaturedWorks] = useState(DEFAULT_PROJECTS_LIST.slice(0, 4));
+  const [slides, setSlides] = useState(() => getInitialProjects());
+  const [featuredWorks, setFeaturedWorks] = useState(() => getInitialProjects().slice(0, 4));
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
 
+  // Real-time project subscription (instant cache + live updates)
   useEffect(() => {
-    getDynamicProjects().then((data) => {
+    const unsubscribe = subscribeToProjects((data) => {
       if (data && data.length > 0) {
         setSlides(data);
         setFeaturedWorks(data.slice(0, 4));
       }
     });
+    return () => {
+      if (typeof unsubscribe === 'function') unsubscribe();
+    };
   }, []);
 
-  // Auto-switch slides every 5.5s unless hovered
+  // Auto-switch slides every 3s (configured via HERO_SETTINGS.slideInterval)
   useEffect(() => {
-    if (isPaused || slides.length === 0) return;
+    if (slides.length <= 1) return;
+    if (HERO_SETTINGS.pauseOnHover && isPaused) return;
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5500);
+    }, HERO_SETTINGS.slideInterval || 3000);
     return () => clearInterval(interval);
   }, [isPaused, currentSlide, slides.length]);
 
@@ -157,19 +168,17 @@ export default function HomePage({ onNavigate, onSelectProject }) {
   };
 
   const handleHeroClick = () => {
-    const slide = slides[currentSlide] || DEFAULT_HERO_SLIDES[0];
-    const project = DEFAULT_PROJECTS_LIST.find((p) => String(p.id) === String(slide.id)) || slide;
+    const slide = slides[currentSlide] || slides[0] || DEFAULT_HERO_SLIDES[0];
     if (onSelectProject) {
-      onSelectProject(project);
+      onSelectProject(slide);
     }
   };
 
   const works = featuredWorks;
 
   const handleCardClick = (work) => {
-    const project = DEFAULT_PROJECTS_LIST.find((p) => String(p.id) === String(work.id)) || work;
     if (onSelectProject) {
-      onSelectProject(project);
+      onSelectProject(work);
     }
   };
 
@@ -191,7 +200,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
         >
           {/* Sliding Track (Rolling Carousel) */}
           <div
-            className="flex w-full h-full transition-transform duration-700 ease-out"
+            className={`flex w-full h-full transition-transform ${HERO_SETTINGS.transitionDuration || 'duration-500'} ease-out`}
             style={{ transform: `translate3d(-${currentSlide * 100}%, 0, 0)` }}
           >
             {slides.map((slide, idx) => (
@@ -253,7 +262,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                       key={`timer-${currentSlide}-${isPaused}`}
                       className={`h-full bg-ashara-gold rounded-full ${isPaused ? 'w-full' : 'animate-progress-fill'
                         }`}
-                      style={{ animationDuration: '5.5s' }}
+                      style={{ animationDuration: `${(HERO_SETTINGS.slideInterval || 3000) / 1000}s` }}
                     />
                   )}
                 </button>

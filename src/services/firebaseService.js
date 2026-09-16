@@ -9,7 +9,8 @@ import {
   deleteDoc,
   query,
   orderBy,
-  serverTimestamp
+  serverTimestamp,
+  onSnapshot
 } from 'firebase/firestore';
 import {
   getAuth,
@@ -282,37 +283,168 @@ export async function getConsultations() {
 }
 
 // ----------------------------------------------------
-// 2. DYNAMIC PROJECTS CMS
+// 2. DYNAMIC PROJECTS CMS (Instant Local Cache + Real-Time Sync)
 // ----------------------------------------------------
 
 /**
- * Get all studio projects (Firestore with fallback to PROJECTS_LIST)
+ * Merge custom/edited projects onto the default projects list by matching IDs
+ */
+export function mergeWithDefaultProjects(customList = []) {
+  if (!Array.isArray(customList) || customList.length === 0) {
+    return DEFAULT_PROJECTS_LIST;
+  }
+  const map = new Map();
+  // 1. Seed base default projects
+  DEFAULT_PROJECTS_LIST.forEach((p) => {
+    map.set(String(p.id), { ...p });
+  });
+  // 2. Overlay custom or saved projects
+  customList.forEach((p) => {
+    if (p && p.id !== undefined) {
+      const existing = map.get(String(p.id)) || {};
+      map.set(String(p.id), { ...existing, ...p });
+    }
+  });
+  return Array.from(map.values());
+}
+
+/**
+ * Synchronously read cached projects for instant 0ms initial render
+ */
+export function getInitialProjects() {
+  if (typeof window !== 'undefined') {
+    try {
+      const stored = localStorage.getItem('ashara_projects');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return mergeWithDefaultProjects(parsed);
+        }
+      }
+    } catch (e) {}
+  }
+  return DEFAULT_PROJECTS_LIST;
+}
+
+/**
+ * Real-time subscription to project updates:
+ * Fires callback INSTANTLY with cached data, listens to local updates (0ms),
+ * and syncs with Cloud Firestore in real time.
+ */
+export function subscribeToProjects(callback) {
+  if (typeof callback !== 'function') return () => {};
+
+  // 1. Immediate initial callback with 0ms cached data
+  callback(getInitialProjects());
+
+  // 2. In-window real-time event listener (0ms response when Admin saves)
+  const handleCustomEvent = (e) => {
+    if (e.detail && Array.isArray(e.detail)) {
+      callback(e.detail);
+    }
+  };
+
+  // 3. Cross-tab storage listener
+  const handleStorageEvent = (e) => {
+    if (e.key === 'ashara_projects' && e.newValue) {
+      try {
+        const parsed = JSON.parse(e.newValue);
+        if (Array.isArray(parsed)) {
+          callback(mergeWithDefaultProjects(parsed));
+        }
+      } catch (err) {}
+    }
+  };
+
+  if (typeof window !== 'undefined') {
+    window.addEventListener('ashara_projects_updated', handleCustomEvent);
+    window.addEventListener('storage', handleStorageEvent);
+  }
+
+  // 4. Cloud Firestore live onSnapshot listener
+  let firestoreUnsub = null;
+  if (isFirebaseConfigured && db) {
+    ensureFirebaseAuth().then(() => {
+      try {
+        firestoreUnsub = onSnapshot(collection(db, 'projects'), (snapshot) => {
+          if (!snapshot.empty) {
+            const remoteDocs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+            const merged = mergeWithDefaultProjects(remoteDocs);
+            try {
+              localStorage.setItem('ashara_projects', JSON.stringify(merged));
+            } catch (e) {}
+            callback(merged);
+          }
+        }, (err) => {
+          console.warn('Firestore projects real-time listener error:', err);
+        });
+      } catch (err) {
+        console.warn('Could not establish Firestore projects listener:', err);
+      }
+    });
+  }
+
+  return () => {
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('ashara_projects_updated', handleCustomEvent);
+      window.removeEventListener('storage', handleStorageEvent);
+    }
+    if (typeof firestoreUnsub === 'function') {
+      firestoreUnsub();
+    }
+  };
+}
+
+/**
+ * Get all studio projects (Firestore with fallback to cached/default list)
  */
 export async function getDynamicProjects() {
+  const localProjects = getInitialProjects();
+
   if (isFirebaseConfigured && db) {
     try {
       await ensureFirebaseAuth();
       const snapshot = await getDocs(collection(db, 'projects'));
       if (!snapshot.empty) {
-        return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        const remoteDocs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        const merged = mergeWithDefaultProjects(remoteDocs);
+        try {
+          localStorage.setItem('ashara_projects', JSON.stringify(merged));
+        } catch (e) {}
+        return merged;
       }
     } catch (error) {
-      console.warn('Firestore projects fetch failed, using default list:', error);
+      console.warn('Firestore projects fetch failed, using cached list:', error);
     }
   }
 
-  // Return local storage or default project list
-  const stored = localStorage.getItem('ashara_projects');
-  return stored ? JSON.parse(stored) : DEFAULT_PROJECTS_LIST;
+  return localProjects;
 }
 
 /**
- * Save or update a project in CMS
+ * Save or update a project in CMS with INSTANT local broadcast and cloud persistence
  */
 export async function saveProject(projectData) {
   const id = projectData.id ? String(projectData.id) : 'proj_' + Date.now();
   const payload = { ...projectData, id, updatedAt: new Date().toISOString() };
 
+  // 1. INSTANT LOCAL CACHE & BROADCAST (0ms lag on client UI)
+  const currentList = getInitialProjects();
+  const existingIdx = currentList.findIndex(p => String(p.id) === String(id));
+  if (existingIdx >= 0) {
+    currentList[existingIdx] = { ...currentList[existingIdx], ...payload };
+  } else {
+    currentList.push(payload);
+  }
+  const merged = mergeWithDefaultProjects(currentList);
+  try {
+    localStorage.setItem('ashara_projects', JSON.stringify(merged));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('ashara_projects_updated', { detail: merged }));
+    }
+  } catch (e) {}
+
+  // 2. PERSIST TO CLOUD FIRESTORE
   if (isFirebaseConfigured && db) {
     try {
       await ensureFirebaseAuth();
@@ -323,22 +455,25 @@ export async function saveProject(projectData) {
     }
   }
 
-  const projects = await getDynamicProjects();
-  const existingIdx = projects.findIndex(p => String(p.id) === String(id));
-  if (existingIdx >= 0) {
-    projects[existingIdx] = payload;
-  } else {
-    projects.push(payload);
-  }
-  localStorage.setItem('ashara_projects', JSON.stringify(projects));
   return { success: true, id, isLive: false };
 }
 
 /**
- * Delete a project from CMS
+ * Delete a project from CMS with INSTANT local broadcast and cloud deletion
  */
 export async function deleteProject(projectId) {
   const id = String(projectId);
+
+  // 1. INSTANT LOCAL CACHE & BROADCAST
+  const currentList = getInitialProjects().filter(p => String(p.id) !== id);
+  try {
+    localStorage.setItem('ashara_projects', JSON.stringify(currentList));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('ashara_projects_updated', { detail: currentList }));
+    }
+  } catch (e) {}
+
+  // 2. DELETE FROM CLOUD FIRESTORE
   if (isFirebaseConfigured && db) {
     try {
       await ensureFirebaseAuth();
@@ -348,42 +483,86 @@ export async function deleteProject(projectId) {
     }
   }
 
-  const projects = await getDynamicProjects();
-  const filtered = projects.filter(p => String(p.id) !== id);
-  localStorage.setItem('ashara_projects', JSON.stringify(filtered));
   return { success: true };
 }
 
 // ----------------------------------------------------
-// 3. DYNAMIC BLOG / JOURNAL CMS
+// 3. DYNAMIC BLOG / JOURNAL CMS (Instant Local Cache + Real-Time Sync)
 // ----------------------------------------------------
 
-/**
- * Get all blog articles (Firestore with fallback to BLOG_POSTS)
- */
+export function mergeWithDefaultBlogPosts(customList = []) {
+  if (!Array.isArray(customList) || customList.length === 0) {
+    return DEFAULT_BLOG_POSTS;
+  }
+  const map = new Map();
+  DEFAULT_BLOG_POSTS.forEach((p) => {
+    map.set(String(p.id), { ...p });
+  });
+  customList.forEach((p) => {
+    if (p && p.id !== undefined) {
+      const existing = map.get(String(p.id)) || {};
+      map.set(String(p.id), { ...existing, ...p });
+    }
+  });
+  return Array.from(map.values());
+}
+
+export function getInitialBlogPosts() {
+  if (typeof window !== 'undefined') {
+    try {
+      const stored = localStorage.getItem('ashara_blog_posts');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return mergeWithDefaultBlogPosts(parsed);
+        }
+      }
+    } catch (e) {}
+  }
+  return DEFAULT_BLOG_POSTS;
+}
+
 export async function getDynamicBlogPosts() {
+  const localPosts = getInitialBlogPosts();
+
   if (isFirebaseConfigured && db) {
     try {
       await ensureFirebaseAuth();
       const snapshot = await getDocs(collection(db, 'blog_posts'));
       if (!snapshot.empty) {
-        return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        const remoteDocs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        const merged = mergeWithDefaultBlogPosts(remoteDocs);
+        try {
+          localStorage.setItem('ashara_blog_posts', JSON.stringify(merged));
+        } catch (e) {}
+        return merged;
       }
     } catch (error) {
-      console.warn('Firestore blog fetch failed, using default posts:', error);
+      console.warn('Firestore blog fetch failed, using cached posts:', error);
     }
   }
 
-  const stored = localStorage.getItem('ashara_blog_posts');
-  return stored ? JSON.parse(stored) : DEFAULT_BLOG_POSTS;
+  return localPosts;
 }
 
-/**
- * Save or update a blog post in CMS
- */
 export async function saveBlogPost(postData) {
   const id = postData.id ? String(postData.id) : 'post_' + Date.now();
   const payload = { ...postData, id, updatedAt: new Date().toISOString() };
+
+  const currentList = getInitialBlogPosts();
+  const existingIdx = currentList.findIndex(p => String(p.id) === String(id));
+  if (existingIdx >= 0) {
+    currentList[existingIdx] = { ...currentList[existingIdx], ...payload };
+  } else {
+    currentList.unshift(payload);
+  }
+  const merged = mergeWithDefaultBlogPosts(currentList);
+  try {
+    localStorage.setItem('ashara_blog_posts', JSON.stringify(merged));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('ashara_blog_updated', { detail: merged }));
+    }
+  } catch (e) {}
 
   if (isFirebaseConfigured && db) {
     try {
@@ -395,22 +574,20 @@ export async function saveBlogPost(postData) {
     }
   }
 
-  const posts = await getDynamicBlogPosts();
-  const existingIdx = posts.findIndex(p => String(p.id) === String(id));
-  if (existingIdx >= 0) {
-    posts[existingIdx] = payload;
-  } else {
-    posts.unshift(payload);
-  }
-  localStorage.setItem('ashara_blog_posts', JSON.stringify(posts));
   return { success: true, id, isLive: false };
 }
 
-/**
- * Delete a blog post from CMS
- */
 export async function deleteBlogPost(postId) {
   const id = String(postId);
+
+  const currentList = getInitialBlogPosts().filter(p => String(p.id) !== id);
+  try {
+    localStorage.setItem('ashara_blog_posts', JSON.stringify(currentList));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('ashara_blog_updated', { detail: currentList }));
+    }
+  } catch (e) {}
+
   if (isFirebaseConfigured && db) {
     try {
       await ensureFirebaseAuth();
@@ -420,9 +597,6 @@ export async function deleteBlogPost(postId) {
     }
   }
 
-  const posts = await getDynamicBlogPosts();
-  const filtered = posts.filter(p => String(p.id) !== id);
-  localStorage.setItem('ashara_blog_posts', JSON.stringify(filtered));
   return { success: true };
 }
 

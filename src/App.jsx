@@ -45,6 +45,7 @@ function getInitialPage() {
 export default function App() {
   const [activePage, setActivePage] = useState(getInitialPage); // 'home' | 'projects' | 'services' | 'about' | 'contact' | 'blog' | 'admin' | 'project-detail'
   const [selectedProject, setSelectedProject] = useState(DEFAULT_PROJECTS_LIST[0]);
+  const [projectSource, setProjectSource] = useState('projects');
   const [theme, setTheme] = useState(() => {
     return sessionStorage.getItem('theme') || 'dark';
   });
@@ -99,8 +100,9 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleSelectProject = (project) => {
+  const handleSelectProject = (project, source = 'projects') => {
     setSelectedProject(project);
+    if (source) setProjectSource(source);
     setActivePage('project-detail');
     window.location.hash = 'project-detail';
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -121,11 +123,11 @@ export default function App() {
       <main className="flex-1">
         <Suspense fallback={<PageLoadingFallback />}>
           {activePage === 'home' && (
-            <HomePage onNavigate={handleNavigate} onSelectProject={handleSelectProject} />
+            <HomePage onNavigate={handleNavigate} onSelectProject={(p) => handleSelectProject(p, 'home')} />
           )}
 
           {activePage === 'projects' && (
-            <ProjectsPage onNavigate={handleNavigate} onSelectProject={handleSelectProject} />
+            <ProjectsPage onNavigate={handleNavigate} onSelectProject={(p) => handleSelectProject(p, 'projects')} />
           )}
           
           {activePage === 'services' && (
@@ -151,6 +153,7 @@ export default function App() {
           {activePage === 'project-detail' && (
             <ProjectDetailPage 
               project={selectedProject} 
+              source={projectSource}
               onNavigate={handleNavigate} 
               onSelectProject={handleSelectProject}
             />

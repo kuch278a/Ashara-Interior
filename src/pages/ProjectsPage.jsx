@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { getDynamicProjects } from '../services/firebaseService';
+import { getInitialProjects, subscribeToProjects } from '../services/firebaseService';
 import { DEFAULT_PROJECTS_LIST } from '../data/defaultData';
 
 export default function ProjectsPage({ onNavigate, onSelectProject, isSection = false }) {
-  const [projects, setProjects] = useState(DEFAULT_PROJECTS_LIST);
+  const [projects, setProjects] = useState(() => getInitialProjects());
   const [selectedFilter, setSelectedFilter] = useState('ALL');
 
   useEffect(() => {
-    getDynamicProjects().then((data) => {
+    const unsubscribe = subscribeToProjects((data) => {
       if (data && data.length > 0) {
         setProjects(data);
       }
     });
+    return () => {
+      if (typeof unsubscribe === 'function') unsubscribe();
+    };
   }, []);
 
   const categories = ['ALL', 'GOVERNMENTAL', 'PRIVATE ORGANIZATION', 'PRIVATE CORPORATION', 'PRIVATE COMPANY'];
@@ -39,7 +42,7 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
             </blockquote>
             <div className="space-y-1 pt-3">
               <p className="text-[11px] sm:text-xs uppercase tracking-[0.28em] font-semibold text-white">
-                DANIEL MESFIN
+                Biruk Esayas
               </p>
               <p className="text-[9.5px] sm:text-[10px] uppercase tracking-[0.32em] font-light text-white/90">
                 CREATIVE DIRECTOR

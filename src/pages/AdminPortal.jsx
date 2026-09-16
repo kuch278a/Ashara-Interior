@@ -17,8 +17,6 @@ import {
   X,
   AlertCircle,
   Lock,
-  Eye,
-  EyeOff,
   LogOut,
   Loader2,
   Upload,
@@ -78,7 +76,6 @@ export default function AdminPortal({ onNavigate }) {
   // Login Form States
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
@@ -445,7 +442,7 @@ export default function AdminPortal({ onNavigate }) {
                   required
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
-                  placeholder="admin or mikasadessalegn@gmail.com"
+                  placeholder="Enter director email or ID"
                   className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm text-ashara-charcoal dark:text-white placeholder-gray-400 rounded-xs focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold transition shadow-inner"
                 />
               </div>
@@ -454,24 +451,14 @@ export default function AdminPortal({ onNavigate }) {
                 <label className="block text-[10px] uppercase tracking-widest font-semibold text-gray-700 dark:text-gray-300">
                   Security Passcode
                 </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    value={loginPassword}
-                    onChange={(e) => setLoginPassword(e.target.value)}
-                    placeholder="••••••••••••"
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm text-ashara-charcoal dark:text-white placeholder-gray-400 rounded-xs focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold transition pr-10 shadow-inner"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-ashara-teal dark:hover:text-ashara-gold transition p-1"
-                    title={showPassword ? "Hide passcode" : "Show passcode"}
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
+                <input
+                  type="password"
+                  required
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  placeholder="passcode"
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm text-ashara-charcoal dark:text-white placeholder-gray-400 rounded-xs focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold transition shadow-inner"
+                />
               </div>
 
               <button
