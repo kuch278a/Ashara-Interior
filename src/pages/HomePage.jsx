@@ -14,13 +14,13 @@ import { getInitialProjects, subscribeToProjects } from '../services/firebaseSer
 // ==========================================
 const HERO_SETTINGS = {
   // Container width (e.g., "max-w-5xl", "max-w-6xl", "max-w-7xl", "max-w-full")
-  maxWidth: "max-w-7xl",
+  maxWidth: "max-w-full",
   // Aspect ratio (e.g., "aspect-[16/9] sm:aspect-[21/9]", "aspect-video")
   aspectRatio: "aspect-[16/9] sm:aspect-[21/9]",
   // Maximum height limit (e.g., "max-h-[500px]", "max-h-[700px]")
-  maxHeight: "max-h-[600px]",
-  // Slide auto-switch interval in milliseconds (3000ms = 3.0 seconds for snappy changes)
-  slideInterval: 3000,
+  maxHeight: "max-h-[650px]",
+  // Slide auto-switch interval in milliseconds (2000ms = 2.0 seconds)
+  slideInterval: 2000,
   // Slide transition duration (e.g. "duration-500", "duration-700")
   transitionDuration: "duration-500",
   // Pause on hover (set to false so the carousel does not freeze indefinitely when cursor is on the banner)
@@ -105,7 +105,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
     if (HERO_SETTINGS.pauseOnHover && isPaused) return;
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, HERO_SETTINGS.slideInterval || 3000);
+    }, HERO_SETTINGS.slideInterval || 2000);
     return () => clearInterval(interval);
   }, [isPaused, currentSlide, slides.length]);
 
@@ -188,7 +188,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
     <div className="bg-transparent animate-fade-in space-y-20 sm:space-y-32 pb-24 transition-colors duration-300 relative">
 
       {/* 1. HERO BANNER: Clean luxury carousel with subtle on-hover arrows, swipe & timer bar */}
-      <section className={`w-full ${HERO_SETTINGS.maxWidth} mx-auto px-6 sm:px-10 lg:px-16 pt-4`}>
+      <section className={`w-full ${HERO_SETTINGS.maxWidth} mx-auto px-4 sm:px-8 lg:px-12 pt-4`}>
         <div
           onClick={handleHeroClick}
           onMouseEnter={() => setIsPaused(true)}
@@ -262,7 +262,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                       key={`timer-${currentSlide}-${isPaused}`}
                       className={`h-full bg-ashara-gold rounded-full ${isPaused ? 'w-full' : 'animate-progress-fill'
                         }`}
-                      style={{ animationDuration: `${(HERO_SETTINGS.slideInterval || 3000) / 1000}s` }}
+                      style={{ animationDuration: `${(HERO_SETTINGS.slideInterval || 2000) / 1000}s` }}
                     />
                   )}
                 </button>

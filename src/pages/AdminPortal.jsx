@@ -37,7 +37,9 @@ import {
   Info,
   CheckCircle2,
   SlidersHorizontal,
-  ChevronDown
+  ChevronDown,
+  Star,
+  Quote
 } from 'lucide-react';
 import { 
   getConsultations, 
@@ -51,7 +53,11 @@ import {
   isFirebaseConfigured,
   loginAdminUser,
   logoutAdminUser,
-  uploadImage
+  uploadImage,
+  getDynamicTestimonials,
+  saveTestimonial,
+  deleteTestimonial,
+  subscribeToTestimonials
 } from '../services/firebaseService';
 import AsharaLogo from '../components/AsharaLogo';
 
@@ -80,10 +86,11 @@ export default function AdminPortal({ onNavigate }) {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   // Portal Navigation & Data
-  const [activeTab, setActiveTab] = useState('projects'); // 'projects' | 'leads' | 'blog'
+  const [activeTab, setActiveTab] = useState('projects'); // 'projects' | 'leads' | 'blog' | 'testimonials'
   const [leads, setLeads] = useState([]);
   const [projects, setProjects] = useState([]);
   const [blogPosts, setBlogPosts] = useState([]);
+  const [testimonials, setTestimonials] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastRefreshed, setLastRefreshed] = useState(null);
@@ -94,6 +101,7 @@ export default function AdminPortal({ onNavigate }) {
   const [projectCategoryFilter, setProjectCategoryFilter] = useState('ALL');
   const [leadStatusFilter, setLeadStatusFilter] = useState('ALL');
   const [blogCategoryFilter, setBlogCategoryFilter] = useState('ALL');
+  const [testimonialFilter, setTestimonialFilter] = useState('ALL');
 
   // Form Modal States
   const [editingProject, setEditingProject] = useState(null);
@@ -106,8 +114,11 @@ export default function AdminPortal({ onNavigate }) {
   const [blogImageFile, setBlogImageFile] = useState(null);
   const [blogImagePreview, setBlogImagePreview] = useState('');
 
+  const [editingTestimonial, setEditingTestimonial] = useState(null);
+  const [isTestimonialModalOpen, setIsTestimonialModalOpen] = useState(false);
+
   // Delete Confirmation Modal State
-  const [deleteConfirm, setDeleteConfirm] = useState(null); // { type: 'project' | 'blog', id, title }
+  const [deleteConfirm, setDeleteConfirm] = useState(null); // { type: 'project' | 'blog' | 'testimonial', id, title }
 
   // Upload Status
   const [uploadStatus, setUploadStatus] = useState({ active: false, stage: '', percent: 0 });
@@ -120,6 +131,15 @@ export default function AdminPortal({ onNavigate }) {
       loadAllData();
     }
   }, [adminUser]);
+
+  useEffect(() => {
+    const unsub = subscribeToTestimonials((list) => {
+      if (list && list.length > 0) setTestimonials(list);
+    });
+    return () => {
+      if (typeof unsub === 'function') unsub();
+    };
+  }, []);
 
   const showToast = (message, type = 'success') => {
     setNotification({ message, type });
@@ -173,14 +193,16 @@ export default function AdminPortal({ onNavigate }) {
     else setIsLoading(true);
 
     try {
-      const [leadsData, projectsData, blogData] = await Promise.all([
+      const [leadsData, projectsData, blogData, testimonialsData] = await Promise.all([
         getConsultations(),
         getDynamicProjects(),
-        getDynamicBlogPosts()
+        getDynamicBlogPosts(),
+        getDynamicTestimonials()
       ]);
       setLeads(leadsData || []);
       setProjects(projectsData || []);
       setBlogPosts(blogData || []);
+      setTestimonials(testimonialsData || []);
       setLastRefreshed(new Date());
       if (isManualRefresh) {
         showToast('Atelier database synchronized');
@@ -274,11 +296,48 @@ export default function AdminPortal({ onNavigate }) {
       } else if (deleteConfirm.type === 'blog') {
         await deleteBlogPost(deleteConfirm.id);
         showToast('Article removed from journal');
+      } else if (deleteConfirm.type === 'testimonial') {
+        await deleteTestimonial(deleteConfirm.id);
+        showToast('Testimonial removed from studio records');
       }
       setDeleteConfirm(null);
       await loadAllData();
     } catch (err) {
       showToast('Failed to delete item', 'error');
+    }
+  };
+
+  // --- Testimonial CRUD ---
+  const handleOpenNewTestimonial = () => {
+    setEditingTestimonial({
+      clientName: '',
+      role: '',
+      organization: '',
+      projectId: '',
+      rating: 5,
+      quote: '',
+      isFeatured: true
+    });
+    setIsTestimonialModalOpen(true);
+  };
+
+  const handleOpenEditTestimonial = (testimonial) => {
+    setEditingTestimonial({ ...testimonial });
+    setIsTestimonialModalOpen(true);
+  };
+
+  const handleSaveTestimonial = async (e) => {
+    e.preventDefault();
+    if (!editingTestimonial) return;
+    try {
+      await saveTestimonial(editingTestimonial);
+      setIsTestimonialModalOpen(false);
+      setEditingTestimonial(null);
+      showToast('Client testimonial saved successfully');
+      await loadAllData();
+    } catch (err) {
+      console.error('Failed to save testimonial:', err);
+      showToast('Error saving testimonial. Please try again.', 'error');
     }
   };
 
@@ -386,6 +445,20 @@ export default function AdminPortal({ onNavigate }) {
       return matchesSearch && matchesCategory;
     });
   }, [blogPosts, searchQuery, blogCategoryFilter]);
+
+  const filteredTestimonials = useMemo(() => {
+    return testimonials.filter(t => {
+      const q = (searchQuery || '').toLowerCase();
+      const matchesSearch = !searchQuery ||
+        (t.clientName || '').toLowerCase().includes(q) ||
+        (t.organization || '').toLowerCase().includes(q) ||
+        (t.role || '').toLowerCase().includes(q) ||
+        (t.quote || '').toLowerCase().includes(q);
+
+      const matchesProject = testimonialFilter === 'ALL' || String(t.projectId) === String(testimonialFilter);
+      return matchesSearch && matchesProject;
+    });
+  }, [testimonials, searchQuery, testimonialFilter]);
 
   // ----------------------------------------------------
   // 1. UNAUTHENTICATED: LUXURY ATELIER LOGIN SCREEN
@@ -709,27 +782,34 @@ export default function AdminPortal({ onNavigate }) {
             </div>
           </div>
 
-          {/* Card 4: System Architecture */}
-          <div className="p-5 bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 rounded-xs shadow-xs">
+          {/* Card 4: Testimonials */}
+          <div 
+            onClick={() => setActiveTab('testimonials')}
+            className={`p-5 bg-white dark:bg-[#0C1726] border rounded-xs shadow-xs hover:shadow-md transition-all cursor-pointer group ${
+              activeTab === 'testimonials' 
+                ? 'border-ashara-teal dark:border-ashara-gold ring-1 ring-ashara-teal dark:ring-ashara-gold' 
+                : 'border-gray-200 dark:border-white/10'
+            }`}
+          >
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-[10px] uppercase tracking-[0.25em] font-semibold text-gray-500 dark:text-gray-400">
-                  Cloud Infrastructure
+                  Client Voices
                 </p>
-                <h3 className="font-serif text-2xl font-bold text-ashara-charcoal dark:text-white mt-1">
-                  {isFirebaseConfigured ? 'Connected' : 'Offline Mode'}
+                <h3 className="font-serif text-3xl font-bold text-ashara-charcoal dark:text-white mt-1">
+                  {testimonials.length}
                 </h3>
               </div>
-              <div className="w-10 h-10 rounded-xs bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 flex items-center justify-center">
-                <Sparkles className="w-5 h-5" />
+              <div className="w-10 h-10 rounded-xs bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Quote className="w-5 h-5" />
               </div>
             </div>
-            <div className="mt-3 pt-3 border-t border-gray-100 dark:border-white/5 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-              <span className="truncate">
-                {lastRefreshed ? `Synced ${lastRefreshed.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Ready'}
+            <div className="mt-3 pt-3 border-t border-gray-100 dark:border-white/5 flex items-center justify-between text-xs">
+              <span className="text-gray-600 dark:text-gray-300 font-light truncate">
+                Project Reviews & Ratings
               </span>
-              <span className="text-[9px] uppercase tracking-wider font-semibold text-emerald-600 dark:text-emerald-400">
-                100% Operational
+              <span className="text-[10px] text-gray-400 group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition flex items-center gap-0.5">
+                Manage <ChevronRight className="w-3 h-3" />
               </span>
             </div>
           </div>
@@ -803,6 +883,25 @@ export default function AdminPortal({ onNavigate }) {
                 </span>
               </button>
 
+              <button
+                onClick={() => { setActiveTab('testimonials'); setSearchQuery(''); }}
+                className={`flex items-center gap-2 px-4 py-2 text-xs uppercase tracking-wider font-semibold rounded-xs transition-all whitespace-nowrap ${
+                  activeTab === 'testimonials'
+                    ? 'bg-white dark:bg-[#1E2E42] text-ashara-teal dark:text-ashara-gold shadow-sm'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                }`}
+              >
+                <Quote className="w-4 h-4" />
+                <span>Client Voices</span>
+                <span className={`px-2 py-0.2 rounded-full text-[10px] font-mono ${
+                  activeTab === 'testimonials'
+                    ? 'bg-ashara-teal/10 dark:bg-ashara-gold/20 text-ashara-teal dark:text-ashara-gold'
+                    : 'bg-gray-200/80 dark:bg-white/10 text-gray-500'
+                }`}>
+                  {testimonials.length}
+                </span>
+              </button>
+
             </nav>
 
             {/* Primary Action Button */}
@@ -826,6 +925,16 @@ export default function AdminPortal({ onNavigate }) {
                   <span>Publish New Article</span>
                 </button>
               )}
+
+              {activeTab === 'testimonials' && (
+                <button
+                  onClick={handleOpenNewTestimonial}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-ashara-teal hover:bg-ashara-teal-hover dark:bg-ashara-gold dark:hover:bg-ashara-gold/90 text-white dark:text-ashara-dark text-xs uppercase tracking-wider font-bold rounded-xs transition shadow-sm"
+                >
+                  <Plus className="w-4 h-4 stroke-[2.5]" />
+                  <span>Add Testimonial</span>
+                </button>
+              )}
             </div>
 
           </div>
@@ -843,6 +952,7 @@ export default function AdminPortal({ onNavigate }) {
                 placeholder={
                   activeTab === 'projects' ? "Search projects by title, client, or narrative..." :
                   activeTab === 'leads' ? "Search inquiries by client name, email, or message..." :
+                  activeTab === 'testimonials' ? "Search reviews by client, organization, or quote..." :
                   "Search journal articles..."
                 }
                 className="w-full pl-10 pr-8 py-2 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs text-xs text-ashara-charcoal dark:text-white placeholder-gray-400 focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold transition"
@@ -874,6 +984,25 @@ export default function AdminPortal({ onNavigate }) {
                     <option value="PRIVATE">Private Entities</option>
                     <option value="CORPORATION">Corporations</option>
                     <option value="COMMERCIAL">Commercial</option>
+                  </select>
+                </div>
+              )}
+
+              {/* Project Filter for Testimonials */}
+              {activeTab === 'testimonials' && (
+                <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                  <Filter className="w-3.5 h-3.5" />
+                  <select
+                    value={testimonialFilter}
+                    onChange={(e) => setTestimonialFilter(e.target.value)}
+                    className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs text-xs text-ashara-charcoal dark:text-white focus:outline-none focus:border-ashara-teal"
+                  >
+                    <option value="ALL">All Project Links ({testimonials.length})</option>
+                    {projects.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.title}
+                      </option>
+                    ))}
                   </select>
                 </div>
               )}
@@ -1246,6 +1375,101 @@ export default function AdminPortal({ onNavigate }) {
               </div>
             )}
 
+          </div>
+        )}
+
+        {/* ==================================================== */}
+        {/* TAB 4: CLIENT TESTIMONIALS MANAGER                  */}
+        {/* ==================================================== */}
+        {activeTab === 'testimonials' && (
+          <div className="space-y-6 animate-fade-in">
+            {filteredTestimonials.length === 0 ? (
+              <div className="bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 p-12 text-center rounded-xs space-y-4">
+                <div className="w-12 h-12 rounded-full bg-ashara-teal/10 dark:bg-ashara-gold/15 text-ashara-teal dark:text-ashara-gold flex items-center justify-center mx-auto">
+                  <Quote className="w-6 h-6" />
+                </div>
+                <div className="space-y-1">
+                  <h3 className="font-serif text-xl text-ashara-charcoal dark:text-white">
+                    No client testimonials found
+                  </h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
+                    {searchQuery ? 'Try adjusting your search criteria.' : 'Add client testimonials to highlight social proof in project details.'}
+                  </p>
+                </div>
+                <button
+                  onClick={handleOpenNewTestimonial}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-ashara-teal text-white text-xs uppercase tracking-wider font-semibold rounded-xs"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add First Testimonial</span>
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredTestimonials.map((t) => {
+                  const linkedProj = projects.find(p => String(p.id) === String(t.projectId));
+                  return (
+                    <div
+                      key={t.id}
+                      className="bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 p-6 rounded-xs shadow-xs hover:shadow-md transition-all flex flex-col justify-between space-y-4 relative group"
+                    >
+                      {/* Top Row: Stars + Linked Project Tag */}
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-1 text-amber-500">
+                          {[...Array(t.rating || 5)].map((_, i) => (
+                            <Star key={i} className="w-3.5 h-3.5 fill-current" />
+                          ))}
+                        </div>
+                        {linkedProj ? (
+                          <span className="text-[9px] uppercase tracking-wider font-semibold px-2.5 py-0.5 rounded-full bg-ashara-teal/10 text-ashara-teal dark:text-ashara-gold border border-ashara-teal/20 truncate max-w-[160px]">
+                            {linkedProj.title}
+                          </span>
+                        ) : (
+                          <span className="text-[9px] uppercase tracking-wider font-normal px-2.5 py-0.5 rounded-full bg-gray-100 dark:bg-white/5 text-gray-500">
+                            General Studio
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Quote Text */}
+                      <p className="font-serif italic text-gray-700 dark:text-gray-300 text-xs sm:text-[13px] leading-relaxed line-clamp-4 font-light">
+                        "{t.quote}"
+                      </p>
+
+                      {/* Author Info + Action Buttons */}
+                      <div className="pt-4 border-t border-gray-100 dark:border-white/5 flex items-center justify-between gap-2">
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold text-ashara-charcoal dark:text-white uppercase tracking-wider truncate">
+                            {t.clientName}
+                          </p>
+                          <p className="text-[11px] text-gray-500 dark:text-gray-400 truncate">
+                            {t.role && `${t.role} • `}
+                            <span className="font-medium text-ashara-teal dark:text-ashara-gold">{t.organization}</span>
+                          </p>
+                        </div>
+
+                        <div className="flex items-center gap-1 shrink-0">
+                          <button
+                            onClick={() => handleOpenEditTestimonial(t)}
+                            className="p-1.5 text-gray-500 hover:text-ashara-teal dark:text-gray-400 dark:hover:text-ashara-gold rounded hover:bg-gray-100 dark:hover:bg-white/5 transition"
+                            title="Edit Testimonial"
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => setDeleteConfirm({ type: 'testimonial', id: t.id, title: `${t.clientName} (${t.organization})` })}
+                            className="p-1.5 text-rose-500 hover:text-rose-700 rounded hover:bg-rose-50 dark:hover:bg-rose-500/10 transition"
+                            title="Delete Testimonial"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 
@@ -1735,6 +1959,166 @@ export default function AdminPortal({ onNavigate }) {
 
             </form>
 
+          </div>
+        </div>
+      )}
+
+      {/* ==================================================== */}
+      {/* MODAL: TESTIMONIAL EDITOR                            */}
+      {/* ==================================================== */}
+      {isTestimonialModalOpen && editingTestimonial && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-xs shadow-2xl p-6 sm:p-8 space-y-5">
+            <div className="flex items-center justify-between pb-3 border-b border-gray-200 dark:border-white/10">
+              <div>
+                <span className="text-[10px] uppercase tracking-[0.25em] text-ashara-teal dark:text-ashara-gold font-bold">
+                  CLIENT SOCIAL PROOF
+                </span>
+                <h3 className="font-serif text-2xl text-ashara-charcoal dark:text-white">
+                  {editingTestimonial.id ? 'Edit Testimonial' : 'Add Client Testimonial'}
+                </h3>
+              </div>
+              <button
+                onClick={() => { setIsTestimonialModalOpen(false); setEditingTestimonial(null); }}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-white p-1"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveTestimonial} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] uppercase tracking-wider font-bold text-gray-700 dark:text-gray-300 mb-1">
+                    Client Name / Rep *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={editingTestimonial.clientName || ''}
+                    onChange={(e) => setEditingTestimonial({ ...editingTestimonial, clientName: e.target.value })}
+                    className="w-full px-3 py-2 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs text-ashara-charcoal dark:text-white rounded-xs focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold"
+                    placeholder="e.g., Deputy President's Office"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] uppercase tracking-wider font-bold text-gray-700 dark:text-gray-300 mb-1">
+                    Role / Title
+                  </label>
+                  <input
+                    type="text"
+                    value={editingTestimonial.role || ''}
+                    onChange={(e) => setEditingTestimonial({ ...editingTestimonial, role: e.target.value })}
+                    className="w-full px-3 py-2 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs text-ashara-charcoal dark:text-white rounded-xs focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold"
+                    placeholder="e.g., Executive Bureau"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] uppercase tracking-wider font-bold text-gray-700 dark:text-gray-300 mb-1">
+                    Organization / Company *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={editingTestimonial.organization || ''}
+                    onChange={(e) => setEditingTestimonial({ ...editingTestimonial, organization: e.target.value })}
+                    className="w-full px-3 py-2 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs text-ashara-charcoal dark:text-white rounded-xs focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold"
+                    placeholder="e.g., Prosperity Party HQ"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] uppercase tracking-wider font-bold text-gray-700 dark:text-gray-300 mb-1">
+                    Linked Project
+                  </label>
+                  <select
+                    value={editingTestimonial.projectId || ''}
+                    onChange={(e) => setEditingTestimonial({ ...editingTestimonial, projectId: e.target.value })}
+                    className="w-full px-3 py-2 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs text-ashara-charcoal dark:text-white rounded-xs focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold"
+                  >
+                    <option value="">General Studio Testimonial</option>
+                    {projects.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[10px] uppercase tracking-wider font-bold text-gray-700 dark:text-gray-300 mb-1">
+                  Star Rating (1 - 5)
+                </label>
+                <div className="flex items-center gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setEditingTestimonial({ ...editingTestimonial, rating: star })}
+                      className="p-1 hover:scale-115 transition-transform"
+                    >
+                      <Star
+                        className={`w-5 h-5 ${
+                          star <= (editingTestimonial.rating || 5)
+                            ? 'fill-amber-500 text-amber-500'
+                            : 'text-gray-300 dark:text-gray-600'
+                        }`}
+                      />
+                    </button>
+                  ))}
+                  <span className="text-xs font-semibold text-gray-600 dark:text-gray-300 ml-2">
+                    {editingTestimonial.rating || 5} Stars
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[10px] uppercase tracking-wider font-bold text-gray-700 dark:text-gray-300 mb-1">
+                  Client Quote / Review *
+                </label>
+                <textarea
+                  rows="4"
+                  required
+                  value={editingTestimonial.quote || ''}
+                  onChange={(e) => setEditingTestimonial({ ...editingTestimonial, quote: e.target.value })}
+                  className="w-full px-3 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm text-ashara-charcoal dark:text-white rounded-xs focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold resize-none"
+                  placeholder="Paste or write the client testimonial quote here..."
+                />
+              </div>
+
+              <div className="flex items-center gap-2 pt-1">
+                <input
+                  type="checkbox"
+                  id="featuredToggle"
+                  checked={editingTestimonial.isFeatured !== false}
+                  onChange={(e) => setEditingTestimonial({ ...editingTestimonial, isFeatured: e.target.checked })}
+                  className="rounded text-ashara-teal focus:ring-ashara-teal w-4 h-4"
+                />
+                <label htmlFor="featuredToggle" className="text-xs text-gray-700 dark:text-gray-300">
+                  Feature prominently on site & homepage
+                </label>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-white/10">
+                <button
+                  type="button"
+                  onClick={() => { setIsTestimonialModalOpen(false); setEditingTestimonial(null); }}
+                  className="px-4 py-2 text-xs uppercase tracking-wider font-semibold text-gray-600 dark:text-gray-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="inline-flex items-center gap-2 px-5 py-2 bg-ashara-teal hover:bg-ashara-teal-hover dark:bg-ashara-gold dark:hover:bg-ashara-gold/90 text-white dark:text-ashara-dark text-xs uppercase tracking-wider font-bold rounded-xs transition shadow-sm"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>Save Testimonial</span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

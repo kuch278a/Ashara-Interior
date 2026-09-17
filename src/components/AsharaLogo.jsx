@@ -6,7 +6,7 @@ export default function AsharaLogo({ className = 'text-ashara-teal', textClassNa
       {/* Official Ashara Fingerprint Mark */}
       <img
         src={light ? './client_logos/ashara_logo_white.png' : './client_logos/ashara_logo_teal.png'}
-        alt="Ashara Interiors"
+        alt="Ashara Interior Design and Building"
         decoding="async"
         style={{ height: size, width: 'auto' }}
         className="object-contain transition-transform duration-300 group-hover:scale-105"
@@ -20,7 +20,7 @@ export default function AsharaLogo({ className = 'text-ashara-teal', textClassNa
           Ashara
         </span>
         <span className={`font-sans tracking-[0.36em] text-[14px] sm:text-[15.5px] uppercase font-light leading-none mt-2 opacity-85 ${textClassName}`}>
-          Interiors
+          Interior Design and Building
         </span>
       </div>
     </div>

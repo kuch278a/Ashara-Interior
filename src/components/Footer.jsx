@@ -24,8 +24,8 @@ export default function Footer({ onNavigate }) {
           <div className="md:col-span-3">
             <button
               onClick={() => onNavigate('home')}
-              className="text-left focus:outline-none hover:opacity-90 transition"
-              aria-label="Ashara Interiors Home"
+              className="text-left focus:outline-none hover:opacity-90 transition "
+              aria-label="Ashara Interior Design and Building Home"
             >
               <AsharaLogo size={96} light={true} className="text-white" textClassName="text-white" />
             </button>
@@ -153,7 +153,8 @@ export default function Footer({ onNavigate }) {
 
         {/* Bottom Copyright Center */}
         <div className="pt-8 border-t border-white/10 flex items-center justify-center text-[10px] sm:text-[11px] text-white/70 font-light">
-          <p>©Ashara Interiors 2025</p>
+          <p>©Ashara Interior Design and Building 2026</p>
+          <p>| All rights reserved</p>
         </div>
 
       </div>

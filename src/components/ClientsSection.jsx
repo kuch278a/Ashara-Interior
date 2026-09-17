@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { getInitialTestimonials, subscribeToTestimonials } from '../services/firebaseService';
 
 const ROW_1_CLIENTS = [
   {
@@ -80,6 +82,19 @@ const ROW_3_CLIENTS = [
 ];
 
 export default function ClientsSection() {
+  const [testimonials, setTestimonials] = useState(() => getInitialTestimonials());
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const unsub = subscribeToTestimonials((list) => {
+      if (list && list.length > 0) setTestimonials(list);
+    });
+    return () => {
+      if (typeof unsub === 'function') unsub();
+    };
+  }, []);
+
+  const activeTestimonial = testimonials[currentIndex] || testimonials[0];
   return (
     <div className="space-y-20 py-8">
       
@@ -156,34 +171,70 @@ export default function ClientsSection() {
       </section>
 
       {/* 2. TESTIMONIAL SECTION matching Figma Homepage */}
-      <section className="max-w-3xl mx-auto px-6 text-center space-y-6">
-        
-        {/* Top Quotation Mark in Soft Teal */}
-        <div className="text-ashara-teal/60 dark:text-ashara-gold/60 text-6xl sm:text-7xl font-serif leading-none select-none flex justify-center transition-colors duration-300">
-          “
-        </div>
-        
-        {/* Testimonial Body in Italic Serif / Cursive Script */}
-        <blockquote className="font-serif italic text-2xl sm:text-3xl lg:text-[32px] text-gray-800 dark:text-gray-200 leading-relaxed font-light px-2 sm:px-6 transition-colors duration-300">
-          “Ashara Interiors transformed our office space beyond our expectations. Their attention to detail and ability to deliver a luxurious, functional design within an incredibly tight deadline was remarkable.”
-        </blockquote>
+      {activeTestimonial && (
+        <section className="max-w-3xl mx-auto px-6 text-center space-y-6">
+          
+          {/* Top Quotation Mark in Soft Teal */}
+          <div className="text-ashara-teal/60 dark:text-ashara-gold/60 text-6xl sm:text-7xl font-serif leading-none select-none flex justify-center transition-colors duration-300">
+            “
+          </div>
+          
+          {/* Testimonial Body in Italic Serif / Cursive Script */}
+          <blockquote className="font-serif italic text-2xl sm:text-3xl lg:text-[32px] text-gray-800 dark:text-gray-200 leading-relaxed font-light px-2 sm:px-6 transition-colors duration-300">
+            “{activeTestimonial.quote}”
+          </blockquote>
 
-        {/* Attribution matching Figma */}
-        <div className="space-y-0.5 pt-2">
-          <p className="text-[10.5px] sm:text-[11px] uppercase tracking-[0.26em] font-semibold text-ashara-charcoal dark:text-white transition-colors duration-300">
-            DEPUTY PRESIDENT'S OFFICE,
-          </p>
-          <p className="text-[10px] sm:text-[10.5px] uppercase tracking-[0.3em] font-normal text-gray-600 dark:text-gray-400 transition-colors duration-300">
-            PROSPERITY PARTY HEADQUARTERS
-          </p>
-        </div>
+          {/* Attribution matching Figma */}
+          <div className="space-y-0.5 pt-2">
+            <p className="text-[10.5px] sm:text-[11px] uppercase tracking-[0.26em] font-semibold text-ashara-charcoal dark:text-white transition-colors duration-300">
+              {activeTestimonial.clientName},
+            </p>
+            <p className="text-[10px] sm:text-[10.5px] uppercase tracking-[0.3em] font-normal text-gray-600 dark:text-gray-400 transition-colors duration-300">
+              {activeTestimonial.organization}
+            </p>
+          </div>
 
-        {/* Bottom Quotation Mark in Soft Teal */}
-        <div className="text-ashara-teal/60 dark:text-ashara-gold/60 text-6xl sm:text-7xl font-serif leading-none select-none flex justify-center pt-2 transition-colors duration-300">
-          ”
-        </div>
+          {/* Bottom Quotation Mark in Soft Teal */}
+          <div className="text-ashara-teal/60 dark:text-ashara-gold/60 text-6xl sm:text-7xl font-serif leading-none select-none flex justify-center pt-2 transition-colors duration-300">
+            ”
+          </div>
 
-      </section>
+          {/* Carousel Navigation Indicators */}
+          {testimonials.length > 1 && (
+            <div className="flex items-center justify-center gap-3 pt-2 select-none">
+              <button
+                onClick={() => setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length)}
+                aria-label="Previous testimonial"
+                className="p-1.5 text-gray-400 hover:text-ashara-teal dark:hover:text-ashara-gold transition rounded-full hover:bg-black/5 dark:hover:bg-white/5"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <div className="flex items-center gap-1.5">
+                {testimonials.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentIndex(idx)}
+                    aria-label={`Go to testimonial ${idx + 1}`}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      idx === currentIndex
+                        ? 'w-6 bg-ashara-teal dark:bg-ashara-gold'
+                        : 'w-1.5 bg-gray-300 dark:bg-white/20'
+                    }`}
+                  />
+                ))}
+              </div>
+              <button
+                onClick={() => setCurrentIndex((prev) => (prev + 1) % testimonials.length)}
+                aria-label="Next testimonial"
+                className="p-1.5 text-gray-400 hover:text-ashara-teal dark:hover:text-ashara-gold transition rounded-full hover:bg-black/5 dark:hover:bg-white/5"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+
+        </section>
+      )}
 
     </div>
   );

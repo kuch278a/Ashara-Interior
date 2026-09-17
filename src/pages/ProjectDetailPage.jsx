@@ -1,18 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight, Star, Quote } from 'lucide-react';
 import { DEFAULT_PROJECTS_LIST } from '../data/defaultData';
-import { getInitialProjects, subscribeToProjects } from '../services/firebaseService';
+import { getInitialProjects, subscribeToProjects, getInitialTestimonials, subscribeToTestimonials } from '../services/firebaseService';
 
 export default function ProjectDetailPage({ onNavigate, onSelectProject, project, source = 'projects' }) {
   // Live project resolution: fallback to first project or live project in storage
   const [allProjects, setAllProjects] = useState(() => getInitialProjects());
+  const [testimonials, setTestimonials] = useState(() => getInitialTestimonials());
   
   useEffect(() => {
-    const unsub = subscribeToProjects((list) => {
+    const unsubProjects = subscribeToProjects((list) => {
       if (list && list.length > 0) setAllProjects(list);
     });
+    const unsubTestimonials = subscribeToTestimonials((list) => {
+      if (list && list.length > 0) setTestimonials(list);
+    });
     return () => {
-      if (typeof unsub === 'function') unsub();
+      if (typeof unsubProjects === 'function') unsubProjects();
+      if (typeof unsubTestimonials === 'function') unsubTestimonials();
     };
   }, []);
 
@@ -59,6 +64,10 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
 
   // Dynamic recommendations: Other live projects from the list
   const recommendations = allProjects.filter((p) => String(p.id) !== String(activeProject.id)).slice(0, 2);
+
+  // Match testimonial linked specifically to this project, or fallback to general featured review
+  const projectTestimonial = testimonials.find((t) => String(t.projectId) === String(activeProject.id)) ||
+    testimonials.find((t) => !t.projectId && t.isFeatured);
 
   const handleRecommendationClick = (recProject) => {
     if (onSelectProject) {
@@ -256,8 +265,56 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
         </div>
       </section>
 
-      {/* 8. ENQUIRE NOW Button (Outlined) */}
-      <div className="text-center pt-10 pb-16">
+      {/* 8. CLIENT WORDS / TESTIMONIAL (Option 3) */}
+      {projectTestimonial && (
+        <section className="max-w-4xl mx-auto px-6 py-12 sm:py-16 animate-fade-in">
+          <div className="relative p-8 sm:p-12 rounded-2xl sm:rounded-3xl bg-[#FAF9F5] dark:bg-white/[0.03] border border-ashara-teal/20 dark:border-ashara-gold/20 shadow-sm text-center space-y-6 backdrop-blur-xs">
+            
+            {/* Top Eyebrow Header */}
+            <div className="flex items-center justify-center gap-3">
+              <span className="h-px w-8 bg-ashara-teal/40 dark:bg-ashara-gold/40" />
+              <span className="text-[10px] uppercase tracking-[0.32em] font-semibold text-ashara-teal dark:text-ashara-gold">
+                Client Perspective
+              </span>
+              <span className="h-px w-8 bg-ashara-teal/40 dark:bg-ashara-gold/40" />
+            </div>
+
+            {/* Star Rating */}
+            <div className="flex items-center justify-center gap-1.5 text-amber-500">
+              {[...Array(projectTestimonial.rating || 5)].map((_, i) => (
+                <Star key={i} className="w-4 h-4 fill-current" />
+              ))}
+            </div>
+
+            {/* Testimonial Quote in Italic Serif */}
+            <blockquote className="font-serif italic text-xl sm:text-2xl lg:text-[26px] text-ashara-charcoal dark:text-gray-100 leading-relaxed font-light px-2 sm:px-8">
+              “{projectTestimonial.quote}”
+            </blockquote>
+
+            {/* Client Attribution & Verification */}
+            <div className="pt-2 space-y-1">
+              <p className="text-xs uppercase tracking-[0.22em] font-semibold text-ashara-charcoal dark:text-white">
+                {projectTestimonial.clientName}
+              </p>
+              <p className="text-[11px] uppercase tracking-[0.2em] font-light text-gray-500 dark:text-gray-400">
+                {projectTestimonial.role && `${projectTestimonial.role} • `}
+                <span className="font-medium text-ashara-teal dark:text-ashara-gold">
+                  {projectTestimonial.organization}
+                </span>
+              </p>
+              <div className="pt-1">
+                <span className="inline-block text-[9px] uppercase tracking-[0.25em] font-medium px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
+                  Verified Project Client
+                </span>
+              </div>
+            </div>
+
+          </div>
+        </section>
+      )}
+
+      {/* 9. ENQUIRE NOW Button (Outlined) */}
+      <div className="text-center pt-8 pb-16">
         <button
           onClick={() => onNavigate('contact')}
           className="inline-block px-10 py-3 border border-gray-900 dark:border-white/20 text-ashara-charcoal dark:text-white text-[11px] uppercase tracking-[0.2em] font-medium hover:bg-ashara-teal dark:hover:bg-ashara-gold hover:text-white dark:hover:text-ashara-dark hover:border-ashara-teal dark:hover:border-ashara-gold transition duration-300 shadow-2xs"

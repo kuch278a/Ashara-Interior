@@ -73,8 +73,8 @@ export default function BlogPage({ isSection = false }) {
         </div>
       </section>
 
-      {/* 3. MORE STORIES */}
-      {posts.length > 2 && (
+      {/* 3. MORE STORIES (Hidden on Home Page) */}
+      {!isSection && posts.length > 2 && (
         <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pt-10 border-t border-gray-200 dark:border-white/10">
           <h3 className="font-serif text-2xl sm:text-3xl text-ashara-charcoal dark:text-white mb-8 tracking-wide transition-colors duration-300">
             More Stories

@@ -20,7 +20,7 @@ import {
   onAuthStateChanged
 } from 'firebase/auth';
 import { getStorage, ref, uploadBytes, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { DEFAULT_PROJECTS_LIST, DEFAULT_BLOG_POSTS, DEFAULT_CONSULTATION_LEADS } from '../data/defaultData.js';
+import { DEFAULT_PROJECTS_LIST, DEFAULT_BLOG_POSTS, DEFAULT_CONSULTATION_LEADS, DEFAULT_TESTIMONIALS_LIST } from '../data/defaultData.js';
 import { compressImage } from '../utils/imageOptimizer.js';
 
 // Firebase configuration from environment variables or live studio keys
@@ -620,7 +620,179 @@ export async function updateConsultationStatus(leadId, newStatus) {
 }
 
 // ----------------------------------------------------
-// 4. AUTHENTICATION HELPERS
+// 4. DYNAMIC TESTIMONIALS CMS (Instant Local Cache + Real-Time Sync)
+// ----------------------------------------------------
+
+export function mergeWithDefaultTestimonials(customList = []) {
+  if (!Array.isArray(customList) || customList.length === 0) {
+    return DEFAULT_TESTIMONIALS_LIST;
+  }
+  const map = new Map();
+  DEFAULT_TESTIMONIALS_LIST.forEach((t) => {
+    map.set(String(t.id), { ...t });
+  });
+  customList.forEach((t) => {
+    if (t && t.id !== undefined) {
+      const existing = map.get(String(t.id)) || {};
+      map.set(String(t.id), { ...existing, ...t });
+    }
+  });
+  return Array.from(map.values());
+}
+
+export function getInitialTestimonials() {
+  if (typeof window !== 'undefined') {
+    try {
+      const stored = localStorage.getItem('ashara_testimonials');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return mergeWithDefaultTestimonials(parsed);
+        }
+      }
+    } catch (e) {}
+  }
+  return DEFAULT_TESTIMONIALS_LIST;
+}
+
+export function subscribeToTestimonials(callback) {
+  if (typeof callback !== 'function') return () => {};
+
+  callback(getInitialTestimonials());
+
+  const handleCustomEvent = (e) => {
+    if (e.detail && Array.isArray(e.detail)) {
+      callback(e.detail);
+    }
+  };
+
+  const handleStorageEvent = (e) => {
+    if (e.key === 'ashara_testimonials' && e.newValue) {
+      try {
+        const parsed = JSON.parse(e.newValue);
+        if (Array.isArray(parsed)) {
+          callback(mergeWithDefaultTestimonials(parsed));
+        }
+      } catch (err) {}
+    }
+  };
+
+  if (typeof window !== 'undefined') {
+    window.addEventListener('ashara_testimonials_updated', handleCustomEvent);
+    window.addEventListener('storage', handleStorageEvent);
+  }
+
+  let firestoreUnsub = null;
+  if (isFirebaseConfigured && db) {
+    try {
+      const q = collection(db, 'testimonials');
+      firestoreUnsub = onSnapshot(q, (snapshot) => {
+        if (!snapshot.empty) {
+          const remoteDocs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+          const merged = mergeWithDefaultTestimonials(remoteDocs);
+          try {
+            localStorage.setItem('ashara_testimonials', JSON.stringify(merged));
+          } catch (e) {}
+          callback(merged);
+        }
+      }, (error) => {
+        console.warn('Firestore testimonials realtime sync error:', error);
+      });
+    } catch (err) {
+      console.warn('Firestore testimonials listener init error:', err);
+    }
+  }
+
+  return () => {
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('ashara_testimonials_updated', handleCustomEvent);
+      window.removeEventListener('storage', handleStorageEvent);
+    }
+    if (typeof firestoreUnsub === 'function') {
+      firestoreUnsub();
+    }
+  };
+}
+
+export async function getDynamicTestimonials() {
+  const local = getInitialTestimonials();
+
+  if (isFirebaseConfigured && db) {
+    try {
+      await ensureFirebaseAuth();
+      const snapshot = await getDocs(collection(db, 'testimonials'));
+      if (!snapshot.empty) {
+        const remoteDocs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        const merged = mergeWithDefaultTestimonials(remoteDocs);
+        try {
+          localStorage.setItem('ashara_testimonials', JSON.stringify(merged));
+        } catch (e) {}
+        return merged;
+      }
+    } catch (error) {
+      console.warn('Firestore testimonials fetch failed, using cached list:', error);
+    }
+  }
+
+  return local;
+}
+
+export async function saveTestimonial(testimonialData) {
+  const id = testimonialData.id ? String(testimonialData.id) : 'test_' + Date.now();
+  const payload = { ...testimonialData, id, updatedAt: new Date().toISOString() };
+
+  const currentList = getInitialTestimonials();
+  const existingIdx = currentList.findIndex(t => String(t.id) === String(id));
+  if (existingIdx >= 0) {
+    currentList[existingIdx] = { ...currentList[existingIdx], ...payload };
+  } else {
+    currentList.unshift(payload);
+  }
+  const merged = mergeWithDefaultTestimonials(currentList);
+  try {
+    localStorage.setItem('ashara_testimonials', JSON.stringify(merged));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('ashara_testimonials_updated', { detail: merged }));
+    }
+  } catch (e) {}
+
+  if (isFirebaseConfigured && db) {
+    try {
+      await ensureFirebaseAuth();
+      await setDoc(doc(db, 'testimonials', id), payload, { merge: true });
+    } catch (error) {
+      console.error('Firestore save testimonial error, saved locally:', error);
+    }
+  }
+
+  return { success: true, id };
+}
+
+export async function deleteTestimonial(testimonialId) {
+  const id = String(testimonialId);
+
+  const currentList = getInitialTestimonials().filter(t => String(t.id) !== id);
+  try {
+    localStorage.setItem('ashara_testimonials', JSON.stringify(currentList));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('ashara_testimonials_updated', { detail: currentList }));
+    }
+  } catch (e) {}
+
+  if (isFirebaseConfigured && db) {
+    try {
+      await ensureFirebaseAuth();
+      await deleteDoc(doc(db, 'testimonials', id));
+    } catch (error) {
+      console.error('Firestore delete testimonial error:', error);
+    }
+  }
+
+  return { success: true };
+}
+
+// ----------------------------------------------------
+// 5. AUTHENTICATION HELPERS
 // ----------------------------------------------------
 
 export async function loginAdminUser(email, password) {

@@ -51,12 +51,12 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
         <button
           onClick={() => handleNavClick('home')}
           className="flex items-center gap-3 text-left focus:outline-none group"
-          aria-label="Ashara Interior Home"
+          aria-label="Ashara Interior Design and Building"
         >
           <div className="flex items-center select-none group">
             <img
               src={theme === 'dark' ? './client_logos/ashara_logo_white.png' : './client_logos/ashara_logo_teal.png'}
-              alt="Ashara — Interior & Architecture"
+              alt="Ashara Interior Design and Building"
               decoding="async"
               className="object-contain transition-transform duration-300 group-hover:scale-105"
               style={{ height: '54px', width: 'auto' }}
@@ -69,8 +69,8 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
             <span className="font-serif tracking-widest font-semibold text-sm text-terion-charcoal dark:text-white uppercase">
               Ashara
             </span>
-            <span className="text-[10px] uppercase tracking-[0.25em] text-terion-muted dark:text-terion-gray font-light">
-              Interior &amp; Architecture
+            <span className="text-[10px] uppercase tracking-[0.2em] text-terion-muted dark:text-terion-gray font-light">
+              Interior Design &amp; Building
             </span>
           </div>
         </button>

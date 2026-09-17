@@ -186,3 +186,40 @@ export const DEFAULT_CONSULTATION_LEADS = [
     status: 'completed'
   }
 ];
+
+export const DEFAULT_TESTIMONIALS_LIST = [
+  {
+    id: 'test_1',
+    projectId: '1', // Prosperity Party Office
+    clientName: "Deputy President's Office",
+    role: 'Executive Bureau',
+    organization: 'Prosperity Party Headquarters',
+    rating: 5,
+    quote: 'Ashara Interiors transformed our office space beyond our expectations. Their attention to detail and ability to deliver a luxurious, functional design within an incredibly tight deadline was remarkable.',
+    isFeatured: true,
+    createdAt: new Date(Date.now() - 5 * 24 * 3600 * 1000).toISOString()
+  },
+  {
+    id: 'test_2',
+    projectId: '6', // Ministry of Revenues
+    clientName: 'Infrastructure Directorate',
+    role: 'Facility & Engineering Lead',
+    organization: 'Ministry of Revenues',
+    rating: 5,
+    quote: 'The acoustic precision, custom timber paneling, and grand executive stage in our main auditorium exceeded all engineering standards. Ashara sets the benchmark for institutional interiors.',
+    isFeatured: true,
+    createdAt: new Date(Date.now() - 10 * 24 * 3600 * 1000).toISOString()
+  },
+  {
+    id: 'test_3',
+    projectId: '5', // Amibara Properties
+    clientName: 'Project Development Board',
+    role: 'Managing Directorate',
+    organization: 'Amibara Properties',
+    rating: 5,
+    quote: 'From initial material curation to the final turnkey handover, Ashara handled our commercial headquarters with supreme professionalism. An unmatched eye for timeless architectural elegance.',
+    isFeatured: true,
+    createdAt: new Date(Date.now() - 15 * 24 * 3600 * 1000).toISOString()
+  }
+];
+

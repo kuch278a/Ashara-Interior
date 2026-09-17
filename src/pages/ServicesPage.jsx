@@ -143,74 +143,76 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
         </blockquote>
       </section>
 
-      {/* 4. "Recent Projects" Section matching Figma Image 2 */}
-      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pt-8 space-y-12">
-        
-        {/* Heading with Divider Lines */}
-        <div className="flex items-center justify-center gap-6 sm:gap-10">
-          <div className="h-[1px] bg-gray-300 dark:bg-white/10 flex-1 max-w-[240px]"></div>
-          <h3 className="font-serif text-2xl sm:text-3xl text-ashara-charcoal dark:text-white tracking-wide transition-colors duration-300">
-            Recent Projects
-          </h3>
-          <div className="h-[1px] bg-gray-300 dark:bg-white/10 flex-1 max-w-[240px]"></div>
-        </div>
-
-        {/* 2 Project Cards Grid with Solid Teal Label Box */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
+      {/* 4. "Recent Projects" Section matching Figma Image 2 (Hidden on Home Page) */}
+      {!isSection && (
+        <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pt-8 space-y-12">
           
-          {/* Card 1: Amibara Properties */}
-          <div 
-            onClick={() => handleProjectClick(5)}
-            className="group relative cursor-pointer aspect-[4/3] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500 border border-black/5 dark:border-white/10"
-          >
-            <img
-              src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=85"
-              alt="Amibara Properties"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-            />
-            <div className="absolute inset-x-0 bottom-0 bg-ashara-teal/95 dark:bg-ashara-teal/95 backdrop-blur-[2px] p-5 sm:p-6 text-white transition-all duration-300">
-              <span className="text-[8.5px] sm:text-[9px] uppercase tracking-[0.28em] text-white/80 font-medium block">
-                PRIVATE COMPANY
-              </span>
-              <h4 className="font-serif text-xl sm:text-2xl font-normal mt-0.5 text-white">
-                Amibara Properties
-              </h4>
-            </div>
+          {/* Heading with Divider Lines */}
+          <div className="flex items-center justify-center gap-6 sm:gap-10">
+            <div className="h-[1px] bg-gray-300 dark:bg-white/10 flex-1 max-w-[240px]"></div>
+            <h3 className="font-serif text-2xl sm:text-3xl text-ashara-charcoal dark:text-white tracking-wide transition-colors duration-300">
+              Recent Projects
+            </h3>
+            <div className="h-[1px] bg-gray-300 dark:bg-white/10 flex-1 max-w-[240px]"></div>
           </div>
 
-          {/* Card 2: Ministry of Revenues */}
-          <div 
-            onClick={() => handleProjectClick(6)}
-            className="group relative cursor-pointer aspect-[4/3] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500 border border-black/5 dark:border-white/10"
-          >
-            <img
-              src="./assets/p6_revenues.png"
-              alt="Ministry of Revenues"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-            />
-            <div className="absolute inset-x-0 bottom-0 bg-ashara-teal/95 dark:bg-ashara-teal/95 backdrop-blur-[2px] p-5 sm:p-6 text-white transition-all duration-300">
-              <span className="text-[8.5px] sm:text-[9px] uppercase tracking-[0.28em] text-white/80 font-medium block">
-                GOVERNMENTAL
-              </span>
-              <h4 className="font-serif text-xl sm:text-2xl font-normal mt-0.5 text-white">
-                Ministry of Revenues
-              </h4>
+          {/* 2 Project Cards Grid with Solid Teal Label Box */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
+            
+            {/* Card 1: Amibara Properties */}
+            <div 
+              onClick={() => handleProjectClick(5)}
+              className="group relative cursor-pointer aspect-[4/3] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500 border border-black/5 dark:border-white/10"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=85"
+                alt="Amibara Properties"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+              />
+              <div className="absolute inset-x-0 bottom-0 bg-ashara-teal/95 dark:bg-ashara-teal/95 backdrop-blur-[2px] p-5 sm:p-6 text-white transition-all duration-300">
+                <span className="text-[8.5px] sm:text-[9px] uppercase tracking-[0.28em] text-white/80 font-medium block">
+                  PRIVATE COMPANY
+                </span>
+                <h4 className="font-serif text-xl sm:text-2xl font-normal mt-0.5 text-white">
+                  Amibara Properties
+                </h4>
+              </div>
             </div>
+
+            {/* Card 2: Ministry of Revenues */}
+            <div 
+              onClick={() => handleProjectClick(6)}
+              className="group relative cursor-pointer aspect-[4/3] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500 border border-black/5 dark:border-white/10"
+            >
+              <img
+                src="./assets/p6_revenues.png"
+                alt="Ministry of Revenues"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+              />
+              <div className="absolute inset-x-0 bottom-0 bg-ashara-teal/95 dark:bg-ashara-teal/95 backdrop-blur-[2px] p-5 sm:p-6 text-white transition-all duration-300">
+                <span className="text-[8.5px] sm:text-[9px] uppercase tracking-[0.28em] text-white/80 font-medium block">
+                  GOVERNMENTAL
+                </span>
+                <h4 className="font-serif text-xl sm:text-2xl font-normal mt-0.5 text-white">
+                  Ministry of Revenues
+                </h4>
+              </div>
+            </div>
+
           </div>
 
-        </div>
+          {/* View All Projects Link */}
+          <div className="text-center pt-6">
+            <button
+              onClick={() => onNavigate('projects')}
+              className="text-[10.5px] uppercase tracking-[0.28em] font-semibold text-gray-800 dark:text-gray-200 hover:text-ashara-teal dark:hover:text-ashara-gold transition border-b border-gray-400 dark:border-white/20 pb-0.5"
+            >
+              VIEW ALL PROJECTS
+            </button>
+          </div>
 
-        {/* View All Projects Link */}
-        <div className="text-center pt-6">
-          <button
-            onClick={() => onNavigate('projects')}
-            className="text-[10.5px] uppercase tracking-[0.28em] font-semibold text-gray-800 dark:text-gray-200 hover:text-ashara-teal dark:hover:text-ashara-gold transition border-b border-gray-400 dark:border-white/20 pb-0.5"
-          >
-            VIEW ALL PROJECTS
-          </button>
-        </div>
-
-      </section>
+        </section>
+      )}
 
     </div>
   );
