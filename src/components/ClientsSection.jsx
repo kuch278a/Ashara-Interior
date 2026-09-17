@@ -84,6 +84,8 @@ const ROW_3_CLIENTS = [
 export default function ClientsSection() {
   const [testimonials, setTestimonials] = useState(() => getInitialTestimonials());
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [touchStart, setTouchStart] = useState(null);
 
   useEffect(() => {
     const unsub = subscribeToTestimonials((list) => {
@@ -94,7 +96,31 @@ export default function ClientsSection() {
     };
   }, []);
 
-  const activeTestimonial = testimonials[currentIndex] || testimonials[0];
+  // Auto-slide testimonials every 4.5 seconds (pauses on hover/touch)
+  useEffect(() => {
+    if (testimonials.length <= 1 || isPaused) return;
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % testimonials.length);
+    }, 4500);
+    return () => clearInterval(interval);
+  }, [testimonials.length, isPaused, currentIndex]);
+
+  const handleTouchStart = (e) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = (e) => {
+    if (touchStart === null) return;
+    const touchEnd = e.changedTouches[0].clientX;
+    const diff = touchStart - touchEnd;
+    if (diff > 50) {
+      setCurrentIndex((prev) => (prev + 1) % testimonials.length);
+    } else if (diff < -50) {
+      setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+    }
+    setTouchStart(null);
+  };
+
   return (
     <div className="space-y-20 py-8">
       
@@ -170,32 +196,49 @@ export default function ClientsSection() {
         </div>
       </section>
 
-      {/* 2. TESTIMONIAL SECTION matching Figma Homepage */}
-      {activeTestimonial && (
-        <section className="max-w-3xl mx-auto px-6 text-center space-y-6">
+      {/* 2. TESTIMONIAL SECTION matching Figma Homepage (Sliding Carousel) */}
+      {testimonials.length > 0 && (
+        <section 
+          className="max-w-3xl mx-auto px-4 sm:px-6 text-center space-y-4 sm:space-y-6 select-none"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
           
           {/* Top Quotation Mark in Soft Teal */}
-          <div className="text-ashara-teal/60 dark:text-ashara-gold/60 text-6xl sm:text-7xl font-serif leading-none select-none flex justify-center transition-colors duration-300">
+          <div className="text-ashara-teal/60 dark:text-ashara-gold/60 text-5xl sm:text-7xl font-serif leading-none select-none flex justify-center transition-colors duration-300">
             “
           </div>
           
-          {/* Testimonial Body in Italic Serif / Cursive Script */}
-          <blockquote className="font-serif italic text-2xl sm:text-3xl lg:text-[32px] text-gray-800 dark:text-gray-200 leading-relaxed font-light px-2 sm:px-6 transition-colors duration-300">
-            “{activeTestimonial.quote}”
-          </blockquote>
+          {/* Sliding Track for Testimonial Quotes */}
+          <div className="overflow-hidden w-full relative">
+            <div 
+              className="flex transition-transform duration-700 ease-out"
+              style={{ transform: `translate3d(-${currentIndex * 100}%, 0, 0)` }}
+            >
+              {testimonials.map((item, idx) => (
+                <div key={item.id || idx} className="w-full shrink-0 px-2 sm:px-6 space-y-4 sm:space-y-5">
+                  <blockquote className="font-serif italic text-xl sm:text-3xl lg:text-[32px] text-gray-800 dark:text-gray-200 leading-relaxed font-light transition-colors duration-300">
+                    “{item.quote}”
+                  </blockquote>
 
-          {/* Attribution matching Figma */}
-          <div className="space-y-0.5 pt-2">
-            <p className="text-[10.5px] sm:text-[11px] uppercase tracking-[0.26em] font-semibold text-ashara-charcoal dark:text-white transition-colors duration-300">
-              {activeTestimonial.clientName},
-            </p>
-            <p className="text-[10px] sm:text-[10.5px] uppercase tracking-[0.3em] font-normal text-gray-600 dark:text-gray-400 transition-colors duration-300">
-              {activeTestimonial.organization}
-            </p>
+                  {/* Attribution */}
+                  <div className="space-y-0.5 pt-1 sm:pt-2">
+                    <p className="text-[10.5px] sm:text-[11px] uppercase tracking-[0.26em] font-semibold text-ashara-charcoal dark:text-white transition-colors duration-300">
+                      {item.clientName},
+                    </p>
+                    <p className="text-[10px] sm:text-[10.5px] uppercase tracking-[0.3em] font-normal text-gray-600 dark:text-gray-400 transition-colors duration-300">
+                      {item.organization}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Bottom Quotation Mark in Soft Teal */}
-          <div className="text-ashara-teal/60 dark:text-ashara-gold/60 text-6xl sm:text-7xl font-serif leading-none select-none flex justify-center pt-2 transition-colors duration-300">
+          <div className="text-ashara-teal/60 dark:text-ashara-gold/60 text-5xl sm:text-7xl font-serif leading-none select-none flex justify-center pt-1 sm:pt-2 transition-colors duration-300">
             ”
           </div>
 
@@ -205,7 +248,7 @@ export default function ClientsSection() {
               <button
                 onClick={() => setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length)}
                 aria-label="Previous testimonial"
-                className="p-1.5 text-gray-400 hover:text-ashara-teal dark:hover:text-ashara-gold transition rounded-full hover:bg-black/5 dark:hover:bg-white/5"
+                className="p-1.5 text-gray-400 hover:text-ashara-teal dark:hover:text-ashara-gold transition rounded-full hover:bg-black/5 dark:hover:bg-white/5 focus:outline-none"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -215,10 +258,10 @@ export default function ClientsSection() {
                     key={idx}
                     onClick={() => setCurrentIndex(idx)}
                     aria-label={`Go to testimonial ${idx + 1}`}
-                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                    className={`h-1.5 rounded-full transition-all duration-300 focus:outline-none ${
                       idx === currentIndex
-                        ? 'w-6 bg-ashara-teal dark:bg-ashara-gold'
-                        : 'w-1.5 bg-gray-300 dark:bg-white/20'
+                        ? 'w-7 bg-ashara-teal dark:bg-ashara-gold'
+                        : 'w-2 bg-gray-300 dark:bg-white/20 hover:bg-gray-400'
                     }`}
                   />
                 ))}
@@ -226,7 +269,7 @@ export default function ClientsSection() {
               <button
                 onClick={() => setCurrentIndex((prev) => (prev + 1) % testimonials.length)}
                 aria-label="Next testimonial"
-                className="p-1.5 text-gray-400 hover:text-ashara-teal dark:hover:text-ashara-gold transition rounded-full hover:bg-black/5 dark:hover:bg-white/5"
+                className="p-1.5 text-gray-400 hover:text-ashara-teal dark:hover:text-ashara-gold transition rounded-full hover:bg-black/5 dark:hover:bg-white/5 focus:outline-none"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
