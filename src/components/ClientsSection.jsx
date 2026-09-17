@@ -96,12 +96,12 @@ export default function ClientsSection() {
     };
   }, []);
 
-  // Auto-slide testimonials every 4.5 seconds (pauses on hover/touch)
+  // Auto-slide testimonials every 2 seconds (pauses on hover/touch)
   useEffect(() => {
     if (testimonials.length <= 1 || isPaused) return;
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-    }, 4500);
+    }, 2000);
     return () => clearInterval(interval);
   }, [testimonials.length, isPaused, currentIndex]);
 
@@ -214,7 +214,7 @@ export default function ClientsSection() {
           {/* Sliding Track for Testimonial Quotes */}
           <div className="overflow-hidden w-full relative">
             <div 
-              className="flex transition-transform duration-700 ease-out"
+              className="flex transition-transform duration-500 ease-out"
               style={{ transform: `translate3d(-${currentIndex * 100}%, 0, 0)` }}
             >
               {testimonials.map((item, idx) => (
