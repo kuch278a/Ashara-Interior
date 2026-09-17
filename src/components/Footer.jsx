@@ -27,7 +27,7 @@ export default function Footer({ onNavigate }) {
               className="text-left focus:outline-none hover:opacity-90 transition "
               aria-label="Ashara Interior Design and Building Home"
             >
-              <AsharaLogo size={96} light={true} className="text-white" textClassName="text-white" />
+              <AsharaLogo size={96} light={false} className="text-white" textClassName="text-white" />
             </button>
           </div>
 

@@ -55,13 +55,13 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
         >
           <div className="flex items-center select-none group">
             <img
-              src={theme === 'dark' ? './client_logos/ashara_logo_white.png' : './client_logos/ashara_logo_teal.png'}
+              src="./Ashara logo/Ashara Logo.png"
               alt="Ashara Interior Design and Building"
               decoding="async"
               className="object-contain transition-transform duration-300 group-hover:scale-105"
-              style={{ height: '54px', width: 'auto' }}
+              style={{ height: '56px', width: 'auto' }}
               onError={(e) => {
-                e.target.src = './assets/ashara_logo_transparent.png';
+                e.target.src = './client_logos/ashara_logo_teal.png';
               }}
             />
           </div>
