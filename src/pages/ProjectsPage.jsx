@@ -2,6 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { getInitialProjects, subscribeToProjects } from '../services/firebaseService';
 import { DEFAULT_PROJECTS_LIST } from '../data/defaultData';
 
+const CATEGORIES = ['ALL', 'GOVERNMENTAL', 'PRIVATE ORGANIZATION', 'PRIVATE CORPORATION', 'PRIVATE COMPANY'];
+
+const getSpanClass = (index) => {
+  const patterns = [
+    'span-h-2', // tall
+    'span-h-1', // normal
+    'span-h-1', // normal
+    'span-h-2', // tall
+    'span-h-1', // normal
+    'span-h-1', // normal
+    'span-h-2', // tall
+    'span-h-1', // normal
+  ];
+  return patterns[index % patterns.length];
+};
+
 export default function ProjectsPage({ onNavigate, onSelectProject, isSection = false }) {
   const [projects, setProjects] = useState(() => getInitialProjects());
   const [selectedFilter, setSelectedFilter] = useState('ALL');
@@ -16,8 +32,6 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
       if (typeof unsubscribe === 'function') unsubscribe();
     };
   }, []);
-
-  const categories = ['ALL', 'GOVERNMENTAL', 'PRIVATE ORGANIZATION', 'PRIVATE CORPORATION', 'PRIVATE COMPANY'];
 
   const filteredProjects = selectedFilter === 'ALL'
     ? projects
@@ -38,7 +52,7 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
           <div className="absolute inset-0 bg-gradient-to-tr from-black/20 via-transparent to-black/10 pointer-events-none"></div>
           <div className="max-w-3xl mx-auto space-y-6 relative z-10">
             <blockquote className="font-serif italic text-3xl sm:text-4xl lg:text-5xl font-light leading-snug sm:leading-tight">
-              “Design with passion, authenticity, and positivity to create spaces that inspire and uplift the soul.”
+              "Design with passion, authenticity, and positivity to create spaces that inspire and uplift the soul."
             </blockquote>
             <div className="space-y-1 pt-3">
               <p className="text-[11px] sm:text-xs uppercase tracking-[0.28em] font-semibold text-white">
@@ -52,7 +66,7 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
         </section>
       )}
 
-      {/* PROJECTS 2x3 GRID SECTION */}
+      {/* PROJECTS MASONRY GRID SECTION */}
       <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pt-12 sm:pt-16 pb-12 space-y-10">
         
         {/* Header with Divider Lines */}
@@ -66,7 +80,7 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
 
         {/* Category Filters */}
         <div className="flex items-center justify-center flex-wrap gap-2 sm:gap-3 pt-2">
-          {categories.map((cat) => {
+          {CATEGORIES.map((cat) => {
             const isActive = selectedFilter === cat;
             return (
               <button
@@ -84,42 +98,111 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
           })}
         </div>
 
-        {/* 2x3 Project Cards Grid with Figma Teal/Green Bottom Label Cards */}
-        <div key={selectedFilter} className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 pt-4 animate-fade-in">
-          {filteredProjects.map((item) => (
-            <div
-              key={item.id}
-              onClick={() => handleProjectClick(item)}
-              className="group relative cursor-pointer aspect-[4/3] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-2xl hover:-translate-y-2 active:scale-[0.98] transition-all duration-500 ease-out border border-black/5 dark:border-white/10"
-            >
-              {/* Photo */}
-              <img
-                src={item.image}
-                loading="lazy"
-                decoding="async"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = item.fallbackImage;
-                }}
-                alt={item.title}
-                className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
-              />
+        {/* CSS Masonry Grid - Pure CSS, No JavaScript Layout */}
+        <div key={selectedFilter} className="masonry-grid animate-fade-in">
+          {filteredProjects.map((item, index) => {
+            const spanClass = getSpanClass(index);
+            return (
+              <article
+                key={item.id}
+                onClick={() => handleProjectClick(item)}
+                className={`masonry-item group relative cursor-pointer overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-2xl hover:-translate-y-2 active:scale-[0.98] transition-all duration-500 ease-out border border-black/5 dark:border-white/10 ${spanClass}`}
+              >
+                {/* Photo */}
+                <img
+                  src={item.image}
+                  loading="lazy"
+                  decoding="async"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = item.fallbackImage;
+                  }}
+                  alt={item.title}
+                  className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
+                />
 
-              {/* Signature Solid Forest Teal/Green Bottom Label Box matching Figma */}
-              <div className="absolute inset-x-0 bottom-0 bg-ashara-teal/95 dark:bg-ashara-teal/95 backdrop-blur-[2px] p-5 sm:p-6 text-white transition-all duration-300 group-hover:bg-ashara-teal">
-                <span className="text-[8.5px] sm:text-[9px] uppercase tracking-[0.28em] text-white/80 font-medium block">
-                  {item.category || item.tag}
-                </span>
-                <h3 className="font-serif text-xl sm:text-2xl font-normal mt-0.5 text-white">
-                  {item.title}
-                </h3>
-              </div>
-            </div>
-          ))}
+                {/* Signature Solid Forest Teal/Green Bottom Label Box matching Figma */}
+                <div className="absolute inset-x-0 bottom-0 bg-ashara-teal/95 dark:bg-ashara-teal/95 backdrop-blur-[2px] p-5 sm:p-6 text-white transition-all duration-300 group-hover:bg-ashara-teal">
+                  <span className="text-[8.5px] sm:text-[9px] uppercase tracking-[0.28em] text-white/80 font-medium block">
+                    {item.category || item.tag}
+                  </span>
+                  <h3 className="font-serif text-xl sm:text-2xl font-normal mt-0.5 text-white">
+                    {item.title}
+                  </h3>
+                </div>
+              </article>
+            );
+          })}
         </div>
 
       </section>
 
+      <style jsx>{`
+        .masonry-grid {
+          display: grid;
+          grid-template-columns: repeat(1, 1fr);
+          gap: 1.5rem;
+          grid-auto-flow: dense;
+        }
+        
+        @media (min-width: 640px) {
+          .masonry-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+          }
+        }
+        
+        @media (min-width: 1024px) {
+          .masonry-grid {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+          }
+        }
+        
+        @media (min-width: 1280px) {
+          .masonry-grid {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+          }
+        }
+        
+        /* Height variations for masonry effect */
+        .span-h-1 {
+          grid-row: span 3;
+        }
+        
+        .span-h-2 {
+          grid-row: span 5;
+        }
+        
+        /* Aspect ratio fallback for items without explicit span */
+        .masonry-item {
+          min-height: 280px;
+        }
+        
+        .span-h-1 {
+          min-height: 320px;
+        }
+        
+        .span-h-2 {
+          min-height: 480px;
+        }
+        
+        @media (min-width: 640px) {
+          .span-h-1 { min-height: 360px; }
+          .span-h-2 { min-height: 540px; }
+        }
+        
+        @media (min-width: 1024px) {
+          .span-h-1 { min-height: 340px; }
+          .span-h-2 { min-height: 500px; }
+        }
+        
+        @media (min-width: 1280px) {
+          .span-h-1 { min-height: 300px; }
+          .span-h-2 { min-height: 440px; }
+        }
+      `}</style>
     </div>
   );
 }

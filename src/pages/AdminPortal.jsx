@@ -108,6 +108,8 @@ export default function AdminPortal({ onNavigate }) {
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [projectImageFile, setProjectImageFile] = useState(null);
   const [projectImagePreview, setProjectImagePreview] = useState('');
+  const [projectGalleryFiles, setProjectGalleryFiles] = useState([]);
+  const [projectGalleryPreviews, setProjectGalleryPreviews] = useState([]);
 
   const [editingPost, setEditingPost] = useState(null);
   const [isBlogModalOpen, setIsBlogModalOpen] = useState(false);
@@ -239,6 +241,8 @@ export default function AdminPortal({ onNavigate }) {
     });
     setProjectImageFile(null);
     setProjectImagePreview('');
+    setProjectGalleryFiles([]);
+    setProjectGalleryPreviews([]);
     setIsProjectModalOpen(true);
   };
 
@@ -246,6 +250,8 @@ export default function AdminPortal({ onNavigate }) {
     setEditingProject({ ...proj });
     setProjectImageFile(null);
     setProjectImagePreview('');
+    setProjectGalleryFiles([]);
+    setProjectGalleryPreviews([]);
     setIsProjectModalOpen(true);
   };
 
@@ -271,12 +277,36 @@ export default function AdminPortal({ onNavigate }) {
           return;
         }
       }
+
+      // Upload gallery images
+      if (projectGalleryFiles.length > 0) {
+        const galleryUrls = [];
+        for (let i = 0; i < projectGalleryFiles.length; i++) {
+          setUploadStatus({
+            active: true,
+            stage: `Uploading gallery image ${i + 1} of ${projectGalleryFiles.length}...`,
+            percent: 40 + Math.round((i / projectGalleryFiles.length) * 50)
+          });
+          const uploadResult = await uploadImage(projectGalleryFiles[i], 'projects');
+          if (uploadResult.success) {
+            galleryUrls.push(uploadResult.url);
+          } else {
+            showToast(`Gallery image ${i + 1} failed: ` + (uploadResult.error || 'Unknown error'), 'error');
+            setUploadStatus({ active: false, stage: '', percent: 0 });
+            return;
+          }
+        }
+        projectData.gallery = [...(projectData.gallery || []), ...galleryUrls];
+      }
+
       setUploadStatus({ active: true, stage: 'Syncing with atelier database...', percent: 95 });
       await saveProject(projectData);
       setIsProjectModalOpen(false);
       setEditingProject(null);
       setProjectImageFile(null);
       setProjectImagePreview('');
+      setProjectGalleryFiles([]);
+      setProjectGalleryPreviews([]);
       showToast(`Project "${projectData.title}" saved successfully`);
       await loadAllData();
     } catch (err) {
@@ -1677,6 +1707,93 @@ export default function AdminPortal({ onNavigate }) {
                         />
                       </label>
                     )}
+
+                    {/* Gallery Images Upload Zone */}
+                    <div className="space-y-2 pt-4 border-t border-gray-200 dark:border-white/10">
+                      <label className="block text-[10px] uppercase tracking-wider font-bold text-gray-700 dark:text-gray-300">
+                        Gallery Images (Sub-images for Detail Page)
+                      </label>
+
+                      {/* Selected Files Badge */}
+                      {projectGalleryFiles.length > 0 ? (
+                        <div className="flex flex-wrap gap-2">
+                          {projectGalleryFiles.map((file, idx) => (
+                            <div key={idx} className="flex items-center gap-2 p-2 bg-ashara-teal/5 dark:bg-ashara-gold/10 border border-ashara-teal/20 dark:border-ashara-gold/30 rounded-xs">
+                              <CheckCircle className="w-4 h-4 text-ashara-teal dark:text-ashara-gold shrink-0" />
+                              <div className="min-w-0">
+                                <p className="text-xs font-semibold text-ashara-charcoal dark:text-white truncate max-w-[180px]">
+                                  {file.name}
+                                </p>
+                                <p className="text-[10px] text-gray-500 dark:text-gray-400">
+                                  {formatFileSize(file.size)}
+                                </p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setProjectGalleryFiles(prev => prev.filter((_, i) => i !== idx));
+                                  setProjectGalleryPreviews(prev => prev.filter((_, i) => i !== idx));
+                                }}
+                                className="text-gray-400 hover:text-rose-500 dark:hover:text-rose-400 p-1 text-xs"
+                                title="Remove"
+                              >
+                                <X className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <label className="flex flex-col items-center justify-center gap-1.5 w-full p-4 bg-gray-50 dark:bg-white/5 border-2 border-dashed border-gray-300 dark:border-white/15 hover:border-ashara-teal dark:hover:border-ashara-gold text-gray-600 dark:text-gray-300 cursor-pointer transition-all duration-200 group rounded-xs">
+                          <Upload className="w-5 h-5 text-gray-400 group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition" />
+                          <span className="text-xs uppercase tracking-wider font-semibold group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition">
+                            Upload gallery images (multiple)
+                          </span>
+                          <span className="text-[10px] text-gray-400 font-light">
+                            Supports JPG, PNG, WEBP — will appear in project detail gallery grid
+                          </span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            className="hidden"
+                            onChange={(e) => {
+                              const files = Array.from(e.target.files);
+                              if (files.length > 0) {
+                                const newFiles = [...projectGalleryFiles, ...files].slice(0, 8);
+                                setProjectGalleryFiles(newFiles);
+                                files.forEach(file => {
+                                  const reader = new FileReader();
+                                  reader.onload = () => setProjectGalleryPreviews(prev => [...prev, reader.result]);
+                                  reader.readAsDataURL(file);
+                                });
+                              }
+                            }}
+                          />
+                        </label>
+                      )}
+
+                      {/* Current Gallery URLs */}
+                      {(editingProject.gallery && editingProject.gallery.length > 0) && (
+                        <div className="pt-2">
+                          <p className="text-[9px] uppercase tracking-wider text-gray-400 mb-1">
+                            Current gallery URLs:
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {editingProject.gallery.map((url, idx) => (
+                              <div key={idx} className="flex items-center gap-2 p-2 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs">
+                                <img src={url} alt="" className="w-10 h-10 object-cover rounded" />
+                                <input
+                                  type="text"
+                                  value={url}
+                                  readOnly
+                                  className="flex-1 px-2 py-1 bg-transparent text-[10px] text-ashara-charcoal dark:text-white truncate"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
 
                     {/* Or URL input */}
                     <div className="pt-1">
