@@ -38,54 +38,87 @@
 
 ## ✨ Key Features & User Experience
 
-- 📜 **Continuous Multi-Section Home Page**:
-  - Scrolling on the **Home page** takes visitors on a seamless journey through the entire studio showcase: Hero Carousel → Philosophy Quote → "Our Works" 2×2 Grid → Services (with interactive accordion) → About Us (with 3 Core Value Pillars) → The Ashara Journal → Clients & Testimonials → Contact Form → Footer.
-- 🎯 **Dedicated Single-Page View Isolation**:
-  - Clicking any navigation item (**`HOME`**, **`PROJECTS`**, **`OUR SERVICES`**, **`ABOUT US`**, **`BLOG`**, **`CONTACT`**) switches to and renders **ONLY that selected page**.
-- 🏛️ **Real Governmental & Corporate Portfolio**:
-  - **Prosperity Party Office** (Executive presidential suite & convention hall)
-  - **Ethiopia Federal Police** (High-security civic campus)
-  - **Fana Broadcasting Corporation** (Broadcasting & media atelier)
-  - **United Beverages** (Neoclassical corporate head office)
-  - **Amibara Properties** (Commercial real estate HQ)
-  - **Ministry of Revenues** (Monumental civic complex & dome auditorium)
-- 🤝 **Client & Partner Matrix**:
-  - Interactive 3-row grid featuring 15+ official client emblems and governmental seals.
-- 📖 **The Ashara Journal (Blog)**:
-  - Architectural essays with an interactive reading modal — dynamically fetched from Firestore.
-- 📩 **Consultation & Booking Form**:
-  - Interactive consultation booking form with validation states and direct WhatsApp / Phone / Email contacts. Submissions are saved to Firebase Firestore.
+### 🏠 Home Page — Multi-Section Continuous Scroll
+Scrolling on the **Home page** takes visitors on a seamless journey through the entire studio showcase:
+1. **Full-Screen Hero Slideshow** — Auto cross-fade (2s transitions, 6s interval), keyboard/touch navigation
+2. **Philosophy Quote** — Editorial serif typography
+3. **Our Works: Accordion Panel Carousel** — Expanding image panels with 2s smooth transitions, hover/click to expand, auto-play (5s)
+4. **Services** — "How We Work" hero & 4-tier interactive accordion
+5. **About Us** — Studio story, atelier workspace, 3 Core Value Pillars
+6. **The Ashara Journal** — Blog preview with reading modal
+7. **Clients & Testimonials** — Infinite marquee logo scroller (2 rows, opposite directions, pure CSS)
+8. **Contact Form** — Consultation booking with WhatsApp/Email/Phone actions
+
+### 🎯 Dedicated Single-Page View Isolation
+Clicking any navigation item (**`HOME`**, **`PROJECTS`**, **`OUR SERVICES`**, **`ABOUT US`**, **`BLOG`**, **`CONTACT`**) switches to and renders **ONLY that selected page**.
+
+### 🏛️ Real Governmental & Corporate Portfolio
+- **Prosperity Party Office** (Executive presidential suite & convention hall)
+- **Ethiopia Federal Police** (High-security civic campus)
+- **Fana Broadcasting Corporation** (Broadcasting & media atelier)
+- **United Beverages** (Neoclassical corporate head office)
+- **Amibara Properties** (Commercial real estate HQ)
+- **Ministry of Revenues** (Monumental civic complex & dome auditorium)
+
+### 🖼️ Projects Page — CSS Masonry Portfolio Layout (No JavaScript)
+- Pure CSS Grid with `grid-auto-flow: dense` — responsive columns (1→2→3→4)
+- Height variations via `grid-row: span` classes for organic masonry feel
+- Category filters (Governmental, Private, Corporate, Commercial)
+- Hover effects with scale & teal label reveal
+
+### 📄 Project Detail Page — Immersive Case Study
+- Single hero image (no slider) with hover zoom
+- Title + architectural narrative (2-column layout)
+- **Full-width feature image** after description
+- 2-column gallery grids + full-width images
+- Client testimonial with star rating & verification badge
+- "You May Like" recommendations
+
+### 🤝 Clients Section — Infinite Marquee Logo Scroller (Pure CSS)
+- **2 rows** with opposite directions (Row 1: L→R, Row 2: R→L)
+- **30s linear infinite loop** — seamless duplication
+- **Pause on hover** (`animation-play-state: paused`)
+- Gradient fade masks on edges
+- Grayscale → color on hover with scale-up
+- Dark mode brightness boost (`brightness-125` → `brightness-150` on hover)
+
+### 📖 The Ashara Journal (Blog)
+- Architectural essays with interactive reading modal
+- Dynamically fetched from Firestore
+- Category filters, search
+
+### 📩 Consultation & Booking Form
+- Interactive form with validation states
+- Direct WhatsApp / Phone / Email contact actions
+- Submissions saved to Firebase Firestore
 
 ---
 
 ## 🔐 Admin Portal & CMS
 
 The Admin Portal is a **password-protected** content management system accessible at:
-
 - `https://kuch278a.github.io/Ashara-Interior/#admin`
 - `https://kuch278a.github.io/Ashara-Interior/?admin`
 
 ### Login Credentials
-
 | Email | Password |
 | :--- | :--- |
 | `admin@ashara.com` | `ashara2025` |
 
 ### CMS Capabilities
-
 | Feature | Description |
 | :--- | :--- |
-| **Projects Manager** | Add, edit, and delete portfolio projects. Changes sync live to the public landing page via Firestore. |
+| **Projects Manager** | Add, edit, delete portfolio projects. Main image + **gallery images** (up to 8). Changes sync live to public pages via Firestore. |
 | **Blog / Journal Editor** | Create and update architectural journal articles with rich metadata. |
-| **Consultation Leads** | View and manage all incoming consultation inquiries from the contact form. |
+| **Consultation Leads** | View and manage all incoming consultation inquiries from the contact form. Status updates (New/Contacted/Completed). Direct WhatsApp/Email actions. |
+| **Testimonials Manager** | Add/edit client testimonials with star ratings, project linking, and featured flag. |
 | **Firebase Status** | Real-time indicator showing whether the app is connected to live Firestore or using local storage fallback. |
 
 ### How CMS Updates Reach the Landing Page
-
-1. Admin adds/edits a project or blog post in the CMS.
+1. Admin adds/edits a project, blog post, or testimonial in the CMS.
 2. Data is saved to **Cloud Firestore** (or `localStorage` as fallback).
-3. The public-facing pages (`HomePage`, `ProjectsPage`, `BlogPage`) fetch data dynamically from Firestore on every page load.
-4. Changes appear immediately — no rebuild or redeployment needed.
+3. The public-facing pages (`HomePage`, `ProjectsPage`, `BlogPage`, `ProjectDetailPage`) fetch data dynamically from Firestore on every page load.
+4. Changes appear immediately — **no rebuild or redeployment needed**.
 
 ---
 
@@ -94,11 +127,13 @@ The Admin Portal is a **password-protected** content management system accessibl
 | Feature | Description |
 | :--- | :--- |
 | **Top Scroll Progress Bar** | Fixed gradient indicator (`from-ashara-teal via-ashara-gold to-ashara-terracotta`) tracking scroll percentage in real time. |
-| **Hero Slide Progress Timer** | The active slide pill fills with an animated gold progress bar showing the 5.5s countdown before transitioning. |
-| **Keyboard Navigation** | Navigate the hero carousel using **Left Arrow (←)** and **Right Arrow (→)** keys. |
-| **Mobile Touch Swiping** | Fluid touch swipe gestures for mobile and tablet carousel navigation. |
+| **Hero Slide Progress Timer** | Active slide pill fills with animated gold progress bar showing 6s countdown before transition. |
+| **Keyboard Navigation** | Navigate hero slideshow & accordion carousel using **Left Arrow (←)** and **Right Arrow (→)** keys. |
+| **Mobile Touch Swiping** | Fluid touch swipe gestures for mobile/tablet on hero slideshow, accordion carousel, and project detail. |
 | **Kinetic Card Physics** | Smooth hover elevation (`hover:-translate-y-2 hover:shadow-2xl`) and image zoom (`group-hover:scale-108`). |
-| **Dynamic Navbar Elevation** | Dynamic backdrop blur and border shadow that adjusts when scrolled past 20px. |
+| **Dynamic Navbar Elevation** | Dynamic backdrop blur and border shadow adjusting when scrolled past 20px. |
+| **Accordion Panel Transitions** | 2s cubic-bezier transitions for panel expand/collapse, grayscale→color, content reveal. |
+| **Masonry Hover** | Card lift + image scale + label color transition. |
 
 ---
 
@@ -124,11 +159,24 @@ The Admin Portal is a **password-protected** content management system accessibl
 | :--- | :--- | :--- |
 | `ashara-teal` | `#1E4E4E` | Primary brand color, headers, footers, project cards |
 | `ashara-teal-hover` | `#163B3B` | Button hover and darker accent states |
+| `ashara-teal-light` | `#2A6868` | Lighter accent states |
 | `ashara-terracotta` | `#DF6D27` | Warm accents, badges, call-to-actions |
 | `ashara-gold` | `#C5A880` | Luxury accents, active indicators, borders |
 | `ashara-charcoal` | `#1A1816` | Primary readable typography (Light mode) |
 | `ashara-dark` | `#0A1525` | Luxury dark mode body background |
 | `ashara-sand` | `#D5CDC4` | Light readable typography (Dark mode) |
+| `ashara-cream` | `#FAF8F5` | Light mode page background |
+
+### Typography Scale
+- **Display**: `font-serif text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-light`
+- **Headline**: `font-serif text-3xl sm:text-4xl`
+- **Title**: `font-serif text-xl sm:text-2xl`
+- **Body**: `text-xs sm:text-[13.5px] leading-relaxed`
+- **Caption/Tag**: `text-[8.5px] sm:text-[10px] uppercase tracking-[0.28em] font-medium`
+
+### Shadows
+- `luxury`: `0 20px 40px -15px rgba(30, 78, 78, 0.08)`
+- `luxury-lg`: `0 30px 60px -20px rgba(30, 78, 78, 0.15)`
 
 ---
 
@@ -142,7 +190,7 @@ Ashara-Interior/
 ├── index.html                      # HTML entry point with default dark theme & fonts
 ├── package.json                    # Project dependencies and scripts
 ├── postcss.config.js               # PostCSS configuration
-├── tailwind.config.js              # Custom theme tokens, fonts, and luxury shadows
+├── tailwind.config.js              # Custom theme tokens, fonts, luxury shadows
 ├── vite.config.js                  # Vite bundler configuration (base: './')
 ├── .env                            # Firebase credentials (not committed)
 ├── public/                         # Static production assets
@@ -152,28 +200,31 @@ Ashara-Interior/
 │   ├── bg_pattern_dark.svg         # Dark mode geometric pattern
 │   └── our_service.jpg             # Services hero banner background
 └── src/
-    ├── App.jsx                     # Main layout, dark mode state, and dedicated view router
-    ├── index.css                   # Global styles, scrollbar, and keyframe animations
+    ├── App.jsx                     # Main layout, dark mode state, dedicated view router
+    ├── index.css                   # Global styles, scrollbar, keyframe animations
     ├── main.jsx                    # React root mount entry point
     ├── components/
     │   ├── AsharaLogo.jsx          # Vector SVG brand emblem & typography
-    │   ├── ClientsSection.jsx      # Client logos matrix & presidential quote
+    │   ├── ClientsSection.jsx      # Infinite marquee logo scroller (2 rows, pure CSS)
     │   ├── Footer.jsx              # Solid teal footer with quick links & social links
-    │   └── Navbar.jsx              # Header navigation, scroll progress, & theme toggle
+    │   ├── Navbar.jsx              # Header navigation, scroll progress, theme toggle
+    │   ├── FullScreenHeroSlideshow.jsx  # Hero cross-fade slideshow (2s, 6s interval)
+    │   ├── AccordionPanelCarousel.jsx   # Expanding image panel carousel (2s transitions)
+    │   └── CoverflowCarousel.jsx        # CoverFlow 3D perspective carousel (unused)
     ├── data/
     │   └── defaultData.js          # Default projects & blog posts (offline fallback)
     ├── pages/
     │   ├── AboutPage.jsx           # Studio story, workspace banner, & 3 Core Pillars
-    │   ├── AdminPortal.jsx         # Password-protected CMS (projects, blog, leads)
+    │   ├── AdminPortal.jsx         # Password-protected CMS (projects, blog, leads, testimonials)
     │   ├── BlogPage.jsx            # The Ashara Journal & interactive reading modal
     │   ├── ContactPage.jsx         # Consultation booking form & studio locations
     │   ├── HomePage.jsx            # Full multi-section continuous scroll experience
     │   ├── ProjectDetailPage.jsx   # Individual project case study with gallery
-    │   ├── ProjectsPage.jsx        # Portfolio gallery with category filters
+    │   ├── ProjectsPage.jsx        # CSS Masonry portfolio grid with category filters
     │   └── ServicesPage.jsx        # "How We Work" hero & 4-tier interactive accordion
     └── services/
         ├── firebase.js             # Re-export alias for backward compatibility
-        └── firebaseService.js      # Firebase init, Firestore CRUD, Auth helpers
+        └── firebaseService.js      # Firebase init, Firestore CRUD, Auth helpers, image upload
 ```
 
 ---
@@ -181,7 +232,6 @@ Ashara-Interior/
 ## 🚀 Getting Started
 
 ### Prerequisites
-
 - **Node.js** (v18.0.0 or higher)
 - **npm** (v9.0.0 or higher)
 
@@ -246,10 +296,10 @@ on:
   workflow_dispatch:
 ```
 
-### Live Production URL:
+### Live Production URL
 👉 **[https://kuch278a.github.io/Ashara-Interior](https://kuch278a.github.io/Ashara-Interior)**
 
-### How to Deploy Updates:
+### How to Deploy Updates
 Whenever you make changes, commit and push to `main`:
 ```bash
 git add .
