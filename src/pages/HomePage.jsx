@@ -19,8 +19,14 @@ export default function HomePage({ onNavigate, onSelectProject }) {
   useEffect(() => {
     const unsubscribe = subscribeToProjects((data) => {
       if (data && data.length > 0) {
-        setSlides(data);
-        setFeaturedWorks(data.slice(0, 4));
+        // Sort by updatedAt/createdAt descending (newest first)
+        const sorted = [...data].sort((a, b) => {
+          const dateA = new Date(a.updatedAt || a.createdAt || 0).getTime();
+          const dateB = new Date(b.updatedAt || b.createdAt || 0).getTime();
+          return dateB - dateA;
+        });
+        setSlides(sorted);
+        setFeaturedWorks(sorted.slice(0, 4));
       }
     });
     return () => {

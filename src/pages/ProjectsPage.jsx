@@ -25,7 +25,13 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
   useEffect(() => {
     const unsubscribe = subscribeToProjects((data) => {
       if (data && data.length > 0) {
-        setProjects(data);
+        // Sort by updatedAt/createdAt descending (newest first)
+        const sorted = [...data].sort((a, b) => {
+          const dateA = new Date(a.updatedAt || a.createdAt || 0).getTime();
+          const dateB = new Date(b.updatedAt || b.createdAt || 0).getTime();
+          return dateB - dateA;
+        });
+        setProjects(sorted);
       }
     });
     return () => {
