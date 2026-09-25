@@ -7,7 +7,10 @@ const ACCORDION_SETTINGS = {
   transitionDuration: 2000,
   autoPlayInterval: 5000,
   minItems: 2,
-  maxItems: 6,
+  maxItems: 12,
+  visibleOnMobile: 3,
+  visibleOnTablet: 4,
+  visibleOnDesktop: 5,
 };
 
 export default function AccordionPanelCarousel({ works, onSelectProject }) {
@@ -19,8 +22,16 @@ export default function AccordionPanelCarousel({ works, onSelectProject }) {
   const panelsRef = useRef([]);
 
   const totalItems = works.length;
-  const itemCount = Math.min(Math.max(totalItems, ACCORDION_SETTINGS.minItems), ACCORDION_SETTINGS.maxItems);
-  const visibleWorks = works.slice(0, itemCount);
+
+  // Responsive visible count
+  const getVisibleCount = () => {
+    if (typeof window === 'undefined') return ACCORDION_SETTINGS.visibleOnDesktop;
+    if (window.innerWidth < 640) return ACCORDION_SETTINGS.visibleOnMobile;
+    if (window.innerWidth < 1024) return ACCORDION_SETTINGS.visibleOnTablet;
+    return ACCORDION_SETTINGS.visibleOnDesktop;
+  };
+
+  const [visibleCount, setVisibleCount] = useState(() => getVisibleCount());
 
   useEffect(() => {
     if (containerRef.current) {
@@ -30,31 +41,58 @@ export default function AccordionPanelCarousel({ works, onSelectProject }) {
       if (containerRef.current) {
         setContainerWidth(containerRef.current.offsetWidth);
       }
+      setVisibleCount(getVisibleCount());
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Calculate which projects to show - sliding window around activeIndex
+  const getVisibleWorks = () => {
+    const vc = visibleCount;
+    if (totalItems <= vc) return works;
+    
+    const halfVisible = Math.floor(vc / 2);
+    let start = activeIndex - halfVisible;
+    let end = start + vc;
+    
+    // Adjust if we're at the beginning
+    if (start < 0) {
+      start = 0;
+      end = vc;
+    }
+    // Adjust if we're at the end
+    if (end > totalItems) {
+      end = totalItems;
+      start = totalItems - vc;
+    }
+    
+    return works.slice(start, end);
+  };
+  
+  const visibleWorks = getVisibleWorks();
+  const startIndex = totalItems <= visibleCount ? 0 : Math.max(0, Math.min(activeIndex - Math.floor(visibleCount / 2), totalItems - visibleCount));
+
   const nextSlide = useCallback(() => {
-    setActiveIndex((prev) => (prev + 1) % itemCount);
-  }, [itemCount]);
+    setActiveIndex((prev) => (prev + 1) % totalItems);
+  }, [totalItems]);
 
   const prevSlide = useCallback(() => {
-    setActiveIndex((prev) => (prev - 1 + itemCount) % itemCount);
-  }, [itemCount]);
+    setActiveIndex((prev) => (prev - 1 + totalItems) % totalItems);
+  }, [totalItems]);
 
   const goToSlide = useCallback((index) => {
     setActiveIndex(index);
   }, []);
 
   useEffect(() => {
-    if (itemCount <= 1) return;
+    if (totalItems <= 1) return;
     if (isPaused) return;
     const interval = setInterval(() => {
       nextSlide();
     }, ACCORDION_SETTINGS.autoPlayInterval);
     return () => clearInterval(interval);
-  }, [isPaused, itemCount, nextSlide]);
+  }, [isPaused, totalItems, nextSlide]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -79,7 +117,7 @@ export default function AccordionPanelCarousel({ works, onSelectProject }) {
   };
 
   const handleMouseEnter = (index) => () => {
-    setActiveIndex(index);
+    setActiveIndex(index + startIndex);
     setIsPaused(true);
   };
 
@@ -88,14 +126,14 @@ export default function AccordionPanelCarousel({ works, onSelectProject }) {
   };
 
   const getPanelStyle = (index) => {
-    const isActive = index === activeIndex;
+    const isActive = index === activeIndex - startIndex;
     const expandedWidthPercent = 65;
-    const collapsedWidthPercent = (100 - expandedWidthPercent) / (itemCount - 1);
+    const collapsedWidthPercent = (100 - expandedWidthPercent) / (visibleCount - 1);
 
     return {
       flex: `0 0 ${isActive ? expandedWidthPercent : collapsedWidthPercent}%`,
       maxWidth: isActive ? `${expandedWidthPercent}%` : `${collapsedWidthPercent}%`,
-      minWidth: isActive ? '0' : '120px',
+      minWidth: isActive ? '0' : '100px',
       transition: `flex ${ACCORDION_SETTINGS.transitionDuration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94), max-width ${ACCORDION_SETTINGS.transitionDuration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`,
     };
   };
@@ -119,7 +157,7 @@ export default function AccordionPanelCarousel({ works, onSelectProject }) {
       >
         <div className="flex h-[450px] sm:h-[500px] lg:h-[550px] rounded-2xl sm:rounded-3xl overflow-hidden bg-gray-100 dark:bg-ashara-charcoal shadow-xl">
           {visibleWorks.map((item, index) => {
-            const isActive = index === activeIndex;
+            const isActive = index === activeIndex - startIndex;
             const panelStyle = getPanelStyle(index);
 
             return (
@@ -128,7 +166,7 @@ export default function AccordionPanelCarousel({ works, onSelectProject }) {
                 ref={(el) => { panelsRef.current[index] = el; }}
                 onClick={() => {
                   if (isActive && onSelectProject) onSelectProject(item);
-                  else goToSlide(index);
+                  else goToSlide(index + startIndex);
                 }}
                 onMouseEnter={handleMouseEnter(index)}
                 className="relative group flex flex-col overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-ashara-gold focus:ring-offset-2 focus:ring-offset-ashara-dark dark:focus:ring-offset-ashara-dark"
@@ -203,7 +241,7 @@ export default function AccordionPanelCarousel({ works, onSelectProject }) {
         </button>
 
         <div className="flex justify-center gap-2 mt-8">
-          {visibleWorks.map((_, index) => (
+          {Array.from({ length: Math.min(totalItems, 10) }).map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
