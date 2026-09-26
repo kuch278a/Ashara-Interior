@@ -76,10 +76,14 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [mounted, setMounted] = useState(false);
+  const [isManualNav, setIsManualNav] = useState(false);
   const slideIntervalRef = useRef(null);
   const transitionTimeoutRef = useRef(null);
+  const isTransitioningRef = useRef(false);
+  const totalSlidesRef = useRef(0);
 
   const totalSlides = slides.length;
+  totalSlidesRef.current = totalSlides;
 
   useEffect(() => {
     setMounted(true);
@@ -87,78 +91,70 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (totalSlides === 0) return;
+      if (totalSlidesRef.current === 0) return;
       if (e.key === 'ArrowRight') nextSlide(true);
       else if (e.key === 'ArrowLeft') prevSlide(true);
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [totalSlides, nextSlide, prevSlide]);
-
-  const clearTimers = useCallback(() => {
-    if (slideIntervalRef.current) clearInterval(slideIntervalRef.current);
-    if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current);
   }, []);
 
-  const [isManualNav, setIsManualNav] = useState(false);
-
   const nextSlide = useCallback((manual = true) => {
-    console.log('nextSlide called', { totalSlides, isTransitioning, currentIndex, manual });
-    if (totalSlides <= 1 || isTransitioning) return;
-    setIsTransitioning(true);
+    if (totalSlidesRef.current <= 1 || isTransitioningRef.current) return;
+    isTransitioningRef.current = true;
     setIsManualNav(manual);
     setCurrentIndex((prev) => {
-      const next = (prev + 1) % totalSlides;
-      console.log('nextSlide index change', { prev, next });
+      const next = (prev + 1) % totalSlidesRef.current;
       return next;
     });
     const duration = manual ? 0 : HERO_SLIDESHOW_SETTINGS.crossFadeDuration;
     transitionTimeoutRef.current = setTimeout(() => {
-      setIsTransitioning(false);
+      isTransitioningRef.current = false;
       setIsManualNav(false);
     }, duration);
-  }, [totalSlides, isTransitioning]);
+  }, []);
 
   const prevSlide = useCallback((manual = true) => {
-    console.log('prevSlide called', { totalSlides, isTransitioning, currentIndex, manual });
-    if (totalSlides <= 1 || isTransitioning) return;
-    setIsTransitioning(true);
+    if (totalSlidesRef.current <= 1 || isTransitioningRef.current) return;
+    isTransitioningRef.current = true;
     setIsManualNav(manual);
     setCurrentIndex((prev) => {
-      const next = (prev - 1 + totalSlides) % totalSlides;
-      console.log('prevSlide index change', { prev, next });
+      const next = (prev - 1 + totalSlidesRef.current) % totalSlidesRef.current;
       return next;
     });
     const duration = manual ? 0 : HERO_SLIDESHOW_SETTINGS.crossFadeDuration;
     transitionTimeoutRef.current = setTimeout(() => {
-      setIsTransitioning(false);
+      isTransitioningRef.current = false;
       setIsManualNav(false);
     }, duration);
-  }, [totalSlides, isTransitioning]);
+  }, []);
 
   const goToSlide = useCallback((index) => {
-    if (index === currentIndex || isTransitioning) return;
-    setIsTransitioning(true);
+    if (index === currentIndex || isTransitioningRef.current) return;
+    isTransitioningRef.current = true;
     setIsManualNav(true);
     setCurrentIndex(index);
     transitionTimeoutRef.current = setTimeout(() => {
-      setIsTransitioning(false);
+      isTransitioningRef.current = false;
       setIsManualNav(false);
     }, 0);
-  }, [currentIndex, isTransitioning]);
+  }, [currentIndex]);
 
+  // Auto-slide interval - only depends on isPaused, not on callbacks
   useEffect(() => {
-    if (totalSlides <= 1) return;
+    if (totalSlidesRef.current <= 1) return;
     if (HERO_SLIDESHOW_SETTINGS.pauseOnHover && isPaused) return;
     
     slideIntervalRef.current = setInterval(() => {
-      nextSlide(false); // Auto-slide uses smooth transition
+      if (!isTransitioningRef.current) {
+        nextSlide(false);
+      }
     }, HERO_SLIDESHOW_SETTINGS.slideInterval);
     
     return () => {
       if (slideIntervalRef.current) clearInterval(slideIntervalRef.current);
     };
-  }, [isPaused, totalSlides, nextSlide]);
+  }, [isPaused]);
 
   const handleTouchStart = (e) => {
     setTouchStart(e.targetTouches[0].clientX);
@@ -174,8 +170,6 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
   };
 
   const activeSlide = slides[currentIndex] || DEFAULT_HERO_SLIDES[0];
-  const prevSlideData = slides[(currentIndex - 1 + totalSlides) % totalSlides];
-  const nextSlideData = slides[(currentIndex + 1) % totalSlides];
 
   if (!mounted) {
     return (
@@ -207,7 +201,6 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
             const isActive = idx === currentIndex;
             const isPrev = idx === (currentIndex - 1 + totalSlides) % totalSlides;
             const isNext = idx === (currentIndex + 1) % totalSlides;
-            const isVisible = isActive || isPrev || isNext;
 
             return (
               <div
@@ -266,7 +259,7 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
         </div>
 
         <button
-          onClick={(e) => { console.log('prev arrow clicked', e); prevSlide(); }}
+          onClick={() => nextSlide(true)}
           aria-label="Previous Project"
           className="absolute left-6 top-1/2 -translate-y-1/2 z-30 p-3 sm:p-4 rounded-full bg-black/30 hover:bg-black/50 backdrop-blur-md text-white transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-ashara-gold flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 cursor-pointer"
         >
@@ -274,7 +267,7 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
         </button>
 
         <button
-          onClick={(e) => { console.log('next arrow clicked', e); nextSlide(); }}
+          onClick={() => prevSlide(true)}
           aria-label="Next Project"
           className="absolute right-6 top-1/2 -translate-y-1/2 z-30 p-3 sm:p-4 rounded-full bg-black/30 hover:bg-black/50 backdrop-blur-md text-white transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-ashara-gold flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 cursor-pointer"
         >
