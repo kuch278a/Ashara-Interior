@@ -227,7 +227,7 @@ export default function AccordionPanelCarousel({ works, onSelectProject }) {
         <button
           onClick={prevSlide}
           aria-label="Previous Project"
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 sm:-translate-x-8 z-20 p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-ashara-gold hidden sm:flex"
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 sm:-translate-x-8 z-20 p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-ashara-gold flex"
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
@@ -235,7 +235,7 @@ export default function AccordionPanelCarousel({ works, onSelectProject }) {
         <button
           onClick={nextSlide}
           aria-label="Next Project"
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 sm:translate-x-8 z-20 p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-ashara-gold hidden sm:flex"
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 sm:translate-x-8 z-20 p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-ashara-gold flex"
         >
           <ChevronRight className="w-6 h-6" />
         </button>
