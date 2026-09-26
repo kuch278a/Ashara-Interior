@@ -12,7 +12,7 @@ import { getInitialProjects, subscribeToProjects } from '../services/firebaseSer
 
 export default function HomePage({ onNavigate, onSelectProject }) {
   const [slides, setSlides] = useState(() => getInitialProjects());
-  const [featuredWorks, setFeaturedWorks] = useState(() => getInitialProjects().slice(0, 4));
+  const [featuredWorks, setFeaturedWorks] = useState(() => getInitialProjects());
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   // Real-time project subscription (instant cache + live updates)
@@ -26,7 +26,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
           return dateB - dateA;
         });
         setSlides(sorted);
-        setFeaturedWorks(sorted.slice(0, 4));
+        setFeaturedWorks(sorted);
       }
     });
     return () => {
