@@ -88,53 +88,63 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (totalSlides === 0) return;
-      if (e.key === 'ArrowRight') nextSlide();
-      else if (e.key === 'ArrowLeft') prevSlide();
+      if (e.key === 'ArrowRight') nextSlide(true);
+      else if (e.key === 'ArrowLeft') prevSlide(true);
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [totalSlides]);
+  }, [totalSlides, nextSlide, prevSlide]);
 
   const clearTimers = useCallback(() => {
     if (slideIntervalRef.current) clearInterval(slideIntervalRef.current);
     if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current);
   }, []);
 
-  const nextSlide = useCallback(() => {
-    console.log('nextSlide called', { totalSlides, isTransitioning, currentIndex });
+  const [isManualNav, setIsManualNav] = useState(false);
+
+  const nextSlide = useCallback((manual = true) => {
+    console.log('nextSlide called', { totalSlides, isTransitioning, currentIndex, manual });
     if (totalSlides <= 1 || isTransitioning) return;
     setIsTransitioning(true);
+    setIsManualNav(manual);
     setCurrentIndex((prev) => {
       const next = (prev + 1) % totalSlides;
       console.log('nextSlide index change', { prev, next });
       return next;
     });
+    const duration = manual ? 0 : HERO_SLIDESHOW_SETTINGS.crossFadeDuration;
     transitionTimeoutRef.current = setTimeout(() => {
       setIsTransitioning(false);
-    }, HERO_SLIDESHOW_SETTINGS.crossFadeDuration);
+      setIsManualNav(false);
+    }, duration);
   }, [totalSlides, isTransitioning]);
 
-  const prevSlide = useCallback(() => {
-    console.log('prevSlide called', { totalSlides, isTransitioning, currentIndex });
+  const prevSlide = useCallback((manual = true) => {
+    console.log('prevSlide called', { totalSlides, isTransitioning, currentIndex, manual });
     if (totalSlides <= 1 || isTransitioning) return;
     setIsTransitioning(true);
+    setIsManualNav(manual);
     setCurrentIndex((prev) => {
       const next = (prev - 1 + totalSlides) % totalSlides;
       console.log('prevSlide index change', { prev, next });
       return next;
     });
+    const duration = manual ? 0 : HERO_SLIDESHOW_SETTINGS.crossFadeDuration;
     transitionTimeoutRef.current = setTimeout(() => {
       setIsTransitioning(false);
-    }, HERO_SLIDESHOW_SETTINGS.crossFadeDuration);
+      setIsManualNav(false);
+    }, duration);
   }, [totalSlides, isTransitioning]);
 
   const goToSlide = useCallback((index) => {
     if (index === currentIndex || isTransitioning) return;
     setIsTransitioning(true);
+    setIsManualNav(true);
     setCurrentIndex(index);
     transitionTimeoutRef.current = setTimeout(() => {
       setIsTransitioning(false);
-    }, HERO_SLIDESHOW_SETTINGS.crossFadeDuration);
+      setIsManualNav(false);
+    }, 0);
   }, [currentIndex, isTransitioning]);
 
   useEffect(() => {
@@ -142,7 +152,7 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
     if (HERO_SLIDESHOW_SETTINGS.pauseOnHover && isPaused) return;
     
     slideIntervalRef.current = setInterval(() => {
-      nextSlide();
+      nextSlide(false); // Auto-slide uses smooth transition
     }, HERO_SLIDESHOW_SETTINGS.slideInterval);
     
     return () => {
@@ -158,8 +168,8 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
     if (!touchStart) return;
     const touchEnd = e.changedTouches[0].clientX;
     const distance = touchStart - touchEnd;
-    if (distance > 50) nextSlide();
-    else if (distance < -50) prevSlide();
+    if (distance > 50) nextSlide(true);
+    else if (distance < -50) prevSlide(true);
     setTouchStart(null);
   };
 
@@ -190,7 +200,7 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            transition: `opacity ${HERO_SLIDESHOW_SETTINGS.crossFadeDuration}ms ease-in-out`,
+            transition: `opacity ${isManualNav ? 0 : HERO_SLIDESHOW_SETTINGS.crossFadeDuration}ms ease-in-out`,
           }}
         >
           {slides.map((slide, idx) => {
@@ -206,7 +216,7 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
                 style={{
                   opacity: isActive ? 1 : 0,
                   zIndex: isActive ? 10 : isPrev || isNext ? 5 : 0,
-                  transition: `opacity ${HERO_SLIDESHOW_SETTINGS.crossFadeDuration}ms ease-in-out, z-index 0ms ${HERO_SLIDESHOW_SETTINGS.crossFadeDuration}ms`,
+                  transition: `opacity ${isManualNav ? 0 : HERO_SLIDESHOW_SETTINGS.crossFadeDuration}ms ease-in-out, z-index 0ms ${isManualNav ? 0 : HERO_SLIDESHOW_SETTINGS.crossFadeDuration}ms`,
                   pointerEvents: isActive ? 'auto' : 'none',
                 }}
                 aria-hidden={!isActive}
