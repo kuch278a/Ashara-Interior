@@ -53,7 +53,11 @@ export default function HomePage({ onNavigate, onSelectProject }) {
 
   const handleCardClick = (work) => {
     if (onSelectProject) {
-      onSelectProject(work);
+      if (work?.id === 'all' && onNavigate) {
+        onNavigate('projects');
+      } else {
+        onSelectProject(work);
+      }
     }
   };
 
