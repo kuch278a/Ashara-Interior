@@ -258,7 +258,7 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
         <button
           onClick={(e) => { console.log('prev arrow clicked', e); prevSlide(); }}
           aria-label="Previous Project"
-          className="absolute left-6 top-1/2 -translate-y-1/2 z-30 p-3 sm:p-4 rounded-full bg-black/30 hover:bg-black/50 backdrop-blur-md text-white transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-ashara-gold flex"
+          className="absolute left-6 top-1/2 -translate-y-1/2 z-30 p-3 sm:p-4 rounded-full bg-black/30 hover:bg-black/50 backdrop-blur-md text-white transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-ashara-gold flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 cursor-pointer"
         >
           <ChevronLeft className="w-6 h-6 sm:w-7 sm:h-7" />
         </button>
@@ -266,7 +266,7 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
         <button
           onClick={(e) => { console.log('next arrow clicked', e); nextSlide(); }}
           aria-label="Next Project"
-          className="absolute right-6 top-1/2 -translate-y-1/2 z-30 p-3 sm:p-4 rounded-full bg-black/30 hover:bg-black/50 backdrop-blur-md text-white transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-ashara-gold flex"
+          className="absolute right-6 top-1/2 -translate-y-1/2 z-30 p-3 sm:p-4 rounded-full bg-black/30 hover:bg-black/50 backdrop-blur-md text-white transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-ashara-gold flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 cursor-pointer"
         >
           <ChevronRight className="w-6 h-6 sm:w-7 sm:h-7" />
         </button>
@@ -277,9 +277,9 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
               <button
                 key={idx}
                 onClick={() => goToSlide(idx)}
-                className={`w-2 h-2 rounded-full transition-all duration-500 ${
+                className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all duration-500 cursor-pointer ${
                   idx === currentIndex
-                    ? 'bg-ashara-gold w-8'
+                    ? 'bg-ashara-gold w-10 sm:w-12'
                     : 'bg-white/40 hover:bg-white'
                 }`}
                 aria-label={`Go to slide ${idx + 1}`}
