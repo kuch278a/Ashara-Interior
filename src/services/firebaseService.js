@@ -191,6 +191,60 @@ export async function uploadImage(file, folder = 'images', onProgress = null) {
 // ----------------------------------------------------
 
 /**
+ * Deliver the enquiry to the studio inbox via Web3Forms.
+ *
+ * Cloud Functions are unavailable on the Firebase Spark plan, so the
+ * browser posts to Web3Forms' relay instead. This is a best-effort
+ * notification only: the lead is already durable in Firestore, so a
+ * mail failure must never make the visitor's submission look rejected.
+ *
+ * @returns {Promise<boolean>} whether the relay accepted the enquiry
+ */
+async function sendEnquiryEmail(payload) {
+  const accessKey = import.meta.env?.VITE_WEB3FORMS_KEY;
+
+  if (!accessKey) {
+    console.warn('[Email] VITE_WEB3FORMS_KEY not set — enquiry saved but no email sent.');
+    return false;
+  }
+
+  // Honeypot: Web3Forms rejects the submission if a real human leaves
+  // this hidden field empty. Bots that fill every field get filtered.
+  try {
+    const res = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        access_key: accessKey,
+        subject: `New Consultation: ${payload.fullName}`,
+        from_name: 'Ashara Interiors Website',
+        // So the studio can reply straight to the visitor.
+        replyto: payload.email,
+        message: [
+          `Full Name: ${payload.fullName}`,
+          `Email: ${payload.email}`,
+          `Phone: ${payload.telephone || 'Not provided'}`,
+          `Submitted: ${payload.createdAt}`,
+          '',
+          payload.enquiry,
+        ].join('\n'),
+        botcheck: '',
+      }),
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.success === false) {
+      console.warn('[Email] Relay rejected the enquiry:', data?.message || res.status);
+      return false;
+    }
+    return true;
+  } catch (error) {
+    console.warn('[Email] Relay request failed:', error.message);
+    return false;
+  }
+}
+
+/**
  * Save a new consultation booking enquiry
  */
 export async function submitConsultation(inquiryData) {
@@ -212,6 +266,10 @@ export async function submitConsultation(inquiryData) {
     }
   }
 
+  // Notify the studio by email. Runs after the durable write so a slow
+  // or failed relay never delays or blocks saving the lead.
+  const emailed = await sendEnquiryEmail(payload);
+
   // Always keep local storage in sync as well
   let localList = [];
   try {
@@ -225,7 +283,7 @@ export async function submitConsultation(inquiryData) {
   localList.unshift(localLead);
   localStorage.setItem('ashara_consultations', JSON.stringify(localList));
 
-  return { success: true, id: localId, isLive: Boolean(firestoreId) };
+  return { success: true, id: localId, isLive: Boolean(firestoreId), emailed };
 }
 
 /**

@@ -25,6 +25,11 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          # Vite inlines VITE_* at build time and .env is gitignored, so
+          # build-time values must be injected here as repo secrets.
+          # Without this the enquiry relay is dead in the deployed bundle.
+          VITE_WEB3FORMS_KEY: ${{ secrets.VITE_WEB3FORMS_KEY }}
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
