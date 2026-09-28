@@ -33,5 +33,14 @@ lerna-debug.log*
 .env.test.local
 .env.production.local
 
+# Functions
+functions/lib
+functions/node_modules
+functions/.env
+
 # Client logos
 client_logos/*
+# Firebase emulator logs
+firestore-debug.log
+ui-debug.log
+.firebase/

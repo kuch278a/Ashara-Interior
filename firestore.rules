@@ -20,12 +20,45 @@ service cloud.firestore {
     }
 
     // ──────────────────────────────────────────────
-    // CONSULTATIONS — Public can create (contact form),
-    // anyone can read (for master passcode admin access),
-    // only admins can update/delete
+    // CONSULTATIONS
+    //
+    // Public (unauthenticated) may CREATE, because the contact form
+    // is anonymous — but the create is strictly validated:
+    //   * only the six expected fields may be written (no extra keys)
+    //   * status must be 'new' (a visitor cannot self-mark a lead
+    //     as 'contacted'/'completed')
+    //   * email must look like an email, and all fields are length
+    //     capped, so the notification function cannot be abused as an
+    //     open mail relay with huge payloads
+    //
+    // READ requires a signed-in user: the leads contain real names,
+    // emails and phone numbers and must not be world-readable.
+    // The admin portal calls ensureFirebaseAuth() before reading.
     // ──────────────────────────────────────────────
     match /consultations/{leadId} {
-      allow create, read: if true;
+      allow create: if
+        request.resource.data.keys().hasOnly([
+          'fullName', 'email', 'telephone', 'enquiry', 'createdAt', 'status'
+        ])
+        && request.resource.data.fullName is string
+        && request.resource.data.fullName.size() > 0
+        && request.resource.data.fullName.size() <= 200
+        && request.resource.data.email is string
+        && request.resource.data.email.size() > 0
+        && request.resource.data.email.size() <= 320
+        && request.resource.data.email.matches('^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$')
+        && request.resource.data.telephone is string
+        && request.resource.data.telephone.size() <= 40
+        && request.resource.data.enquiry is string
+        && request.resource.data.enquiry.size() > 0
+        && request.resource.data.enquiry.size() <= 5000
+        && request.resource.data.createdAt is string
+        && request.resource.data.createdAt.size() > 0
+        && request.resource.data.createdAt.size() <= 64
+        && request.resource.data.status == 'new';
+
+      allow read: if request.auth != null;
+
       allow update, delete: if request.auth != null;
     }
 

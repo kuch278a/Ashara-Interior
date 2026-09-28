@@ -9,7 +9,6 @@ import {
   deleteDoc,
   query,
   orderBy,
-  serverTimestamp,
   onSnapshot
 } from 'firebase/firestore';
 import {
@@ -205,8 +204,7 @@ export async function submitConsultation(inquiryData) {
   if (isFirebaseConfigured && db) {
     try {
       const docRef = await addDoc(collection(db, 'consultations'), {
-        ...payload,
-        serverTimestamp: serverTimestamp()
+        ...payload
       });
       firestoreId = docRef.id;
     } catch (error) {
