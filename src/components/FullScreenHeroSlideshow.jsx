@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 const HERO_SLIDESHOW_SETTINGS = {
   crossFadeDuration: 2000,
   slideInterval: 6000,
-  pauseOnHover: false,
+  pauseOnHover: true,
 };
 
 const DEFAULT_HERO_SLIDES = [
@@ -77,10 +77,12 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
   const [touchStart, setTouchStart] = useState(null);
   const [mounted, setMounted] = useState(false);
   const [isManualNav, setIsManualNav] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const slideIntervalRef = useRef(null);
   const transitionTimeoutRef = useRef(null);
   const isTransitioningRef = useRef(false);
   const totalSlidesRef = useRef(0);
+  const prefersReducedMotionRef = useRef(false);
 
   const totalSlides = slides.length;
   totalSlidesRef.current = totalSlides;
@@ -90,14 +92,58 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
   }, []);
 
   useEffect(() => {
+    const query = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const update = () => {
+      prefersReducedMotionRef.current = query.matches;
+      setPrefersReducedMotion(query.matches);
+    };
+    update();
+    query.addEventListener('change', update);
+    return () => query.removeEventListener('change', update);
+  }, []);
+
+  // Cross-fade length, collapsed to an instant cut when the visitor has
+  // asked for reduced motion.
+  const fadeDuration = prefersReducedMotion ? 0 : HERO_SLIDESHOW_SETTINGS.crossFadeDuration;
+
+  useEffect(() => {
     const handleKeyDown = (e) => {
       if (totalSlidesRef.current === 0) return;
+      // Never hijack arrow keys while the visitor is typing or editing.
+      const target = e.target;
+      if (target) {
+        const tag = target.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || target.isContentEditable) {
+          return;
+        }
+      }
       if (e.key === 'ArrowRight') nextSlide(true);
       else if (e.key === 'ArrowLeft') prevSlide(true);
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
+
+  // Any pending transition timer must not outlive the component.
+  useEffect(() => {
+    return () => {
+      if (transitionTimeoutRef.current) {
+        clearTimeout(transitionTimeoutRef.current);
+        transitionTimeoutRef.current = null;
+      }
+    };
+  }, []);
+
+  const startTransitionTimer = (duration) => {
+    if (transitionTimeoutRef.current) {
+      clearTimeout(transitionTimeoutRef.current);
+    }
+    transitionTimeoutRef.current = setTimeout(() => {
+      transitionTimeoutRef.current = null;
+      isTransitioningRef.current = false;
+      setIsManualNav(false);
+    }, duration);
+  };
 
   const nextSlide = useCallback((manual = true) => {
     if (totalSlidesRef.current <= 1 || isTransitioningRef.current) return;
@@ -107,11 +153,7 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
       const next = (prev + 1) % totalSlidesRef.current;
       return next;
     });
-    const duration = manual ? 0 : HERO_SLIDESHOW_SETTINGS.crossFadeDuration;
-    transitionTimeoutRef.current = setTimeout(() => {
-      isTransitioningRef.current = false;
-      setIsManualNav(false);
-    }, duration);
+    startTransitionTimer(manual ? 0 : (prefersReducedMotionRef.current ? 0 : HERO_SLIDESHOW_SETTINGS.crossFadeDuration));
   }, []);
 
   const prevSlide = useCallback((manual = true) => {
@@ -122,11 +164,7 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
       const next = (prev - 1 + totalSlidesRef.current) % totalSlidesRef.current;
       return next;
     });
-    const duration = manual ? 0 : HERO_SLIDESHOW_SETTINGS.crossFadeDuration;
-    transitionTimeoutRef.current = setTimeout(() => {
-      isTransitioningRef.current = false;
-      setIsManualNav(false);
-    }, duration);
+    startTransitionTimer(manual ? 0 : (prefersReducedMotionRef.current ? 0 : HERO_SLIDESHOW_SETTINGS.crossFadeDuration));
   }, []);
 
   const goToSlide = useCallback((index) => {
@@ -134,27 +172,26 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
     isTransitioningRef.current = true;
     setIsManualNav(true);
     setCurrentIndex(index);
-    transitionTimeoutRef.current = setTimeout(() => {
-      isTransitioningRef.current = false;
-      setIsManualNav(false);
-    }, 0);
+    startTransitionTimer(0);
   }, [currentIndex]);
 
   // Auto-slide interval - only depends on isPaused, not on callbacks
   useEffect(() => {
     if (totalSlidesRef.current <= 1) return;
     if (HERO_SLIDESHOW_SETTINGS.pauseOnHover && isPaused) return;
-    
+    // WCAG 2.3.3: do not auto-advance when reduced motion is requested.
+    if (prefersReducedMotion) return;
+
     slideIntervalRef.current = setInterval(() => {
       if (!isTransitioningRef.current) {
         nextSlide(false);
       }
     }, HERO_SLIDESHOW_SETTINGS.slideInterval);
-    
+
     return () => {
       if (slideIntervalRef.current) clearInterval(slideIntervalRef.current);
     };
-  }, [isPaused]);
+  }, [isPaused, prefersReducedMotion]);
 
   const handleTouchStart = (e) => {
     setTouchStart(e.targetTouches[0].clientX);
@@ -194,7 +231,7 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            transition: `opacity ${isManualNav ? 0 : HERO_SLIDESHOW_SETTINGS.crossFadeDuration}ms ease-in-out`,
+            transition: `opacity ${isManualNav ? 0 : fadeDuration}ms ease-in-out`,
           }}
         >
           {slides.map((slide, idx) => {
@@ -209,7 +246,7 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
                 style={{
                   opacity: isActive ? 1 : 0,
                   zIndex: isActive ? 10 : isPrev || isNext ? 5 : 0,
-                  transition: `opacity ${isManualNav ? 0 : HERO_SLIDESHOW_SETTINGS.crossFadeDuration}ms ease-in-out, z-index 0ms ${isManualNav ? 0 : HERO_SLIDESHOW_SETTINGS.crossFadeDuration}ms`,
+                  transition: `opacity ${isManualNav ? 0 : fadeDuration}ms ease-in-out, z-index 0ms ${isManualNav ? 0 : fadeDuration}ms`,
                   pointerEvents: isActive ? 'auto' : 'none',
                 }}
                 aria-hidden={!isActive}
@@ -249,8 +286,9 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
             </h1>
             <div className="mt-8 flex items-center gap-4 animate-fade-in-up" style={{ animationDelay: '300ms' }}>
               <button
+                type="button"
                 onClick={() => onSelectProject && onSelectProject(activeSlide)}
-                className="px-8 py-3.5 bg-ashara-gold/10 hover:bg-ashara-gold/20 border border-ashara-gold/50 hover:border-ashara-gold text-white text-[11px] uppercase tracking-[0.25em] font-semibold rounded-full transition-all duration-500 backdrop-blur-sm hover:scale-105 focus:outline-none focus:ring-2 focus:ring-ashara-gold focus:ring-offset-2 focus:ring-offset-black"
+                className="px-8 py-3.5 bg-ashara-gold/10 hover:bg-ashara-gold/20 border border-ashara-gold/50 hover:border-ashara-gold text-white text-[11px] uppercase tracking-[0.25em] font-semibold rounded-full transition-colors duration-500 backdrop-blur-sm hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold focus-visible:ring-offset-2 focus-visible:ring-offset-black"
               >
                 Explore Project
               </button>
@@ -259,17 +297,19 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
         </div>
 
         <button
-          onClick={() => nextSlide(true)}
+          type="button"
+          onClick={() => prevSlide(true)}
           aria-label="Previous Project"
-          className="absolute left-6 top-1/2 -translate-y-1/2 z-30 p-3 sm:p-4 rounded-full bg-black/30 hover:bg-black/50 backdrop-blur-md text-white transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-ashara-gold flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 cursor-pointer"
+          className="absolute left-6 top-1/2 -translate-y-1/2 z-30 p-3 sm:p-4 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md text-white transition-colors duration-300 hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14"
         >
           <ChevronLeft className="w-6 h-6 sm:w-7 sm:h-7" />
         </button>
 
         <button
-          onClick={() => prevSlide(true)}
+          type="button"
+          onClick={() => nextSlide(true)}
           aria-label="Next Project"
-          className="absolute right-6 top-1/2 -translate-y-1/2 z-30 p-3 sm:p-4 rounded-full bg-black/30 hover:bg-black/50 backdrop-blur-md text-white transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-ashara-gold flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 cursor-pointer"
+          className="absolute right-6 top-1/2 -translate-y-1/2 z-30 p-3 sm:p-4 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md text-white transition-colors duration-300 hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14"
         >
           <ChevronRight className="w-6 h-6 sm:w-7 sm:h-7" />
         </button>
@@ -279,26 +319,29 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
             {slides.map((_, idx) => (
               <button
                 key={idx}
+                type="button"
                 onClick={() => goToSlide(idx)}
-                className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all duration-500 cursor-pointer ${
+                className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-colors duration-500 ${
                   idx === currentIndex
                     ? 'bg-ashara-gold w-10 sm:w-12'
                     : 'bg-white/40 hover:bg-white'
                 }`}
                 aria-label={`Go to slide ${idx + 1}`}
-                aria-current={idx === currentIndex ? 'true' : 'false'}
+                aria-current={idx === currentIndex ? 'true' : undefined}
               />
             ))}
           </div>
-          <div
+          <button
+            type="button"
             onClick={() => {
               const el = document.getElementById('home-works');
               if (el) el.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="cursor-pointer"
+            aria-label="Scroll to featured work"
+            className="focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-full"
           >
             <ChevronDown className="w-5 h-5 text-ashara-gold animate-bounce" />
-          </div>
+          </button>
         </div>
       </section>
 
@@ -316,6 +359,15 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
         .animate-fade-in-up {
           animation: fade-in-up 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
           opacity: 0;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .animate-fade-in-up {
+            animation: none;
+            opacity: 1;
+          }
+          .animate-bounce {
+            animation: none;
+          }
         }
       `}</style>
     </>
