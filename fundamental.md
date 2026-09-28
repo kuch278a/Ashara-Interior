@@ -87,7 +87,7 @@ offline/fallback layer, so writes that fail are silent by design.
 |---|---|---|---|
 | `projects` | yes | yes | `ashara_projects` |
 | `blog_posts` | yes | yes | `ashara_blog_posts` |
-| `testimonials` | **no rule** | **no rule** | `ashara_testimonials` |
+| `testimonials` | yes | yes | `ashara_testimonials` |
 | `consultations` | **no** (auth only) | yes | `ashara_consultations` |
 
 `consultations` document shape — enforced by `firestore.rules`:
@@ -247,12 +247,13 @@ Runner warnings on every run: Node 20 deprecation on the actions, and
 deployed manually with `firebase deploy --only firestore:rules`; nothing in CI
 does it.
 
-> **Storage rules are orphaned.** `storage.rules` exists at the repo root and
-> looks reasonable (auth-only write, 10MB cap, images only), but `firebase.json`
-> has **no `storage` block**, so `firebase deploy` never applies it. The rules
-> actually in force in production are whatever was last deployed by some other
-> route. Add `"storage": { "rules": "storage.rules" }` to `firebase.json` and
-> deploy to make the file authoritative.
+> **Firebase Storage is not provisioned on this project.** `storage.rules` is
+> committed and reasonable (auth-only write, 10MB cap, images only), and is now
+> referenced from `firebase.json` — but the project has never had a Storage
+> bucket, so `firebase deploy --only storage` fails with *"Firebase Storage has
+> not been set up"*. **Every `uploadImage()` call in the admin portal has
+> therefore been failing** and falling back to its non-Cloud path. Image
+> uploads are not currently working in production.
 
 ---
 
@@ -263,19 +264,19 @@ Ranked by how much they matter.
 1. **Rotate the hardcoded admin credential** and replace
    `request.auth != null` with a role claim. Until then the site's content and
    all enquiries are effectively public.
-2. **Add a `testimonials` rule** or drop Firestore for that collection (§4).
-3. **Wire `storage.rules` into `firebase.json`** and deploy it (§9).
-4. **Switch off client clock for `consultations.createdAt`** — use a real
+2. **Provision Firebase Storage** (§9) — needs a one-time click in the console
+   and almost certainly the Blaze plan. Until then, admin image uploads fail.
+3. **Switch off client clock for `consultations.createdAt`** — use a real
    server timestamp, and make the read paths and email templates handle a
    Firestore `Timestamp` rather than a string.
-5. **No tests.** A single test for `submitConsultation` and the rules would
+4. **No tests.** A single test for `submitConsultation` and the rules would
    have caught most of this session's problems. No runner is configured.
-6. **Client confirmation email is missing** — visitors get no email at all.
-7. **Decide on Blaze.** Either upgrade and restore proper backend email, or
+5. **Client confirmation email is missing** — visitors get no email at all.
+6. **Decide on Blaze.** Either upgrade and restore proper backend email, or
    accept the Web3Forms dependency permanently.
-8. **Revoke the unused Gmail App Password** created during the Cloud Functions
+7. **Revoke the unused Gmail App Password** created during the Cloud Functions
    attempt. It is no longer read by anything.
-9. **Consolidate the `ashara` / `terion` palettes** (§2).
+8. **Consolidate the `ashara` / `terion` palettes** (§2).
 
 ---
 
