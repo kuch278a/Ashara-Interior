@@ -40,3 +40,7 @@ ui-debug.log
 
 # Client logos
 client_logos/*
+
+# Test files
+test-email.html
+test-email.js
