@@ -34,6 +34,7 @@ lerna-debug.log*
 .env.production.local
 
 # Firebase emulator logs
+firebase-debug.log
 firestore-debug.log
 ui-debug.log
 .firebase/
