@@ -5,8 +5,8 @@ import AsharaLogo from './AsharaLogo';
 // Configurable Company Social Links
 const SOCIAL_LINKS = {
   facebook: 'https://www.facebook.com/asharainteriors',
-  instagram: 'https://www.instagram.com/asharainteriors',
-  tiktok: 'https://www.tiktok.com/@asharainteriors',
+  instagram: 'https://www.instagram.com/ashara_interiors',
+  tiktok: 'https://www.tiktok.com/@ashara_interiors',
   linkedin: 'https://www.linkedin.com/company/ashara-interiors',
   phone: 'tel:+251911123892',
   email: 'mailto:info@ashara.com'
