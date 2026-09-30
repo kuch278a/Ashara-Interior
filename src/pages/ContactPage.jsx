@@ -78,7 +78,7 @@ export default function ContactPage({ isSection = false }) {
               <div className="flex items-start gap-3.5">
                 <Mail className="w-4 h-4 text-gray-700 dark:text-ashara-gold mt-1 shrink-0 stroke-[1.5]" />
                 <p className="leading-snug">
-                  Email <a href="mailto:Mikasadessalegn@gmail.com" className="hover:text-ashara-teal dark:hover:text-ashara-gold transition">Mikasadessalegn@gmail.com</a>
+                  Email <a href="mailto:birukesayas911@gmail.com" className="hover:text-ashara-teal dark:hover:text-ashara-gold transition">birukesayas911@gmail.com</a>
                 </p>
               </div>
 
