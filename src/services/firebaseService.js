@@ -1,3 +1,4 @@
+import emailjs from '@emailjs/browser';
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import {
   getFirestore,
@@ -64,13 +65,7 @@ export { db, auth, storage };
  */
 export async function ensureFirebaseAuth() {
   if (isFirebaseConfigured && auth) {
-    if (auth.currentUser) return auth.currentUser;
-    try {
-      const cred = await signInWithEmailAndPassword(auth, 'mikasadessalegn@gmail.com', 'ashara2025');
-      return cred.user;
-    } catch (e) {
-      console.warn('[FirebaseAuth] Auto-session connection note:', e.message);
-    }
+    return auth.currentUser || null;
   }
   return null;
 }
@@ -191,55 +186,53 @@ export async function uploadImage(file, folder = 'images', onProgress = null) {
 // ----------------------------------------------------
 
 /**
- * Deliver the enquiry to the studio inbox via Web3Forms.
+ * Deliver the enquiry to the studio inbox via EmailJS.
  *
- * Cloud Functions are unavailable on the Firebase Spark plan, so the
- * browser posts to Web3Forms' relay instead. This is a best-effort
+ * EmailJS sends directly from the browser using your connected Gmail/Outlook
+ * account — no backend or Cloud Functions required. This is a best-effort
  * notification only: the lead is already durable in Firestore, so a
  * mail failure must never make the visitor's submission look rejected.
  *
- * @returns {Promise<boolean>} whether the relay accepted the enquiry
+ * Setup: https://www.emailjs.com/
+ *   1. Create a free account and connect your Gmail/Outlook as a Service.
+ *   2. Create an Email Template and note the Template ID.
+ *   3. Copy your Service ID, Template ID, and Public Key into .env:
+ *      VITE_EMAILJS_SERVICE_ID, VITE_EMAILJS_TEMPLATE_ID, VITE_EMAILJS_PUBLIC_KEY
+ *
+ * @returns {Promise<boolean>} whether EmailJS accepted the send request
  */
 async function sendEnquiryEmail(payload) {
-  const accessKey = import.meta.env?.VITE_WEB3FORMS_KEY;
+  const serviceId  = import.meta.env?.VITE_EMAILJS_SERVICE_ID;
+  const templateId = import.meta.env?.VITE_EMAILJS_TEMPLATE_ID;
+  const publicKey  = import.meta.env?.VITE_EMAILJS_PUBLIC_KEY;
 
-  if (!accessKey) {
-    console.warn('[Email] VITE_WEB3FORMS_KEY not set — enquiry saved but no email sent.');
+  if (!serviceId || !templateId || !publicKey) {
+    console.warn('[Email] EmailJS env vars not set — enquiry saved to Firestore but no email sent.');
+    console.warn('[Email] Add VITE_EMAILJS_SERVICE_ID, VITE_EMAILJS_TEMPLATE_ID, VITE_EMAILJS_PUBLIC_KEY to your .env');
     return false;
   }
 
-  // Honeypot: Web3Forms rejects the submission if a real human leaves
-  // this hidden field empty. Bots that fill every field get filtered.
-  try {
-    const res = await fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({
-        access_key: accessKey,
-        subject: `New Consultation: ${payload.fullName}`,
-        from_name: 'Ashara Interiors Website',
-        // So the studio can reply straight to the visitor.
-        replyto: payload.email,
-        message: [
-          `Full Name: ${payload.fullName}`,
-          `Email: ${payload.email}`,
-          `Phone: ${payload.telephone || 'Not provided'}`,
-          `Submitted: ${payload.createdAt}`,
-          '',
-          payload.enquiry,
-        ].join('\n'),
-        botcheck: '',
-      }),
-    });
+  // These variable names must match the ones defined in your EmailJS template.
+  const templateParams = {
+    client_name:   payload.fullName,
+    client_email:  payload.email,
+    client_phone:  payload.telephone || 'Not provided',
+    enquiry:       payload.enquiry,
+    submitted_at:  new Date(payload.createdAt).toLocaleString('en-GB', {
+      dateStyle: 'full', timeStyle: 'short'
+    }),
+    reply_to:      payload.email,
+  };
 
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok || data.success === false) {
-      console.warn('[Email] Relay rejected the enquiry:', data?.message || res.status);
-      return false;
+  try {
+    const response = await emailjs.send(serviceId, templateId, templateParams, publicKey);
+    if (response.status === 200) {
+      return true;
     }
-    return true;
+    console.warn('[Email] EmailJS returned non-200 status:', response.status, response.text);
+    return false;
   } catch (error) {
-    console.warn('[Email] Relay request failed:', error.message);
+    console.warn('[Email] EmailJS send failed:', error);
     return false;
   }
 }
@@ -855,36 +848,29 @@ export async function loginAdminUser(email, password) {
   const cleanEmail = email.trim().toLowerCase();
   const cleanPass = password.trim();
 
-  // Strictly allowed Super Admin credentials ONLY
-  const isSuperAdminEmail = (cleanEmail === 'mikasadessalegn@gmail.com' || cleanEmail === 'admin');
-  const isSuperAdminPass = (cleanPass === 'ashara2026' || cleanPass === 'ashara2025');
-
-  if (!isSuperAdminEmail || !isSuperAdminPass) {
-    return { success: false, error: 'Access denied. Invalid Super Admin email or passcode.' };
-  }
-
   // 1. Try Firebase Auth if live Firebase is active
   if (isFirebaseConfigured && auth) {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, cleanEmail, cleanPass);
       const user = {
-        email: userCredential.user.email || cleanEmail,
-        name: cleanEmail === 'mikasadessalegn@gmail.com' ? 'Mika Dessalegn' : 'Studio Director'
+        email: userCredential.user.email,
+        name: 'Studio Director'
       };
       sessionStorage.setItem('ashara_admin_auth', JSON.stringify(user));
       return { success: true, user };
     } catch (error) {
-      // Firebase Auth user not registered in Firebase console — fallback to master session
+      return { success: false, error: 'Access denied. Invalid email or passcode.' };
     }
   }
 
-  // 2. Super Admin Authorization Fallback
-  const adminUser = {
-    email: cleanEmail,
-    name: cleanEmail === 'mikasadessalegn@gmail.com' ? 'Mika Dessalegn' : 'Studio Director'
-  };
-  sessionStorage.setItem('ashara_admin_auth', JSON.stringify(adminUser));
-  return { success: true, user: adminUser };
+  // 2. Local sandbox fallback
+  if (cleanEmail === 'admin@ashara.com' && cleanPass === 'ashara2025') {
+    const adminUser = { email: cleanEmail, name: 'Local Admin Sandbox' };
+    sessionStorage.setItem('ashara_admin_auth', JSON.stringify(adminUser));
+    return { success: true, user: adminUser };
+  }
+
+  return { success: false, error: 'Access denied. Invalid email or passcode.' };
 }
 
 export async function logoutAdminUser() {

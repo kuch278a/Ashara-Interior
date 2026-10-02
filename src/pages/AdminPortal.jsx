@@ -62,14 +62,13 @@ import {
 import AsharaLogo from '../components/AsharaLogo';
 
 export default function AdminPortal({ onNavigate }) {
-  // Authentication State (Strict Super Admin Validation)
+  // Authentication State
   const [adminUser, setAdminUser] = useState(() => {
     try {
       const saved = sessionStorage.getItem('ashara_admin_auth');
       if (!saved) return null;
       const parsed = JSON.parse(saved);
-      const email = (parsed?.email || '').toLowerCase();
-      if (email === 'admin' || email === 'mikasadessalegn@gmail.com') {
+      if (parsed && parsed.email) {
         return parsed;
       }
       sessionStorage.removeItem('ashara_admin_auth');
