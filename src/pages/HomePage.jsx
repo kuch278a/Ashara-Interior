@@ -3,7 +3,6 @@ import { ChevronDown, ArrowUp } from 'lucide-react';
 import ClientsSection from '../components/ClientsSection';
 import FullScreenHeroSlideshow from '../components/FullScreenHeroSlideshow';
 import AccordionPanelCarousel from '../components/AccordionPanelCarousel';
-import { DEFAULT_PROJECTS_LIST } from '../data/defaultData';
 import ServicesPage from './ServicesPage';
 import AboutPage from './AboutPage';
 import BlogPage from './BlogPage';

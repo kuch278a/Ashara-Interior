@@ -128,19 +128,18 @@ export default function AdminPortal({ onNavigate }) {
   const [copiedId, setCopiedId] = useState(null);
 
   useEffect(() => {
-    if (adminUser) {
-      loadAllData();
-    }
-  }, [adminUser]);
+    if (!adminUser) return;
 
-  useEffect(() => {
+    loadAllData();
+
+    // Real-time testimonials sync — only active while authenticated
     const unsub = subscribeToTestimonials((list) => {
       if (list && list.length > 0) setTestimonials(list);
     });
     return () => {
       if (typeof unsub === 'function') unsub();
     };
-  }, []);
+  }, [adminUser]);
 
   const showToast = (message, type = 'success') => {
     setNotification({ message, type });
