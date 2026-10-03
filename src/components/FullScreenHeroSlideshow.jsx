@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 const HERO_SLIDESHOW_SETTINGS = {
   crossFadeDuration: 2000,
   slideInterval: 6000,
-  pauseOnHover: true,
+  pauseOnHover: false,
 };
 
 const DEFAULT_HERO_SLIDES = [
@@ -222,9 +222,11 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
   return (
     <>
       <section
-        className="relative w-full h-screen min-h-[600px] max-h-[900px] overflow-hidden"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
+        className="relative w-full h-screen min-h-[600px] max-h-[900px] overflow-hidden cursor-pointer"
+        onClick={(e) => {
+          if (e.target.closest('button')) return;
+          if (onSelectProject) onSelectProject(activeSlide);
+        }}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
@@ -285,13 +287,7 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
               {activeSlide.title}
             </h1>
             <div className="mt-8 flex items-center gap-4 animate-fade-in-up" style={{ animationDelay: '300ms' }}>
-              <button
-                type="button"
-                onClick={() => onSelectProject && onSelectProject(activeSlide)}
-                className="px-8 py-3.5 bg-ashara-gold/10 hover:bg-ashara-gold/20 border border-ashara-gold/50 hover:border-ashara-gold text-white text-[11px] uppercase tracking-[0.25em] font-semibold rounded-full transition-colors duration-500 backdrop-blur-sm hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              >
-                Explore Project
-              </button>
+              {/* Explore Button removed per user request. Clicking the background image handles the navigation now. */}
             </div>
           </div>
         </div>

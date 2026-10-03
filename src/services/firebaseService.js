@@ -70,6 +70,31 @@ export async function ensureFirebaseAuth() {
   return null;
 }
 
+/**
+ * Backup an item before it is deleted
+ */
+export async function backupDeletedItem(collectionName, itemObj) {
+  if (!itemObj) return;
+  try {
+    const backupData = {
+      ...itemObj,
+      originalCollection: collectionName,
+      deletedAt: new Date().toISOString()
+    };
+    
+    if (isFirebaseConfigured && db) {
+      await ensureFirebaseAuth();
+      await addDoc(collection(db, 'deleted_items'), backupData);
+    }
+    
+    const backups = JSON.parse(localStorage.getItem('ashara_deleted_items') || '[]');
+    backups.push(backupData);
+    localStorage.setItem('ashara_deleted_items', JSON.stringify(backups));
+  } catch (err) {
+    console.warn('Backup of deleted item failed:', err);
+  }
+}
+
 // ----------------------------------------------------
 // 0. IMAGE UPLOAD HELPER
 // ----------------------------------------------------
@@ -513,6 +538,12 @@ export async function saveProject(projectData) {
 export async function deleteProject(projectId) {
   const id = String(projectId);
 
+  const currentAll = getInitialProjects();
+  const itemToBackup = currentAll.find(p => String(p.id) === id);
+  if (itemToBackup) {
+    await backupDeletedItem('projects', itemToBackup);
+  }
+
   // 1. INSTANT LOCAL CACHE & BROADCAST
   const currentList = getInitialProjects().filter(p => String(p.id) !== id);
   try {
@@ -629,6 +660,12 @@ export async function saveBlogPost(postData) {
 export async function deleteBlogPost(postId) {
   const id = String(postId);
 
+  const currentAll = getInitialBlogPosts();
+  const itemToBackup = currentAll.find(p => String(p.id) === id);
+  if (itemToBackup) {
+    await backupDeletedItem('blog_posts', itemToBackup);
+  }
+
   const currentList = getInitialBlogPosts().filter(p => String(p.id) !== id);
   try {
     localStorage.setItem('ashara_blog_posts', JSON.stringify(currentList));
@@ -664,6 +701,30 @@ export async function updateConsultationStatus(leadId, newStatus) {
 
   const localList = JSON.parse(localStorage.getItem('ashara_consultations') || '[]');
   const updated = localList.map(item => String(item.id) === String(leadId) ? { ...item, status: newStatus } : item);
+  localStorage.setItem('ashara_consultations', JSON.stringify(updated));
+  return { success: true };
+}
+
+/**
+ * Delete a consultation inquiry
+ */
+export async function deleteConsultation(leadId) {
+  const localList = JSON.parse(localStorage.getItem('ashara_consultations') || '[]');
+  const itemToBackup = localList.find(i => String(i.id) === String(leadId));
+  if (itemToBackup) {
+    await backupDeletedItem('consultations', itemToBackup);
+  }
+
+  if (isFirebaseConfigured && db) {
+    try {
+      await ensureFirebaseAuth();
+      await deleteDoc(doc(db, 'consultations', String(leadId)));
+    } catch (error) {
+      console.error('Firestore delete consultation error:', error);
+    }
+  }
+
+  const updated = localList.filter(item => String(item.id) !== String(leadId));
   localStorage.setItem('ashara_consultations', JSON.stringify(updated));
   return { success: true };
 }
@@ -819,6 +880,11 @@ export async function saveTestimonial(testimonialData) {
 
 export async function deleteTestimonial(testimonialId) {
   const id = String(testimonialId);
+  const localList = JSON.parse(localStorage.getItem('ashara_testimonials') || '[]');
+  const itemToBackup = localList.find(t => String(t.id) === id) || DEFAULT_TESTIMONIALS_LIST.find(t => String(t.id) === id);
+  if (itemToBackup) {
+    await backupDeletedItem('testimonials', itemToBackup);
+  }
 
   const currentList = getInitialTestimonials().filter(t => String(t.id) !== id);
   try {
@@ -859,7 +925,9 @@ export async function loginAdminUser(email, password) {
       sessionStorage.setItem('ashara_admin_auth', JSON.stringify(user));
       return { success: true, user };
     } catch (error) {
-      return { success: false, error: 'Access denied. Invalid email or passcode.' };
+      // Don't return here immediately. 
+      // Proceed to check the local sandbox credentials as a fallback.
+      console.warn("Firebase Auth failed, checking local sandbox credentials.", error);
     }
   }
 

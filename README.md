@@ -29,7 +29,7 @@
 **Ashara Interiors** is a high-performance luxury web platform built with **React**, **Vite**, and **Tailwind CSS**, backed by **Firebase** (Firestore, Auth, Storage). It bridges Ethiopian monumental civic heritage with contemporary architectural rigor — and includes a full-featured content management system for managing projects, blog posts, and consultation leads.
 
 ### Visual & Architectural Highlights
-- **Default Luxury Dark Mode**: Always initializes in Dark Mode with deep sapphire backgrounds (`#0A1525`), subtle geometric lattice patterns, and gold typography.
+- **Default Light Mode**: Initializes in Light Mode with bright cream backgrounds (`#FAF8F5`) by default, while supporting a manual toggle to a luxury dark mode with deep sapphire backgrounds (`#0A1525`).
 - **Editorial Typography**: Cormorant Garamond serif headings, Plus Jakarta Sans interface typography, and Pinyon Script flourishes.
 - **Signature Teal Project Cards**: Solid deep forest teal (`#1E4E4E`) bottom label boxes featuring uppercase category tags and serif typography.
 - **Real-Time Scroll Progress**: A gradient progress bar fixed to the top of the viewport tracking reading depth.
@@ -187,7 +187,7 @@ Ashara-Interior/
 ├── .github/
 │   └── workflows/
 │       └── deploy.yml              # Automated GitHub Pages CI/CD workflow
-├── index.html                      # HTML entry point with default dark theme & fonts
+├── index.html                      # HTML entry point with default light theme & fonts
 ├── package.json                    # Project dependencies and scripts
 ├── postcss.config.js               # PostCSS configuration
 ├── tailwind.config.js              # Custom theme tokens, fonts, luxury shadows
@@ -312,4 +312,4 @@ GitHub Actions will automatically run the build and publish the updated site to 
 
 ## 📄 License
 
-This project is licensed under the [MIT License](LICENSE) — curated for **Ashara Interiors**.
+This project is licensed under the(LICENSE) — curated for **Ashara Interiors**.

@@ -47,7 +47,7 @@ export default function App() {
   const [selectedProject, setSelectedProject] = useState(DEFAULT_PROJECTS_LIST[0]);
   const [projectSource, setProjectSource] = useState('projects');
   const [theme, setTheme] = useState(() => {
-    return sessionStorage.getItem('theme') || 'dark';
+    return sessionStorage.getItem('theme') || 'light';
   });
 
   useEffect(() => {

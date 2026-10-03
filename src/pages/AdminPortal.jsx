@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Users, Layers, FileText, Database, Plus,
   RefreshCw, ChevronRight, ArrowUpRight, Building2,
@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import {
   getConsultations, getDynamicProjects, saveProject, deleteProject,
-  getDynamicBlogPosts, saveBlogPost, deleteBlogPost, updateConsultationStatus,
+  getDynamicBlogPosts, saveBlogPost, deleteBlogPost, updateConsultationStatus, deleteConsultation,
   isFirebaseConfigured, loginAdminUser, logoutAdminUser, uploadImage,
   getDynamicTestimonials, saveTestimonial, deleteTestimonial, subscribeToTestimonials
 } from '../services/firebaseService';
@@ -211,6 +211,7 @@ export default function AdminPortal({ onNavigate }) {
       if (deleteConfirm.type === 'project')     { await deleteProject(deleteConfirm.id);     showToast('Project removed from portfolio'); }
       if (deleteConfirm.type === 'blog')        { await deleteBlogPost(deleteConfirm.id);    showToast('Article removed from journal'); }
       if (deleteConfirm.type === 'testimonial') { await deleteTestimonial(deleteConfirm.id); showToast('Testimonial removed from studio records'); }
+      if (deleteConfirm.type === 'lead')        { await deleteConsultation(deleteConfirm.id); showToast('Inquiry removed from records'); }
       setDeleteConfirm(null); await loadAllData();
     } catch { showToast('Failed to delete item', 'error'); }
   };
@@ -390,7 +391,7 @@ export default function AdminPortal({ onNavigate }) {
         </div>
 
         {activeTab === 'projects'     && <AdminProjectsTab     filteredProjects={filteredProjects}       searchQuery={searchQuery} onOpenNew={handleOpenNewProject}     onOpenEdit={handleOpenEditProject}     onDelete={setDeleteConfirm} />}
-        {activeTab === 'leads'        && <AdminLeadsTab        filteredLeads={filteredLeads}              searchQuery={searchQuery} copiedId={copiedId}                   onCopy={handleCopy}                    onUpdateStatus={handleUpdateLeadStatus} />}
+        {activeTab === 'leads'        && <AdminLeadsTab        filteredLeads={filteredLeads}              searchQuery={searchQuery} copiedId={copiedId}                   onCopy={handleCopy}                    onUpdateStatus={handleUpdateLeadStatus} onDelete={setDeleteConfirm} />}
         {activeTab === 'blog'         && <AdminBlogTab         filteredBlogPosts={filteredBlogPosts}      searchQuery={searchQuery} onOpenNew={handleOpenNewPost}         onOpenEdit={handleOpenEditPost}        onDelete={setDeleteConfirm} />}
         {activeTab === 'testimonials' && <AdminTestimonialsTab filteredTestimonials={filteredTestimonials} searchQuery={searchQuery} projects={projects}                  onOpenNew={handleOpenNewTestimonial}   onOpenEdit={handleOpenEditTestimonial} onDelete={setDeleteConfirm} />}
 

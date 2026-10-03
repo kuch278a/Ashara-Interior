@@ -1,7 +1,7 @@
-﻿import React from 'react';
-import { Users, Mail, Phone, Clock, MessageSquare, Copy, Check } from 'lucide-react';
+import React from 'react';
+import { Users, Mail, Phone, Clock, MessageSquare, Copy, Check, Trash2 } from 'lucide-react';
 
-export default function AdminLeadsTab({ filteredLeads, searchQuery, copiedId, onCopy, onUpdateStatus }) {
+export default function AdminLeadsTab({ filteredLeads, searchQuery, copiedId, onCopy, onUpdateStatus, onDelete }) {
   return (
     <div className="space-y-6">
       {filteredLeads.length === 0 ? (
@@ -91,6 +91,9 @@ export default function AdminLeadsTab({ filteredLeads, searchQuery, copiedId, on
                       <Mail className="w-3.5 h-3.5" /><span>Send Email</span>
                     </a>
                   )}
+                  <button onClick={() => onDelete({ type: 'lead', id: lead.id, title: lead.fullName || 'Anonymous Client' })}
+                    className="p-2 text-rose-500 hover:text-rose-700 transition rounded-xs hover:bg-rose-50 dark:hover:bg-rose-500/10 shadow-xs border border-transparent hover:border-rose-100 dark:hover:border-rose-500/20"
+                    title="Delete Inquiry"><Trash2 className="w-3.5 h-3.5" /></button>
                 </div>
               </div>
             );
