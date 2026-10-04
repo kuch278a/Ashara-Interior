@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Block admin portal from being indexed
+Disallow: /#admin
+
+Sitemap: https://asharainteriors.com/sitemap.xml
