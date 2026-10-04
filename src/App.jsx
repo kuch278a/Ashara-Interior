@@ -25,19 +25,25 @@ function PageLoadingFallback() {
   );
 }
 
+const VALID_PAGES = ['home', 'admin', 'projects', 'services', 'about', 'contact', 'blog', 'project-detail'];
+
 function getInitialPage() {
   const hash = window.location.hash.replace(/^#\/?/, '').toLowerCase();
-  if (['admin', 'projects', 'services', 'about', 'contact', 'blog', 'project-detail'].includes(hash)) {
+  if (VALID_PAGES.includes(hash)) {
     return hash;
   }
   const searchParams = new URLSearchParams(window.location.search);
   const pageParam = searchParams.get('page') || (searchParams.has('admin') ? 'admin' : null);
-  if (pageParam && ['admin', 'projects', 'services', 'about', 'contact', 'blog', 'project-detail'].includes(pageParam.toLowerCase())) {
+  if (pageParam && VALID_PAGES.includes(pageParam.toLowerCase())) {
     return pageParam.toLowerCase();
   }
   const path = window.location.pathname.toLowerCase();
   if (path.endsWith('/admin') || path.endsWith('/admin/')) {
     return 'admin';
+  }
+  // Unknown hash — treat as 404
+  if (hash && !VALID_PAGES.includes(hash)) {
+    return '404';
   }
   return 'home';
 }
@@ -157,6 +163,22 @@ export default function App() {
               onNavigate={handleNavigate} 
               onSelectProject={handleSelectProject}
             />
+          )}
+
+          {activePage === '404' && (
+            <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-6 py-24 space-y-6 animate-fade-in">
+              <p className="text-[10px] uppercase tracking-[0.35em] text-ashara-teal dark:text-ashara-gold font-semibold">404 — Page Not Found</p>
+              <h1 className="font-serif text-5xl sm:text-7xl text-ashara-charcoal dark:text-ashara-sand font-light">Lost in Space</h1>
+              <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md font-light leading-relaxed">
+                The page you're looking for doesn't exist. It may have been moved, deleted, or you may have mistyped the URL.
+              </p>
+              <button
+                onClick={() => handleNavigate('home')}
+                className="mt-4 px-8 py-3 bg-ashara-teal hover:bg-ashara-teal/90 text-white text-xs tracking-[0.2em] uppercase font-medium rounded-full transition-all duration-200 hover:scale-105"
+              >
+                Back to Home
+              </button>
+            </div>
           )}
         </Suspense>
       </main>
