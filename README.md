@@ -188,44 +188,43 @@ Ashara-Interior/
 ├── .github/
 │   └── workflows/
 │       └── deploy.yml              # Automated GitHub Pages CI/CD workflow
-├── index.html                      # HTML entry point with default light theme & fonts
+├── index.html                      # HTML entry point with default light theme & SEO metadata
 ├── package.json                    # Project dependencies and scripts
 ├── postcss.config.js               # PostCSS configuration
 ├── tailwind.config.js              # Custom theme tokens, fonts, luxury shadows
 ├── vite.config.js                  # Vite bundler configuration (base: './')
 ├── .env                            # Firebase credentials (not committed)
-├── public/                         # Static production assets
-│   ├── assets/                     # Project showcase photography (p1–p6)
-│   ├── client_logos/               # 15+ governmental seals & client logos
-│   ├── bg_pattern.svg              # Light mode geometric pattern
-│   ├── bg_pattern_dark.svg         # Dark mode geometric pattern
-│   └── our_service.jpg             # Services hero banner background
+├── public/                         # Public static files
+│   ├── 404.html                    # GitHub Pages SPA redirect handler
+│   └── robots.txt                  # Search engine crawler instructions (blocks admin)
 └── src/
     ├── App.jsx                     # Main layout, dark mode state, dedicated view router
     ├── index.css                   # Global styles, scrollbar, keyframe animations
     ├── main.jsx                    # React root mount entry point
+    ├── assets/                     # Vite-optimized images, logos, and photography
     ├── components/
     │   ├── AsharaLogo.jsx          # Vector SVG brand emblem & typography
     │   ├── ClientsSection.jsx      # Infinite marquee logo scroller (2 rows, pure CSS)
     │   ├── Footer.jsx              # Solid teal footer with quick links & social links
     │   ├── Navbar.jsx              # Header navigation, scroll progress, theme toggle
     │   ├── FullScreenHeroSlideshow.jsx  # Hero cross-fade slideshow (2s, 6s interval)
-    │   ├── AccordionPanelCarousel.jsx   # Expanding image panel carousel (2s transitions)
-    │   └── CoverflowCarousel.jsx        # CoverFlow 3D perspective carousel (unused)
+    │   └── AccordionPanelCarousel.jsx   # Expanding image panel carousel (2s transitions)
     ├── data/
     │   └── defaultData.js          # Default projects & blog posts (offline fallback)
     ├── pages/
+    │   ├── admin/                  # Modular CMS tab and modal components
     │   ├── AboutPage.jsx           # Studio story, workspace banner, & 3 Core Pillars
-    │   ├── AdminPortal.jsx         # Password-protected CMS (projects, blog, leads, testimonials)
+    │   ├── AdminPortal.jsx         # Access-controlled CMS (projects, blog, leads)
     │   ├── BlogPage.jsx            # The Ashara Journal & interactive reading modal
     │   ├── ContactPage.jsx         # Consultation booking form & studio locations
     │   ├── HomePage.jsx            # Full multi-section continuous scroll experience
     │   ├── ProjectDetailPage.jsx   # Individual project case study with gallery
     │   ├── ProjectsPage.jsx        # CSS Masonry portfolio grid with category filters
     │   └── ServicesPage.jsx        # "How We Work" hero & 4-tier interactive accordion
-    └── services/
-        ├── firebase.js             # Re-export alias for backward compatibility
-        └── firebaseService.js      # Firebase init, Firestore CRUD, Auth helpers, image upload
+    ├── services/
+    │   └── firebaseService.js      # Firebase init, Firestore CRUD, Auth helpers, image upload
+    └── utils/
+        └── imageOptimizer.js       # Client-side image compression utilities
 ```
 
 ---
