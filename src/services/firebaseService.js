@@ -925,17 +925,8 @@ export async function loginAdminUser(email, password) {
       sessionStorage.setItem('ashara_admin_auth', JSON.stringify(user));
       return { success: true, user };
     } catch (error) {
-      // Don't return here immediately. 
-      // Proceed to check the local sandbox credentials as a fallback.
-      console.warn("Firebase Auth failed, checking local sandbox credentials.", error);
+      console.error("Firebase Auth failed:", error);
     }
-  }
-
-  // 2. Local sandbox fallback
-  if (cleanEmail === 'admin@ashara.com' && cleanPass === 'ashara2025') {
-    const adminUser = { email: cleanEmail, name: 'Local Admin Sandbox' };
-    sessionStorage.setItem('ashara_admin_auth', JSON.stringify(adminUser));
-    return { success: true, user: adminUser };
   }
 
   return { success: false, error: 'Access denied. Invalid email or passcode.' };
