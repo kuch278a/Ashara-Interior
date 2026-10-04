@@ -13,7 +13,6 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
     { id: 'projects', label: 'Projects' },
     { id: 'services', label: 'Services' },
     { id: 'about', label: 'About' },
-    { id: 'blog', label: 'Blog' },
     { id: 'contact', label: 'Contact' },
   ];
 
@@ -37,22 +36,21 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
   };
 
   return (
-    <header className="sticky top-0 z-50 pt-3 sm:pt-4 px-4 sm:px-6 pointer-events-none transition-all duration-300">
+    <header className={`sticky top-0 z-50 w-full transition-all duration-300 pointer-events-auto bg-white dark:bg-ashara-dark ${
+      isScrolled ? 'shadow-md border-transparent' : 'border-b border-gray-200 dark:border-white/10'
+    }`}>
       {/* Real-time Scroll Progress Indicator Bar */}
       <div 
-        className="fixed top-0 left-0 h-[2.5px] bg-gradient-to-r from-ashara-teal via-ashara-gold to-ashara-terracotta z-50 transition-all duration-150 ease-out pointer-events-none"
+        className="absolute top-0 left-0 h-[2px] bg-gradient-to-r from-ashara-teal via-ashara-gold to-ashara-terracotta z-50 transition-all duration-150 ease-out"
         style={{ width: `${scrollProgress}%` }}
       />
 
-      {/* Floating Pill Navigation Bar */}
-      <div className={`pointer-events-auto max-w-6xl mx-auto rounded-full transition-all duration-300 px-5 sm:px-7 py-2.5 sm:py-3 flex items-center justify-between border bg-white/70 dark:bg-terion-card-dark/70 backdrop-blur-sm border-terion-border/50 dark:border-white/5 ${
-        isScrolled ? 'shadow-lg shadow-black/5 dark:shadow-black/20 bg-white/90 dark:bg-terion-card-dark/90' : 'shadow-xs'
-      }`}>
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-4 sm:py-5 flex items-center justify-between">
         
         {/* Brand Logo & Title */}
         <button
           onClick={() => handleNavClick('home')}
-          className="flex items-center gap-3 text-left focus:outline-none group"
+          className="flex items-center gap-4 text-left focus:outline-none group"
           aria-label="Ashara Interior Design and Building"
         >
           <div className="flex items-center select-none group">
@@ -61,88 +59,92 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
               alt="Ashara Interior Design and Building"
               decoding="async"
               className="object-contain transition-transform duration-300 group-hover:scale-105"
-              style={{ height: '56px', width: 'auto' }}
+              style={{ height: '48px', width: 'auto' }}
               onError={(e) => {
                 e.target.src = {asset_2};
               }}
             />
           </div>
           <div className="hidden sm:flex flex-col text-left">
-            <span className="font-serif tracking-widest font-semibold text-sm text-terion-charcoal dark:text-white uppercase">
+            <span className="font-serif tracking-[0.2em] font-bold text-[12px] text-ashara-charcoal dark:text-white uppercase">
               Ashara
             </span>
-            <span className="text-[10px] uppercase tracking-[0.2em] text-terion-muted dark:text-terion-gray font-light">
-              Interior Design &amp; Building
+            <span className="text-[9px] uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400 font-light mt-0.5">
+              Interior Design
             </span>
           </div>
         </button>
 
-        {/* Center Pill Nav */}
-        <nav className="hidden md:flex items-center gap-1 bg-terion-bg/60 dark:bg-white/5 p-1 rounded-full border border-terion-border/40 dark:border-white/5">
-          {navLinks.map((link) => {
-            const isActive = activePage === link.id || (activePage === 'project-detail' && link.id === 'projects');
-            return (
-              <button
-                key={link.id}
-                onClick={() => handleNavClick(link.id)}
-                className={`px-4 py-1.5 rounded-full text-[13px] font-medium transition-all duration-200 ${
-                  isActive
-                    ? 'bg-terion-charcoal text-white dark:bg-white dark:text-terion-charcoal shadow-sm'
-                    : 'text-terion-stone dark:text-terion-gray hover:text-terion-charcoal dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10'
-                }`}
-              >
-                {link.label}
-              </button>
-            );
-          })}
-        </nav>
+        {/* Right Side Nav Links */}
+        <div className="flex items-center gap-6 lg:gap-10">
+          <nav className="hidden md:flex items-center gap-6 lg:gap-8">
+            {navLinks.map((link) => {
+              const isActive = activePage === link.id || (activePage === 'project-detail' && link.id === 'projects');
+              return (
+                <button
+                  key={link.id}
+                  onClick={() => handleNavClick(link.id)}
+                  className={`text-[12px] uppercase tracking-[0.2em] font-bold transition-colors duration-200 ${
+                    isActive
+                      ? 'text-ashara-teal dark:text-ashara-gold border-b border-ashara-teal dark:border-ashara-gold pb-1'
+                      : 'text-gray-500 dark:text-gray-400 hover:text-ashara-charcoal dark:hover:text-white pb-1'
+                  }`}
+                >
+                  {link.label}
+                </button>
+              );
+            })}
+          </nav>
 
-        {/* Action Buttons */}
-        <div className="flex items-center gap-2.5 sm:gap-3">
-          {/* Light / Dark Mode Toggle */}
-          <button
-            onClick={toggleTheme}
-            className="w-9 h-9 rounded-full flex items-center justify-center text-terion-stone dark:text-terion-gray hover:text-terion-charcoal dark:hover:text-white hover:bg-terion-bg dark:hover:bg-white/10 transition duration-200 border border-transparent hover:border-terion-border dark:hover:border-white/10 focus:outline-none"
-            aria-label={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-          >
-            {theme === 'dark' ? (
-              <Sun className="w-4 h-4 text-terion-stone dark:text-terion-gray" />
-            ) : (
-              <Moon className="w-4 h-4 text-terion-stone" />
-            )}
-          </button>
+          {/* Action Buttons */}
+          <div className="flex items-center gap-3">
+            {/* Light / Dark Mode Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="w-9 h-9 rounded-full flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-ashara-teal dark:hover:text-ashara-gold hover:bg-gray-100 dark:hover:bg-white/10 transition duration-200 focus:outline-none"
+              aria-label={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-4 h-4 text-gray-400" />
+              ) : (
+                <Moon className="w-4 h-4 text-gray-500" />
+              )}
+            </button>
 
-          {/* Mobile Hamburger Toggle */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden w-9 h-9 rounded-full flex items-center justify-center text-terion-stone dark:text-terion-gray hover:text-terion-charcoal dark:hover:text-white hover:bg-terion-bg dark:hover:bg-white/10 transition focus:outline-none"
-            aria-label="Toggle Navigation Menu"
-          >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
+            {/* Mobile Hamburger Toggle */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden w-9 h-9 rounded-full flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10 transition focus:outline-none"
+              aria-label="Toggle Navigation Menu"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Mobile Dropdown Menu Card */}
+      {/* Mobile Dropdown Menu */}
       {mobileMenuOpen && (
-        <div className="pointer-events-auto md:hidden max-w-6xl mx-auto mt-2 p-3 rounded-2xl bg-white/95 dark:bg-terion-card-dark/95 backdrop-blur-md border border-terion-border/50 dark:border-white/10 shadow-xl space-y-1 animate-fade-in">
-          {navLinks.map((link) => {
-            const isActive = activePage === link.id || (activePage === 'project-detail' && link.id === 'projects');
-            return (
-              <button
-                key={link.id}
-                onClick={() => handleNavClick(link.id)}
-                className={`block w-full text-left px-4 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200 ${
-                  isActive
-                    ? 'bg-terion-charcoal text-white dark:bg-white dark:text-terion-charcoal shadow-sm font-semibold'
-                    : 'text-terion-stone dark:text-terion-gray hover:text-terion-charcoal dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10'
-                }`}
-              >
-                {link.label}
-              </button>
-            );
-          })}
+        <div className="pointer-events-auto md:hidden w-full absolute top-full left-0 bg-white dark:bg-ashara-dark border-b border-gray-200 dark:border-white/10 shadow-lg animate-fade-in">
+          <div className="px-6 py-4 space-y-2">
+            {navLinks.map((link) => {
+              const isActive = activePage === link.id || (activePage === 'project-detail' && link.id === 'projects');
+              return (
+                <button
+                  key={link.id}
+                  onClick={() => handleNavClick(link.id)}
+                  className={`block w-full text-left px-4 py-3 rounded-lg text-[12px] uppercase tracking-[0.2em] font-bold transition-colors duration-200 ${
+                    isActive
+                      ? 'bg-gray-50 dark:bg-white/5 text-ashara-teal dark:text-ashara-gold'
+                      : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 hover:text-ashara-charcoal dark:hover:text-white'
+                  }`}
+                >
+                  {link.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
     </header>

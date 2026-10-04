@@ -9,30 +9,29 @@ const ACCORDION_ITEMS = [
     id: 1,
     number: '1.',
     title: 'Interior Design',
-    content: 'Comprehensive spatial planning, luxury material curation, tailored color palettes, and end-to-end styling for executive bureaus, high-end residences, and cultural venues.'
+    content: 'Comprehensive spatial planning, luxury material curation, tailored color palettes, and end-to-end styling.'
   },
   {
     id: 2,
     number: '2.',
-    title: 'Architectural Design',
+    title: 'Architecture Design',
     content: 'Master planning, spatial articulation, facade development, and structural coordination blending classical proportions with modern sustainable engineering.'
   },
   {
     id: 3,
     number: '3.',
-    title: 'House Redesign',
-    content: 'Transforming existing residential architecture through structural re-modelling, spatial flow optimization, bespoke joinery, and harmonized lighting schemas.'
+    title: 'Office Layouts',
+    content: 'Transforming existing office architecture through structural re-modelling, spatial flow optimization, and harmonized lighting schemas.'
   },
   {
     id: 4,
     number: '4.',
-    title: 'Design Consultancy',
-    content: 'Strategic acoustic appraisals, luxury FF&E procurement advisory, lighting design consultations, and spatial branding for institutions and corporations.'
+    title: 'Retail Space',
+    content: 'Strategic acoustic appraisals, luxury FF&E procurement advisory, lighting design consultations, and spatial branding.'
   }
 ];
 
 export default function ServicesPage({ onNavigate, onSelectProject, isSection = false }) {
-  // In Figma, item 3 is expanded by default
   const [openIndex, setOpenIndex] = useState(3);
 
   const toggleAccordion = (id) => {
@@ -49,46 +48,36 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
   };
 
   return (
-    <div className="bg-transparent animate-fade-in transition-colors duration-300">
+    <div className="bg-[#FAF8F5] dark:bg-ashara-dark min-h-screen animate-fade-in transition-colors duration-300">
       
-      {/* 1. HERO: "How We Work" Dark Cathedral Arch Banner matching Figma Image 2 */}
-      <section className="w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 pt-4">
-        <div className="relative w-full min-h-[480px] sm:min-h-[540px] flex items-center justify-center bg-black overflow-hidden px-6 py-20 text-center rounded-2xl sm:rounded-3xl shadow-lg border border-black/5 dark:border-white/10">
-          {/* Background Image */}
-          <div 
-            className="absolute inset-0 bg-cover bg-center opacity-70 scale-100"
-            style={{
-              backgroundImage: `url(${asset_1})`
-            }}
-          ></div>
-          
-          {/* Dark Vignette Overlay */}
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-[0.5px]"></div>
-
-          {/* Hero Content */}
-          <div className="relative z-10 max-w-3xl mx-auto space-y-6 text-white px-4">
-          <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.32em] text-ashara-gold font-semibold">
-            SERVICES & EXPERTISE
-          </p>
-          <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal tracking-wide text-white">
-            How We Work
-          </h2>
-          
-          <p className="text-xs sm:text-[13.5px] leading-relaxed sm:leading-loose text-white/90 font-light tracking-wide max-w-2xl mx-auto">
-            Ashara Interiors is an interior design, architecture, and build company passionate about creating inspiring spaces that radiate positivity and reflect our clients' unique identities. Specializing in governmental bureaus, commercial spaces, hotels, residential projects, and cultural landmarks, we offer comprehensive services ranging from stand-alone interior design to complete turnkey solutions.
-          </p>
-        </div>
-      </div>
-    </section>
+      {/* 1. HERO with 'How We Work' Text */}
+      {!isSection && (
+        <section className="w-full">
+          <div className="relative w-full h-screen min-h-[500px] bg-black flex flex-col items-center justify-center text-center px-6">
+            <div 
+              className="absolute inset-0 bg-cover bg-center opacity-40"
+              style={{ backgroundImage: `url(${asset_1})` }}
+            />
+            <div className="relative z-10 max-w-4xl mx-auto space-y-6">
+              <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-white font-normal">
+                How We Work
+              </h1>
+              <p className="text-sm sm:text-base leading-relaxed text-white/90 font-light max-w-3xl mx-auto">
+                Ashara Interiors is an interior design, architecture, and build company passionate about creating inspiring spaces that radiate positivity and reflect our clients' unique identities. Specializing in governmental bureaus, commercial spaces, hotels, residential projects, and cultural landmarks, we offer comprehensive services ranging from stand-alone interior design to complete turnkey solutions.
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* 2. "How We Can Help" Section with Numbered Accordion */}
-      <section className="max-w-3xl mx-auto px-6 sm:px-10 pt-16 sm:pt-24 space-y-12">
-        <h3 className="font-serif text-3xl sm:text-4xl text-center text-ashara-charcoal dark:text-white font-normal tracking-wide transition-colors duration-300">
+      <section className="max-w-4xl mx-auto px-6 sm:px-10 pt-16 sm:pt-24 pb-16 space-y-12">
+        <h3 className="font-serif text-3xl sm:text-4xl text-center text-ashara-charcoal font-normal tracking-wide transition-colors duration-300">
           How We Can Help
         </h3>
 
         {/* Accordion List */}
-        <div className="divide-y divide-gray-200 dark:divide-white/10">
+        <div className="divide-y divide-gray-200 max-w-2xl mx-auto border-t border-b border-gray-200">
           {ACCORDION_ITEMS.map((item) => {
             const isOpen = openIndex === item.id;
             return (
@@ -98,26 +87,26 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
                   className="w-full flex items-center justify-between text-left group"
                 >
                   <div className="flex items-baseline gap-4 sm:gap-6">
-                    <span className="font-serif text-xl sm:text-2xl text-ashara-charcoal dark:text-white font-light transition-colors duration-300">
+                    <span className="font-serif text-xl sm:text-2xl text-gray-400 font-light">
                       {item.number}
                     </span>
-                    <span className="font-serif text-xl sm:text-2xl text-ashara-charcoal dark:text-white font-normal group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition-colors duration-300">
+                    <span className="font-serif text-xl sm:text-2xl text-ashara-charcoal font-normal group-hover:text-ashara-teal transition-colors duration-300">
                       {item.title}
                     </span>
                   </div>
-                  <span className="text-gray-400 group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition-colors duration-200">
+                  <span className="text-gray-400 group-hover:text-ashara-teal transition-colors duration-200">
                     {isOpen ? (
-                      <Minus className="w-5 h-5 transition-transform duration-300" />
+                      <Minus className="w-4 h-4 transition-transform duration-300" />
                     ) : (
-                      <Plus className="w-5 h-5 transition-transform duration-300" />
+                      <Plus className="w-4 h-4 transition-transform duration-300" />
                     )}
                   </span>
                 </button>
 
                 {/* Animated Body Content */}
                 {isOpen && (
-                  <div className="pt-4 pl-8 sm:pl-11 pr-4 animate-fade-in">
-                    <p className="text-xs sm:text-[13px] leading-relaxed text-gray-600 dark:text-gray-300 font-light transition-colors duration-300">
+                  <div className="pt-4 pl-8 sm:pl-12 pr-4 animate-fade-in">
+                    <p className="text-sm leading-relaxed text-gray-500 font-light transition-colors duration-300">
                       {item.content}
                     </p>
                   </div>
@@ -127,89 +116,86 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
           })}
         </div>
 
-        {/* ENQUIRE NOW Button (Outlined Box) */}
+        {/* Enquire Now Button */}
         <div className="text-center pt-4">
           <button
-            onClick={() => onNavigate('contact')}
-            className="inline-block px-10 py-3 border border-gray-900 dark:border-white/20 text-ashara-charcoal dark:text-white text-[11px] uppercase tracking-[0.2em] font-medium hover:bg-ashara-teal dark:hover:bg-ashara-gold hover:text-white dark:hover:text-ashara-dark hover:border-ashara-teal dark:hover:border-ashara-gold transition duration-300 shadow-2xs"
+            onClick={() => onNavigate && onNavigate('contact')}
+            className="inline-block px-8 py-3 border border-gray-300 text-ashara-charcoal text-[10px] uppercase tracking-[0.2em] font-semibold hover:border-ashara-teal hover:text-ashara-teal transition duration-300"
           >
             ENQUIRE NOW
           </button>
         </div>
       </section>
 
-      {/* 3. Quote Banner matching Figma Image 2 */}
-      <section className="max-w-4xl mx-auto px-6 py-20 text-center">
-        <blockquote className="font-serif italic text-2xl sm:text-3xl lg:text-4xl text-ashara-charcoal dark:text-white leading-relaxed font-light transition-colors duration-300">
-          “Simplicity is the ultimate sophistication.”
-        </blockquote>
-      </section>
-
-      {/* 4. "Recent Projects" Section matching Figma Image 2 (Hidden on Home Page) */}
+      {/* 4. "Recent Projects" Section matching Figma */}
       {!isSection && (
-        <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pt-8 space-y-12">
+        <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pt-8 pb-24 space-y-12 text-center">
           
-          {/* Heading with Divider Lines */}
-          <div className="flex items-center justify-center gap-6 sm:gap-10">
-            <div className="h-[1px] bg-gray-300 dark:bg-white/10 flex-1 max-w-[240px]"></div>
-            <h3 className="font-serif text-2xl sm:text-3xl text-ashara-charcoal dark:text-white tracking-wide transition-colors duration-300">
+          {/* Title with horizontal lines */}
+          <div className="flex items-center justify-center gap-6">
+            <div className="h-[1px] bg-gray-300 flex-1 max-w-[120px]"></div>
+            <h3 className="font-serif text-2xl sm:text-3xl text-ashara-charcoal font-normal">
               Recent Projects
             </h3>
-            <div className="h-[1px] bg-gray-300 dark:bg-white/10 flex-1 max-w-[240px]"></div>
+            <div className="h-[1px] bg-gray-300 flex-1 max-w-[120px]"></div>
           </div>
 
-          {/* 2 Project Cards Grid with Solid Teal Label Box */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
+          {/* 2 Project Cards Grid matching Figma (text below image) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-12 text-left">
             
             {/* Card 1: Amibara Properties */}
-            <div 
+            <article 
               onClick={() => handleProjectClick(5)}
-              className="group relative cursor-pointer aspect-[4/3] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500 border border-black/5 dark:border-white/10"
+              className="group cursor-pointer block"
             >
-              <img
-                src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=85"
-                alt="Amibara Properties"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-              />
-              <div className="absolute inset-x-0 bottom-0 bg-ashara-teal/95 dark:bg-ashara-teal/95 backdrop-blur-[2px] p-5 sm:p-6 text-white transition-all duration-300">
-                <span className="text-[8.5px] sm:text-[9px] uppercase tracking-[0.28em] text-white/80 font-medium block">
-                  PRIVATE COMPANY
-                </span>
-                <h4 className="font-serif text-xl sm:text-2xl font-normal mt-0.5 text-white">
+              <div className="w-full aspect-[4/3] overflow-hidden bg-gray-200 mb-4">
+                <img
+                  src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=85"
+                  alt="Amibara Properties"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                />
+              </div>
+              <div>
+                <h4 className="font-serif text-xl sm:text-2xl text-ashara-charcoal mb-1 group-hover:text-ashara-teal transition-colors">
                   Amibara Properties
                 </h4>
+                <span className="text-[9px] uppercase tracking-[0.2em] text-gray-500 font-medium">
+                  PRIVATE COMPANY
+                </span>
               </div>
-            </div>
+            </article>
 
             {/* Card 2: Ministry of Revenues */}
-            <div 
+            <article 
               onClick={() => handleProjectClick(6)}
-              className="group relative cursor-pointer aspect-[4/3] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500 border border-black/5 dark:border-white/10"
+              className="group cursor-pointer block"
             >
-              <img
-                src={asset_2}
-                alt="Ministry of Revenues"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-              />
-              <div className="absolute inset-x-0 bottom-0 bg-ashara-teal/95 dark:bg-ashara-teal/95 backdrop-blur-[2px] p-5 sm:p-6 text-white transition-all duration-300">
-                <span className="text-[8.5px] sm:text-[9px] uppercase tracking-[0.28em] text-white/80 font-medium block">
-                  GOVERNMENTAL
-                </span>
-                <h4 className="font-serif text-xl sm:text-2xl font-normal mt-0.5 text-white">
+              <div className="w-full aspect-[4/3] overflow-hidden bg-gray-200 mb-4">
+                <img
+                  src={asset_2}
+                  alt="Ministry of Revenues"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                />
+              </div>
+              <div>
+                <h4 className="font-serif text-xl sm:text-2xl text-ashara-charcoal mb-1 group-hover:text-ashara-teal transition-colors">
                   Ministry of Revenues
                 </h4>
+                <span className="text-[9px] uppercase tracking-[0.2em] text-gray-500 font-medium">
+                  GOVERNMENTAL
+                </span>
               </div>
-            </div>
+            </article>
 
           </div>
 
           {/* View All Projects Link */}
-          <div className="text-center pt-6">
-            <button
-              onClick={() => onNavigate('projects')}
-              className="text-[10.5px] uppercase tracking-[0.28em] font-semibold text-gray-800 dark:text-gray-200 hover:text-ashara-teal dark:hover:text-ashara-gold transition border-b border-gray-400 dark:border-white/20 pb-0.5"
+          <div className="pt-12 text-center">
+            <button 
+              onClick={() => onNavigate && onNavigate('projects')}
+              className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] font-semibold text-gray-500 hover:text-ashara-teal transition-colors"
             >
-              VIEW ALL PROJECTS
+              VIEW ALL PROJECTS <span className="text-[12px] leading-none mb-0.5">&gt;</span>
             </button>
           </div>
 

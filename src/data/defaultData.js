@@ -11,7 +11,7 @@ export const DEFAULT_PROJECTS_LIST = [
   {
     id: 1,
     title: 'Prosperity Party Office',
-    category: 'GOVERNMENTAL',
+    category: 'INTERIOR',
     subtitle: 'GOVERNMENT SUB-OFFICE',
     image: asset_1,
     fallbackImage: asset_2,
@@ -28,7 +28,7 @@ export const DEFAULT_PROJECTS_LIST = [
   {
     id: 2,
     title: 'Ethiopia Federal Police',
-    category: 'GOVERNMENTAL',
+    category: 'ARCHITECTURE',
     subtitle: 'GOVERNMENTAL HEADQUARTERS',
     image: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1800&q=90',
     fallbackImage: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85',
@@ -45,7 +45,7 @@ export const DEFAULT_PROJECTS_LIST = [
   {
     id: 3,
     title: 'Fana Broadcasting Corporation',
-    category: 'PRIVATE ORGANIZATION',
+    category: 'CONSULTANCY',
     subtitle: 'BROADCASTING & MEDIA ATELIER',
     image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=85',
     fallbackImage: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=85',
@@ -62,7 +62,7 @@ export const DEFAULT_PROJECTS_LIST = [
   {
     id: 4,
     title: 'United Beverages',
-    category: 'PRIVATE CORPORATION',
+    category: 'INTERIOR',
     subtitle: 'CORPORATE HEAD OFFICE',
     image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=85',
     fallbackImage: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85',
@@ -79,7 +79,7 @@ export const DEFAULT_PROJECTS_LIST = [
   {
     id: 5,
     title: 'Amibara Properties',
-    category: 'PRIVATE COMPANY',
+    category: 'ARCHITECTURE',
     subtitle: 'COMMERCIAL REAL ESTATE HQ',
     image: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1800&q=85',
     fallbackImage: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=85',
@@ -96,7 +96,7 @@ export const DEFAULT_PROJECTS_LIST = [
   {
     id: 6,
     title: 'Ministry of Revenues',
-    category: 'GOVERNMENTAL',
+    category: 'CONSULTANCY',
     subtitle: 'MINISTRY CIVIC COMPLEX',
     image: asset_5,
     fallbackImage: asset_6,

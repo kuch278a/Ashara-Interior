@@ -13,48 +13,35 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
   };
 
   return (
-    <div className="bg-transparent animate-fade-in transition-colors duration-300">
+    <div className="bg-white min-h-screen animate-fade-in transition-colors duration-300">
       
-      {/* 1. HERO: Glass Facade & Sky Banner matching Figma Image 4 */}
-      <section className="w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 pt-4">
-        <div className="relative w-full min-h-[420px] sm:min-h-[480px] flex items-center justify-center bg-gray-900 overflow-hidden px-6 py-20 text-center rounded-2xl sm:rounded-3xl shadow-lg border border-black/5 dark:border-white/10">
+      {/* 1. HERO IMAGE WITH TEXT OVERLAY */}
+      <section className="w-full">
+        <div className="relative w-full h-screen min-h-[500px] bg-black flex flex-col items-center justify-center text-center">
           <div 
-            className="absolute inset-0 bg-cover bg-center opacity-85"
-            style={{
-              backgroundImage: `url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1800&q=90')`
-            }}
-          ></div>
-          
-          <div className="absolute inset-0 bg-sky-950/20 backdrop-blur-[0.5px]"></div>
-
-          {/* Hero Title Overlay */}
-          <div className="relative z-10 space-y-2 text-ashara-charcoal">
-            <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.32em] text-ashara-teal dark:text-ashara-gold font-semibold">
-              OUR COMPANY
-            </p>
-            <h1 className="font-serif text-4xl sm:text-6xl text-ashara-charcoal dark:text-white font-normal tracking-wide transition-colors duration-300">
+            className="absolute inset-0 bg-cover bg-center opacity-80"
+            style={{ backgroundImage: `url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=85')` }}
+          />
+          <div className="relative z-10 space-y-2 text-white">
+            <span className="text-[9px] uppercase tracking-[0.3em] font-semibold">
+              WE CREATE
+            </span>
+            <h1 className="font-serif text-4xl sm:text-5xl font-normal">
               About Us
             </h1>
           </div>
         </div>
       </section>
 
-      {/* 2. 2-COLUMN INTRO SECTION matching Figma Screen 4 */}
-      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pt-20 sm:pt-24 pb-14">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-14 items-start">
-          
-          {/* Left: Heading & Script Accent */}
-          <div className="md:col-span-5 space-y-2">
-            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-ashara-charcoal dark:text-white font-normal leading-tight transition-colors duration-300">
-              Transforming spaces into timeless, elegant environments.
+      {/* 2. TWO COLUMN INTRO */}
+      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 py-20">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-20 items-start">
+          <div className="md:col-span-5">
+            <h2 className="font-serif italic text-3xl sm:text-4xl text-gray-500 font-light leading-tight">
+              We create luxury interiors that stand the test of time.
             </h2>
-            <p className="font-script text-2xl sm:text-3xl text-ashara-teal dark:text-ashara-gold pt-2 transition-colors duration-300">
-              elevating human experiences
-            </p>
           </div>
-
-          {/* Right: Body Narrative */}
-          <div className="md:col-span-7 space-y-5 text-gray-700 dark:text-gray-300 font-light text-xs sm:text-[13.5px] leading-relaxed transition-colors duration-300">
+          <div className="md:col-span-7 space-y-6 text-[13px] leading-relaxed text-gray-600 font-light">
             <p>
               Ashara Interiors is a premier interior architecture and design atelier rooted in Addis Ababa, Ethiopia. We specialize in high-end governmental complexes, prestigious corporate headquarters, luxury residential retreats, and bespoke commercial environments.
             </p>
@@ -62,134 +49,143 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
               Our philosophy bridges Ethiopian neoclassical grandeur with contemporary European minimalism. Every space we sculpt is meticulously tailored with custom timber craftsmanship, refined acoustic engineering, and timeless marble textures designed to inspire for generations.
             </p>
           </div>
-
         </div>
       </section>
 
-      {/* 3. FULL-WIDTH FEATURE BANNER: Concrete Atrium & Floating Stairs */}
-      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 py-8">
-        <div className="relative w-full aspect-[16/9] sm:aspect-[21/10] max-h-[560px] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-sm border border-black/5 dark:border-white/10">
+      {/* 3. FULL WIDTH IMAGE */}
+      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pb-20">
+        <div className="w-full aspect-[21/9] overflow-hidden bg-gray-200">
           <img
-            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=90"
-            alt="Ashara Design Atelier Workspace"
+            src={asset_1}
+            alt="Interior View"
             className="w-full h-full object-cover"
           />
         </div>
       </section>
 
-      {/* 4. CORE VALUES / THREE PILLARS matching Figma */}
-      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 sm:gap-8 text-center md:text-left">
-          
-          <div className="space-y-3">
-            <span className="font-serif text-3xl sm:text-4xl text-ashara-teal dark:text-ashara-gold font-light">01</span>
-            <h3 className="font-serif text-xl sm:text-2xl text-ashara-charcoal dark:text-white transition-colors duration-300">
-              Authentic Heritage
-            </h3>
-            <p className="text-xs sm:text-[13px] leading-relaxed text-gray-600 dark:text-gray-300 font-light transition-colors duration-300">
-              Integrating authentic local materials, bespoke indigenous timber craft, and cultural geometries into modern architectural contexts.
-            </p>
+      {/* 4. OUR MISSION (Text Left, Image Right) */}
+      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pb-12">
+        <div className="bg-[#EBF2F2] grid grid-cols-1 md:grid-cols-2">
+          <div className="p-10 lg:p-16 flex flex-col justify-center">
+            <div className="flex items-center gap-6 mb-6">
+              <h3 className="font-serif text-2xl text-ashara-charcoal font-normal whitespace-nowrap">Our Mission</h3>
+              <div className="h-[1px] bg-gray-300 flex-1"></div>
+            </div>
+            <div className="space-y-4 text-[13px] leading-relaxed text-gray-600 font-light">
+              <p>
+                At Ashara Interiors, our mission is to elevate the human experience through exceptional spatial design. We are dedicated to creating environments that not only reflect the unique identity and aspirations of our clients but also foster well-being, productivity, and inspiration. 
+              </p>
+              <p>
+                By blending innovative architecture with timeless aesthetics, we strive to deliver sustainable and functional spaces that stand as a testament to unparalleled craftsmanship and visionary design.
+              </p>
+            </div>
           </div>
-
-          <div className="space-y-3">
-            <span className="font-serif text-3xl sm:text-4xl text-ashara-teal dark:text-ashara-gold font-light">02</span>
-            <h3 className="font-serif text-xl sm:text-2xl text-ashara-charcoal dark:text-white transition-colors duration-300">
-              Architectural Rigor
-            </h3>
-            <p className="text-xs sm:text-[13px] leading-relaxed text-gray-600 dark:text-gray-300 font-light transition-colors duration-300">
-              Precision acoustic calculations, sustainable climate zoning, and seamless structural integration across large-scale civic projects.
-            </p>
+          <div className="h-[300px] md:h-auto">
+            <img
+              src={asset_1}
+              alt="Our Mission"
+              className="w-full h-full object-cover"
+            />
           </div>
-
-          <div className="space-y-3">
-            <span className="font-serif text-3xl sm:text-4xl text-ashara-teal dark:text-ashara-gold font-light">03</span>
-            <h3 className="font-serif text-xl sm:text-2xl text-ashara-charcoal dark:text-white transition-colors duration-300">
-              Bespoke Execution
-            </h3>
-            <p className="text-xs sm:text-[13px] leading-relaxed text-gray-600 dark:text-gray-300 font-light transition-colors duration-300">
-              Turnkey delivery from schematic concept to master joinery installation, ensuring flawless luxury execution within tight timelines.
-            </p>
-          </div>
-
         </div>
       </section>
 
-      {/* 5. QUOTE BANNER matching Figma Image 4 */}
-      <section className="max-w-4xl mx-auto px-6 py-12 text-center">
-        <blockquote className="font-serif italic text-2xl sm:text-3xl lg:text-4xl text-ashara-charcoal dark:text-white leading-relaxed font-light transition-colors duration-300">
-          “Architecture should speak of its time and place, but yearn for timelessness.”
-        </blockquote>
+      {/* 5. OUR VISION (Image Left, Text Right) */}
+      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pb-24">
+        <div className="bg-[#EBF2F2] grid grid-cols-1 md:grid-cols-2">
+          <div className="h-[300px] md:h-auto order-last md:order-first">
+            <img
+              src={asset_1}
+              alt="Our Vision"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="p-10 lg:p-16 flex flex-col justify-center">
+            <div className="flex items-center gap-6 mb-6">
+              <div className="h-[1px] bg-gray-300 flex-1"></div>
+              <h3 className="font-serif text-2xl text-ashara-charcoal font-normal whitespace-nowrap">Our Vision</h3>
+            </div>
+            <div className="space-y-4 text-[13px] leading-relaxed text-gray-600 font-light">
+              <p>
+                Our vision is to be the leading force in luxury interior architecture across Africa and beyond. We envision a future where our designs set the global standard for elegance and innovation.
+              </p>
+              <p>
+                We aim to continuously push the boundaries of design, integrating advanced technologies with traditional artistry. Ultimately, our goal is to leave a lasting legacy of beautiful, enduring spaces that enrich the lives of those who inhabit them.
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
 
-      {/* 6. "Recent Projects" Section matching Figma Image 4 (Hidden on Home Page) */}
+      {/* 6. RECENT PROJECTS SECTION */}
       {!isSection && (
-        <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pt-12 space-y-12">
+        <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pt-8 pb-24 space-y-12 text-center">
           
-          {/* Heading with Divider Lines */}
-          <div className="flex items-center justify-center gap-6 sm:gap-10">
-            <div className="h-[1px] bg-gray-300 dark:bg-white/10 flex-1 max-w-[240px]"></div>
-            <h3 className="font-serif text-2xl sm:text-3xl text-ashara-charcoal dark:text-white tracking-wide transition-colors duration-300">
+          {/* Title with horizontal lines */}
+          <div className="flex items-center justify-center gap-6">
+            <div className="h-[1px] bg-gray-300 flex-1 max-w-[120px]"></div>
+            <h3 className="font-serif text-2xl sm:text-3xl text-ashara-charcoal font-normal">
               Recent Projects
             </h3>
-            <div className="h-[1px] bg-gray-300 dark:bg-white/10 flex-1 max-w-[240px]"></div>
+            <div className="h-[1px] bg-gray-300 flex-1 max-w-[120px]"></div>
           </div>
 
-          {/* 2 Project Cards with Solid Teal Label Box */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
+          {/* 2 Project Cards Grid matching Figma (text below image) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-12 text-left">
             
             {/* Card 1: Amibara Properties */}
-            <div 
+            <article 
               onClick={() => handleProjectClick(5)}
-              className="group relative cursor-pointer aspect-[4/3] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500 border border-black/5 dark:border-white/10"
+              className="group cursor-pointer block"
             >
-              <img
-                src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=85"
-                alt="Amibara Properties"
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-              />
-              <div className="absolute inset-x-0 bottom-0 bg-ashara-teal/95 dark:bg-ashara-teal/95 backdrop-blur-[2px] p-5 sm:p-6 text-white transition-all duration-300">
-                <span className="text-[8.5px] sm:text-[9px] uppercase tracking-[0.28em] text-white/80 font-medium block">
-                  PRIVATE COMPANY
-                </span>
-                <h4 className="font-serif text-xl sm:text-2xl font-normal mt-0.5 text-white">
+              <div className="w-full aspect-[4/3] overflow-hidden bg-gray-200 mb-4">
+                <img
+                  src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=85"
+                  alt="Amibara Properties"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                />
+              </div>
+              <div>
+                <h4 className="font-serif text-xl sm:text-2xl text-ashara-charcoal mb-1 group-hover:text-ashara-teal transition-colors">
                   Amibara Properties
                 </h4>
+                <span className="text-[9px] uppercase tracking-[0.2em] text-gray-500 font-medium">
+                  PRIVATE COMPANY
+                </span>
               </div>
-            </div>
+            </article>
 
             {/* Card 2: Ministry of Revenues */}
-            <div 
+            <article 
               onClick={() => handleProjectClick(6)}
-              className="group relative cursor-pointer aspect-[4/3] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500 border border-black/5 dark:border-white/10"
+              className="group cursor-pointer block"
             >
-              <img
-                src={asset_1}
-                alt="Ministry of Revenues"
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-              />
-              <div className="absolute inset-x-0 bottom-0 bg-ashara-teal/95 dark:bg-ashara-teal/95 backdrop-blur-[2px] p-5 sm:p-6 text-white transition-all duration-300">
-                <span className="text-[8.5px] sm:text-[9px] uppercase tracking-[0.28em] text-white/80 font-medium block">
-                  GOVERNMENTAL
-                </span>
-                <h4 className="font-serif text-xl sm:text-2xl font-normal mt-0.5 text-white">
+              <div className="w-full aspect-[4/3] overflow-hidden bg-gray-200 mb-4">
+                <img
+                  src={asset_1}
+                  alt="Ministry of Revenues"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                />
+              </div>
+              <div>
+                <h4 className="font-serif text-xl sm:text-2xl text-ashara-charcoal mb-1 group-hover:text-ashara-teal transition-colors">
                   Ministry of Revenues
                 </h4>
+                <span className="text-[9px] uppercase tracking-[0.2em] text-gray-500 font-medium">
+                  GOVERNMENTAL
+                </span>
               </div>
-            </div>
+            </article>
 
           </div>
 
           {/* View All Projects Link */}
-          <div className="text-center pt-6">
-            <button
-              onClick={() => onNavigate('projects')}
-              className="text-[10.5px] uppercase tracking-[0.28em] font-semibold text-gray-800 dark:text-gray-200 hover:text-ashara-teal dark:hover:text-ashara-gold transition border-b border-gray-400 dark:border-white/20 pb-0.5"
+          <div className="pt-12 text-center">
+            <button 
+              onClick={() => onNavigate && onNavigate('projects')}
+              className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] font-semibold text-gray-500 hover:text-ashara-teal transition-colors"
             >
-              VIEW ALL PROJECTS
+              VIEW ALL PROJECTS <span className="text-[12px] leading-none mb-0.5">&gt;</span>
             </button>
           </div>
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Phone, Mail, MessageSquare, MapPin, CheckCircle2, Loader2 } from 'lucide-react';
 import { submitConsultation } from '../services/firebaseService';
+import { Loader2, CheckCircle2, Phone, Mail, MessageSquare, MapPin } from 'lucide-react';
 
 export default function ContactPage({ isSection = false }) {
   const [submitted, setSubmitted] = useState(false);
@@ -36,61 +36,54 @@ export default function ContactPage({ isSection = false }) {
   };
 
   return (
-    <div className="bg-transparent py-12 sm:py-16 px-6 sm:px-10 lg:px-16 animate-fade-in transition-colors duration-300">
-      <div className="max-w-5xl mx-auto space-y-10">
-        
-        {/* Intro Subtitle matching Figma Screen 1 */}
-        <div className="text-center max-w-3xl mx-auto pt-2">
-          <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.32em] text-ashara-teal dark:text-ashara-gold font-semibold mb-3">
-            GET IN TOUCH
-          </p>
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-ashara-charcoal dark:text-white font-normal tracking-wide transition-colors duration-300 mb-4">
-            Connect with Ashara
-          </h2>
-          <p className="text-gray-700 dark:text-gray-300 text-sm sm:text-lg font-light leading-relaxed tracking-tight transition-colors duration-300">
+    <div className="bg-[#EBF2F2] dark:bg-ashara-dark min-h-screen animate-fade-in transition-colors duration-300">
+      
+      {/* 1. HERO HEADER matching Figma */}
+      <section className="w-full py-24 sm:py-32 px-6 lg:px-12 text-center">
+        <div className="max-w-3xl mx-auto">
+          <p className="font-serif text-2xl sm:text-3xl text-ashara-charcoal dark:text-white leading-relaxed">
             If you would like to discuss your project, schedule an appointment or arrange to view more of our extensive portfolio please contact us on the details below.
           </p>
         </div>
+      </section>
 
-        {/* Clean Horizontal Divider Line */}
-        <div className="w-full h-[1px] bg-gray-900/90 dark:bg-white/10 my-10 transition-colors duration-300"></div>
+      {/* Horizontal Divider */}
+      <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16">
+        <div className="h-[1px] bg-gray-300 w-full mb-12"></div>
+      </div>
 
-        {/* 2-Column Section: Contact (Left) & Enquiries (Right) */}
+      {/* 2. 2-COLUMN SECTION (Contact Info + Form) */}
+      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pb-20">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-20 items-start pt-4">
           
-          {/* Left Column: Contact */}
+          {/* Left Column: Contact Info */}
           <div className="md:col-span-5 space-y-8">
             <h2 className="font-serif text-3xl sm:text-4xl text-ashara-charcoal dark:text-white font-normal tracking-wide transition-colors duration-300">
               Contact
             </h2>
-
+            
             <div className="space-y-5 text-[13px] sm:text-sm text-gray-800 dark:text-gray-300 font-light">
-              
-              {/* Telephone */}
               <div className="flex items-start gap-3.5">
                 <Phone className="w-4 h-4 text-gray-700 dark:text-ashara-gold mt-1 shrink-0 stroke-[1.5]" />
                 <p className="leading-snug">
                   Telephone <span className="font-normal text-ashara-charcoal dark:text-white">+251 91 219 5768</span>
                 </p>
               </div>
-
-              {/* Email */}
+              
               <div className="flex items-start gap-3.5">
                 <Mail className="w-4 h-4 text-gray-700 dark:text-ashara-gold mt-1 shrink-0 stroke-[1.5]" />
                 <p className="leading-snug">
                   Email <a href="mailto:birukesayas911@gmail.com" className="hover:text-ashara-teal dark:hover:text-ashara-gold transition">birukesayas911@gmail.com</a>
                 </p>
               </div>
-
-              {/* WhatsApp */}
+              
               <div className="flex items-start gap-3.5">
                 <MessageSquare className="w-4 h-4 text-gray-700 dark:text-ashara-gold mt-1 shrink-0 stroke-[1.5]" />
                 <p className="leading-snug">
-                  WhatsApp <a href="https://wa.me/251907636463" target="_blank" rel="noopener noreferrer" className="hover:text-ashara-teal dark:hover:text-ashara-gold transition">+251 90 763 6463</a>
+                  WhatsApp <a href="https://wa.me/251907636463" target="_blank" rel="noreferrer" className="hover:text-ashara-teal dark:hover:text-ashara-gold transition">+251 90 763 6463</a>
                 </p>
               </div>
-
-              {/* Location Address */}
+              
               <div className="flex items-start gap-3.5 pt-2">
                 <MapPin className="w-4 h-4 text-gray-700 dark:text-ashara-gold mt-1 shrink-0 stroke-[1.5]" />
                 <div className="leading-relaxed text-gray-700 dark:text-gray-400">
@@ -101,24 +94,23 @@ export default function ContactPage({ isSection = false }) {
                   <p>Addis Ababa, Ethiopia</p>
                 </div>
               </div>
-
             </div>
           </div>
 
-          {/* Right Column: Enquiries Form */}
+          {/* Right Column: Form */}
           <div className="md:col-span-7 space-y-8">
             <h2 className="font-serif text-3xl sm:text-4xl text-ashara-charcoal dark:text-white font-normal tracking-wide transition-colors duration-300">
               Enquiries
             </h2>
 
             {submitted ? (
-              <div className="bg-[#EBF2F2] dark:bg-white/5 p-8 border border-ashara-teal/30 dark:border-ashara-gold/20 text-center space-y-4 shadow-sm animate-fade-in">
+              <div className="bg-white/50 dark:bg-white/5 p-8 border border-ashara-teal/30 dark:border-ashara-gold/20 text-center space-y-4 shadow-sm animate-fade-in">
                 <div className="w-12 h-12 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark rounded-full flex items-center justify-center mx-auto">
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
                 <h3 className="font-serif text-2xl text-ashara-charcoal dark:text-white">Enquiry Submitted Successfully</h3>
-                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 max-w-sm mx-auto font-light leading-relaxed">
-                  Thank you, <strong>{form.fullName || 'Valued Client'}</strong>. Your consultation enquiry has been recorded with reference <span className="font-mono text-ashara-teal dark:text-ashara-gold font-semibold">#{submittedId ? submittedId.slice(0, 8) : 'LEAD-OK'}</span>. Our studio team in Addis Ababa will review your requirements and respond promptly.
+                <p className="text-sm text-gray-600 dark:text-gray-300 max-w-sm mx-auto font-light leading-relaxed">
+                  Thank you, <strong>{form.fullName || 'Valued Client'}</strong>. We will review your requirements and respond promptly.
                 </p>
                 <button
                   onClick={() => {
@@ -126,15 +118,13 @@ export default function ContactPage({ isSection = false }) {
                     setSubmittedId('');
                     setForm({ fullName: '', email: '', telephone: '', enquiry: '' });
                   }}
-                  className="px-6 py-2 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-xs uppercase tracking-wider font-medium hover:bg-ashara-teal-hover dark:hover:bg-ashara-gold/80 transition"
+                  className="mt-4 px-6 py-2 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-[10px] uppercase tracking-[0.2em] font-medium hover:bg-ashara-teal/90 transition"
                 >
                   Send Another Enquiry
                 </button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
-                
-                {/* Full Name */}
                 <div>
                   <input
                     type="text"
@@ -145,8 +135,7 @@ export default function ContactPage({ isSection = false }) {
                     className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-charcoal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition"
                   />
                 </div>
-
-                {/* Email Address & Telephone Row */}
+                
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <input
@@ -168,8 +157,7 @@ export default function ContactPage({ isSection = false }) {
                     />
                   </div>
                 </div>
-
-                {/* Enquiry Textarea */}
+                
                 <div>
                   <textarea
                     rows="6"
@@ -180,8 +168,7 @@ export default function ContactPage({ isSection = false }) {
                     className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-charcoal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition resize-none"
                   ></textarea>
                 </div>
-
-                {/* Submit Enquiry Button (Right Aligned, Solid Teal #1E4E4E) */}
+                
                 <div className="flex justify-end pt-2">
                   <button
                     type="submit"
@@ -191,22 +178,19 @@ export default function ContactPage({ isSection = false }) {
                     {isSubmitting ? (
                       <>
                         <Loader2 className="w-4 h-4 animate-spin" />
-                        <span>RECORDING ENQUIRY...</span>
+                        <span>SUBMITTING...</span>
                       </>
                     ) : (
                       <span>SUBMIT ENQUIRY</span>
                     )}
                   </button>
                 </div>
-
               </form>
             )}
-
           </div>
-
         </div>
+      </section>
 
-      </div>
     </div>
   );
 }

@@ -10,7 +10,6 @@ const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const ProjectDetailPage = lazy(() => import('./pages/ProjectDetailPage'));
-const BlogPage = lazy(() => import('./pages/BlogPage'));
 const AdminPortal = lazy(() => import('./pages/AdminPortal'));
 
 // Minimal elegant fallback for route transitions
@@ -26,7 +25,7 @@ function PageLoadingFallback() {
 }
 
 // Public pages — 'admin' is intentionally excluded
-const VALID_PAGES = ['home', 'projects', 'services', 'about', 'contact', 'blog', 'project-detail'];
+const VALID_PAGES = ['home', 'projects', 'services', 'about', 'contact', 'project-detail'];
 
 // Secret key required to access the admin portal
 // Access via: yoursite.com/?key=ashara-studio-2026#admin
@@ -65,7 +64,7 @@ function getInitialPage() {
 }
 
 export default function App() {
-  const [activePage, setActivePage] = useState(getInitialPage); // 'home' | 'projects' | 'services' | 'about' | 'contact' | 'blog' | 'admin' | 'project-detail'
+  const [activePage, setActivePage] = useState(getInitialPage); // 'home' | 'projects' | 'services' | 'about' | 'contact' | 'admin' | 'project-detail'
   const [selectedProject, setSelectedProject] = useState(DEFAULT_PROJECTS_LIST[0]);
   const [projectSource, setProjectSource] = useState('projects');
   const [theme, setTheme] = useState(() => {
@@ -164,10 +163,6 @@ export default function App() {
             <ContactPage onNavigate={handleNavigate} />
           )}
 
-          {activePage === 'blog' && (
-            <BlogPage />
-          )}
-
           {activePage === 'admin' && (
             <AdminPortal onNavigate={handleNavigate} />
           )}
@@ -199,8 +194,8 @@ export default function App() {
         </Suspense>
       </main>
 
-      {/* 3. Figma Solid Deep Forest Teal Footer (hidden on admin portal) */}
-      {activePage !== 'admin' && <Footer onNavigate={handleNavigate} />}
+      {/* 3. Figma Solid Deep Forest Teal Footer (hidden on admin portal and home) */}
+      {activePage !== 'admin' && activePage !== 'home' && <Footer onNavigate={handleNavigate} />}
 
     </div>
   );
