@@ -96,14 +96,15 @@ Clicking any navigation item (**`HOME`**, **`PROJECTS`**, **`OUR SERVICES`**, **
 
 ## 🔐 Admin Portal & CMS
 
-The Admin Portal is a **password-protected** content management system accessible at:
-- `https://kuch278a.github.io/Ashara-Interior/#admin`
-- `https://kuch278a.github.io/Ashara-Interior/?admin`
+The Admin Portal is a **password-protected** content management system. For security, it is completely hidden from the public and can only be accessed using a secret key URL:
+
+- **Live Deployment:** `https://kuch278a.github.io/Ashara-Interior/?key=ashara-studio-2026#admin`
+- **Local Development:** `http://localhost:5173/?key=ashara-studio-2026#admin`
 
 ### Login Credentials
-| Email | Password |
-| :--- | :--- |
-| `admin@ashara.com` | `ashara2025` |
+Authentication is strictly handled by **Firebase Auth** (The hardcoded sandbox fallback has been removed for security).
+- **Email:** Your authorized user email registered in Firebase Console (e.g., `birukesayas911@gmail.com`)
+- **Password:** Your secure Firebase user password
 
 ### CMS Capabilities
 | Feature | Description |
