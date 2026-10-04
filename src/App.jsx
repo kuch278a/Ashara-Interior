@@ -25,21 +25,37 @@ function PageLoadingFallback() {
   );
 }
 
-const VALID_PAGES = ['home', 'admin', 'projects', 'services', 'about', 'contact', 'blog', 'project-detail'];
+// Public pages — 'admin' is intentionally excluded
+const VALID_PAGES = ['home', 'projects', 'services', 'about', 'contact', 'blog', 'project-detail'];
+
+// Secret key required to access the admin portal
+// Access via: yoursite.com/?key=ashara-studio-2026#admin
+const ADMIN_SECRET_KEY = 'ashara-studio-2026';
+
+function canAccessAdmin() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('key') === ADMIN_SECRET_KEY;
+}
 
 function getInitialPage() {
   const hash = window.location.hash.replace(/^#\/?/, '').toLowerCase();
+
+  // Admin is only accessible with the secret key
+  if (hash === 'admin') {
+    return canAccessAdmin() ? 'admin' : '404';
+  }
+
   if (VALID_PAGES.includes(hash)) {
     return hash;
   }
   const searchParams = new URLSearchParams(window.location.search);
-  const pageParam = searchParams.get('page') || (searchParams.has('admin') ? 'admin' : null);
+  const pageParam = searchParams.get('page');
   if (pageParam && VALID_PAGES.includes(pageParam.toLowerCase())) {
     return pageParam.toLowerCase();
   }
   const path = window.location.pathname.toLowerCase();
   if (path.endsWith('/admin') || path.endsWith('/admin/')) {
-    return 'admin';
+    return canAccessAdmin() ? 'admin' : '404';
   }
   // Unknown hash — treat as 404
   if (hash && !VALID_PAGES.includes(hash)) {
