@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Moon, Sun } from 'lucide-react';
+import asset_1 from '../assets/Ashara logo/Ashara Logo.png';
+import asset_2 from '../assets/client_logos/ashara_logo_teal.png';
 
 export default function Navbar({ activePage, setActivePage, theme, toggleTheme }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -55,13 +57,13 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
         >
           <div className="flex items-center select-none group">
             <img
-              src="./Ashara logo/Ashara Logo.png"
+              src={asset_1}
               alt="Ashara Interior Design and Building"
               decoding="async"
               className="object-contain transition-transform duration-300 group-hover:scale-105"
               style={{ height: '56px', width: 'auto' }}
               onError={(e) => {
-                e.target.src = './client_logos/ashara_logo_teal.png';
+                e.target.src = {asset_2};
               }}
             />
           </div>

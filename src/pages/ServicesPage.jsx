@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Plus, Minus } from 'lucide-react';
 import { DEFAULT_PROJECTS_LIST } from '../data/defaultData';
+import asset_1 from '../assets/our_service.jpg';
+import asset_2 from '../assets/p6_revenues.png';
 
 const ACCORDION_ITEMS = [
   {
@@ -56,7 +58,7 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
           <div 
             className="absolute inset-0 bg-cover bg-center opacity-70 scale-100"
             style={{
-              backgroundImage: `url('./our_service.jpg')`
+              backgroundImage: `url(${asset_1})`
             }}
           ></div>
           
@@ -185,7 +187,7 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
               className="group relative cursor-pointer aspect-[4/3] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500 border border-black/5 dark:border-white/10"
             >
               <img
-                src="./assets/p6_revenues.png"
+                src={asset_2}
                 alt="Ministry of Revenues"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
               />

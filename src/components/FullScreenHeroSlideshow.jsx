@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
+import asset_1 from '../assets/p1_prosperity.png';
+import asset_2 from '../assets/p6_revenues.png';
 
 const HERO_SLIDESHOW_SETTINGS = {
   crossFadeDuration: 2000,
@@ -12,7 +14,7 @@ const DEFAULT_HERO_SLIDES = [
     id: 1,
     tag: 'GOVERNMENT SUB-OFFICE',
     title: 'Prosperity Party Office',
-    image: './assets/p1_prosperity.png',
+    image: asset_1,
     subtitle: 'GOVERNMENT SUB-OFFICE',
     description: 'Ashara Interiors was commissioned to design a grand presidential state suite and governmental convention headquarters. Integrating monumental Ethiopian historical references with contemporary civic transparency, the project features bespoke coffered timber acoustic domes, structural cantilevered glass staircases, and executive ceremonial boardrooms.'
   },
@@ -52,7 +54,7 @@ const DEFAULT_HERO_SLIDES = [
     id: 6,
     tag: 'GOVERNMENTAL',
     title: 'Ministry of Revenues',
-    image: './assets/p6_revenues.png',
+    image: asset_2,
     subtitle: 'MINISTRY CIVIC COMPLEX',
     description: 'A monumental civic dome auditorium incorporating geodesic timber space trusses, ambient indirect circadian lighting, and custom acoustical plasterwork designed for national assemblies.'
   }

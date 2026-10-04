@@ -1,5 +1,6 @@
 import React from 'react';
 import { DEFAULT_PROJECTS_LIST } from '../data/defaultData';
+import asset_1 from '../assets/p6_revenues.png';
 
 export default function AboutPage({ onNavigate, onSelectProject, isSection = false }) {
   const handleProjectClick = (projId) => {
@@ -164,7 +165,7 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
               className="group relative cursor-pointer aspect-[4/3] overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-ashara-charcoal shadow-sm hover:shadow-md transition-all duration-500 border border-black/5 dark:border-white/10"
             >
               <img
-                src="./assets/p6_revenues.png"
+                src={asset_1}
                 alt="Ministry of Revenues"
                 loading="lazy"
                 decoding="async"

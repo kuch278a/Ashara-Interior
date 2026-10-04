@@ -1,15 +1,24 @@
+import asset_1 from '../assets/p1_prosperity.png';
+import asset_2 from '../assets/client_logos/prosperity_party_hero.png';
+import asset_3 from '../assets/client_logos/prosperity_party_hero.png';
+import asset_4 from '../assets/client_logos/prosperity_party_main.jpg';
+import asset_5 from '../assets/p6_revenues.png';
+import asset_6 from '../assets/client_logos/ministry_of_revenues_hero.jpg';
+import asset_7 from '../assets/client_logos/ministry_of_revenues_hero.jpg';
+import asset_8 from '../assets/client_logos/ministry_of_revenues_auditorium.jpg';
+
 export const DEFAULT_PROJECTS_LIST = [
   {
     id: 1,
     title: 'Prosperity Party Office',
     category: 'GOVERNMENTAL',
     subtitle: 'GOVERNMENT SUB-OFFICE',
-    image: './assets/p1_prosperity.png',
-    fallbackImage: './client_logos/prosperity_party_hero.png',
+    image: asset_1,
+    fallbackImage: asset_2,
     description: 'Ashara Interiors was commissioned to design a grand presidential state suite and governmental convention headquarters. Integrating monumental Ethiopian historical references with contemporary civic transparency, the project features bespoke coffered timber acoustic domes, structural cantilevered glass staircases, and executive ceremonial boardrooms.',
     gallery: [
-      './client_logos/prosperity_party_hero.png',
-      './client_logos/prosperity_party_main.jpg',
+      asset_3,
+      asset_4,
       'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=90',
       'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85',
       'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=85',
@@ -89,12 +98,12 @@ export const DEFAULT_PROJECTS_LIST = [
     title: 'Ministry of Revenues',
     category: 'GOVERNMENTAL',
     subtitle: 'MINISTRY CIVIC COMPLEX',
-    image: './assets/p6_revenues.png',
-    fallbackImage: './client_logos/ministry_of_revenues_hero.jpg',
+    image: asset_5,
+    fallbackImage: asset_6,
     description: 'A monumental civic dome auditorium incorporating geodesic timber space trusses, ambient indirect circadian lighting, and custom acoustical plasterwork designed for national assemblies.',
     gallery: [
-      './client_logos/ministry_of_revenues_hero.jpg',
-      './client_logos/ministry_of_revenues_auditorium.jpg',
+      asset_7,
+      asset_8,
       'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=90',
       'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=85',
       'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=85',

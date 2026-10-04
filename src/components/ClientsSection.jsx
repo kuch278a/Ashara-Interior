@@ -1,20 +1,34 @@
 import React, { useEffect, useRef } from 'react';
+import asset_1 from '../assets/client_logos/eaii_institute.png';
+import asset_2 from '../assets/client_logos/prosperity_party.png';
+import asset_3 from '../assets/client_logos/customs_commission.png';
+import asset_4 from '../assets/client_logos/fbc_media.png';
+import asset_5 from '../assets/client_logos/Ethiopian_Press_Agency.png';
+import asset_6 from '../assets/client_logos/bw_policy_studies_institute.jpg';
+import asset_7 from '../assets/client_logos/bw_oromia_president_office.jpg';
+import asset_8 from '../assets/client_logos/ministry_of_revenues.png';
+import asset_9 from '../assets/client_logos/addis_ababa_police.png';
+import asset_10 from '../assets/client_logos/oromia_police.png';
+import asset_11 from '../assets/client_logos/united_beverages.png';
+import asset_12 from '../assets/client_logos/amibara_properties.png';
+import asset_13 from '../assets/client_logos/bw_hill_bottom.jpg';
+import asset_14 from '../assets/client_logos/bw_mela_muziqa.jpg';
 
 const CLIENTS = [
-  { name: 'Artificial Intelligence Institute', image: './client_logos/eaii_institute.png', alt: 'Artificial Intelligence Institute' },
-  { name: 'Prosperity Party', image: './client_logos/prosperity_party.png', alt: 'Prosperity Party' },
-  { name: 'Customs Commission', image: './client_logos/customs_commission.png', alt: 'Customs Commission' },
-  { name: 'FBC Media', image: './client_logos/fbc_media.png', alt: 'FBC Media' },
-  { name: 'Ethiopian Press Agency', image: './client_logos/Ethiopian_Press_Agency.png', alt: 'Ethiopian Press Agency' },
-  { name: 'Policy Studies Institute', image: './client_logos/bw_policy_studies_institute.jpg', alt: 'Policy Studies Institute' },
-  { name: "Oromia President's Office", image: './client_logos/bw_oromia_president_office.jpg', alt: "Oromia President's Office" },
-  { name: 'Ministry of Revenues', image: './client_logos/ministry_of_revenues.png', alt: 'Ministry of Revenues' },
-  { name: 'Addis Ababa Police', image: './client_logos/addis_ababa_police.png', alt: 'Addis Ababa Police' },
-  { name: 'Oromia Police', image: './client_logos/oromia_police.png', alt: 'Oromia Police' },
-  { name: 'United Beverages', image: './client_logos/united_beverages.png', alt: 'United Beverages' },
-  { name: 'Amibara Properties', image: './client_logos/amibara_properties.png', alt: 'Amibara Properties' },
-  { name: 'Hill Bottom Recreation', image: './client_logos/bw_hill_bottom.jpg', alt: 'Hill Bottom Recreation' },
-  { name: 'Mela Muziqa', image: './client_logos/bw_mela_muziqa.jpg', alt: 'Mela Muziqa' },
+  { name: 'Artificial Intelligence Institute', image: asset_1, alt: 'Artificial Intelligence Institute' },
+  { name: 'Prosperity Party', image: asset_2, alt: 'Prosperity Party' },
+  { name: 'Customs Commission', image: asset_3, alt: 'Customs Commission' },
+  { name: 'FBC Media', image: asset_4, alt: 'FBC Media' },
+  { name: 'Ethiopian Press Agency', image: asset_5, alt: 'Ethiopian Press Agency' },
+  { name: 'Policy Studies Institute', image: asset_6, alt: 'Policy Studies Institute' },
+  { name: "Oromia President's Office", image: asset_7, alt: "Oromia President's Office" },
+  { name: 'Ministry of Revenues', image: asset_8, alt: 'Ministry of Revenues' },
+  { name: 'Addis Ababa Police', image: asset_9, alt: 'Addis Ababa Police' },
+  { name: 'Oromia Police', image: asset_10, alt: 'Oromia Police' },
+  { name: 'United Beverages', image: asset_11, alt: 'United Beverages' },
+  { name: 'Amibara Properties', image: asset_12, alt: 'Amibara Properties' },
+  { name: 'Hill Bottom Recreation', image: asset_13, alt: 'Hill Bottom Recreation' },
+  { name: 'Mela Muziqa', image: asset_14, alt: 'Mela Muziqa' },
 ];
 
 const ALL_CLIENTS = [...CLIENTS];
