@@ -41,7 +41,7 @@ export default function ContactPage({ isSection = false }) {
       {/* 1. HERO HEADER matching Figma */}
       <section className="w-full py-24 sm:py-32 px-6 lg:px-12 text-center">
         <div className="max-w-3xl mx-auto">
-          <p className="font-serif text-2xl sm:text-3xl text-ashara-charcoal dark:text-white leading-relaxed">
+          <p className="font-serif text-2xl sm:text-3xl text-ashara-teal dark:text-white leading-relaxed">
             If you would like to discuss your project, schedule an appointment or arrange to view more of our extensive portfolio please contact us on the details below.
           </p>
         </div>
@@ -49,7 +49,7 @@ export default function ContactPage({ isSection = false }) {
 
       {/* Horizontal Divider */}
       <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16">
-        <div className="h-[1px] bg-gray-300 w-full mb-12"></div>
+        <div className="h-[1px] bg-gray-300 dark:bg-white/15 w-full mb-12"></div>
       </div>
 
       {/* 2. 2-COLUMN SECTION (Contact Info + Form) */}
@@ -58,36 +58,36 @@ export default function ContactPage({ isSection = false }) {
           
           {/* Left Column: Contact Info */}
           <div className="md:col-span-5 space-y-8">
-            <h2 className="font-serif text-3xl sm:text-4xl text-ashara-charcoal dark:text-white font-normal tracking-wide transition-colors duration-300">
+            <h2 className="font-serif text-3xl sm:text-4xl text-ashara-teal dark:text-white font-normal tracking-wide transition-colors duration-300">
               Contact
             </h2>
             
-            <div className="space-y-5 text-[13px] sm:text-sm text-gray-800 dark:text-gray-300 font-light">
+            <div className="space-y-5 text-[13px] sm:text-sm text-ashara-teal dark:text-white font-light">
               <div className="flex items-start gap-3.5">
-                <Phone className="w-4 h-4 text-gray-700 dark:text-ashara-gold mt-1 shrink-0 stroke-[1.5]" />
+                <Phone className="w-4 h-4 text-ashara-teal dark:text-white mt-1 shrink-0 stroke-[1.5]" />
                 <p className="leading-snug">
-                  Telephone <span className="font-normal text-ashara-charcoal dark:text-white">+251 91 219 5768</span>
+                  Telephone <span className="font-normal text-ashara-teal dark:text-white">+251 91 219 5768</span>
                 </p>
               </div>
               
               <div className="flex items-start gap-3.5">
-                <Mail className="w-4 h-4 text-gray-700 dark:text-ashara-gold mt-1 shrink-0 stroke-[1.5]" />
+                <Mail className="w-4 h-4 text-ashara-teal dark:text-white mt-1 shrink-0 stroke-[1.5]" />
                 <p className="leading-snug">
-                  Email <a href="mailto:birukesayas911@gmail.com" className="hover:text-ashara-teal dark:hover:text-ashara-gold transition">birukesayas911@gmail.com</a>
+                  Email <a href="mailto:birukesayas911@gmail.com" className="hover:text-ashara-teal dark:hover:text-white transition">birukesayas911@gmail.com</a>
                 </p>
               </div>
               
               <div className="flex items-start gap-3.5">
-                <MessageSquare className="w-4 h-4 text-gray-700 dark:text-ashara-gold mt-1 shrink-0 stroke-[1.5]" />
+                <MessageSquare className="w-4 h-4 text-ashara-teal dark:text-white mt-1 shrink-0 stroke-[1.5]" />
                 <p className="leading-snug">
-                  WhatsApp <a href="https://wa.me/251907636463" target="_blank" rel="noreferrer" className="hover:text-ashara-teal dark:hover:text-ashara-gold transition">+251 90 763 6463</a>
+                  WhatsApp <a href="https://wa.me/251907636463" target="_blank" rel="noreferrer" className="hover:text-ashara-teal dark:hover:text-white transition">+251 90 763 6463</a>
                 </p>
               </div>
               
               <div className="flex items-start gap-3.5 pt-2">
-                <MapPin className="w-4 h-4 text-gray-700 dark:text-ashara-gold mt-1 shrink-0 stroke-[1.5]" />
-                <div className="leading-relaxed text-gray-700 dark:text-gray-400">
-                  <p className="font-medium text-ashara-charcoal dark:text-white">Ashara Interiors</p>
+                <MapPin className="w-4 h-4 text-ashara-teal dark:text-white mt-1 shrink-0 stroke-[1.5]" />
+                <div className="leading-relaxed text-ashara-teal dark:text-white">
+                  <p className="font-medium text-ashara-teal dark:text-white">Ashara Interiors</p>
                   <p>Megenagna</p>
                   <p>Infront of Ethio Ceramics</p>
                   <p>Bete Sahlite-Mihret Building, 4th Floor</p>
@@ -99,7 +99,7 @@ export default function ContactPage({ isSection = false }) {
 
           {/* Right Column: Form */}
           <div className="md:col-span-7 space-y-8">
-            <h2 className="font-serif text-3xl sm:text-4xl text-ashara-charcoal dark:text-white font-normal tracking-wide transition-colors duration-300">
+            <h2 className="font-serif text-3xl sm:text-4xl text-ashara-teal dark:text-white font-normal tracking-wide transition-colors duration-300">
               Enquiries
             </h2>
 
@@ -108,8 +108,8 @@ export default function ContactPage({ isSection = false }) {
                 <div className="w-12 h-12 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark rounded-full flex items-center justify-center mx-auto">
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
-                <h3 className="font-serif text-2xl text-ashara-charcoal dark:text-white">Enquiry Submitted Successfully</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300 max-w-sm mx-auto font-light leading-relaxed">
+                <h3 className="font-serif text-2xl text-ashara-teal dark:text-white">Enquiry Submitted Successfully</h3>
+                <p className="text-sm text-ashara-teal dark:text-white max-w-sm mx-auto font-light leading-relaxed">
                   Thank you, <strong>{form.fullName || 'Valued Client'}</strong>. We will review your requirements and respond promptly.
                 </p>
                 <button
@@ -132,7 +132,7 @@ export default function ContactPage({ isSection = false }) {
                     placeholder="Full Name"
                     value={form.fullName}
                     onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-                    className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-charcoal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition"
+                    className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition"
                   />
                 </div>
                 
@@ -144,7 +144,7 @@ export default function ContactPage({ isSection = false }) {
                       placeholder="Email Address"
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-charcoal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition"
+                      className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition"
                     />
                   </div>
                   <div>
@@ -153,7 +153,7 @@ export default function ContactPage({ isSection = false }) {
                       placeholder="Telephone"
                       value={form.telephone}
                       onChange={(e) => setForm({ ...form, telephone: e.target.value })}
-                      className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-charcoal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition"
+                      className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition"
                     />
                   </div>
                 </div>
@@ -165,7 +165,7 @@ export default function ContactPage({ isSection = false }) {
                     placeholder="Tell us about your enquiry - New construction / renovation / remodel."
                     value={form.enquiry}
                     onChange={(e) => setForm({ ...form, enquiry: e.target.value })}
-                    className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-charcoal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition resize-none"
+                    className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition resize-none"
                   ></textarea>
                 </div>
                 

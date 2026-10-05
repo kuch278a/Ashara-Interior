@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Trash2, X, AlertCircle } from 'lucide-react';
 
 export default function AdminDeleteConfirm({ deleteConfirm, onCancel, onConfirm }) {
@@ -10,14 +10,14 @@ export default function AdminDeleteConfirm({ deleteConfirm, onCancel, onConfirm 
           <div className="w-10 h-10 rounded-full bg-rose-500/10 flex items-center justify-center shrink-0">
             <Trash2 className="w-5 h-5" />
           </div>
-          <h3 className="font-serif text-xl font-bold text-ashara-charcoal dark:text-white">Confirm Deletion</h3>
+          <h3 className="font-serif text-xl font-bold text-ashara-teal dark:text-white">Confirm Deletion</h3>
         </div>
-        <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
-          Are you sure you want to remove <span className="font-semibold text-ashara-charcoal dark:text-white">"{deleteConfirm.title}"</span>? This action cannot be undone.
+        <p className="text-xs text-ashara-teal dark:text-white leading-relaxed">
+          Are you sure you want to remove <span className="font-semibold text-ashara-teal dark:text-white">"{deleteConfirm.title}"</span>? This action cannot be undone.
         </p>
         <div className="flex items-center justify-end gap-3 pt-2">
           <button type="button" onClick={onCancel}
-            className="px-4 py-2 text-xs uppercase tracking-wider font-semibold text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition">
+            className="px-4 py-2 text-xs uppercase tracking-wider font-semibold text-ashara-teal dark:text-white hover:text-ashara-teal dark:hover:text-white transition">
             Cancel
           </button>
           <button type="button" onClick={onConfirm}

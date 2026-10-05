@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Quote, Plus, Star, Edit3, Trash2 } from 'lucide-react';
 
 export default function AdminTestimonialsTab({ filteredTestimonials, searchQuery, projects, onOpenNew, onOpenEdit, onDelete }) {
@@ -6,12 +6,12 @@ export default function AdminTestimonialsTab({ filteredTestimonials, searchQuery
     <div className="space-y-6 animate-fade-in">
       {filteredTestimonials.length === 0 ? (
         <div className="bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 p-12 text-center rounded-xs space-y-4">
-          <div className="w-12 h-12 rounded-full bg-ashara-teal/10 dark:bg-ashara-gold/15 text-ashara-teal dark:text-ashara-gold flex items-center justify-center mx-auto">
+          <div className="w-12 h-12 rounded-full bg-ashara-teal/10 dark:bg-ashara-gold/15 text-ashara-teal dark:text-white flex items-center justify-center mx-auto">
             <Quote className="w-6 h-6" />
           </div>
           <div className="space-y-1">
-            <h3 className="font-serif text-xl text-ashara-charcoal dark:text-white">No client testimonials found</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
+            <h3 className="font-serif text-xl text-ashara-teal dark:text-white">No client testimonials found</h3>
+            <p className="text-xs text-ashara-teal dark:text-white max-w-sm mx-auto">
               {searchQuery ? 'Try adjusting your search criteria.' : 'Add client testimonials to highlight social proof in project details.'}
             </p>
           </div>
@@ -31,22 +31,22 @@ export default function AdminTestimonialsTab({ filteredTestimonials, searchQuery
                     {[...Array(t.rating || 5)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-current" />)}
                   </div>
                   {linkedProj ? (
-                    <span className="text-[9px] uppercase tracking-wider font-semibold px-2.5 py-0.5 rounded-full bg-ashara-teal/10 text-ashara-teal dark:text-ashara-gold border border-ashara-teal/20 truncate max-w-[160px]">{linkedProj.title}</span>
+                    <span className="text-[9px] uppercase tracking-wider font-semibold px-2.5 py-0.5 rounded-full bg-ashara-teal/10 text-ashara-teal dark:text-white border border-ashara-teal/20 truncate max-w-[160px]">{linkedProj.title}</span>
                   ) : (
-                    <span className="text-[9px] uppercase tracking-wider font-normal px-2.5 py-0.5 rounded-full bg-gray-100 dark:bg-white/5 text-gray-500">General Studio</span>
+                    <span className="text-[9px] uppercase tracking-wider font-normal px-2.5 py-0.5 rounded-full bg-gray-100 dark:bg-white/5 text-ashara-teal dark:text-white">General Studio</span>
                   )}
                 </div>
-                <p className="font-serif italic text-gray-700 dark:text-gray-300 text-xs sm:text-[13px] leading-relaxed line-clamp-4 font-light">"{t.quote}"</p>
+                <p className="font-serif italic text-ashara-teal dark:text-white text-xs sm:text-[13px] leading-relaxed line-clamp-4 font-light">"{t.quote}"</p>
                 <div className="pt-4 border-t border-gray-100 dark:border-white/5 flex items-center justify-between gap-2">
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold text-ashara-charcoal dark:text-white uppercase tracking-wider truncate">{t.clientName}</p>
-                    <p className="text-[11px] text-gray-500 dark:text-gray-400 truncate">
-                      {t.role && `${t.role} • `}<span className="font-medium text-ashara-teal dark:text-ashara-gold">{t.organization}</span>
+                    <p className="text-xs font-semibold text-ashara-teal dark:text-white uppercase tracking-wider truncate">{t.clientName}</p>
+                    <p className="text-[11px] text-ashara-teal dark:text-white truncate">
+                      {t.role && `${t.role} � `}<span className="font-medium text-ashara-teal dark:text-white">{t.organization}</span>
                     </p>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
                     <button onClick={() => onOpenEdit(t)}
-                      className="p-1.5 text-gray-500 hover:text-ashara-teal dark:text-gray-400 dark:hover:text-ashara-gold rounded hover:bg-gray-100 dark:hover:bg-white/5 transition"
+                      className="p-1.5 text-ashara-teal hover:text-ashara-teal dark:text-white dark:hover:text-white rounded hover:bg-gray-100 dark:hover:bg-white/5 transition"
                       title="Edit Testimonial"><Edit3 className="w-3.5 h-3.5" /></button>
                     <button onClick={() => onDelete({ type: 'testimonial', id: t.id, title: `${t.clientName} (${t.organization})` })}
                       className="p-1.5 text-rose-500 hover:text-rose-700 rounded hover:bg-rose-50 dark:hover:bg-rose-500/10 transition"

@@ -248,9 +248,9 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
                 key={slide.id}
                 className="absolute inset-0"
                 style={{
-                  opacity: isActive ? 1 : 0,
-                  zIndex: isActive ? 10 : isPrev || isNext ? 5 : 0,
-                  transition: `opacity ${isManualNav ? 0 : fadeDuration}ms ease-in-out, z-index 0ms ${isManualNav ? 0 : fadeDuration}ms`,
+                  transform: `translateX(${(idx - currentIndex) * 100}%)`,
+                  zIndex: isActive ? 10 : 0,
+                  transition: `transform ${isManualNav ? 500 : 800}ms cubic-bezier(0.25, 1, 0.5, 1)`,
                   pointerEvents: isActive ? 'auto' : 'none',
                 }}
                 aria-hidden={!isActive}
@@ -298,18 +298,18 @@ export default function FullScreenHeroSlideshow({ onNavigate, onSelectProject })
           type="button"
           onClick={() => prevSlide(true)}
           aria-label="Previous Project"
-          className="absolute left-3 md:left-8 top-1/2 -translate-y-1/2 z-30 rounded-full bg-ashara-dark/50 hover:bg-ashara-gold backdrop-blur-md border border-white/20 hover:border-transparent text-white hover:text-ashara-dark transition-all duration-300 hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16"
+          className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-30 rounded-full bg-ashara-dark/50 hover:bg-ashara-gold backdrop-blur-md border border-white/20 hover:border-transparent text-white hover:text-ashara-dark transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12"
         >
-          <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 stroke-[1.5]" />
+          <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 stroke-[1.5]" />
         </button>
 
         <button
           type="button"
           onClick={() => nextSlide(true)}
           aria-label="Next Project"
-          className="absolute right-3 md:right-8 top-1/2 -translate-y-1/2 z-30 rounded-full bg-ashara-dark/50 hover:bg-ashara-gold backdrop-blur-md border border-white/20 hover:border-transparent text-white hover:text-ashara-dark transition-all duration-300 hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16"
+          className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-30 rounded-full bg-ashara-dark/50 hover:bg-ashara-gold backdrop-blur-md border border-white/20 hover:border-transparent text-white hover:text-ashara-dark transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12"
         >
-          <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 stroke-[1.5]" />
+          <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 stroke-[1.5]" />
         </button>
 
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2">

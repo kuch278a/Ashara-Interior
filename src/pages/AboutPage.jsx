@@ -13,7 +13,7 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
   };
 
   return (
-    <div className="bg-white min-h-screen animate-fade-in transition-colors duration-300">
+    <div className="bg-white dark:bg-ashara-dark min-h-screen animate-fade-in transition-colors duration-300">
       
       {/* 1. HERO IMAGE WITH TEXT OVERLAY */}
       <section className="w-full">
@@ -37,11 +37,11 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
       <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 py-20">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-20 items-start">
           <div className="md:col-span-5">
-            <h2 className="font-serif italic text-3xl sm:text-4xl text-gray-500 font-light leading-tight">
+            <h2 className="font-serif italic text-3xl sm:text-4xl text-ashara-teal dark:text-white font-light leading-tight">
               We create luxury interiors that stand the test of time.
             </h2>
           </div>
-          <div className="md:col-span-7 space-y-6 text-[13px] leading-relaxed text-gray-600 font-light">
+          <div className="md:col-span-7 space-y-6 text-[13px] leading-relaxed text-ashara-teal dark:text-white font-light">
             <p>
               Ashara Interiors is a premier interior architecture and design atelier rooted in Addis Ababa, Ethiopia. We specialize in high-end governmental complexes, prestigious corporate headquarters, luxury residential retreats, and bespoke commercial environments.
             </p>
@@ -65,13 +65,13 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
 
       {/* 4. OUR MISSION (Text Left, Image Right) */}
       <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pb-12">
-        <div className="bg-[#EBF2F2] grid grid-cols-1 md:grid-cols-2">
+        <div className="bg-[#EBF2F2] dark:bg-white/5 grid grid-cols-1 md:grid-cols-2">
           <div className="p-10 lg:p-16 flex flex-col justify-center">
             <div className="flex items-center gap-6 mb-6">
-              <h3 className="font-serif text-2xl text-ashara-charcoal font-normal whitespace-nowrap">Our Mission</h3>
-              <div className="h-[1px] bg-gray-300 flex-1"></div>
+              <h3 className="font-serif text-2xl text-ashara-teal dark:text-white font-normal whitespace-nowrap">Our Mission</h3>
+              <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1"></div>
             </div>
-            <div className="space-y-4 text-[13px] leading-relaxed text-gray-600 font-light">
+            <div className="space-y-4 text-[13px] leading-relaxed text-ashara-teal dark:text-white font-light">
               <p>
                 At Ashara Interiors, our mission is to elevate the human experience through exceptional spatial design. We are dedicated to creating environments that not only reflect the unique identity and aspirations of our clients but also foster well-being, productivity, and inspiration. 
               </p>
@@ -92,7 +92,7 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
 
       {/* 5. OUR VISION (Image Left, Text Right) */}
       <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pb-24">
-        <div className="bg-[#EBF2F2] grid grid-cols-1 md:grid-cols-2">
+        <div className="bg-[#EBF2F2] dark:bg-white/5 grid grid-cols-1 md:grid-cols-2">
           <div className="h-[300px] md:h-auto order-last md:order-first">
             <img
               src={asset_1}
@@ -102,10 +102,10 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
           </div>
           <div className="p-10 lg:p-16 flex flex-col justify-center">
             <div className="flex items-center gap-6 mb-6">
-              <div className="h-[1px] bg-gray-300 flex-1"></div>
-              <h3 className="font-serif text-2xl text-ashara-charcoal font-normal whitespace-nowrap">Our Vision</h3>
+              <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1"></div>
+              <h3 className="font-serif text-2xl text-ashara-teal dark:text-white font-normal whitespace-nowrap">Our Vision</h3>
             </div>
-            <div className="space-y-4 text-[13px] leading-relaxed text-gray-600 font-light">
+            <div className="space-y-4 text-[13px] leading-relaxed text-ashara-teal dark:text-white font-light">
               <p>
                 Our vision is to be the leading force in luxury interior architecture across Africa and beyond. We envision a future where our designs set the global standard for elegance and innovation.
               </p>
@@ -123,11 +123,11 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
           
           {/* Title with horizontal lines */}
           <div className="flex items-center justify-center gap-6">
-            <div className="h-[1px] bg-gray-300 flex-1 max-w-[120px]"></div>
-            <h3 className="font-serif text-2xl sm:text-3xl text-ashara-charcoal font-normal">
+            <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1 max-w-[120px]"></div>
+            <h3 className="font-serif text-2xl sm:text-3xl text-ashara-teal dark:text-white font-normal">
               Recent Projects
             </h3>
-            <div className="h-[1px] bg-gray-300 flex-1 max-w-[120px]"></div>
+            <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1 max-w-[120px]"></div>
           </div>
 
           {/* 2 Project Cards Grid matching Figma (text below image) */}
@@ -146,10 +146,10 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
                 />
               </div>
               <div>
-                <h4 className="font-serif text-xl sm:text-2xl text-ashara-charcoal mb-1 group-hover:text-ashara-teal transition-colors">
+                <h4 className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white mb-1 group-hover:text-ashara-teal transition-colors">
                   Amibara Properties
                 </h4>
-                <span className="text-[9px] uppercase tracking-[0.2em] text-gray-500 font-medium">
+                <span className="text-[9px] uppercase tracking-[0.2em] text-ashara-teal dark:text-white font-medium">
                   PRIVATE COMPANY
                 </span>
               </div>
@@ -168,10 +168,10 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
                 />
               </div>
               <div>
-                <h4 className="font-serif text-xl sm:text-2xl text-ashara-charcoal mb-1 group-hover:text-ashara-teal transition-colors">
+                <h4 className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white mb-1 group-hover:text-ashara-teal transition-colors">
                   Ministry of Revenues
                 </h4>
-                <span className="text-[9px] uppercase tracking-[0.2em] text-gray-500 font-medium">
+                <span className="text-[9px] uppercase tracking-[0.2em] text-ashara-teal dark:text-white font-medium">
                   GOVERNMENTAL
                 </span>
               </div>
@@ -183,7 +183,7 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
           <div className="pt-12 text-center">
             <button 
               onClick={() => onNavigate && onNavigate('projects')}
-              className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] font-semibold text-gray-500 hover:text-ashara-teal transition-colors"
+              className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] font-semibold text-ashara-teal dark:text-white hover:text-ashara-teal transition-colors"
             >
               VIEW ALL PROJECTS <span className="text-[12px] leading-none mb-0.5">&gt;</span>
             </button>

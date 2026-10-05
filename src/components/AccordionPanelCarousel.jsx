@@ -142,7 +142,7 @@ export default function AccordionPanelCarousel({ works, onSelectProject }) {
     <section id="home-works" className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 space-y-12">
       <div className="flex items-center justify-center gap-6 sm:gap-10">
         <div className="h-[1px] bg-gray-300 dark:bg-white/10 flex-1 max-w-[240px]"></div>
-        <h2 className="font-serif text-3xl sm:text-4xl text-ashara-charcoal dark:text-white tracking-wide transition-colors duration-300">
+        <h2 className="font-serif text-3xl sm:text-4xl text-ashara-teal dark:text-white tracking-wide transition-colors duration-300">
           Our Works
         </h2>
         <div className="h-[1px] bg-gray-300 dark:bg-white/10 flex-1 max-w-[240px]"></div>
@@ -259,7 +259,7 @@ export default function AccordionPanelCarousel({ works, onSelectProject }) {
       <div className="text-center pt-4">
         <button
           onClick={() => onSelectProject && onSelectProject({ id: 'all' })}
-          className="text-[10.5px] uppercase tracking-[0.28em] font-semibold text-gray-800 dark:text-gray-200 hover:text-ashara-teal dark:hover:text-ashara-gold transition border-b border-gray-400 dark:border-white/20 pb-0.5"
+          className="text-[10.5px] uppercase tracking-[0.28em] font-semibold text-ashara-teal dark:text-white hover:text-ashara-teal dark:hover:text-white transition border-b border-gray-400 dark:border-white/20 pb-0.5"
         >
           VIEW ALL PROJECTS
         </button>

@@ -62,11 +62,11 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
         
         {/* Title with horizontal lines */}
         <div className="flex items-center justify-center gap-6 mb-12">
-          <div className="h-[1px] bg-gray-300 flex-1 max-w-[120px]"></div>
-          <h2 className="font-serif text-3xl sm:text-4xl text-ashara-charcoal font-normal">
+          <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1 max-w-[120px]"></div>
+          <h2 className="font-serif text-3xl sm:text-4xl text-ashara-teal dark:text-white font-normal">
             Projects
           </h2>
-          <div className="h-[1px] bg-gray-300 flex-1 max-w-[120px]"></div>
+          <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1 max-w-[120px]"></div>
         </div>
 
         {/* 2-Column Grid matching Figma */}
@@ -94,7 +94,7 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
 
               {/* Text Below Image */}
               <div>
-                <h3 className="font-serif text-2xl text-ashara-charcoal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition-colors">
+                <h3 className="font-serif text-2xl text-ashara-teal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-teal transition-colors">
                   {item.title}
                 </h3>
               </div>

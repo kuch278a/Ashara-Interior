@@ -10,10 +10,10 @@ export default function AdminLeadsTab({ filteredLeads, searchQuery, copiedId, on
             <Users className="w-7 h-7" />
           </div>
           <div className="space-y-1">
-            <h3 className="font-serif text-xl text-ashara-charcoal dark:text-white">
+            <h3 className="font-serif text-xl text-ashara-teal dark:text-white">
               {searchQuery ? 'No matching consultation inquiries' : 'No client leads recorded yet'}
             </h3>
-            <p className="text-xs text-gray-500 max-w-md mx-auto">
+            <p className="text-xs text-ashara-teal dark:text-white max-w-md mx-auto">
               When visitors submit inquiries through the Contact page, they will instantly appear here with contact actions.
             </p>
           </div>
@@ -29,32 +29,32 @@ export default function AdminLeadsTab({ filteredLeads, searchQuery, copiedId, on
                 <div className="space-y-3">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-ashara-teal/10 dark:bg-ashara-gold/15 text-ashara-teal dark:text-ashara-gold font-bold text-sm flex items-center justify-center shrink-0">
+                      <div className="w-10 h-10 rounded-full bg-ashara-teal/10 dark:bg-ashara-gold/15 text-ashara-teal dark:text-white font-bold text-sm flex items-center justify-center shrink-0">
                         {(lead.fullName || 'Client')[0].toUpperCase()}
                       </div>
                       <div>
-                        <h3 className="font-serif text-lg font-bold text-ashara-charcoal dark:text-white leading-tight">{lead.fullName || 'Anonymous Client'}</h3>
-                        <p className="text-[10px] text-gray-400 flex items-center gap-1 mt-0.5">
+                        <h3 className="font-serif text-lg font-bold text-ashara-teal dark:text-white leading-tight">{lead.fullName || 'Anonymous Client'}</h3>
+                        <p className="text-[10px] text-ashara-teal dark:text-white flex items-center gap-1 mt-0.5">
                           <Clock className="w-3 h-3" />
                           {lead.createdAt ? new Date(lead.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recent'}
                         </p>
                       </div>
                     </div>
                     <select value={status} onChange={(e) => onUpdateStatus(lead.id, e.target.value)}
-                      className={`px-2 py-1 text-[9px] uppercase font-bold tracking-wider rounded-xs border focus:outline-none cursor-pointer ${status === 'new' ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30' : status === 'contacted' ? 'bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30' : 'bg-gray-200/60 dark:bg-white/10 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-white/15'}`}>
+                      className={`px-2 py-1 text-[9px] uppercase font-bold tracking-wider rounded-xs border focus:outline-none cursor-pointer ${status === 'new' ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30' : status === 'contacted' ? 'bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30' : 'bg-gray-200/60 dark:bg-white/10 text-ashara-teal dark:text-white border-gray-300 dark:border-white/15'}`}>
                       <option value="new">● New</option>
                       <option value="contacted">● Contacted</option>
                       <option value="completed">● Completed</option>
                     </select>
                   </div>
-                  <div className="space-y-1.5 text-xs text-gray-600 dark:text-gray-300">
+                  <div className="space-y-1.5 text-xs text-ashara-teal dark:text-white">
                     {lead.email && (
                       <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-white/5 rounded-xs">
                         <div className="flex items-center gap-2 truncate">
-                          <Mail className="w-3.5 h-3.5 text-ashara-teal dark:text-ashara-gold shrink-0" />
+                          <Mail className="w-3.5 h-3.5 text-ashara-teal dark:text-white shrink-0" />
                           <span className="truncate text-xs">{lead.email}</span>
                         </div>
-                        <button onClick={() => onCopy(lead.email, `email_${leadKey}`)} className="text-gray-400 hover:text-ashara-teal dark:hover:text-ashara-gold p-1" title="Copy Email">
+                        <button onClick={() => onCopy(lead.email, `email_${leadKey}`)} className="text-ashara-teal dark:text-white hover:text-ashara-teal dark:hover:text-white p-1" title="Copy Email">
                           {copiedId === `email_${leadKey}` ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                         </button>
                       </div>
@@ -62,17 +62,17 @@ export default function AdminLeadsTab({ filteredLeads, searchQuery, copiedId, on
                     {lead.telephone && (
                       <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-white/5 rounded-xs">
                         <div className="flex items-center gap-2 truncate">
-                          <Phone className="w-3.5 h-3.5 text-ashara-teal dark:text-ashara-gold shrink-0" />
+                          <Phone className="w-3.5 h-3.5 text-ashara-teal dark:text-white shrink-0" />
                           <span className="truncate text-xs font-mono">{lead.telephone}</span>
                         </div>
-                        <button onClick={() => onCopy(lead.telephone, `phone_${leadKey}`)} className="text-gray-400 hover:text-ashara-teal dark:hover:text-ashara-gold p-1" title="Copy Phone">
+                        <button onClick={() => onCopy(lead.telephone, `phone_${leadKey}`)} className="text-ashara-teal dark:text-white hover:text-ashara-teal dark:hover:text-white p-1" title="Copy Phone">
                           {copiedId === `phone_${leadKey}` ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                         </button>
                       </div>
                     )}
                   </div>
                   <div className="p-3.5 bg-gray-50/75 dark:bg-white/5 border-l-2 border-ashara-teal dark:border-ashara-gold rounded-r-xs">
-                    <p className="text-xs text-gray-700 dark:text-gray-300 italic leading-relaxed line-clamp-4">
+                    <p className="text-xs text-ashara-teal dark:text-white italic leading-relaxed line-clamp-4">
                       "{lead.enquiry || lead.message || 'General architectural consultation request'}"
                     </p>
                   </div>

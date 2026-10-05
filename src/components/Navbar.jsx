@@ -58,7 +58,7 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
               src={asset_1}
               alt="Ashara Interior Design and Building"
               decoding="async"
-              className="object-contain transition-transform duration-300 group-hover:scale-105"
+              className="object-contain transition-transform duration-300 group-hover:scale-105 dark:brightness-0 dark:invert"
               style={{ height: '48px', width: 'auto' }}
               onError={(e) => {
                 e.target.src = {asset_2};
@@ -66,11 +66,11 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
             />
           </div>
           <div className="hidden sm:flex flex-col text-left">
-            <span className="font-serif tracking-[0.2em] font-bold text-[12px] text-ashara-charcoal dark:text-white uppercase">
+            <span className="font-serif tracking-[0.2em] font-bold text-[12px] text-ashara-teal dark:text-white uppercase">
               Ashara
             </span>
-            <span className="text-[9px] uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400 font-light mt-0.5">
-              Interior Design
+            <span className="text-[9px] uppercase tracking-[0.3em] text-ashara-teal dark:text-white font-light mt-0.5">
+              Interior Design & Building
             </span>
           </div>
         </button>
@@ -86,8 +86,8 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
                   onClick={() => handleNavClick(link.id)}
                   className={`text-[12px] uppercase tracking-[0.2em] font-bold transition-colors duration-200 ${
                     isActive
-                      ? 'text-ashara-teal dark:text-ashara-gold border-b border-ashara-teal dark:border-ashara-gold pb-1'
-                      : 'text-gray-500 dark:text-gray-400 hover:text-ashara-charcoal dark:hover:text-white pb-1'
+                      ? 'text-ashara-teal dark:text-white border-b border-ashara-teal dark:border-white pb-1'
+                      : 'text-ashara-teal/60 dark:text-white/60 hover:text-ashara-teal dark:hover:text-white pb-1'
                   }`}
                 >
                   {link.label}
@@ -101,21 +101,21 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
             {/* Light / Dark Mode Toggle */}
             <button
               onClick={toggleTheme}
-              className="w-9 h-9 rounded-full flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-ashara-teal dark:hover:text-ashara-gold hover:bg-gray-100 dark:hover:bg-white/10 transition duration-200 focus:outline-none"
+              className="w-9 h-9 rounded-full flex items-center justify-center text-ashara-teal dark:text-white hover:text-ashara-teal dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition duration-200 focus:outline-none"
               aria-label={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
               title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
               {theme === 'dark' ? (
-                <Sun className="w-4 h-4 text-gray-400" />
+                <Sun className="w-4 h-4 text-ashara-teal dark:text-white" />
               ) : (
-                <Moon className="w-4 h-4 text-gray-500" />
+                <Moon className="w-4 h-4 text-ashara-teal dark:text-white" />
               )}
             </button>
 
             {/* Mobile Hamburger Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden w-9 h-9 rounded-full flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10 transition focus:outline-none"
+              className="md:hidden w-9 h-9 rounded-full flex items-center justify-center text-ashara-teal dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition focus:outline-none"
               aria-label="Toggle Navigation Menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -136,8 +136,8 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
                   onClick={() => handleNavClick(link.id)}
                   className={`block w-full text-left px-4 py-3 rounded-lg text-[12px] uppercase tracking-[0.2em] font-bold transition-colors duration-200 ${
                     isActive
-                      ? 'bg-gray-50 dark:bg-white/5 text-ashara-teal dark:text-ashara-gold'
-                      : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 hover:text-ashara-charcoal dark:hover:text-white'
+                      ? 'bg-ashara-teal/10 dark:bg-white/10 text-ashara-teal dark:text-white'
+                      : 'text-ashara-teal/60 dark:text-white/60 hover:bg-ashara-teal/5 dark:hover:bg-white/5 hover:text-ashara-teal dark:hover:text-white'
                   }`}
                 >
                   {link.label}

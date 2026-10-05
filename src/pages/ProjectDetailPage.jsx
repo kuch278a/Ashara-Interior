@@ -52,7 +52,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
   };
 
   return (
-    <div className="bg-white min-h-screen animate-fade-in pb-24 transition-colors duration-300">
+    <div className="bg-white dark:bg-ashara-dark min-h-screen animate-fade-in pb-24 transition-colors duration-300">
       
       {/* 1. FULL-WIDTH HERO IMAGE */}
       <section className="w-full h-[400px] sm:h-[500px] lg:h-[600px] bg-gray-100">
@@ -72,17 +72,17 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
           
           {/* Left: Title & Subtitle */}
           <div className="md:col-span-5 space-y-2">
-            <h1 className="font-serif text-3xl sm:text-4xl text-ashara-charcoal font-normal">
+            <h1 className="font-serif text-3xl sm:text-4xl text-ashara-teal dark:text-white font-normal">
               {activeProject.title}
             </h1>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-medium">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-ashara-teal dark:text-white font-medium">
               {activeProject.subtitle || activeProject.category || 'GOVERNMENTAL'}
             </p>
           </div>
 
           {/* Right: Architectural Narrative */}
           <div className="md:col-span-7">
-            <p className="text-[13px] leading-relaxed text-gray-600 font-light">
+            <p className="text-[13px] leading-relaxed text-ashara-teal dark:text-white font-light">
               {activeProject.description}
             </p>
           </div>
@@ -137,7 +137,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
 
       {/* 5. QUOTE BANNER: Sophia / Daniel Mesfin Quote matching Figma Image 5 */}
       <section className="max-w-4xl mx-auto px-6 py-12 text-center">
-        <blockquote className="font-serif italic text-2xl sm:text-3xl text-gray-500 leading-relaxed font-light">
+        <blockquote className="font-serif italic text-2xl sm:text-3xl text-ashara-teal dark:text-white leading-relaxed font-light">
           “Design with passion, authenticity, and positivity to create spaces that inspire and uplift the soul.”
         </blockquote>
       </section>
@@ -191,7 +191,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
       <div className="text-center pt-8 pb-20">
         <button
           onClick={() => onNavigate('contact')}
-          className="inline-block px-10 py-3 border border-gray-300 text-ashara-charcoal text-[10px] uppercase tracking-[0.2em] font-semibold hover:border-ashara-teal hover:text-ashara-teal transition duration-300"
+          className="inline-block px-10 py-3 border border-gray-300 text-ashara-teal dark:text-white text-[10px] uppercase tracking-[0.2em] font-semibold hover:border-ashara-teal hover:text-ashara-teal transition duration-300"
         >
           ENQUIRE NOW
         </button>
@@ -202,11 +202,11 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
         
         {/* Title with horizontal lines */}
         <div className="flex items-center justify-center gap-6">
-          <div className="h-[1px] bg-gray-300 flex-1 max-w-[120px]"></div>
-          <h3 className="font-serif text-2xl sm:text-3xl text-ashara-charcoal font-normal">
+          <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1 max-w-[120px]"></div>
+          <h3 className="font-serif text-2xl sm:text-3xl text-ashara-teal dark:text-white font-normal">
             You May Like
           </h3>
-          <div className="h-[1px] bg-gray-300 flex-1 max-w-[120px]"></div>
+          <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1 max-w-[120px]"></div>
         </div>
 
         {/* 2 Project Cards Grid matching Figma (text below image) */}
@@ -231,10 +231,10 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
                 />
               </div>
               <div>
-                <h4 className="font-serif text-xl sm:text-2xl text-ashara-charcoal mb-1 group-hover:text-ashara-teal transition-colors">
+                <h4 className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white mb-1 group-hover:text-ashara-teal transition-colors">
                   {rec.title}
                 </h4>
-                <span className="text-[9px] uppercase tracking-[0.2em] text-gray-500 font-medium">
+                <span className="text-[9px] uppercase tracking-[0.2em] text-ashara-teal dark:text-white font-medium">
                   {rec.category || rec.subtitle}
                 </span>
               </div>

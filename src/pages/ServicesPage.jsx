@@ -72,7 +72,7 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
 
       {/* 2. "How We Can Help" Section with Numbered Accordion */}
       <section className="max-w-4xl mx-auto px-6 sm:px-10 pt-16 sm:pt-24 pb-16 space-y-12">
-        <h3 className="font-serif text-3xl sm:text-4xl text-center text-ashara-charcoal font-normal tracking-wide transition-colors duration-300">
+        <h3 className="font-serif text-3xl sm:text-4xl text-center text-ashara-teal dark:text-white font-normal tracking-wide transition-colors duration-300">
           How We Can Help
         </h3>
 
@@ -87,14 +87,14 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
                   className="w-full flex items-center justify-between text-left group"
                 >
                   <div className="flex items-baseline gap-4 sm:gap-6">
-                    <span className="font-serif text-xl sm:text-2xl text-gray-400 font-light">
+                    <span className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white font-light">
                       {item.number}
                     </span>
-                    <span className="font-serif text-xl sm:text-2xl text-ashara-charcoal font-normal group-hover:text-ashara-teal transition-colors duration-300">
+                    <span className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white font-normal group-hover:text-ashara-teal transition-colors duration-300">
                       {item.title}
                     </span>
                   </div>
-                  <span className="text-gray-400 group-hover:text-ashara-teal transition-colors duration-200">
+                  <span className="text-ashara-teal dark:text-white group-hover:text-ashara-teal transition-colors duration-200">
                     {isOpen ? (
                       <Minus className="w-4 h-4 transition-transform duration-300" />
                     ) : (
@@ -106,7 +106,7 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
                 {/* Animated Body Content */}
                 {isOpen && (
                   <div className="pt-4 pl-8 sm:pl-12 pr-4 animate-fade-in">
-                    <p className="text-sm leading-relaxed text-gray-500 font-light transition-colors duration-300">
+                    <p className="text-sm leading-relaxed text-ashara-teal dark:text-white font-light transition-colors duration-300">
                       {item.content}
                     </p>
                   </div>
@@ -120,7 +120,7 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
         <div className="text-center pt-4">
           <button
             onClick={() => onNavigate && onNavigate('contact')}
-            className="inline-block px-8 py-3 border border-gray-300 text-ashara-charcoal text-[10px] uppercase tracking-[0.2em] font-semibold hover:border-ashara-teal hover:text-ashara-teal transition duration-300"
+            className="inline-block px-8 py-3 border border-gray-300 text-ashara-teal dark:text-white text-[10px] uppercase tracking-[0.2em] font-semibold hover:border-ashara-teal hover:text-ashara-teal transition duration-300"
           >
             ENQUIRE NOW
           </button>
@@ -133,11 +133,11 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
           
           {/* Title with horizontal lines */}
           <div className="flex items-center justify-center gap-6">
-            <div className="h-[1px] bg-gray-300 flex-1 max-w-[120px]"></div>
-            <h3 className="font-serif text-2xl sm:text-3xl text-ashara-charcoal font-normal">
+            <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1 max-w-[120px]"></div>
+            <h3 className="font-serif text-2xl sm:text-3xl text-ashara-teal dark:text-white font-normal">
               Recent Projects
             </h3>
-            <div className="h-[1px] bg-gray-300 flex-1 max-w-[120px]"></div>
+            <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1 max-w-[120px]"></div>
           </div>
 
           {/* 2 Project Cards Grid matching Figma (text below image) */}
@@ -156,10 +156,10 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
                 />
               </div>
               <div>
-                <h4 className="font-serif text-xl sm:text-2xl text-ashara-charcoal mb-1 group-hover:text-ashara-teal transition-colors">
+                <h4 className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white mb-1 group-hover:text-ashara-teal transition-colors">
                   Amibara Properties
                 </h4>
-                <span className="text-[9px] uppercase tracking-[0.2em] text-gray-500 font-medium">
+                <span className="text-[9px] uppercase tracking-[0.2em] text-ashara-teal dark:text-white font-medium">
                   PRIVATE COMPANY
                 </span>
               </div>
@@ -178,10 +178,10 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
                 />
               </div>
               <div>
-                <h4 className="font-serif text-xl sm:text-2xl text-ashara-charcoal mb-1 group-hover:text-ashara-teal transition-colors">
+                <h4 className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white mb-1 group-hover:text-ashara-teal transition-colors">
                   Ministry of Revenues
                 </h4>
-                <span className="text-[9px] uppercase tracking-[0.2em] text-gray-500 font-medium">
+                <span className="text-[9px] uppercase tracking-[0.2em] text-ashara-teal dark:text-white font-medium">
                   GOVERNMENTAL
                 </span>
               </div>
@@ -193,7 +193,7 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
           <div className="pt-12 text-center">
             <button 
               onClick={() => onNavigate && onNavigate('projects')}
-              className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] font-semibold text-gray-500 hover:text-ashara-teal transition-colors"
+              className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] font-semibold text-ashara-teal dark:text-white hover:text-ashara-teal transition-colors"
             >
               VIEW ALL PROJECTS <span className="text-[12px] leading-none mb-0.5">&gt;</span>
             </button>

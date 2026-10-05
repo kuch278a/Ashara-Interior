@@ -20,10 +20,10 @@ export default function BlogPage({ isSection = false }) {
       
       {/* 1. HERO BANNER: Neoclassical Editorial Title */}
       <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pt-12 sm:pt-16 pb-10 text-center space-y-3">
-        <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.32em] text-ashara-teal dark:text-ashara-gold font-semibold">
+        <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.32em] text-ashara-teal dark:text-white font-semibold">
           THE ASHARA JOURNAL
         </p>
-        <h2 className="font-serif text-3xl sm:text-5xl lg:text-6xl text-ashara-charcoal dark:text-white font-normal tracking-wide transition-colors duration-300">
+        <h2 className="font-serif text-3xl sm:text-5xl lg:text-6xl text-ashara-teal dark:text-white font-normal tracking-wide transition-colors duration-300">
           Insights & Monograph
         </h2>
         <div className="w-16 h-[2px] bg-ashara-teal dark:bg-ashara-gold mx-auto mt-4"></div>
@@ -51,20 +51,20 @@ export default function BlogPage({ isSection = false }) {
                 </span>
               </div>
               <div className="space-y-2">
-                <div className="flex items-center gap-4 text-[10.5px] text-gray-500 dark:text-gray-400 font-medium">
-                  <span className="uppercase tracking-wider text-ashara-teal dark:text-ashara-gold">{post.category}</span>
+                <div className="flex items-center gap-4 text-[10.5px] text-ashara-teal dark:text-white font-medium">
+                  <span className="uppercase tracking-wider text-ashara-teal dark:text-white">{post.category}</span>
                   <div className="flex items-center gap-1">
                     <Calendar className="w-3.5 h-3.5" />
                     <span>{post.date}</span>
                   </div>
                 </div>
-                <h2 className="font-serif text-2xl sm:text-3xl text-ashara-charcoal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition duration-300">
+                <h2 className="font-serif text-2xl sm:text-3xl text-ashara-teal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-teal transition duration-300">
                   {post.title}
                 </h2>
-                <p className="text-xs sm:text-[13px] leading-relaxed text-gray-600 dark:text-gray-300 font-light line-clamp-2">
+                <p className="text-xs sm:text-[13px] leading-relaxed text-ashara-teal dark:text-white font-light line-clamp-2">
                   {post.summary}
                 </p>
-                <button className="flex items-center gap-1.5 text-[10.5px] uppercase tracking-[0.2em] font-semibold text-gray-800 dark:text-gray-200 group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition duration-200">
+                <button className="flex items-center gap-1.5 text-[10.5px] uppercase tracking-[0.2em] font-semibold text-ashara-teal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-teal transition duration-200">
                   Read Article <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -76,7 +76,7 @@ export default function BlogPage({ isSection = false }) {
       {/* 3. MORE STORIES (Hidden on Home Page) */}
       {!isSection && posts.length > 2 && (
         <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pt-10 border-t border-gray-200 dark:border-white/10">
-          <h3 className="font-serif text-2xl sm:text-3xl text-ashara-charcoal dark:text-white mb-8 tracking-wide transition-colors duration-300">
+          <h3 className="font-serif text-2xl sm:text-3xl text-ashara-teal dark:text-white mb-8 tracking-wide transition-colors duration-300">
             More Stories
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
@@ -96,14 +96,14 @@ export default function BlogPage({ isSection = false }) {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <div className="text-[10px] text-gray-500 dark:text-gray-400 font-medium">
-                    <span className="uppercase tracking-wider text-ashara-teal dark:text-ashara-gold mr-3">{post.category}</span>
+                  <div className="text-[10px] text-ashara-teal dark:text-white font-medium">
+                    <span className="uppercase tracking-wider text-ashara-teal dark:text-white mr-3">{post.category}</span>
                     <span>{post.readTime}</span>
                   </div>
-                  <h4 className="font-serif text-xl text-ashara-charcoal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition duration-300 leading-snug">
+                  <h4 className="font-serif text-xl text-ashara-teal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-teal transition duration-300 leading-snug">
                     {post.title}
                   </h4>
-                  <p className="text-[11px] leading-relaxed text-gray-600 dark:text-gray-300 font-light line-clamp-2">
+                  <p className="text-[11px] leading-relaxed text-ashara-teal dark:text-white font-light line-clamp-2">
                     {post.summary}
                   </p>
                 </div>
@@ -127,7 +127,7 @@ export default function BlogPage({ isSection = false }) {
             {/* Close Button */}
             <button
               onClick={() => setSelectedPost(null)}
-              className="absolute top-4 right-4 z-10 bg-white/90 dark:bg-ashara-charcoal/90 text-gray-700 dark:text-gray-200 hover:text-ashara-teal dark:hover:text-ashara-gold p-2 rounded-full shadow-sm hover:scale-105 transition"
+              className="absolute top-4 right-4 z-10 bg-white/90 dark:bg-ashara-charcoal/90 text-ashara-teal dark:text-white hover:text-ashara-teal dark:hover:text-white p-2 rounded-full shadow-sm hover:scale-105 transition"
               aria-label="Close Article"
             >
               <X className="w-5 h-5" />
@@ -145,8 +145,8 @@ export default function BlogPage({ isSection = false }) {
             {/* Article Content */}
             <div className="p-6 sm:p-10 space-y-6">
               <div className="space-y-3">
-                <div className="flex items-center gap-4 text-[11px] text-gray-500 dark:text-gray-400 font-medium">
-                  <span className="uppercase tracking-[0.15em] text-ashara-teal dark:text-ashara-gold font-semibold">{selectedPost.category}</span>
+                <div className="flex items-center gap-4 text-[11px] text-ashara-teal dark:text-white font-medium">
+                  <span className="uppercase tracking-[0.15em] text-ashara-teal dark:text-white font-semibold">{selectedPost.category}</span>
                   <div className="flex items-center gap-1">
                     <Clock className="w-3.5 h-3.5" />
                     <span>{selectedPost.readTime}</span>
@@ -154,7 +154,7 @@ export default function BlogPage({ isSection = false }) {
                   <span>{selectedPost.date}</span>
                 </div>
                 
-                <h2 className="font-serif text-3xl sm:text-4xl text-ashara-charcoal dark:text-white leading-tight">
+                <h2 className="font-serif text-3xl sm:text-4xl text-ashara-teal dark:text-white leading-tight">
                   {selectedPost.title}
                 </h2>
               </div>
@@ -163,7 +163,7 @@ export default function BlogPage({ isSection = false }) {
               <div className="h-[1px] bg-gray-200 dark:bg-white/10 w-full"></div>
 
               {/* Body Paragraphs */}
-              <div className="font-serif text-[15px] sm:text-lg leading-relaxed text-gray-700 dark:text-gray-300 space-y-6 font-light">
+              <div className="font-serif text-[15px] sm:text-lg leading-relaxed text-ashara-teal dark:text-white space-y-6 font-light">
                 {selectedPost.paragraphs.map((p, idx) => (
                   <p key={idx}>{p}</p>
                 ))}

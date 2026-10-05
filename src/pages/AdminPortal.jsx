@@ -251,36 +251,36 @@ export default function AdminPortal({ onNavigate }) {
           <div className="absolute -top-10 -left-10 w-40 h-40 bg-ashara-gold/10 rounded-full blur-2xl pointer-events-none" />
           <div className="flex items-center gap-4 sm:gap-6">
             <div className="w-12 h-12 rounded-xs bg-ashara-teal/10 dark:bg-ashara-gold/15 border border-ashara-teal/20 dark:border-ashara-gold/30 flex items-center justify-center shrink-0 shadow-inner">
-              <Building2 className="w-6 h-6 text-ashara-teal dark:text-ashara-gold" />
+              <Building2 className="w-6 h-6 text-ashara-teal dark:text-white" />
             </div>
             <div>
               <div className="flex items-center gap-2.5 flex-wrap">
-                <span className="text-[9.5px] uppercase tracking-[0.3em] font-bold text-ashara-teal dark:text-ashara-gold">STUDIO MANAGEMENT ATELIER</span>
+                <span className="text-[9.5px] uppercase tracking-[0.3em] font-bold text-ashara-teal dark:text-white">STUDIO MANAGEMENT ATELIER</span>
                 <div className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wider ${isFirebaseConfigured ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/25' : 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/25'}`}>
                   <span className={`w-1.5 h-1.5 rounded-full ${isFirebaseConfigured ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
                   <Database className="w-2.5 h-2.5" />
                   <span>{isFirebaseConfigured ? 'Live Cloud Sync' : 'Local Sandbox'}</span>
                 </div>
               </div>
-              <h1 className="font-serif text-2xl sm:text-3xl text-ashara-charcoal dark:text-white font-normal mt-0.5">Ashara Executive Portal</h1>
+              <h1 className="font-serif text-2xl sm:text-3xl text-ashara-teal dark:text-white font-normal mt-0.5">Ashara Executive Portal</h1>
             </div>
           </div>
           <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
             <button onClick={() => loadAllData(true)} disabled={isRefreshing}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-ashara-charcoal dark:text-gray-200 text-xs uppercase tracking-wider font-semibold rounded-xs transition border border-gray-200 dark:border-white/10 disabled:opacity-50" title="Synchronize database">
-              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-ashara-teal dark:text-ashara-gold' : ''}`} />
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-ashara-teal dark:text-white dark:text-white text-xs uppercase tracking-wider font-semibold rounded-xs transition border border-gray-200 dark:border-white/10 disabled:opacity-50" title="Synchronize database">
+              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-ashara-teal dark:text-white' : ''}`} />
               <span className="hidden sm:inline">{isRefreshing ? 'Syncing...' : 'Sync'}</span>
             </button>
             <button onClick={() => onNavigate('home')}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 dark:border-white/15 text-xs uppercase tracking-wider font-semibold text-ashara-charcoal dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 rounded-xs transition">
-              <span>View Site</span><ArrowUpRight className="w-3.5 h-3.5 text-gray-400" />
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 dark:border-white/15 text-xs uppercase tracking-wider font-semibold text-ashara-teal dark:text-white dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-xs transition">
+              <span>View Site</span><ArrowUpRight className="w-3.5 h-3.5 text-ashara-teal dark:text-white" />
             </button>
             <div className="h-6 w-px bg-gray-200 dark:bg-white/10 mx-1 hidden sm:block" />
             <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs">
               <div className="w-6 h-6 rounded-full bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-[10px] font-bold flex items-center justify-center">
                 {(adminUser.name || adminUser.email || 'D')[0].toUpperCase()}
               </div>
-              <span className="text-xs font-mono text-gray-600 dark:text-gray-300 truncate max-w-[140px]">{adminUser.email || 'Director'}</span>
+              <span className="text-xs font-mono text-ashara-teal dark:text-white truncate max-w-[140px]">{adminUser.email || 'Director'}</span>
             </div>
             <button onClick={handleLogout}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-rose-500/10 hover:bg-rose-500 hover:text-white border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs uppercase tracking-wider font-semibold rounded-xs transition duration-200" title="Sign Out">
@@ -299,22 +299,22 @@ export default function AdminPortal({ onNavigate }) {
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             { tab: 'leads',        label: 'Client Inquiries',      count: leads.length,        icon: <Users className="w-5 h-5" />,    color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20', sub: <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />{newLeadsCount} New Leads</span>, action: 'View matrix' },
-            { tab: 'projects',     label: 'Portfolio Showcase',    count: projects.length,     icon: <Layers className="w-5 h-5" />,   color: 'bg-ashara-teal/10 dark:bg-ashara-gold/15 text-ashara-teal dark:text-ashara-gold border-ashara-teal/20 dark:border-ashara-gold/30', sub: <span className="text-gray-600 dark:text-gray-300 font-light truncate">Gov • Corp • Commercial</span>, action: 'Manage' },
-            { tab: 'blog',         label: 'Architectural Journal', count: blogPosts.length,    icon: <FileText className="w-5 h-5" />, color: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20', sub: <span className="text-gray-600 dark:text-gray-300 font-light truncate">Published Essays & Insights</span>, action: 'Edit' },
-            { tab: 'testimonials', label: 'Client Voices',         count: testimonials.length, icon: <Quote className="w-5 h-5" />,   color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20', sub: <span className="text-gray-600 dark:text-gray-300 font-light truncate">Project Reviews & Ratings</span>, action: 'Manage' },
+            { tab: 'projects',     label: 'Portfolio Showcase',    count: projects.length,     icon: <Layers className="w-5 h-5" />,   color: 'bg-ashara-teal/10 dark:bg-ashara-gold/15 text-ashara-teal dark:text-white border-ashara-teal/20 dark:border-ashara-gold/30', sub: <span className="text-ashara-teal dark:text-white font-light truncate">Gov • Corp • Commercial</span>, action: 'Manage' },
+            { tab: 'blog',         label: 'Architectural Journal', count: blogPosts.length,    icon: <FileText className="w-5 h-5" />, color: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20', sub: <span className="text-ashara-teal dark:text-white font-light truncate">Published Essays & Insights</span>, action: 'Edit' },
+            { tab: 'testimonials', label: 'Client Voices',         count: testimonials.length, icon: <Quote className="w-5 h-5" />,   color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20', sub: <span className="text-ashara-teal dark:text-white font-light truncate">Project Reviews & Ratings</span>, action: 'Manage' },
           ].map(({ tab, label, count, icon, color, sub, action }) => (
             <div key={tab} onClick={() => setActiveTab(tab)}
               className={`p-5 bg-white dark:bg-[#0C1726] border rounded-xs shadow-xs hover:shadow-md transition-all cursor-pointer group ${activeTab === tab ? 'border-ashara-teal dark:border-ashara-gold ring-1 ring-ashara-teal dark:ring-ashara-gold' : 'border-gray-200 dark:border-white/10'}`}>
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.25em] font-semibold text-gray-500 dark:text-gray-400">{label}</p>
-                  <h3 className="font-serif text-3xl font-bold text-ashara-charcoal dark:text-white mt-1">{count}</h3>
+                  <p className="text-[10px] uppercase tracking-[0.25em] font-semibold text-ashara-teal dark:text-white">{label}</p>
+                  <h3 className="font-serif text-3xl font-bold text-ashara-teal dark:text-white mt-1">{count}</h3>
                 </div>
                 <div className={`w-10 h-10 rounded-xs ${color} border flex items-center justify-center group-hover:scale-110 transition-transform`}>{icon}</div>
               </div>
               <div className="mt-3 pt-3 border-t border-gray-100 dark:border-white/5 flex items-center justify-between text-xs">
                 {sub}
-                <span className="text-[10px] text-gray-400 group-hover:text-ashara-teal dark:group-hover:text-ashara-gold transition flex items-center gap-0.5">{action}<ChevronRight className="w-3 h-3" /></span>
+                <span className="text-[10px] text-ashara-teal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-teal transition flex items-center gap-0.5">{action}<ChevronRight className="w-3 h-3" /></span>
               </div>
             </div>
           ))}
@@ -330,9 +330,9 @@ export default function AdminPortal({ onNavigate }) {
                 { key: 'testimonials', label: 'Client Voices',     icon: <Quote className="w-4 h-4" />,    count: testimonials.length },
               ].map(({ key, label, icon, count, badge }) => (
                 <button key={key} onClick={() => { setActiveTab(key); setSearchQuery(''); }}
-                  className={`flex items-center gap-2 px-4 py-2 text-xs uppercase tracking-wider font-semibold rounded-xs transition-all whitespace-nowrap ${activeTab === key ? 'bg-white dark:bg-[#1E2E42] text-ashara-teal dark:text-ashara-gold shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
+                  className={`flex items-center gap-2 px-4 py-2 text-xs uppercase tracking-wider font-semibold rounded-xs transition-all whitespace-nowrap ${activeTab === key ? 'bg-white dark:bg-[#1E2E42] text-ashara-teal dark:text-white shadow-sm' : 'text-ashara-teal dark:text-white hover:text-ashara-teal dark:hover:text-white'}`}>
                   {icon}<span>{label}</span>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono ${badge && badge > 0 ? 'bg-emerald-500 text-white font-bold' : activeTab === key ? 'bg-ashara-teal/10 dark:bg-ashara-gold/20 text-ashara-teal dark:text-ashara-gold' : 'bg-gray-200/80 dark:bg-white/10 text-gray-500'}`}>{count}</span>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono ${badge && badge > 0 ? 'bg-emerald-500 text-white font-bold' : activeTab === key ? 'bg-ashara-teal/10 dark:bg-ashara-gold/20 text-ashara-teal dark:text-white' : 'bg-gray-200/80 dark:bg-white/10 text-ashara-teal'}`}>{count}</span>
                 </button>
               ))}
             </nav>
@@ -344,18 +344,18 @@ export default function AdminPortal({ onNavigate }) {
           </div>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-3 border-t border-gray-100 dark:border-white/5">
             <div className="relative flex-1 max-w-md">
-              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-ashara-teal dark:text-white" />
               <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={activeTab === 'projects' ? 'Search projects...' : activeTab === 'leads' ? 'Search inquiries...' : activeTab === 'testimonials' ? 'Search reviews...' : 'Search articles...'}
-                className="w-full pl-10 pr-8 py-2 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs text-xs text-ashara-charcoal dark:text-white placeholder-gray-400 focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold transition" />
-              {searchQuery && <button onClick={() => setSearchQuery('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-0.5"><X className="w-3.5 h-3.5" /></button>}
+                className="w-full pl-10 pr-8 py-2 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs text-xs text-ashara-teal dark:text-white placeholder-gray-400 focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold transition" />
+              {searchQuery && <button onClick={() => setSearchQuery('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ashara-teal dark:text-white hover:text-ashara-teal p-0.5"><X className="w-3.5 h-3.5" /></button>}
             </div>
             <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
               {activeTab === 'projects' && (
-                <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                <div className="flex items-center gap-1.5 text-xs text-ashara-teal dark:text-white">
                   <Filter className="w-3.5 h-3.5" />
                   <select value={projectCategoryFilter} onChange={(e) => setProjectCategoryFilter(e.target.value)}
-                    className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs text-xs text-ashara-charcoal dark:text-white focus:outline-none focus:border-ashara-teal">
+                    className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs text-xs text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal">
                     <option value="ALL">All Categories ({projects.length})</option>
                     <option value="GOVERNMENTAL">Governmental</option>
                     <option value="PRIVATE">Private Entities</option>
@@ -365,20 +365,20 @@ export default function AdminPortal({ onNavigate }) {
                 </div>
               )}
               {activeTab === 'testimonials' && (
-                <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                <div className="flex items-center gap-1.5 text-xs text-ashara-teal dark:text-white">
                   <Filter className="w-3.5 h-3.5" />
                   <select value={testimonialFilter} onChange={(e) => setTestimonialFilter(e.target.value)}
-                    className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs text-xs text-ashara-charcoal dark:text-white focus:outline-none focus:border-ashara-teal">
+                    className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs text-xs text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal">
                     <option value="ALL">All Project Links ({testimonials.length})</option>
                     {projects.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}
                   </select>
                 </div>
               )}
               {activeTab === 'leads' && (
-                <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                <div className="flex items-center gap-1.5 text-xs text-ashara-teal dark:text-white">
                   <SlidersHorizontal className="w-3.5 h-3.5" />
                   <select value={leadStatusFilter} onChange={(e) => setLeadStatusFilter(e.target.value)}
-                    className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs text-xs text-ashara-charcoal dark:text-white focus:outline-none focus:border-ashara-teal">
+                    className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs text-xs text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal">
                     <option value="ALL">All Inquiries ({leads.length})</option>
                     <option value="new">New Inquiries ({newLeadsCount})</option>
                     <option value="contacted">Contacted</option>

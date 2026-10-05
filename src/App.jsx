@@ -17,7 +17,7 @@ function PageLoadingFallback() {
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-4 py-20">
       <div className="w-8 h-8 border-2 border-ashara-teal/30 dark:border-ashara-gold/30 border-t-ashara-teal dark:border-t-ashara-gold rounded-full animate-spin"></div>
-      <span className="text-[10px] tracking-[0.3em] uppercase text-gray-500 dark:text-gray-400 font-sans">
+      <span className="text-[10px] tracking-[0.3em] uppercase text-ashara-teal dark:text-white font-sans">
         Loading...
       </span>
     </div>
@@ -130,7 +130,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-ashara-charcoal dark:bg-ashara-dark dark:text-ashara-sand font-sans antialiased transition-colors duration-300">
+    <div className="min-h-screen flex flex-col bg-white text-ashara-teal dark:bg-ashara-dark dark:text-white font-sans antialiased transition-colors duration-300">
       
       {/* 1. Figma Header Navigation Bar */}
       <Navbar 
@@ -178,9 +178,9 @@ export default function App() {
 
           {activePage === '404' && (
             <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-6 py-24 space-y-6 animate-fade-in">
-              <p className="text-[10px] uppercase tracking-[0.35em] text-ashara-teal dark:text-ashara-gold font-semibold">404 — Page Not Found</p>
-              <h1 className="font-serif text-5xl sm:text-7xl text-ashara-charcoal dark:text-ashara-sand font-light">Lost in Space</h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md font-light leading-relaxed">
+              <p className="text-[10px] uppercase tracking-[0.35em] text-ashara-teal dark:text-white font-semibold">404 — Page Not Found</p>
+              <h1 className="font-serif text-5xl sm:text-7xl text-ashara-teal dark:text-white font-light">Lost in Space</h1>
+              <p className="text-sm text-ashara-teal dark:text-white max-w-md font-light leading-relaxed">
                 The page you're looking for doesn't exist. It may have been moved, deleted, or you may have mistyped the URL.
               </p>
               <button

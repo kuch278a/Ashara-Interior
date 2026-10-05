@@ -2,7 +2,7 @@ import React from 'react';
 
 import logoImage from '../assets/Ashara logo/Ashara Logo.png';
 
-export default function AsharaLogo({ className = 'text-ashara-teal', textClassName = 'text-ashara-charcoal', size = 70, light = false, hideText = false }) {
+export default function AsharaLogo({ className = 'text-ashara-teal', textClassName = 'text-ashara-teal', size = 70, light = false, hideText = false }) {
   return (
     <div className={`flex items-center gap-5 select-none ${className}`}>
       {/* Official Ashara Fingerprint Mark */}

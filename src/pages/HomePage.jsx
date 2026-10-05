@@ -85,7 +85,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
   };
 
   return (
-    <div className="bg-white animate-fade-in pb-0 transition-colors duration-300 relative">
+    <div className="bg-white dark:bg-ashara-dark animate-fade-in pb-0 transition-colors duration-300 relative">
       
       {/* 1. HERO SLIDESHOW */}
       <section 
@@ -114,9 +114,9 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                 aria-hidden={!isActive}
                 aria-current={isActive}
                 style={{
-                  opacity: isActive ? 1 : 0,
+                  transform: `translateX(${(index - currentSlide) * 100}%)`,
                   zIndex,
-                  transition: 'opacity 2000ms ease-in-out, z-index 2000ms',
+                  transition: 'transform 800ms cubic-bezier(0.25, 1, 0.5, 1)',
                   pointerEvents: isActive ? 'auto' : 'none'
                 }}
               >
@@ -162,17 +162,17 @@ export default function HomePage({ onNavigate, onSelectProject }) {
           type="button" 
           aria-label="Previous Project" 
           onClick={(e) => { e.stopPropagation(); prevSlide(); }}
-          className="absolute left-4 md:left-10 top-1/2 -translate-y-1/2 z-30 text-white/60 hover:text-white transition-all duration-500 hover:-translate-x-2 hover:scale-110 focus:outline-none drop-shadow-xl"
+          className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-30 text-white/60 hover:text-white transition-colors duration-300 focus:outline-none drop-shadow-xl"
         >
-          <ChevronLeft className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 stroke-[1]" />
+          <ChevronLeft className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 stroke-[1]" />
         </button>
         <button 
           type="button" 
           aria-label="Next Project" 
           onClick={(e) => { e.stopPropagation(); nextSlide(); }}
-          className="absolute right-4 md:right-10 top-1/2 -translate-y-1/2 z-30 text-white/60 hover:text-white transition-all duration-500 hover:translate-x-2 hover:scale-110 focus:outline-none drop-shadow-xl"
+          className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-30 text-white/60 hover:text-white transition-colors duration-300 focus:outline-none drop-shadow-xl"
         >
-          <ChevronRight className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 stroke-[1]" />
+          <ChevronRight className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 stroke-[1]" />
         </button>
 
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2">
@@ -204,10 +204,10 @@ export default function HomePage({ onNavigate, onSelectProject }) {
 
       {/* 2. PHILOSOPHY QUOTE (White background) */}
       <section className="max-w-4xl mx-auto px-6 text-center pt-32 pb-24">
-        <span className="block text-[10px] sm:text-[11px] uppercase tracking-[0.3em] font-semibold text-ashara-teal mb-6">
+        <span className="block text-[10px] sm:text-[11px] uppercase tracking-[0.3em] font-semibold text-ashara-teal dark:text-white mb-6">
           WELCOME
         </span>
-        <blockquote className="font-serif italic text-3xl sm:text-4xl text-gray-500 leading-snug font-light transition-colors duration-300 max-w-3xl mx-auto">
+        <blockquote className="font-serif italic text-3xl sm:text-4xl text-ashara-teal dark:text-white leading-snug font-light transition-colors duration-300 max-w-3xl mx-auto">
           “Design with passion, authenticity, and positivity to create spaces that inspire and uplift the soul.”
         </blockquote>
       </section>
@@ -217,11 +217,11 @@ export default function HomePage({ onNavigate, onSelectProject }) {
         
         {/* Title with horizontal lines */}
         <div className="flex items-center justify-center gap-6 mb-12 max-w-6xl mx-auto px-6">
-          <div className="h-[1px] bg-gray-300 flex-1 max-w-[120px]"></div>
-          <h2 className="font-serif text-2xl sm:text-3xl text-ashara-charcoal font-normal">
+          <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1 max-w-[120px]"></div>
+          <h2 className="font-serif text-2xl sm:text-3xl text-ashara-teal dark:text-white font-normal">
             Our Works
           </h2>
-          <div className="h-[1px] bg-gray-300 flex-1 max-w-[120px]"></div>
+          <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1 max-w-[120px]"></div>
         </div>
         
         {/* Accordion Expanding Carousel with Floating Arrows */}
@@ -305,7 +305,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
               className={`h-2.5 sm:h-3 transition-colors duration-500 ${
                 activeAccordionIndex === index 
                   ? 'bg-ashara-teal w-10 sm:w-12' 
-                  : 'w-2.5 sm:w-3 bg-gray-300 hover:bg-ashara-teal/60'
+                  : 'w-2.5 sm:w-3 bg-gray-300 dark:bg-white/15 hover:bg-ashara-teal/60'
               }`}
               aria-label={`Go to slide ${index + 1}`}
               aria-current={activeAccordionIndex === index}
@@ -317,7 +317,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
         <div className="mt-12">
           <button 
             onClick={() => onNavigate && onNavigate('projects')}
-            className="group relative inline-flex items-center justify-center overflow-hidden h-8 text-[12px] uppercase tracking-[0.25em] font-bold text-gray-500 hover:text-ashara-teal transition-colors"
+            className="group relative inline-flex items-center justify-center overflow-hidden h-8 text-[12px] uppercase tracking-[0.25em] font-bold text-ashara-teal dark:text-white hover:text-ashara-teal transition-colors"
           >
             {/* Invisible placeholder to maintain the button's size */}
             <span className="invisible whitespace-nowrap">
@@ -340,11 +340,11 @@ export default function HomePage({ onNavigate, onSelectProject }) {
       {/* 4. OUR CLIENTS */}
       <section className="text-center pt-16 pb-24">
         <div className="flex items-center justify-center gap-6 mb-12 max-w-6xl mx-auto px-6">
-          <div className="h-[1px] bg-gray-300 flex-1 max-w-[120px]"></div>
-          <h2 className="font-serif text-2xl sm:text-3xl text-ashara-charcoal font-normal">
+          <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1 max-w-[120px]"></div>
+          <h2 className="font-serif text-2xl sm:text-3xl text-ashara-teal dark:text-white font-normal">
             Our Clients
           </h2>
-          <div className="h-[1px] bg-gray-300 flex-1 max-w-[120px]"></div>
+          <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1 max-w-[120px]"></div>
         </div>
         <ClientsSection />
       </section>
@@ -356,12 +356,12 @@ export default function HomePage({ onNavigate, onSelectProject }) {
           <ChevronLeft className="w-8 h-8 stroke-1" />
         </button>
 
-        <blockquote className="font-serif italic text-2xl sm:text-3xl md:text-4xl text-gray-500 font-light leading-relaxed max-w-4xl mx-auto px-4 mb-8">
+        <blockquote className="font-serif italic text-2xl sm:text-3xl md:text-4xl text-ashara-teal dark:text-white font-light leading-relaxed max-w-4xl mx-auto px-4 mb-8">
           Ashara Interiors transformed our office space beyond our expectations. Their attention to detail and ability to deliver a luxurious, functional design within an incredibly tight deadline was remarkable.
         </blockquote>
         
         <div className="space-y-1">
-          <p className="text-[12px] sm:text-[13px] md:text-[14px] uppercase tracking-[0.2em] font-bold text-gray-500">
+          <p className="text-[12px] sm:text-[13px] md:text-[14px] uppercase tracking-[0.2em] font-bold text-ashara-teal dark:text-white">
             DEPUTY PRESIDENT'S OFFICE,<br/>
             PROSPERITY PARTY HEADQUARTERS
           </p>
@@ -375,8 +375,8 @@ export default function HomePage({ onNavigate, onSelectProject }) {
         {/* Pagination Indicators */}
         <div className="flex justify-center gap-2 mt-8">
           <button className="w-2 h-2 rounded-full bg-ashara-teal transition-colors"></button>
-          <button className="w-2 h-2 rounded-full bg-gray-300 hover:bg-gray-400 transition-colors"></button>
-          <button className="w-2 h-2 rounded-full bg-gray-300 hover:bg-gray-400 transition-colors"></button>
+          <button className="w-2 h-2 rounded-full bg-gray-300 dark:bg-white/15 hover:bg-gray-400 transition-colors"></button>
+          <button className="w-2 h-2 rounded-full bg-gray-300 dark:bg-white/15 hover:bg-gray-400 transition-colors"></button>
         </div>
       </section>
 
