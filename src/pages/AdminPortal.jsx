@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
-  Users, Layers, FileText, Database, Plus,
+  Users, Layers, Database, Plus,
   RefreshCw, ChevronRight, ArrowUpRight, Building2,
   CheckCircle2, SlidersHorizontal, Filter, Search, X,
   LogOut, Quote
 } from 'lucide-react';
 import {
   getConsultations, getDynamicProjects, saveProject, deleteProject,
-  getDynamicBlogPosts, saveBlogPost, deleteBlogPost, updateConsultationStatus, deleteConsultation,
+  updateConsultationStatus, deleteConsultation,
   isFirebaseConfigured, loginAdminUser, logoutAdminUser, uploadImage,
   getDynamicTestimonials, saveTestimonial, deleteTestimonial, subscribeToTestimonials
 } from '../services/firebaseService';
@@ -15,10 +15,8 @@ import {
 import AdminLoginScreen      from './admin/AdminLoginScreen';
 import AdminProjectsTab      from './admin/AdminProjectsTab';
 import AdminLeadsTab         from './admin/AdminLeadsTab';
-import AdminBlogTab          from './admin/AdminBlogTab';
 import AdminTestimonialsTab  from './admin/AdminTestimonialsTab';
 import AdminProjectModal     from './admin/AdminProjectModal';
-import AdminBlogModal        from './admin/AdminBlogModal';
 import AdminTestimonialModal from './admin/AdminTestimonialModal';
 import AdminDeleteConfirm    from './admin/AdminDeleteConfirm';
 
@@ -40,16 +38,12 @@ export default function AdminPortal({ onNavigate }) {
   const [activeTab,    setActiveTab]    = useState('projects');
   const [leads,        setLeads]        = useState([]);
   const [projects,     setProjects]     = useState([]);
-  const [blogPosts,    setBlogPosts]    = useState([]);
   const [testimonials, setTestimonials] = useState([]);
-  const [isLoading,    setIsLoading]    = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [lastRefreshed, setLastRefreshed] = useState(null);
   const [notification,  setNotification]  = useState(null);
   const [searchQuery,           setSearchQuery]           = useState('');
   const [projectCategoryFilter, setProjectCategoryFilter] = useState('ALL');
   const [leadStatusFilter,      setLeadStatusFilter]      = useState('ALL');
-  const [blogCategoryFilter,    setBlogCategoryFilter]    = useState('ALL');
   const [testimonialFilter,     setTestimonialFilter]     = useState('ALL');
   const [editingProject,          setEditingProject]          = useState(null);
   const [isProjectModalOpen,      setIsProjectModalOpen]      = useState(false);
@@ -57,10 +51,6 @@ export default function AdminPortal({ onNavigate }) {
   const [projectImagePreview,     setProjectImagePreview]     = useState('');
   const [projectGalleryFiles,     setProjectGalleryFiles]     = useState([]);
   const [projectGalleryPreviews,  setProjectGalleryPreviews]  = useState([]);
-  const [editingPost,      setEditingPost]      = useState(null);
-  const [isBlogModalOpen,  setIsBlogModalOpen]  = useState(false);
-  const [blogImageFile,    setBlogImageFile]    = useState(null);
-  const [blogImagePreview, setBlogImagePreview] = useState('');
   const [editingTestimonial,     setEditingTestimonial]     = useState(null);
   const [isTestimonialModalOpen, setIsTestimonialModalOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
@@ -107,17 +97,16 @@ export default function AdminPortal({ onNavigate }) {
     showToast('Signed out of Studio Atelier', 'info');
   };
   const loadAllData = async (isManualRefresh = false) => {
-    if (isManualRefresh) setIsRefreshing(true); else setIsLoading(true);
+    if (isManualRefresh) setIsRefreshing(true);
     try {
-      const [leadsData, projectsData, blogData, testimonialsData] = await Promise.all([
-        getConsultations(), getDynamicProjects(), getDynamicBlogPosts(), getDynamicTestimonials()
+      const [leadsData, projectsData, testimonialsData] = await Promise.all([
+        getConsultations(), getDynamicProjects(), getDynamicTestimonials()
       ]);
       setLeads(leadsData || []); setProjects(projectsData || []);
-      setBlogPosts(blogData || []); setTestimonials(testimonialsData || []);
-      setLastRefreshed(new Date());
+      setTestimonials(testimonialsData || []);
       if (isManualRefresh) showToast('Atelier database synchronized');
     } catch { showToast('Could not sync remote data. Offline cache active.', 'error'); }
-    finally { setIsLoading(false); setIsRefreshing(false); }
+    finally { setIsRefreshing(false); }
   };
   const handleUpdateLeadStatus = async (leadId, newStatus) => {
     try {
@@ -180,36 +169,11 @@ export default function AdminPortal({ onNavigate }) {
       await loadAllData();
     } catch { showToast('Error saving testimonial. Please try again.', 'error'); }
   };
-  const handleOpenNewPost = () => {
-    setEditingPost({ title: '', category: 'CIVIC ARCHITECTURE', readTime: '4 MIN READ', excerpt: '', fullContent: '', image: '' });
-    setBlogImageFile(null); setBlogImagePreview(''); setIsBlogModalOpen(true);
-  };
-  const handleOpenEditPost = (post) => { setEditingPost({ ...post }); setBlogImageFile(null); setBlogImagePreview(''); setIsBlogModalOpen(true); };
-  const handleSaveBlogPost = async (e) => {
-    e.preventDefault(); if (!editingPost) return;
-    setUploadStatus({ active: true, stage: 'Preparing article...', percent: 10 });
-    try {
-      let postData = { ...editingPost };
-      if (blogImageFile) {
-        const r = await uploadImage(blogImageFile, 'blog', (p) => {
-          setUploadStatus({ active: true, stage: p.stage === 'compressing' ? 'Optimizing cover photo...' : `Uploading (${p.percent}%)...`, percent: p.percent });
-        });
-        if (r.success) { postData.image = r.url; }
-        else { showToast('Image processing failed: ' + (r.error || 'Unknown error'), 'error'); setUploadStatus({ active: false, stage: '', percent: 0 }); return; }
-      }
-      setUploadStatus({ active: true, stage: 'Publishing to journal...', percent: 95 });
-      await saveBlogPost(postData);
-      setIsBlogModalOpen(false); setEditingPost(null); setBlogImageFile(null); setBlogImagePreview('');
-      showToast('Journal article published');
-      await loadAllData();
-    } catch { showToast('Error publishing article. Please try again.', 'error'); }
-    finally { setUploadStatus({ active: false, stage: '', percent: 0 }); }
-  };
+
   const handleConfirmDelete = async () => {
     if (!deleteConfirm) return;
     try {
       if (deleteConfirm.type === 'project')     { await deleteProject(deleteConfirm.id);     showToast('Project removed from portfolio'); }
-      if (deleteConfirm.type === 'blog')        { await deleteBlogPost(deleteConfirm.id);    showToast('Article removed from journal'); }
       if (deleteConfirm.type === 'testimonial') { await deleteTestimonial(deleteConfirm.id); showToast('Testimonial removed from studio records'); }
       if (deleteConfirm.type === 'lead')        { await deleteConsultation(deleteConfirm.id); showToast('Inquiry removed from records'); }
       setDeleteConfirm(null); await loadAllData();
@@ -224,10 +188,7 @@ export default function AdminPortal({ onNavigate }) {
     const s = !searchQuery || (l.fullName||'').toLowerCase().includes(searchQuery.toLowerCase()) || (l.email||'').toLowerCase().includes(searchQuery.toLowerCase()) || (l.telephone||'').toLowerCase().includes(searchQuery.toLowerCase()) || (l.enquiry||l.message||'').toLowerCase().includes(searchQuery.toLowerCase());
     return s && (leadStatusFilter === 'ALL' || (l.status||'new').toLowerCase() === leadStatusFilter.toLowerCase());
   }), [leads, searchQuery, leadStatusFilter]);
-  const filteredBlogPosts = useMemo(() => blogPosts.filter(b => {
-    const s = !searchQuery || (b.title||'').toLowerCase().includes(searchQuery.toLowerCase()) || (b.excerpt||'').toLowerCase().includes(searchQuery.toLowerCase());
-    return s && (blogCategoryFilter === 'ALL' || (b.category||'').toUpperCase() === blogCategoryFilter);
-  }), [blogPosts, searchQuery, blogCategoryFilter]);
+
   const filteredTestimonials = useMemo(() => testimonials.filter(t => {
     const q = (searchQuery||'').toLowerCase();
     const s = !searchQuery || (t.clientName||'').toLowerCase().includes(q) || (t.organization||'').toLowerCase().includes(q) || (t.role||'').toLowerCase().includes(q) || (t.quote||'').toLowerCase().includes(q);
@@ -296,11 +257,10 @@ export default function AdminPortal({ onNavigate }) {
           </div>
         )}
 
-        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[
             { tab: 'leads',        label: 'Client Inquiries',      count: leads.length,        icon: <Users className="w-5 h-5" />,    color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20', sub: <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />{newLeadsCount} New Leads</span>, action: 'View matrix' },
             { tab: 'projects',     label: 'Portfolio Showcase',    count: projects.length,     icon: <Layers className="w-5 h-5" />,   color: 'bg-ashara-teal/10 dark:bg-ashara-gold/15 text-ashara-teal dark:text-white border-ashara-teal/20 dark:border-ashara-gold/30', sub: <span className="text-ashara-teal dark:text-white font-light truncate">Gov • Corp • Commercial</span>, action: 'Manage' },
-            { tab: 'blog',         label: 'Architectural Journal', count: blogPosts.length,    icon: <FileText className="w-5 h-5" />, color: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20', sub: <span className="text-ashara-teal dark:text-white font-light truncate">Published Essays & Insights</span>, action: 'Edit' },
             { tab: 'testimonials', label: 'Client Voices',         count: testimonials.length, icon: <Quote className="w-5 h-5" />,   color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20', sub: <span className="text-ashara-teal dark:text-white font-light truncate">Project Reviews & Ratings</span>, action: 'Manage' },
           ].map(({ tab, label, count, icon, color, sub, action }) => (
             <div key={tab} onClick={() => setActiveTab(tab)}
@@ -326,7 +286,6 @@ export default function AdminPortal({ onNavigate }) {
               {[
                 { key: 'projects',     label: 'Projects Showcase', icon: <Layers className="w-4 h-4" />,   count: projects.length },
                 { key: 'leads',        label: 'Client Enquiries',  icon: <Users className="w-4 h-4" />,    count: leads.length, badge: newLeadsCount },
-                { key: 'blog',         label: 'The Journal',       icon: <FileText className="w-4 h-4" />, count: blogPosts.length },
                 { key: 'testimonials', label: 'Client Voices',     icon: <Quote className="w-4 h-4" />,    count: testimonials.length },
               ].map(({ key, label, icon, count, badge }) => (
                 <button key={key} onClick={() => { setActiveTab(key); setSearchQuery(''); }}
@@ -338,7 +297,6 @@ export default function AdminPortal({ onNavigate }) {
             </nav>
             <div className="flex items-center gap-3">
               {activeTab === 'projects' && <button onClick={handleOpenNewProject} className="inline-flex items-center gap-2 px-4 py-2.5 bg-ashara-teal hover:bg-ashara-teal-hover dark:bg-ashara-gold dark:hover:bg-ashara-gold/90 text-white dark:text-ashara-dark text-xs uppercase tracking-wider font-bold rounded-xs transition shadow-sm"><Plus className="w-4 h-4 stroke-[2.5]" /><span>Add New Project</span></button>}
-              {activeTab === 'blog' && <button onClick={handleOpenNewPost} className="inline-flex items-center gap-2 px-4 py-2.5 bg-ashara-teal hover:bg-ashara-teal-hover dark:bg-ashara-gold dark:hover:bg-ashara-gold/90 text-white dark:text-ashara-dark text-xs uppercase tracking-wider font-bold rounded-xs transition shadow-sm"><Plus className="w-4 h-4 stroke-[2.5]" /><span>Publish New Article</span></button>}
               {activeTab === 'testimonials' && <button onClick={handleOpenNewTestimonial} className="inline-flex items-center gap-2 px-4 py-2.5 bg-ashara-teal hover:bg-ashara-teal-hover dark:bg-ashara-gold dark:hover:bg-ashara-gold/90 text-white dark:text-ashara-dark text-xs uppercase tracking-wider font-bold rounded-xs transition shadow-sm"><Plus className="w-4 h-4 stroke-[2.5]" /><span>Add Testimonial</span></button>}
             </div>
           </div>
@@ -346,7 +304,7 @@ export default function AdminPortal({ onNavigate }) {
             <div className="relative flex-1 max-w-md">
               <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-ashara-teal dark:text-white" />
               <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={activeTab === 'projects' ? 'Search projects...' : activeTab === 'leads' ? 'Search inquiries...' : activeTab === 'testimonials' ? 'Search reviews...' : 'Search articles...'}
+                placeholder={activeTab === 'projects' ? 'Search projects...' : activeTab === 'leads' ? 'Search inquiries...' : 'Search reviews...'}
                 className="w-full pl-10 pr-8 py-2 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs text-xs text-ashara-teal dark:text-white placeholder-gray-400 focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold transition" />
               {searchQuery && <button onClick={() => setSearchQuery('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ashara-teal dark:text-white hover:text-ashara-teal p-0.5"><X className="w-3.5 h-3.5" /></button>}
             </div>
@@ -392,7 +350,6 @@ export default function AdminPortal({ onNavigate }) {
 
         {activeTab === 'projects'     && <AdminProjectsTab     filteredProjects={filteredProjects}       searchQuery={searchQuery} onOpenNew={handleOpenNewProject}     onOpenEdit={handleOpenEditProject}     onDelete={setDeleteConfirm} />}
         {activeTab === 'leads'        && <AdminLeadsTab        filteredLeads={filteredLeads}              searchQuery={searchQuery} copiedId={copiedId}                   onCopy={handleCopy}                    onUpdateStatus={handleUpdateLeadStatus} onDelete={setDeleteConfirm} />}
-        {activeTab === 'blog'         && <AdminBlogTab         filteredBlogPosts={filteredBlogPosts}      searchQuery={searchQuery} onOpenNew={handleOpenNewPost}         onOpenEdit={handleOpenEditPost}        onDelete={setDeleteConfirm} />}
         {activeTab === 'testimonials' && <AdminTestimonialsTab filteredTestimonials={filteredTestimonials} searchQuery={searchQuery} projects={projects}                  onOpenNew={handleOpenNewTestimonial}   onOpenEdit={handleOpenEditTestimonial} onDelete={setDeleteConfirm} />}
 
       </div>
@@ -409,16 +366,7 @@ export default function AdminPortal({ onNavigate }) {
           onSubmit={handleSaveProject}
         />
       )}
-      {isBlogModalOpen && (
-        <AdminBlogModal
-          editingPost={editingPost} setEditingPost={setEditingPost}
-          blogImageFile={blogImageFile} setBlogImageFile={setBlogImageFile}
-          blogImagePreview={blogImagePreview} setBlogImagePreview={setBlogImagePreview}
-          uploadStatus={uploadStatus} formatFileSize={formatFileSize}
-          onClose={() => { if (!uploadStatus.active) { setIsBlogModalOpen(false); setBlogImageFile(null); setBlogImagePreview(''); }}}
-          onSubmit={handleSaveBlogPost}
-        />
-      )}
+
       {isTestimonialModalOpen && (
         <AdminTestimonialModal
           editingTestimonial={editingTestimonial} setEditingTestimonial={setEditingTestimonial}

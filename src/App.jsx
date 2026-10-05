@@ -132,13 +132,15 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col bg-white text-ashara-teal dark:bg-ashara-dark dark:text-white font-sans antialiased transition-colors duration-300">
       
-      {/* 1. Figma Header Navigation Bar */}
-      <Navbar 
-        activePage={activePage} 
-        setActivePage={handleNavigate} 
-        theme={theme} 
-        toggleTheme={toggleTheme} 
-      />
+      {/* 1. Figma Header Navigation Bar (hidden on admin portal) */}
+      {activePage !== 'admin' && (
+        <Navbar 
+          activePage={activePage} 
+          setActivePage={handleNavigate} 
+          theme={theme} 
+          toggleTheme={toggleTheme} 
+        />
+      )}
 
       {/* 2. Main Page View Router with Suspense */}
       <main className="flex-1">
