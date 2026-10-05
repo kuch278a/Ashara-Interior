@@ -227,9 +227,9 @@ export async function uploadImage(file, folder = 'images', onProgress = null) {
  * @returns {Promise<boolean>} whether EmailJS accepted the send request
  */
 async function sendEnquiryEmail(payload) {
-  const serviceId  = import.meta.env?.VITE_EMAILJS_SERVICE_ID;
-  const templateId = import.meta.env?.VITE_EMAILJS_TEMPLATE_ID;
-  const publicKey  = import.meta.env?.VITE_EMAILJS_PUBLIC_KEY;
+  const serviceId  = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+  const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+  const publicKey  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
   if (!serviceId || !templateId || !publicKey) {
     console.warn('[Email] EmailJS env vars not set — enquiry saved to Firestore but no email sent.');
