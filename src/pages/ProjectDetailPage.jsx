@@ -191,7 +191,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
       <div className="text-center pt-8 pb-20">
         <button
           onClick={() => onNavigate('contact')}
-          className="inline-block px-10 py-3 border border-gray-300 text-ashara-teal dark:text-white text-[10px] uppercase tracking-[0.2em] font-semibold hover:border-ashara-teal hover:text-ashara-teal transition duration-300"
+          className="inline-flex items-center justify-center w-[210px] h-[60px] border border-gray-300 text-ashara-teal dark:text-white text-xs sm:text-sm uppercase tracking-[0.2em] font-bold transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl hover:bg-ashara-teal hover:text-white dark:hover:bg-ashara-gold dark:hover:text-ashara-dark hover:border-transparent"
         >
           ENQUIRE NOW
         </button>

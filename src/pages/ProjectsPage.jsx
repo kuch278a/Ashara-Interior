@@ -63,7 +63,7 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
         {/* Title with horizontal lines */}
         <div className="flex items-center justify-center gap-6 mb-12 max-w-5xl mx-auto">
           <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1"></div>
-          <h2 className="font-serif text-lg sm:text-xl text-ashara-teal dark:text-white font-normal whitespace-nowrap">
+          <h2 className="font-serif text-2xl sm:text-3xl text-ashara-teal dark:text-white font-bold w-[210px] h-[60px] flex items-center justify-center whitespace-nowrap">
             Projects
           </h2>
           <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1"></div>

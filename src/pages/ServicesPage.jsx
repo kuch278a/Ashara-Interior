@@ -120,7 +120,7 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
         <div className="text-center pt-4">
           <button
             onClick={() => onNavigate && onNavigate('contact')}
-            className="inline-block px-8 py-3 border border-gray-300 text-ashara-teal dark:text-white text-[10px] uppercase tracking-[0.2em] font-semibold hover:border-ashara-teal hover:text-ashara-teal transition duration-300"
+            className="inline-flex items-center justify-center w-[210px] h-[60px] border border-gray-300 text-ashara-teal dark:text-white text-xs sm:text-sm uppercase tracking-[0.2em] font-bold transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl hover:bg-ashara-teal hover:text-white dark:hover:bg-ashara-gold dark:hover:text-ashara-dark hover:border-transparent"
           >
             ENQUIRE NOW
           </button>
@@ -134,7 +134,7 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
           {/* Title with horizontal lines */}
           <div className="flex items-center justify-center gap-6 max-w-5xl mx-auto">
             <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1"></div>
-            <h3 className="font-serif text-lg sm:text-xl text-ashara-teal dark:text-white font-normal whitespace-nowrap">
+            <h3 className="font-serif text-2xl sm:text-3xl text-ashara-teal dark:text-white font-bold w-[210px] h-[60px] flex items-center justify-center whitespace-nowrap">
               Recent Projects
             </h3>
             <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1"></div>
