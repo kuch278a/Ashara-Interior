@@ -8,6 +8,24 @@ import AboutPage from './AboutPage';
 import ContactPage from './ContactPage';
 import { getInitialProjects, subscribeToProjects } from '../services/firebaseService';
 
+const TESTIMONIALS = [
+  {
+    quote: "Ashara Interiors transformed our office space beyond our expectations. Their attention to detail and ability to deliver a luxurious, functional design within an incredibly tight deadline was remarkable.",
+    author: "DEPUTY PRESIDENT'S OFFICE",
+    company: "PROSPERITY PARTY HEADQUARTERS"
+  },
+  {
+    quote: "The level of professionalism and artistic vision brought to our project was truly unmatched. They took our vague concepts and turned them into a breathtaking reality.",
+    author: "DIRECTOR OF OPERATIONS",
+    company: "AMIBARA PROPERTIES"
+  },
+  {
+    quote: "Working with Ashara was a seamless experience. Their bespoke approach to interior architecture gave our headquarters a timeless elegance that perfectly represents our brand.",
+    author: "HEAD OF INFRASTRUCTURE",
+    company: "MINISTRY OF REVENUES"
+  }
+];
+
 export default function HomePage({ onNavigate, onSelectProject }) {
   const [works, setWorks] = useState(() => getInitialProjects());
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -15,6 +33,16 @@ export default function HomePage({ onNavigate, onSelectProject }) {
   const [activeAccordionIndex, setActiveAccordionIndex] = useState(0);
   const [isAccordionPaused, setIsAccordionPaused] = useState(false);
   const [isHeroPaused, setIsHeroPaused] = useState(false);
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [isTestimonialPaused, setIsTestimonialPaused] = useState(false);
+
+  useEffect(() => {
+    if (isTestimonialPaused) return;
+    const interval = setInterval(() => {
+      setCurrentTestimonial((prev) => (prev + 1) % TESTIMONIALS.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [isTestimonialPaused]);
 
   // Auto-advance accordion every 2 seconds
   useEffect(() => {
@@ -216,12 +244,12 @@ export default function HomePage({ onNavigate, onSelectProject }) {
       <section className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 text-center pt-12 pb-24">
         
         {/* Title with horizontal lines */}
-        <div className="flex items-center justify-center gap-6 mb-12 max-w-6xl mx-auto px-6">
-          <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1 max-w-[120px]"></div>
-          <h2 className="font-serif text-2xl sm:text-3xl text-ashara-teal dark:text-white font-normal">
+        <div className="flex items-center justify-center gap-6 mb-12 max-w-5xl mx-auto px-6">
+          <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1"></div>
+          <h2 className="font-serif text-lg sm:text-xl text-ashara-teal dark:text-white font-normal">
             Our Works
           </h2>
-          <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1 max-w-[120px]"></div>
+          <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1"></div>
         </div>
         
         {/* Accordion Expanding Carousel with Floating Arrows */}
@@ -350,33 +378,65 @@ export default function HomePage({ onNavigate, onSelectProject }) {
       </section>
 
       {/* 5. TESTIMONIAL CAROUSEL */}
-      <section className="max-w-4xl mx-auto px-6 text-center pt-24 pb-40 relative">
+      <section 
+        className="max-w-4xl mx-auto px-6 text-center pt-24 pb-40 relative"
+        onMouseEnter={() => setIsTestimonialPaused(true)}
+        onMouseLeave={() => setIsTestimonialPaused(false)}
+      >
         {/* Left Arrow */}
-        <button className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-300 hover:text-ashara-teal transition-colors hidden sm:block">
+        <button 
+          onClick={() => setCurrentTestimonial((prev) => (prev - 1 + TESTIMONIALS.length) % TESTIMONIALS.length)}
+          className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-300 hover:text-ashara-teal transition-colors hidden sm:block z-10"
+        >
           <ChevronLeft className="w-8 h-8 stroke-1" />
         </button>
 
-        <blockquote className="font-serif italic text-2xl sm:text-3xl md:text-4xl text-ashara-teal dark:text-white font-light leading-relaxed max-w-4xl mx-auto px-4 mb-8">
-          Ashara Interiors transformed our office space beyond our expectations. Their attention to detail and ability to deliver a luxurious, functional design within an incredibly tight deadline was remarkable.
-        </blockquote>
-        
-        <div className="space-y-1">
-          <p className="text-[12px] sm:text-[13px] md:text-[14px] uppercase tracking-[0.2em] font-bold text-ashara-teal dark:text-white">
-            DEPUTY PRESIDENT'S OFFICE,<br/>
-            PROSPERITY PARTY HEADQUARTERS
-          </p>
+        <div className="overflow-hidden w-full">
+          <div 
+            className="flex transition-transform duration-700 ease-in-out items-center"
+            style={{ transform: `translateX(-${currentTestimonial * 100}%)` }}
+          >
+            {TESTIMONIALS.map((testimonial, idx) => (
+              <div 
+                key={idx}
+                className="w-full flex-shrink-0 px-8 sm:px-12 md:px-16"
+              >
+                <blockquote className="font-serif italic text-2xl sm:text-3xl md:text-4xl text-ashara-teal dark:text-white font-light leading-relaxed max-w-4xl mx-auto mb-8">
+                  {testimonial.quote}
+                </blockquote>
+                
+                <div className="space-y-1">
+                  <p className="text-[12px] sm:text-[13px] md:text-[14px] uppercase tracking-[0.2em] font-bold text-ashara-teal dark:text-white">
+                    {testimonial.author},<br/>
+                    {testimonial.company}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Right Arrow */}
-        <button className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-300 hover:text-ashara-teal transition-colors hidden sm:block">
+        <button 
+          onClick={() => setCurrentTestimonial((prev) => (prev + 1) % TESTIMONIALS.length)}
+          className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-300 hover:text-ashara-teal transition-colors hidden sm:block z-10"
+        >
           <ChevronRight className="w-8 h-8 stroke-1" />
         </button>
 
         {/* Pagination Indicators */}
         <div className="flex justify-center gap-2 mt-8">
-          <button className="w-2 h-2 rounded-full bg-ashara-teal transition-colors"></button>
-          <button className="w-2 h-2 rounded-full bg-gray-300 dark:bg-white/15 hover:bg-gray-400 transition-colors"></button>
-          <button className="w-2 h-2 rounded-full bg-gray-300 dark:bg-white/15 hover:bg-gray-400 transition-colors"></button>
+          {TESTIMONIALS.map((_, idx) => (
+            <button 
+              key={idx}
+              onClick={() => setCurrentTestimonial(idx)}
+              className={`w-2 h-2 rounded-none transition-colors ${
+                currentTestimonial === idx 
+                  ? 'bg-ashara-teal' 
+                  : 'bg-gray-300 dark:bg-white/15 hover:bg-gray-400'
+              }`}
+            ></button>
+          ))}
         </div>
       </section>
 

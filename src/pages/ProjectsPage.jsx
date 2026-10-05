@@ -61,12 +61,12 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
       <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pt-16 pb-24">
         
         {/* Title with horizontal lines */}
-        <div className="flex items-center justify-center gap-6 mb-12">
-          <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1 max-w-[120px]"></div>
-          <h2 className="font-serif text-3xl sm:text-4xl text-ashara-teal dark:text-white font-normal">
+        <div className="flex items-center justify-center gap-6 mb-12 max-w-5xl mx-auto">
+          <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1"></div>
+          <h2 className="font-serif text-lg sm:text-xl text-ashara-teal dark:text-white font-normal whitespace-nowrap">
             Projects
           </h2>
-          <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1 max-w-[120px]"></div>
+          <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1"></div>
         </div>
 
         {/* 2-Column Grid matching Figma */}

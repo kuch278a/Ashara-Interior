@@ -54,22 +54,23 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
           aria-label="Ashara Interior Design and Building"
         >
           <div className="flex items-center select-none group">
-            <img
-              src={asset_1}
-              alt="Ashara Interior Design and Building"
-              decoding="async"
-              className="object-contain transition-transform duration-300 group-hover:scale-105 dark:brightness-0 dark:invert"
-              style={{ height: '48px', width: 'auto' }}
-              onError={(e) => {
-                e.target.src = {asset_2};
-              }}
-            />
+            <div className="overflow-hidden h-[44px] w-[44px] relative flex-shrink-0 rounded-full">
+              <img
+                src={asset_1}
+                alt="Ashara Interior Design and Building"
+                decoding="async"
+                className="absolute top-[0%] left-1/2 -translate-x-1/2 w-[56px] max-w-none h-auto transition-transform duration-300 group-hover:scale-105 dark:brightness-0 dark:invert"
+                onError={(e) => {
+                  e.target.src = {asset_2};
+                }}
+              />
+            </div>
           </div>
           <div className="hidden sm:flex flex-col text-left">
-            <span className="font-serif tracking-[0.2em] font-bold text-[12px] text-ashara-teal dark:text-white uppercase">
+            <span className="font-sans uppercase tracking-[0.2em] text-ashara-teal dark:text-white font-bold text-[18px]">
               Ashara
             </span>
-            <span className="text-[9px] uppercase tracking-[0.3em] text-ashara-teal dark:text-white font-light mt-0.5">
+            <span className="text-[9px] uppercase tracking-[0.3em] text-ashara-teal dark:text-white mt-0.5">
               Interior Design & Building
             </span>
           </div>

@@ -63,7 +63,7 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
                 How We Work
               </h1>
               <p className="text-sm sm:text-base leading-relaxed text-white/90 font-light max-w-3xl mx-auto">
-                Ashara Interiors is an interior design, architecture, and build company passionate about creating inspiring spaces that radiate positivity and reflect our clients' unique identities. Specializing in governmental bureaus, commercial spaces, hotels, residential projects, and cultural landmarks, we offer comprehensive services ranging from stand-alone interior design to complete turnkey solutions.
+                Ashara Interiors is an interior design, architecture, and build company passionate about creating inspiring spaces that radiate positivity and reflect our clients' unique identities. Specializing in governmental bureaus, commercial spaces, hotels, residential projects, and cultural landmarks, we offer comprehensive services ranging from stand-alone interior design to complete turnkey solutions. On larger projects, we seamlessly integrate with your existing team of architects and contractors, or provide end-to-end project management from concept to completion.
               </p>
             </div>
           </div>
@@ -132,12 +132,12 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
         <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pt-8 pb-24 space-y-12 text-center">
           
           {/* Title with horizontal lines */}
-          <div className="flex items-center justify-center gap-6">
-            <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1 max-w-[120px]"></div>
-            <h3 className="font-serif text-2xl sm:text-3xl text-ashara-teal dark:text-white font-normal">
+          <div className="flex items-center justify-center gap-6 max-w-5xl mx-auto">
+            <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1"></div>
+            <h3 className="font-serif text-lg sm:text-xl text-ashara-teal dark:text-white font-normal whitespace-nowrap">
               Recent Projects
             </h3>
-            <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1 max-w-[120px]"></div>
+            <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1"></div>
           </div>
 
           {/* 2 Project Cards Grid matching Figma (text below image) */}
