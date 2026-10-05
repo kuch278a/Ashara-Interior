@@ -41,23 +41,12 @@ export default function AdminTestimonialModal({ editingTestimonial, setEditingTe
               <label className="block text-[10px] uppercase tracking-wider font-bold text-ashara-teal dark:text-white mb-1">Linked Project</label>
               <select value={editingTestimonial.projectId || ''} onChange={(e) => setEditingTestimonial({ ...editingTestimonial, projectId: e.target.value })}
                 className="w-full px-3 py-2 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs text-ashara-teal dark:text-white rounded-xs focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold">
-                <option value="">General Studio Testimonial</option>
-                {projects.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}
+                <option value="" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">General Studio Testimonial</option>
+                {projects.map((p) => <option key={p.id} value={p.id} className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">{p.title}</option>)}
               </select>
             </div>
           </div>
-          {/* Star Rating */}
-          <div>
-            <label className="block text-[10px] uppercase tracking-wider font-bold text-ashara-teal dark:text-white mb-1">Star Rating (1 - 5)</label>
-            <div className="flex items-center gap-2">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button key={star} type="button" onClick={() => setEditingTestimonial({ ...editingTestimonial, rating: star })} className="p-1 hover:scale-115 transition-transform">
-                  <Star className={`w-5 h-5 ${star <= (editingTestimonial.rating || 5) ? 'fill-amber-500 text-amber-500' : 'text-gray-300 dark:text-white'}`} />
-                </button>
-              ))}
-              <span className="text-xs font-semibold text-ashara-teal dark:text-white ml-2">{editingTestimonial.rating || 5} Stars</span>
-            </div>
-          </div>
+
           <div>
             <label className="block text-[10px] uppercase tracking-wider font-bold text-ashara-teal dark:text-white mb-1">Client Quote / Review *</label>
             <textarea rows="4" required value={editingTestimonial.quote || ''} onChange={(e) => setEditingTestimonial({ ...editingTestimonial, quote: e.target.value })}

@@ -41,7 +41,7 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
               We create luxury interiors that stand the test of time.
             </h2>
           </div>
-          <div className="md:col-span-7 space-y-6 text-[13px] leading-relaxed text-ashara-teal dark:text-white font-bold">
+          <div className="md:col-span-7 space-y-6 text-[13px] leading-relaxed text-ashara-teal dark:text-white font-normal">
             <p>
               Ashara Interiors is a premier interior architecture and design atelier rooted in Addis Ababa, Ethiopia. We specialize in high-end governmental complexes, prestigious corporate headquarters, luxury residential retreats, and bespoke commercial environments.
             </p>
@@ -71,7 +71,7 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
               <h3 className="font-serif text-2xl text-ashara-teal dark:text-white font-normal whitespace-nowrap">Our Mission</h3>
               <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1"></div>
             </div>
-            <div className="space-y-4 text-[13px] leading-relaxed text-ashara-teal dark:text-white font-bold">
+            <div className="space-y-4 text-[13px] leading-relaxed text-ashara-teal dark:text-white font-normal">
               <p>
                 At Ashara Interiors, our mission is to elevate the human experience through exceptional spatial design. We are dedicated to creating environments that not only reflect the unique identity and aspirations of our clients but also foster well-being, productivity, and inspiration. 
               </p>
@@ -105,7 +105,7 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
               <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1"></div>
               <h3 className="font-serif text-2xl text-ashara-teal dark:text-white font-normal whitespace-nowrap">Our Vision</h3>
             </div>
-            <div className="space-y-4 text-[13px] leading-relaxed text-ashara-teal dark:text-white font-bold">
+            <div className="space-y-4 text-[13px] leading-relaxed text-ashara-teal dark:text-white font-normal">
               <p>
                 Our vision is to be the leading force in luxury interior architecture across Africa and beyond. We envision a future where our designs set the global standard for elegance and innovation.
               </p>

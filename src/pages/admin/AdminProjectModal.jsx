@@ -64,11 +64,12 @@ export default function AdminProjectModal({
                   <select value={editingProject.category || editingProject.tag || 'GOVERNMENTAL'}
                     onChange={(e) => setEditingProject({ ...editingProject, category: e.target.value, tag: e.target.value })}
                     className="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm text-ashara-teal dark:text-white rounded-xs focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold">
-                    <option value="GOVERNMENTAL">GOVERNMENTAL</option>
-                    <option value="PRIVATE ORGANIZATION">PRIVATE ORGANIZATION</option>
-                    <option value="PRIVATE CORPORATION">PRIVATE CORPORATION</option>
-                    <option value="PRIVATE COMPANY">PRIVATE COMPANY</option>
-                    <option value="COMMERCIAL">COMMERCIAL</option>
+                    <option value="GOVERNMENTAL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">GOVERNMENTAL</option>
+                    <option value="PRIVATE ORGANIZATION" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">PRIVATE ORGANIZATION</option>
+                    <option value="PRIVATE CORPORATION" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">PRIVATE CORPORATION</option>
+                    <option value="PRIVATE COMPANY" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">PRIVATE COMPANY</option>
+                    <option value="COMMERCIAL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">COMMERCIAL</option>
+                    <option value="RESIDENTIAL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">RESIDENTIAL</option>
                   </select>
                 </div>
                 <div>

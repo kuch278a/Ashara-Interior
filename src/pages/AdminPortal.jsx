@@ -261,7 +261,7 @@ export default function AdminPortal({ onNavigate }) {
           {[
             { tab: 'leads',        label: 'Client Inquiries',      count: leads.length,        icon: <Users className="w-5 h-5" />,    color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20', sub: <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />{newLeadsCount} New Leads</span>, action: 'View matrix' },
             { tab: 'projects',     label: 'Portfolio Showcase',    count: projects.length,     icon: <Layers className="w-5 h-5" />,   color: 'bg-ashara-teal/10 dark:bg-ashara-gold/15 text-ashara-teal dark:text-white border-ashara-teal/20 dark:border-ashara-gold/30', sub: <span className="text-ashara-teal dark:text-white font-light truncate">Gov • Corp • Commercial</span>, action: 'Manage' },
-            { tab: 'testimonials', label: 'Client Voices',         count: testimonials.length, icon: <Quote className="w-5 h-5" />,   color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20', sub: <span className="text-ashara-teal dark:text-white font-light truncate">Project Reviews & Ratings</span>, action: 'Manage' },
+            { tab: 'testimonials', label: 'Client Voices',         count: testimonials.length, icon: <Quote className="w-5 h-5" />,   color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20', sub: <span className="text-ashara-teal dark:text-white font-light truncate">Project Reviews</span>, action: 'Manage' },
           ].map(({ tab, label, count, icon, color, sub, action }) => (
             <div key={tab} onClick={() => setActiveTab(tab)}
               className={`p-5 bg-white dark:bg-[#0C1726] border rounded-xs shadow-xs hover:shadow-md transition-all cursor-pointer group ${activeTab === tab ? 'border-ashara-teal dark:border-ashara-gold ring-1 ring-ashara-teal dark:ring-ashara-gold' : 'border-gray-200 dark:border-white/10'}`}>
@@ -314,11 +314,12 @@ export default function AdminPortal({ onNavigate }) {
                   <Filter className="w-3.5 h-3.5" />
                   <select value={projectCategoryFilter} onChange={(e) => setProjectCategoryFilter(e.target.value)}
                     className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs text-xs text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal">
-                    <option value="ALL">All Categories ({projects.length})</option>
-                    <option value="GOVERNMENTAL">Governmental</option>
-                    <option value="PRIVATE">Private Entities</option>
-                    <option value="CORPORATION">Corporations</option>
-                    <option value="COMMERCIAL">Commercial</option>
+                    <option value="ALL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">All Categories ({projects.length})</option>
+                    <option value="GOVERNMENTAL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Governmental</option>
+                    <option value="PRIVATE" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Private Entities</option>
+                    <option value="CORPORATION" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Corporations</option>
+                    <option value="COMMERCIAL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Commercial</option>
+                    <option value="RESIDENTIAL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Residential</option>
                   </select>
                 </div>
               )}
@@ -327,8 +328,8 @@ export default function AdminPortal({ onNavigate }) {
                   <Filter className="w-3.5 h-3.5" />
                   <select value={testimonialFilter} onChange={(e) => setTestimonialFilter(e.target.value)}
                     className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs text-xs text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal">
-                    <option value="ALL">All Project Links ({testimonials.length})</option>
-                    {projects.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}
+                    <option value="ALL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">All Project Links ({testimonials.length})</option>
+                    {projects.map((p) => <option key={p.id} value={p.id} className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">{p.title}</option>)}
                   </select>
                 </div>
               )}
@@ -337,10 +338,10 @@ export default function AdminPortal({ onNavigate }) {
                   <SlidersHorizontal className="w-3.5 h-3.5" />
                   <select value={leadStatusFilter} onChange={(e) => setLeadStatusFilter(e.target.value)}
                     className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs text-xs text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal">
-                    <option value="ALL">All Inquiries ({leads.length})</option>
-                    <option value="new">New Inquiries ({newLeadsCount})</option>
-                    <option value="contacted">Contacted</option>
-                    <option value="completed">Completed</option>
+                    <option value="ALL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">All Inquiries ({leads.length})</option>
+                    <option value="new" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">New Inquiries ({newLeadsCount})</option>
+                    <option value="contacted" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Contacted</option>
+                    <option value="completed" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Completed</option>
                   </select>
                 </div>
               )}

@@ -26,10 +26,7 @@ export default function AdminTestimonialsTab({ filteredTestimonials, searchQuery
             const linkedProj = projects.find(p => String(p.id) === String(t.projectId));
             return (
               <div key={t.id} className="bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 p-6 rounded-xs shadow-xs hover:shadow-md transition-all flex flex-col justify-between space-y-4 relative group">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-1 text-amber-500">
-                    {[...Array(t.rating || 5)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-current" />)}
-                  </div>
+                <div className="flex items-center justify-end gap-2">
                   {linkedProj ? (
                     <span className="text-[9px] uppercase tracking-wider font-semibold px-2.5 py-0.5 rounded-full bg-ashara-teal/10 text-ashara-teal dark:text-white border border-ashara-teal/20 truncate max-w-[160px]">{linkedProj.title}</span>
                   ) : (
