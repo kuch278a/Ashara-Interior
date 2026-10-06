@@ -55,14 +55,14 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
     <div className="bg-white dark:bg-ashara-dark min-h-screen animate-fade-in pb-24 transition-colors duration-300">
       
       {/* 1. FULL-WIDTH HERO IMAGE */}
-      <section className="w-full h-[400px] sm:h-[500px] lg:h-[600px] bg-gray-100">
+      <section className="w-full h-[400px] sm:h-[500px] lg:h-[600px] bg-gray-100 dark:bg-ashara-dark">
         <img
           src={gallery[0] || activeProject.fallbackImage}
           alt={`${activeProject.title} Hero`}
           loading="eager"
           decoding="async"
           fetchPriority="high"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-center"
         />
       </section>
 
@@ -76,7 +76,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
               {activeProject.title}
             </h1>
             <p className="text-[10px] uppercase tracking-[0.2em] text-ashara-teal dark:text-white font-medium">
-              {activeProject.subtitle || activeProject.category || 'GOVERNMENTAL'}
+              {activeProject.category && `${activeProject.category} | `}{activeProject.subtitle}
             </p>
           </div>
 
@@ -93,13 +93,13 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
       {/* 3. FULL-WIDTH IMAGE 2 */}
       {gallery[1] && (
         <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pb-12">
-          <div className="w-full aspect-[21/9] bg-gray-200">
+          <div className="w-full aspect-[21/9] bg-gray-200 dark:bg-gray-800">
             <img
               src={gallery[1]}
               alt="Project View 2"
               loading="lazy"
               decoding="async"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover object-center"
             />
           </div>
         </section>
@@ -110,24 +110,24 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
         <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pb-12">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
             {gallery[2] && (
-              <div className="aspect-[4/3] bg-gray-200">
+              <div className="aspect-[4/3] bg-gray-200 dark:bg-gray-800">
                 <img
                   src={gallery[2]}
                   alt="Project View 3"
                   loading="lazy"
                   decoding="async"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-center"
                 />
               </div>
             )}
             {gallery[3] && (
-              <div className="aspect-[4/3] bg-gray-200">
+              <div className="aspect-[4/3] bg-gray-200 dark:bg-gray-800">
                 <img
                   src={gallery[3]}
                   alt="Project View 4"
                   loading="lazy"
                   decoding="async"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-center"
                 />
               </div>
             )}
@@ -147,24 +147,24 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
         <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 py-12">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
             {gallery[4] && (
-              <div className="aspect-[4/3] bg-gray-200">
+              <div className="aspect-[4/3] bg-gray-200 dark:bg-gray-800">
                 <img
                   src={gallery[4]}
                   alt="Project View 5"
                   loading="lazy"
                   decoding="async"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-center"
                 />
               </div>
             )}
             {gallery[5] && (
-              <div className="aspect-[4/3] bg-gray-200">
+              <div className="aspect-[4/3] bg-gray-200 dark:bg-gray-800">
                 <img
                   src={gallery[5]}
                   alt="Project View 6"
                   loading="lazy"
                   decoding="async"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-center"
                 />
               </div>
             )}
@@ -175,13 +175,13 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
       {/* 7. FULL-WIDTH IMAGE: Image 7 */}
       {gallery[6] && (
         <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pb-16">
-          <div className="w-full aspect-[21/9] bg-gray-200">
+          <div className="w-full aspect-[21/9] bg-gray-200 dark:bg-gray-800">
             <img
               src={gallery[6]}
               alt="Project View 7"
               loading="lazy"
               decoding="async"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover object-center"
             />
           </div>
         </section>
@@ -209,15 +209,15 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
           <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1 max-w-[120px]"></div>
         </div>
 
-        {/* 2 Project Cards Grid matching Figma (text below image) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-12 text-left">
+        {/* 2 Project Cards Grid matching the new Masonry style */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 text-left">
           {recommendations.map((rec) => (
             <article 
               key={rec.id}
               onClick={() => handleRecommendationClick(rec)}
-              className="group cursor-pointer block"
+              className="group cursor-pointer break-inside-avoid relative overflow-hidden rounded-sm"
             >
-              <div className="w-full aspect-[4/3] overflow-hidden bg-gray-200 mb-4">
+              <div className="w-full relative overflow-hidden bg-gray-100 dark:bg-gray-800">
                 <img
                   src={rec.image}
                   loading="lazy"
@@ -227,16 +227,15 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
                     e.target.src = rec.fallbackImage;
                   }}
                   alt={rec.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                  className="w-full h-auto object-cover object-center transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
                 />
-              </div>
-              <div>
-                <h4 className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white mb-1 group-hover:text-ashara-teal transition-colors">
-                  {rec.title}
-                </h4>
-                <span className="text-[9px] uppercase tracking-[0.2em] text-ashara-teal dark:text-white font-medium">
-                  {rec.category || rec.subtitle}
-                </span>
+                
+                {/* Elegant Hover Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
+                  <h4 className="font-serif text-xl sm:text-2xl text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ease-out">
+                    {rec.title}
+                  </h4>
+                </div>
               </div>
             </article>
           ))}

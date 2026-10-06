@@ -78,7 +78,7 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
               className="group cursor-pointer block"
             >
               {/* Photo */}
-              <div className="w-full aspect-[4/3] overflow-hidden bg-gray-200 mb-4">
+              <div className="w-full aspect-[4/3] overflow-hidden bg-gray-200 dark:bg-gray-800 mb-4">
                 <img
                   src={item.image}
                   loading="lazy"
@@ -87,8 +87,7 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
                     e.target.onerror = null;
                     e.target.src = item.fallbackImage;
                   }}
-                  alt={item.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
               </div>
 

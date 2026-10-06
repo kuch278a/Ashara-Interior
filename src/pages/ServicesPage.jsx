@@ -159,9 +159,6 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
                 <h4 className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white mb-1 group-hover:text-ashara-teal transition-colors">
                   Amibara Properties
                 </h4>
-                <span className="text-[9px] uppercase tracking-[0.2em] text-ashara-teal dark:text-white font-medium">
-                  PRIVATE COMPANY
-                </span>
               </div>
             </article>
 
@@ -181,9 +178,6 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
                 <h4 className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white mb-1 group-hover:text-ashara-teal transition-colors">
                   Ministry of Revenues
                 </h4>
-                <span className="text-[9px] uppercase tracking-[0.2em] text-ashara-teal dark:text-white font-medium">
-                  GOVERNMENTAL
-                </span>
               </div>
             </article>
 

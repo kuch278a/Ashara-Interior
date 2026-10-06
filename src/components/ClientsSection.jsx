@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import asset_1 from '../assets/client_logos/eaii_institute.png';
 import asset_2 from '../assets/client_logos/prosperity_party.png';
 import asset_3 from '../assets/client_logos/customs_commission.png';
@@ -13,6 +13,7 @@ import asset_11 from '../assets/client_logos/united_beverages.png';
 import asset_12 from '../assets/client_logos/amibara_properties.png';
 import asset_13 from '../assets/client_logos/bw_hill_bottom.jpg';
 import asset_14 from '../assets/client_logos/bw_mela_muziqa.jpg';
+import asset_15 from '../assets/client_logos/ethiopian_air_force.png';
 
 const CLIENTS = [
   { name: 'Artificial Intelligence Institute', image: asset_1, alt: 'Artificial Intelligence Institute' },
@@ -29,6 +30,7 @@ const CLIENTS = [
   { name: 'Amibara Properties', image: asset_12, alt: 'Amibara Properties' },
   { name: 'Hill Bottom Recreation', image: asset_13, alt: 'Hill Bottom Recreation' },
   { name: 'Mela Muziqa', image: asset_14, alt: 'Mela Muziqa' },
+  { name: 'Ethiopian Air Force', image: asset_15, alt: 'Ethiopian Air Force' },
 ];
 
 export default function ClientsSection() {
@@ -50,4 +52,3 @@ export default function ClientsSection() {
     </div>
   );
 }
-

@@ -46,29 +46,33 @@ export default function HomePage({ onNavigate, onSelectProject }) {
 
   // Auto-advance accordion every 2 seconds
   useEffect(() => {
-    if (works.length === 0 || isAccordionPaused) return;
+    const accLen = works.slice(10, 20).length;
+    if (accLen === 0 || isAccordionPaused) return;
     const accordionTimer = setInterval(() => {
-      setActiveAccordionIndex((prev) => (prev + 1) % Math.min(works.length, 5));
+      setActiveAccordionIndex((prev) => (prev + 1) % accLen);
     }, 2000);
     return () => clearInterval(accordionTimer);
-  }, [works.length, isAccordionPaused]);
+  }, [works, isAccordionPaused]);
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % works.length);
+    const heroLen = works.slice(0, 10).length;
+    if (heroLen > 0) setCurrentSlide((prev) => (prev + 1) % heroLen);
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + works.length) % works.length);
+    const heroLen = works.slice(0, 10).length;
+    if (heroLen > 0) setCurrentSlide((prev) => (prev - 1 + heroLen) % heroLen);
   };
 
   // Optional: Auto-advance slides every 6 seconds
   useEffect(() => {
-    if (works.length <= 1 || isHeroPaused) return;
+    const heroLen = works.slice(0, 10).length;
+    if (heroLen <= 1 || isHeroPaused) return;
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % works.length);
+      setCurrentSlide((prev) => (prev + 1) % heroLen);
     }, 6000);
     return () => clearInterval(timer);
-  }, [works.length, isHeroPaused]);
+  }, [works, isHeroPaused]);
 
   useEffect(() => {
     const unsubscribe = subscribeToProjects((data) => {
@@ -128,9 +132,10 @@ export default function HomePage({ onNavigate, onSelectProject }) {
         onMouseLeave={() => setIsHeroPaused(false)}
       >
         <div className="absolute inset-0 pointer-events-none" style={{ transition: 'opacity 2000ms ease-in-out' }}>
-          {works.map((work, index) => {
+          {works.slice(0, 10).map((work, index) => {
+            const heroLen = works.slice(0, 10).length;
             const isActive = index === currentSlide;
-            const isPrev = index === (currentSlide - 1 + works.length) % works.length;
+            const isPrev = index === (currentSlide - 1 + heroLen) % heroLen;
             let zIndex = 0;
             if (isActive) zIndex = 10;
             else if (isPrev) zIndex = 5;
@@ -172,10 +177,10 @@ export default function HomePage({ onNavigate, onSelectProject }) {
         
         <div className="absolute bottom-10 left-10 sm:bottom-16 sm:left-16 lg:bottom-20 lg:left-24 z-10 pr-10 sm:pr-16 lg:pr-24">
           <div className="max-w-4xl">
-            {works[currentSlide] && (
+            {works.slice(0, 10)[currentSlide] && (
               <>
                 <h1 className="font-serif text-[40px] leading-[50px] font-light text-white tracking-tight animate-fade-in-up" key={`title-${currentSlide}`} style={{ animationDelay: '200ms' }}>
-                  {works[currentSlide].title}
+                  {works.slice(0, 10)[currentSlide].title}
                 </h1>
                 <div className="animate-fade-in-up" key={`cat-${currentSlide}`} style={{ animationDelay: '100ms' }}>
                   
@@ -205,7 +210,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
 
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2">
           <div className="flex gap-1.5">
-            {works.map((_, i) => (
+            {works.slice(0, 10).map((_, i) => (
               <button 
                 key={i}
                 type="button" 
@@ -258,7 +263,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
           onMouseEnter={() => setIsAccordionPaused(true)}
           onMouseLeave={() => setIsAccordionPaused(false)}
         >
-          {works.slice(0, 5).map((work, index) => {
+          {works.slice(10, 20).map((work, index) => {
             const isActive = activeAccordionIndex === index;
             return (
               <article
@@ -297,8 +302,8 @@ export default function HomePage({ onNavigate, onSelectProject }) {
             aria-label="Previous Project" 
             onClick={(e) => {
               e.stopPropagation();
-              const maxItems = Math.min(works.length, 5);
-              setActiveAccordionIndex((activeAccordionIndex - 1 + maxItems) % maxItems);
+              const accLen = works.slice(10, 20).length;
+              if (accLen > 0) setActiveAccordionIndex((activeAccordionIndex - 1 + accLen) % accLen);
             }}
             className="absolute left-4 md:left-10 top-1/2 -translate-y-1/2 z-30 text-white/60 hover:text-white transition-all duration-500 hover:-translate-x-2 hover:scale-110 focus:outline-none drop-shadow-xl"
           >
@@ -310,8 +315,8 @@ export default function HomePage({ onNavigate, onSelectProject }) {
             aria-label="Next Project" 
             onClick={(e) => {
               e.stopPropagation();
-              const maxItems = Math.min(works.length, 5);
-              setActiveAccordionIndex((activeAccordionIndex + 1) % maxItems);
+              const accLen = works.slice(10, 20).length;
+              if (accLen > 0) setActiveAccordionIndex((activeAccordionIndex + 1) % accLen);
             }}
             className="absolute right-4 md:right-10 top-1/2 -translate-y-1/2 z-30 text-white/60 hover:text-white transition-all duration-500 hover:translate-x-2 hover:scale-110 focus:outline-none drop-shadow-xl"
           >
@@ -320,8 +325,8 @@ export default function HomePage({ onNavigate, onSelectProject }) {
         </div>
 
         {/* Carousel Indicators */}
-        <div className="mt-6 flex justify-center gap-1.5">
-          {works.slice(0, 5).map((_, index) => (
+        <div className="mt-6 flex justify-center flex-wrap gap-1.5">
+          {works.slice(10, 20).map((_, index) => (
             <button
               key={index}
               type="button"
