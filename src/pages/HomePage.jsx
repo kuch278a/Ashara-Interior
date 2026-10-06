@@ -46,7 +46,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
 
   // Auto-advance accordion every 2 seconds
   useEffect(() => {
-    const accLen = works.slice(10, 20).length;
+    const accLen = works.slice(10, 16).length;
     if (accLen === 0 || isAccordionPaused) return;
     const accordionTimer = setInterval(() => {
       setActiveAccordionIndex((prev) => (prev + 1) % accLen);
@@ -259,18 +259,18 @@ export default function HomePage({ onNavigate, onSelectProject }) {
         
         {/* Accordion Expanding Carousel with Floating Arrows */}
         <div 
-          className="relative flex flex-col md:flex-row h-[80vh] md:h-[60vh] min-h-[600px] md:min-h-[500px] max-h-[900px] md:max-h-[700px] w-full gap-2 overflow-hidden rounded-none group"
+          className="relative flex flex-row h-[60vh] min-h-[400px] md:min-h-[500px] max-h-[700px] w-full gap-2 overflow-x-auto md:overflow-hidden snap-x snap-mandatory md:snap-none rounded-none group [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
           onMouseEnter={() => setIsAccordionPaused(true)}
           onMouseLeave={() => setIsAccordionPaused(false)}
         >
-          {works.slice(10, 20).map((work, index) => {
+          {works.slice(10, 16).map((work, index) => {
             const isActive = activeAccordionIndex === index;
             return (
               <article
                 key={work.id}
                 onClick={() => handleCardClick(work)}
                 onMouseEnter={() => setActiveAccordionIndex(index)}
-                className={`relative cursor-pointer overflow-hidden transition-all duration-700 ease-in-out bg-gray-100 ${isActive ? 'flex-[4]' : 'flex-1'}`}
+                className={`relative cursor-pointer overflow-hidden transition-all duration-700 ease-in-out bg-gray-100 shrink-0 snap-center w-[85vw] md:w-auto ${isActive ? 'md:flex-[4]' : 'md:flex-1'}`}
               >
                 <img
                   src={work.image}
@@ -285,8 +285,8 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                 />
                 <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/10 transition-opacity duration-300 ${isActive ? 'opacity-90' : 'opacity-70'}`}></div>
                 
-                <div className={`absolute inset-0 p-4 sm:p-6 md:p-8 flex flex-col justify-end z-10 transition-opacity duration-500 delay-100 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
-                  <div className={`transform transition-transform duration-500 ease-out ${isActive ? 'translate-y-0' : 'translate-y-4'}`}>
+                <div className={`absolute inset-0 p-4 sm:p-6 md:p-8 flex flex-col justify-end z-10 transition-opacity duration-500 delay-100 ${isActive ? 'opacity-100' : 'opacity-100 md:opacity-0'}`}>
+                  <div className={`transform transition-transform duration-500 ease-out ${isActive ? 'translate-y-0' : 'translate-y-0 md:translate-y-4'}`}>
                     <h3 className={`font-serif text-lg sm:text-xl md:text-2xl lg:text-3xl text-white font-light transition-all duration-500 overflow-hidden overflow-ellipsis ${isActive ? 'whitespace-normal' : 'whitespace-nowrap max-w-[90%] md:max-w-[80%]'}`}>
                       {work.title}
                     </h3>
@@ -302,10 +302,10 @@ export default function HomePage({ onNavigate, onSelectProject }) {
             aria-label="Previous Project" 
             onClick={(e) => {
               e.stopPropagation();
-              const accLen = works.slice(10, 20).length;
+              const accLen = works.slice(10, 16).length;
               if (accLen > 0) setActiveAccordionIndex((activeAccordionIndex - 1 + accLen) % accLen);
             }}
-            className="absolute left-4 md:left-10 top-1/2 -translate-y-1/2 z-30 text-white/60 hover:text-white transition-all duration-500 hover:-translate-x-2 hover:scale-110 focus:outline-none drop-shadow-xl"
+            className="hidden md:block absolute left-4 md:left-10 top-1/2 -translate-y-1/2 z-30 text-white/60 hover:text-white transition-all duration-500 hover:-translate-x-2 hover:scale-110 focus:outline-none drop-shadow-xl"
           >
             <ChevronLeft className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 stroke-[1]" />
           </button>
@@ -315,18 +315,18 @@ export default function HomePage({ onNavigate, onSelectProject }) {
             aria-label="Next Project" 
             onClick={(e) => {
               e.stopPropagation();
-              const accLen = works.slice(10, 20).length;
+              const accLen = works.slice(10, 16).length;
               if (accLen > 0) setActiveAccordionIndex((activeAccordionIndex + 1) % accLen);
             }}
-            className="absolute right-4 md:right-10 top-1/2 -translate-y-1/2 z-30 text-white/60 hover:text-white transition-all duration-500 hover:translate-x-2 hover:scale-110 focus:outline-none drop-shadow-xl"
+            className="hidden md:block absolute right-4 md:right-10 top-1/2 -translate-y-1/2 z-30 text-white/60 hover:text-white transition-all duration-500 hover:translate-x-2 hover:scale-110 focus:outline-none drop-shadow-xl"
           >
             <ChevronRight className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 stroke-[1]" />
           </button>
         </div>
 
         {/* Carousel Indicators */}
-        <div className="mt-6 flex justify-center flex-wrap gap-1.5">
-          {works.slice(10, 20).map((_, index) => (
+        <div className="mt-6 justify-center flex-wrap gap-1.5 hidden md:flex">
+          {works.slice(10, 16).map((_, index) => (
             <button
               key={index}
               type="button"
