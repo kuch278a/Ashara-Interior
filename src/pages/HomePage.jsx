@@ -179,7 +179,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
           <div className="max-w-4xl">
             {works.slice(0, 10)[currentSlide] && (
               <>
-                <h1 className="font-serif text-[40px] leading-[50px] font-light text-white tracking-tight animate-fade-in-up" key={`title-${currentSlide}`} style={{ animationDelay: '200ms' }}>
+                <h1 className="font-serif text-3xl sm:text-[40px] leading-tight sm:leading-[50px] font-light text-white tracking-tight animate-fade-in-up" key={`title-${currentSlide}`} style={{ animationDelay: '200ms' }}>
                   {works.slice(0, 10)[currentSlide].title}
                 </h1>
                 <div className="animate-fade-in-up" key={`cat-${currentSlide}`} style={{ animationDelay: '100ms' }}>
@@ -259,7 +259,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
         
         {/* Accordion Expanding Carousel with Floating Arrows */}
         <div 
-          className="relative flex flex-col md:flex-row h-[60vh] min-h-[500px] max-h-[700px] w-full gap-2 overflow-hidden rounded-none group"
+          className="relative flex flex-col md:flex-row h-[80vh] md:h-[60vh] min-h-[600px] md:min-h-[500px] max-h-[900px] md:max-h-[700px] w-full gap-2 overflow-hidden rounded-none group"
           onMouseEnter={() => setIsAccordionPaused(true)}
           onMouseLeave={() => setIsAccordionPaused(false)}
         >
@@ -285,9 +285,9 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                 />
                 <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/10 transition-opacity duration-300 ${isActive ? 'opacity-90' : 'opacity-70'}`}></div>
                 
-                <div className={`absolute inset-0 p-6 sm:p-8 flex flex-col justify-end z-10 transition-opacity duration-500 delay-100 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
+                <div className={`absolute inset-0 p-4 sm:p-6 md:p-8 flex flex-col justify-end z-10 transition-opacity duration-500 delay-100 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
                   <div className={`transform transition-transform duration-500 ease-out ${isActive ? 'translate-y-0' : 'translate-y-4'}`}>
-                    <h3 className={`font-serif text-xl sm:text-2xl lg:text-3xl text-white font-light transition-all duration-500 overflow-hidden overflow-ellipsis ${isActive ? 'whitespace-normal' : 'whitespace-nowrap max-w-[80%]'}`}>
+                    <h3 className={`font-serif text-lg sm:text-xl md:text-2xl lg:text-3xl text-white font-light transition-all duration-500 overflow-hidden overflow-ellipsis ${isActive ? 'whitespace-normal' : 'whitespace-nowrap max-w-[90%] md:max-w-[80%]'}`}>
                       {work.title}
                     </h3>
                   </div>

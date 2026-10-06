@@ -42,7 +42,7 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
           className="bg-[#DF6D27] text-white min-h-[100svh] px-6 lg:px-12 flex flex-col items-center justify-center text-center relative overflow-hidden"
         >
           <div className="max-w-4xl mx-auto space-y-6 relative z-10 w-full">
-            <blockquote className="font-serif italic text-4xl sm:text-5xl lg:text-[56px] font-light leading-snug">
+            <blockquote className="font-serif italic text-3xl sm:text-4xl lg:text-[56px] font-light leading-snug">
               “Design with passion, authenticity, and positivity to create spaces that inspire and uplift the soul.”
             </blockquote>
             <div className="space-y-2 pt-6">
