@@ -35,12 +35,30 @@ export default function HomePage({ onNavigate, onSelectProject }) {
   const [isHeroPaused, setIsHeroPaused] = useState(false);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [isTestimonialPaused, setIsTestimonialPaused] = useState(false);
+  const [touchStartX, setTouchStartX] = useState(null);
+
+  const handleTestimonialTouchStart = (e) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleTestimonialTouchEnd = (e) => {
+    if (touchStartX === null) return;
+    const delta = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(delta) > 50) {
+      setCurrentTestimonial((prev) =>
+        delta < 0
+          ? (prev + 1) % TESTIMONIALS.length
+          : (prev - 1 + TESTIMONIALS.length) % TESTIMONIALS.length
+      );
+    }
+    setTouchStartX(null);
+  };
 
   useEffect(() => {
     if (isTestimonialPaused) return;
     const interval = setInterval(() => {
       setCurrentTestimonial((prev) => (prev + 1) % TESTIMONIALS.length);
-    }, 2000);
+    }, 6000);
     return () => clearInterval(interval);
   }, [isTestimonialPaused]);
 
@@ -125,7 +143,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
       {/* 1. HERO SLIDESHOW */}
       <section 
         id="real-hero"
-        className="relative w-full h-screen min-h-[600px] max-h-[900px] overflow-hidden cursor-pointer"
+        className="relative w-full h-[100svh] min-h-[600px] max-h-[900px] overflow-hidden cursor-pointer"
         onClick={(e) => {
           // Prevent navigation if clicking arrows or buttons
           if (e.target.closest('button')) return;
@@ -240,7 +258,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
 
       {/* 2. PHILOSOPHY QUOTE (White background) */}
       <section className="max-w-4xl mx-auto px-6 text-center pt-32 pb-24">
-        <span className="block text-[10px] sm:text-[11px] uppercase tracking-[0.3em] font-semibold text-ashara-teal dark:text-white mb-6">
+        <span className="block text-[11px] uppercase tracking-[0.3em] font-semibold text-ashara-teal dark:text-white mb-6">
           WELCOME
         </span>
         <blockquote className="font-serif italic text-3xl sm:text-4xl text-ashara-teal dark:text-white leading-snug font-light transition-colors duration-300 max-w-3xl mx-auto">
@@ -390,6 +408,8 @@ export default function HomePage({ onNavigate, onSelectProject }) {
         className="max-w-4xl mx-auto px-6 text-center pt-24 pb-40 relative"
         onMouseEnter={() => setIsTestimonialPaused(true)}
         onMouseLeave={() => setIsTestimonialPaused(false)}
+        onTouchStart={handleTestimonialTouchStart}
+        onTouchEnd={handleTestimonialTouchEnd}
       >
         {/* Left Arrow */}
         <button 

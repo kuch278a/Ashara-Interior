@@ -75,7 +75,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
             <h1 className="font-serif text-3xl sm:text-4xl text-ashara-teal dark:text-white font-normal">
               {activeProject.title}
             </h1>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-ashara-teal dark:text-white font-medium">
+            <p className="text-[11px] uppercase tracking-[0.2em] text-ashara-teal dark:text-white font-medium">
               {activeProject.category && `${activeProject.category} | `}{activeProject.subtitle}
             </p>
           </div>

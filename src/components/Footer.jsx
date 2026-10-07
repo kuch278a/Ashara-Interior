@@ -62,7 +62,7 @@ export default function Footer({ onNavigate }) {
           </div>
 
           {/* 4. Navigation */}
-          <nav className="flex flex-col space-y-3 text-[10px] sm:text-xs uppercase tracking-widest text-white/90 font-medium">
+          <nav className="flex flex-col space-y-3 text-xs uppercase tracking-widest text-white/90 font-medium">
             <button onClick={() => onNavigate('projects')} className="text-left hover:text-white transition">
               PROJECTS
             </button>
@@ -103,7 +103,7 @@ export default function Footer({ onNavigate }) {
         </div>
 
         {/* Bottom Copyright Center */}
-        <div className="flex justify-center text-[10px] text-white/60">
+        <div className="flex justify-center text-xs text-white/60">
           <p>©Ashara Interior Design and Building 2026 | All rights reserved</p>
         </div>
 

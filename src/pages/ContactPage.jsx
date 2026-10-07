@@ -118,7 +118,7 @@ export default function ContactPage({ isSection = false }) {
                     setSubmittedId('');
                     setForm({ fullName: '', email: '', telephone: '', enquiry: '' });
                   }}
-                  className="mt-4 px-6 py-2 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-[10px] uppercase tracking-[0.2em] font-medium hover:bg-ashara-teal/90 transition"
+                  className="mt-4 px-6 py-2 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-[11px] uppercase tracking-[0.2em] font-medium hover:bg-ashara-teal/90 transition"
                 >
                   Send Another Enquiry
                 </button>
@@ -132,7 +132,7 @@ export default function ContactPage({ isSection = false }) {
                     placeholder="Full Name"
                     value={form.fullName}
                     onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-                    className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition"
+                    className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-base sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition"
                   />
                 </div>
                 
@@ -144,7 +144,7 @@ export default function ContactPage({ isSection = false }) {
                       placeholder="Email Address"
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition"
+                      className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-base sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition"
                     />
                   </div>
                   <div>
@@ -153,7 +153,7 @@ export default function ContactPage({ isSection = false }) {
                       placeholder="Telephone"
                       value={form.telephone}
                       onChange={(e) => setForm({ ...form, telephone: e.target.value })}
-                      className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition"
+                      className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-base sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition"
                     />
                   </div>
                 </div>
@@ -165,7 +165,7 @@ export default function ContactPage({ isSection = false }) {
                     placeholder="Tell us about your enquiry - New construction / renovation / remodel."
                     value={form.enquiry}
                     onChange={(e) => setForm({ ...form, enquiry: e.target.value })}
-                    className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition resize-none"
+                    className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-base sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition resize-none"
                   ></textarea>
                 </div>
                 
