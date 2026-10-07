@@ -53,7 +53,7 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
       {/* 1. HERO with 'How We Work' Text */}
       {!isSection && (
         <section className="w-full">
-          <div className="relative w-full h-[100svh] min-h-[500px] bg-black flex flex-col items-center justify-center text-center px-6">
+          <div className="relative w-full h-screen supports-[height:100svh]:h-[100svh] min-h-[500px] bg-black flex flex-col items-center justify-center text-center px-6">
             <div 
               className="absolute inset-0 bg-cover bg-center opacity-40"
               style={{ backgroundImage: `url(${asset_1})` }}

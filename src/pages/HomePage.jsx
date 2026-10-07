@@ -182,7 +182,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
       {/* 1. HERO SLIDESHOW */}
       <section 
         id="real-hero"
-        className="relative w-full aspect-[4/3] max-h-[85svh] overflow-hidden cursor-pointer"
+        className="relative w-full h-screen supports-[height:100svh]:h-[100svh] overflow-hidden cursor-pointer"
         onClick={(e) => {
           // Prevent navigation if clicking arrows or buttons
           if (e.target.closest('button')) return;

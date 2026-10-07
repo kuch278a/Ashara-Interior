@@ -18,7 +18,7 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
       
       {/* 1. HERO IMAGE WITH TEXT OVERLAY */}
       <section className="w-full">
-        <div className="relative w-full h-[100svh] min-h-[500px] bg-black flex flex-col items-center justify-center text-center">
+        <div className="relative w-full h-screen supports-[height:100svh]:h-[100svh] min-h-[500px] bg-black flex flex-col items-center justify-center text-center">
           <div 
             className="absolute inset-0 bg-cover bg-center opacity-80"
             style={{ backgroundImage: `url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=85')` }}
