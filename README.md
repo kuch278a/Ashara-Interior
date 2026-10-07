@@ -26,7 +26,7 @@
 
 ## 🌟 Overview
 
-**Ashara Interiors** is a high-performance luxury web platform built with **React**, **Vite**, and **Tailwind CSS**, backed by **Firebase** (Firestore, Auth, Storage). It bridges Ethiopian monumental civic heritage with contemporary architectural rigor — and includes a full-featured content management system for managing projects, blog posts, and consultation leads.
+**Ashara Interiors** is a high-performance luxury web platform built with **React**, **Vite**, and **Tailwind CSS**, backed by **Firebase** (Firestore, Auth, Storage). It bridges Ethiopian monumental civic heritage with contemporary architectural rigor — and includes a full-featured content management system for managing projects, testimonials, and consultation leads.
 
 ### Visual & Architectural Highlights
 - **Default Light Mode**: Initializes in Light Mode with bright cream backgrounds (`#FAF8F5`) by default, while supporting a manual toggle to a luxury dark mode with deep sapphire backgrounds (`#0A1525`).
@@ -45,12 +45,11 @@ Scrolling on the **Home page** takes visitors on a seamless journey through the 
 3. **Our Works: Accordion Panel Carousel** — Expanding image panels with 2s smooth transitions, hover/click to expand, auto-play (5s)
 4. **Services** — "How We Work" hero & 4-tier interactive accordion
 5. **About Us** — Studio story, atelier workspace, 3 Core Value Pillars
-6. **The Ashara Journal** — Blog preview with reading modal
-7. **Clients & Testimonials** — Infinite marquee logo scroller (2 rows, opposite directions, pure CSS)
-8. **Contact Form** — Consultation booking with WhatsApp/Email/Phone actions
+6. **Clients & Testimonials** — Infinite marquee logo scroller (2 rows, opposite directions, pure CSS)
+7. **Contact Form** — Consultation booking with WhatsApp/Email/Phone actions
 
 ### 🎯 Dedicated Single-Page View Isolation
-Clicking any navigation item (**`HOME`**, **`PROJECTS`**, **`OUR SERVICES`**, **`ABOUT US`**, **`BLOG`**, **`CONTACT`**) switches to and renders **ONLY that selected page**.
+Clicking any navigation item (**`HOME`**, **`PROJECTS`**, **`OUR SERVICES`**, **`ABOUT US`**, **`CONTACT`**) switches to and renders **ONLY that selected page**.
 
 ### 🏛️ Real Governmental & Corporate Portfolio
 - **Prosperity Party Office** (Executive presidential suite & convention hall)
@@ -82,11 +81,6 @@ Clicking any navigation item (**`HOME`**, **`PROJECTS`**, **`OUR SERVICES`**, **
 - Grayscale → color on hover with scale-up
 - Dark mode brightness boost (`brightness-125` → `brightness-150` on hover)
 
-### 📖 The Ashara Journal (Blog)
-- Architectural essays with interactive reading modal
-- Dynamically fetched from Firestore
-- Category filters, search
-
 ### 📩 Consultation & Booking Form
 - Interactive form with validation states
 - Direct WhatsApp / Phone / Email contact actions
@@ -110,15 +104,14 @@ Authentication is strictly handled by **Firebase Auth** (The hardcoded sandbox f
 | Feature | Description |
 | :--- | :--- |
 | **Projects Manager** | Add, edit, delete portfolio projects. Main image + **gallery images** (up to 8). Changes sync live to public pages via Firestore. |
-| **Blog / Journal Editor** | Create and update architectural journal articles with rich metadata. |
 | **Consultation Leads** | View and manage all incoming consultation inquiries from the contact form. Status updates (New/Contacted/Completed). Direct WhatsApp/Email actions. |
 | **Testimonials Manager** | Add/edit client testimonials with star ratings, project linking, and featured flag. |
 | **Firebase Status** | Real-time indicator showing whether the app is connected to live Firestore or using local storage fallback. |
 
 ### How CMS Updates Reach the Landing Page
-1. Admin adds/edits a project, blog post, or testimonial in the CMS.
+1. Admin adds/edits a project or testimonial in the CMS.
 2. Data is saved to **Cloud Firestore** (or `localStorage` as fallback).
-3. The public-facing pages (`HomePage`, `ProjectsPage`, `BlogPage`, `ProjectDetailPage`) fetch data dynamically from Firestore on every page load.
+3. The public-facing pages (`HomePage`, `ProjectsPage`, `ProjectDetailPage`) fetch data dynamically from Firestore on every page load.
 4. Changes appear immediately — **no rebuild or redeployment needed**.
 
 ---
@@ -206,16 +199,13 @@ Ashara-Interior/
     │   ├── AsharaLogo.jsx          # Vector SVG brand emblem & typography
     │   ├── ClientsSection.jsx      # Infinite marquee logo scroller (2 rows, pure CSS)
     │   ├── Footer.jsx              # Solid teal footer with quick links & social links
-    │   ├── Navbar.jsx              # Header navigation, scroll progress, theme toggle
-    │   ├── FullScreenHeroSlideshow.jsx  # Hero cross-fade slideshow (2s, 6s interval)
-    │   └── AccordionPanelCarousel.jsx   # Expanding image panel carousel (2s transitions)
+    │   └── Navbar.jsx              # Header navigation, scroll progress, theme toggle
     ├── data/
-    │   └── defaultData.js          # Default projects & blog posts (offline fallback)
+    │   └── defaultData.js          # Default projects, leads & testimonials (offline fallback)
     ├── pages/
     │   ├── admin/                  # Modular CMS tab and modal components
     │   ├── AboutPage.jsx           # Studio story, workspace banner, & 3 Core Pillars
-    │   ├── AdminPortal.jsx         # Access-controlled CMS (projects, blog, leads)
-    │   ├── BlogPage.jsx            # The Ashara Journal & interactive reading modal
+    │   ├── AdminPortal.jsx         # Access-controlled CMS (projects, leads, testimonials)
     │   ├── ContactPage.jsx         # Consultation booking form & studio locations
     │   ├── HomePage.jsx            # Full multi-section continuous scroll experience
     │   ├── ProjectDetailPage.jsx   # Individual project case study with gallery
