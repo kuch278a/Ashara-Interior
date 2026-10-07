@@ -18,13 +18,13 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
       
       {/* 1. HERO IMAGE WITH TEXT OVERLAY */}
       <section className="w-full">
-        <div className="relative w-full h-screen min-h-[500px] bg-black flex flex-col items-center justify-center text-center">
+        <div className="relative w-full h-[100svh] min-h-[500px] bg-black flex flex-col items-center justify-center text-center">
           <div 
             className="absolute inset-0 bg-cover bg-center opacity-80"
             style={{ backgroundImage: `url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=85')` }}
           />
           <div className="relative z-10 space-y-2 text-white">
-            <span className="text-[9px] uppercase tracking-[0.3em] font-semibold">
+            <span className="text-[11px] uppercase tracking-[0.3em] font-semibold">
               WE CREATE
             </span>
             <h1 className="font-serif text-4xl sm:text-5xl font-normal">
@@ -247,7 +247,7 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
           <div className="pt-12 text-center">
             <button 
               onClick={() => onNavigate && onNavigate('projects')}
-              className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] font-semibold text-ashara-teal dark:text-white hover:text-ashara-teal transition-colors"
+              className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.25em] font-semibold text-ashara-teal dark:text-white hover:text-ashara-teal transition-colors"
             >
               VIEW ALL PROJECTS <span className="text-[12px] leading-none mb-0.5">&gt;</span>
             </button>

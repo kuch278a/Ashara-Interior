@@ -53,7 +53,7 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
       {/* 1. HERO with 'How We Work' Text */}
       {!isSection && (
         <section className="w-full">
-          <div className="relative w-full h-screen min-h-[500px] bg-black flex flex-col items-center justify-center text-center px-6">
+          <div className="relative w-full h-[100svh] min-h-[500px] bg-black flex flex-col items-center justify-center text-center px-6">
             <div 
               className="absolute inset-0 bg-cover bg-center opacity-40"
               style={{ backgroundImage: `url(${asset_1})` }}
@@ -187,7 +187,7 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
           <div className="pt-12 text-center">
             <button 
               onClick={() => onNavigate && onNavigate('projects')}
-              className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] font-semibold text-ashara-teal dark:text-white hover:text-ashara-teal transition-colors"
+              className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.25em] font-semibold text-ashara-teal dark:text-white hover:text-ashara-teal transition-colors"
             >
               VIEW ALL PROJECTS <span className="text-[12px] leading-none mb-0.5">&gt;</span>
             </button>
