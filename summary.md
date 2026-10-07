@@ -19,7 +19,7 @@
 | **Frontend Framework** | **React 18.3** (`react`, `react-dom`) | Component-based UI architecture |
 | **Build & Dev Tooling** | **Vite 5.4** (`@vitejs/plugin-react`) | Fast bundling, HMR, and optimized production builds |
 | **Styling & Design System** | **Tailwind CSS 3.4**, PostCSS, Autoprefixer | Custom design tokens, utilities, responsive layouts |
-| **Icons & Micro-UI** | **lucide-react**, `clsx`, `tailwind-merge` | Consistent iconography and conditional class management |
+| **Icons & Micro-UI** | **lucide-react** | Consistent iconography |
 | **Backend & Cloud** | **Firebase 12.18** (Firestore, Auth, Storage) | Real-time database, authentication, asset hosting |
 | **Data Fallback** | **Web Storage API** (`localStorage`, `sessionStorage`) | Seamless offline development and demo mode |
 | **Hosting & CI/CD** | **GitHub Pages** & GitHub Actions Workflow | Automated deployment pipeline |
@@ -68,7 +68,6 @@ Ashara-Interior/
     │   └── AdminPortal.jsx        # Password-protected CMS (Projects, Blog, Leads Manager)
     │
     ├── services/
-    │   ├── firebase.js            # Export gateway for Firebase services
     │   └── firebaseService.js     # Firestore CRUD, Firebase Auth, and Storage upload APIs
     │
     └── data/

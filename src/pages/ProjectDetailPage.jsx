@@ -48,7 +48,6 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
     if (onSelectProject) {
       onSelectProject(recProject);
     }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (

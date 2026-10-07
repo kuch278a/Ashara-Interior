@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, ArrowUp, ChevronDown, ArrowRight } from 'lucide-react';
 import ClientsSection from '../components/ClientsSection';
 import Footer from '../components/Footer';
@@ -7,6 +7,8 @@ import ServicesPage from './ServicesPage';
 import AboutPage from './AboutPage';
 import ContactPage from './ContactPage';
 import { getInitialProjects, subscribeToProjects } from '../services/firebaseService';
+
+const isDesktopView = () => window.matchMedia('(min-width: 768px)').matches;
 
 const TESTIMONIALS = [
   {
@@ -35,23 +37,42 @@ export default function HomePage({ onNavigate, onSelectProject }) {
   const [isHeroPaused, setIsHeroPaused] = useState(false);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [isTestimonialPaused, setIsTestimonialPaused] = useState(false);
-  const [touchStartX, setTouchStartX] = useState(null);
+  const [touchStart, setTouchStart] = useState(null);
+
+  const accordionRef = useRef(null);
+
+  const heroWorks = works.slice(0, 10);
+  // Works 11-16 feed the accordion; fall back to the first six so the section is never empty
+  const accordionWorks = works.length > 10 ? works.slice(10, 16) : works.slice(0, 6);
+
+  // Pause auto-advance and resume after a delay (mirrors the accordion indicator pattern)
+  const pauseAndResumeTestimonials = () => {
+    setIsTestimonialPaused(true);
+    setTimeout(() => setIsTestimonialPaused(false), 5000);
+  };
 
   const handleTestimonialTouchStart = (e) => {
-    setTouchStartX(e.touches[0].clientX);
+    setTouchStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
   };
 
   const handleTestimonialTouchEnd = (e) => {
-    if (touchStartX === null) return;
-    const delta = e.changedTouches[0].clientX - touchStartX;
-    if (Math.abs(delta) > 50) {
+    if (touchStart === null) return;
+    const deltaX = e.changedTouches[0].clientX - touchStart.x;
+    const deltaY = e.changedTouches[0].clientY - touchStart.y;
+    // Only treat as a swipe when horizontal movement dominates vertical drift
+    if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
       setCurrentTestimonial((prev) =>
-        delta < 0
+        deltaX < 0
           ? (prev + 1) % TESTIMONIALS.length
           : (prev - 1 + TESTIMONIALS.length) % TESTIMONIALS.length
       );
+      pauseAndResumeTestimonials();
     }
-    setTouchStartX(null);
+    setTouchStart(null);
+  };
+
+  const handleTestimonialTouchCancel = () => {
+    setTouchStart(null);
   };
 
   useEffect(() => {
@@ -62,29 +83,47 @@ export default function HomePage({ onNavigate, onSelectProject }) {
     return () => clearInterval(interval);
   }, [isTestimonialPaused]);
 
-  // Auto-advance accordion every 2 seconds
+  // Auto-advance accordion every 6 seconds (desktop showcase only)
   useEffect(() => {
-    const accLen = works.slice(10, 16).length;
-    if (accLen === 0 || isAccordionPaused) return;
+    const accLen = accordionWorks.length;
+    if (accLen === 0 || isAccordionPaused || !isDesktopView()) return;
     const accordionTimer = setInterval(() => {
       setActiveAccordionIndex((prev) => (prev + 1) % accLen);
-    }, 2000);
+    }, 6000);
     return () => clearInterval(accordionTimer);
   }, [works, isAccordionPaused]);
 
+  // On mobile the accordion is a manual swipe carousel: keep the active card in sync with scrolling
+  useEffect(() => {
+    const container = accordionRef.current;
+    if (!container || isDesktopView()) return;
+    const handleAccordionScroll = () => {
+      if (isDesktopView()) return;
+      const firstCard = container.children[0];
+      if (!firstCard) return;
+      const step = firstCard.offsetWidth + 8;
+      const idx = Math.round(container.scrollLeft / step);
+      if (idx >= 0 && idx < accordionWorks.length) {
+        setActiveAccordionIndex((prev) => (idx === prev ? prev : idx));
+      }
+    };
+    container.addEventListener('scroll', handleAccordionScroll, { passive: true });
+    return () => container.removeEventListener('scroll', handleAccordionScroll);
+  }, [works]);
+
   const nextSlide = () => {
-    const heroLen = works.slice(0, 10).length;
+    const heroLen = heroWorks.length;
     if (heroLen > 0) setCurrentSlide((prev) => (prev + 1) % heroLen);
   };
 
   const prevSlide = () => {
-    const heroLen = works.slice(0, 10).length;
+    const heroLen = heroWorks.length;
     if (heroLen > 0) setCurrentSlide((prev) => (prev - 1 + heroLen) % heroLen);
   };
 
   // Optional: Auto-advance slides every 6 seconds
   useEffect(() => {
-    const heroLen = works.slice(0, 10).length;
+    const heroLen = heroWorks.length;
     if (heroLen <= 1 || isHeroPaused) return;
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroLen);
@@ -153,8 +192,8 @@ export default function HomePage({ onNavigate, onSelectProject }) {
         onMouseLeave={() => setIsHeroPaused(false)}
       >
         <div className="absolute inset-0 pointer-events-none" style={{ transition: 'opacity 2000ms ease-in-out' }}>
-          {works.slice(0, 10).map((work, index) => {
-            const heroLen = works.slice(0, 10).length;
+          {heroWorks.map((work, index) => {
+            const heroLen = heroWorks.length;
             const isActive = index === currentSlide;
             const isPrev = index === (currentSlide - 1 + heroLen) % heroLen;
             let zIndex = 0;
@@ -190,26 +229,23 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                     transition: 'transform 6000ms ease-out' 
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent pointer-events-none"></div>
+                <div className="absolute inset-0 bg-black/45 pointer-events-none"></div>
               </div>
             );
           })}
         </div>
         
-        <div className="absolute bottom-10 left-10 sm:bottom-16 sm:left-16 lg:bottom-20 lg:left-24 z-10 pr-10 sm:pr-16 lg:pr-24">
-          <div className="max-w-4xl">
-            {works.slice(0, 10)[currentSlide] && (
-              <>
-                <h1 className="font-serif text-3xl sm:text-[40px] leading-tight sm:leading-[50px] font-light text-white tracking-tight animate-fade-in-up" key={`title-${currentSlide}`} style={{ animationDelay: '200ms' }}>
-                  {works.slice(0, 10)[currentSlide].title}
-                </h1>
-                <div className="animate-fade-in-up" key={`cat-${currentSlide}`} style={{ animationDelay: '100ms' }}>
-                  
-                </div>
-              </>
-            )}
-            <div className="mt-8 flex items-center gap-4 animate-fade-in-up" style={{ animationDelay: '300ms' }}></div>
-          </div>
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-6 pointer-events-none">
+          {heroWorks[currentSlide] && (
+            <div className="max-w-4xl space-y-2">
+              <span className="block text-[11px] uppercase tracking-[0.3em] font-semibold text-white/90 animate-fade-in" key={`tag-${currentSlide}`}>
+                {(heroWorks[currentSlide].category || heroWorks[currentSlide].tag || 'Ashara Interiors').toUpperCase()}
+              </span>
+              <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-light text-white tracking-tight animate-fade-in" key={`title-${currentSlide}`} style={{ animationDelay: '150ms' }}>
+                {heroWorks[currentSlide].title}
+              </h1>
+            </div>
+          )}
         </div>
 
         <button 
@@ -231,7 +267,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
 
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2">
           <div className="flex gap-1.5">
-            {works.slice(0, 10).map((_, i) => (
+            {heroWorks.map((_, i) => (
               <button 
                 key={i}
                 type="button" 
@@ -280,11 +316,12 @@ export default function HomePage({ onNavigate, onSelectProject }) {
         
         {/* Accordion Expanding Carousel with Floating Arrows */}
         <div 
-          className="relative flex flex-row h-[60vh] min-h-[400px] md:min-h-[500px] max-h-[700px] w-full gap-2 overflow-x-auto md:overflow-hidden snap-x snap-mandatory md:snap-none rounded-none group [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          ref={accordionRef}
+          className="relative flex flex-row h-[60svh] min-h-[400px] md:min-h-[500px] max-h-[700px] w-full gap-2 overflow-x-auto md:overflow-hidden snap-x snap-mandatory md:snap-none rounded-none group [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
           onMouseEnter={() => setIsAccordionPaused(true)}
           onMouseLeave={() => setIsAccordionPaused(false)}
         >
-          {works.slice(10, 16).map((work, index) => {
+          {accordionWorks.map((work, index) => {
             const isActive = activeAccordionIndex === index;
             return (
               <article
@@ -323,7 +360,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
             aria-label="Previous Project" 
             onClick={(e) => {
               e.stopPropagation();
-              const accLen = works.slice(10, 16).length;
+              const accLen = accordionWorks.length;
               if (accLen > 0) setActiveAccordionIndex((activeAccordionIndex - 1 + accLen) % accLen);
             }}
             className="hidden md:block absolute left-4 md:left-10 top-1/2 -translate-y-1/2 z-30 text-white/60 hover:text-white transition-all duration-500 hover:-translate-x-2 hover:scale-110 focus:outline-none drop-shadow-xl"
@@ -336,7 +373,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
             aria-label="Next Project" 
             onClick={(e) => {
               e.stopPropagation();
-              const accLen = works.slice(10, 16).length;
+              const accLen = accordionWorks.length;
               if (accLen > 0) setActiveAccordionIndex((activeAccordionIndex + 1) % accLen);
             }}
             className="hidden md:block absolute right-4 md:right-10 top-1/2 -translate-y-1/2 z-30 text-white/60 hover:text-white transition-all duration-500 hover:translate-x-2 hover:scale-110 focus:outline-none drop-shadow-xl"
@@ -346,8 +383,8 @@ export default function HomePage({ onNavigate, onSelectProject }) {
         </div>
 
         {/* Carousel Indicators */}
-        <div className="mt-6 justify-center flex-wrap gap-1.5 hidden md:flex">
-          {works.slice(10, 16).map((_, index) => (
+        <div className="mt-6 flex justify-center flex-wrap gap-1.5">
+          {accordionWorks.map((_, index) => (
             <button
               key={index}
               type="button"
@@ -355,6 +392,10 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                 setActiveAccordionIndex(index);
                 setIsAccordionPaused(true);
                 setTimeout(() => setIsAccordionPaused(false), 5000); // Resume after 5 seconds
+                if (!isDesktopView() && accordionRef.current) {
+                  const card = accordionRef.current.children[index];
+                  if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+                }
               }}
               className={`h-2.5 sm:h-3 transition-colors duration-500 ${
                 activeAccordionIndex === index 
@@ -405,11 +446,12 @@ export default function HomePage({ onNavigate, onSelectProject }) {
 
       {/* 5. TESTIMONIAL CAROUSEL */}
       <section 
-        className="max-w-4xl mx-auto px-6 text-center pt-24 pb-40 relative"
+        className="max-w-4xl mx-auto px-6 text-center pt-24 pb-40 relative touch-pan-y"
         onMouseEnter={() => setIsTestimonialPaused(true)}
         onMouseLeave={() => setIsTestimonialPaused(false)}
         onTouchStart={handleTestimonialTouchStart}
         onTouchEnd={handleTestimonialTouchEnd}
+        onTouchCancel={handleTestimonialTouchCancel}
       >
         {/* Left Arrow */}
         <button 
@@ -457,7 +499,10 @@ export default function HomePage({ onNavigate, onSelectProject }) {
           {TESTIMONIALS.map((_, idx) => (
             <button 
               key={idx}
-              onClick={() => setCurrentTestimonial(idx)}
+              onClick={() => {
+                setCurrentTestimonial(idx);
+                pauseAndResumeTestimonials();
+              }}
               className={`w-2 h-2 rounded-none transition-colors ${
                 currentTestimonial === idx 
                   ? 'bg-ashara-teal' 

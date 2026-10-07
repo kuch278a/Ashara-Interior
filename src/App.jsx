@@ -1,4 +1,4 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useLayoutEffect, lazy, Suspense } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import { DEFAULT_PROJECTS_LIST } from './data/defaultData';
@@ -107,6 +107,11 @@ export default function App() {
     sessionStorage.setItem('theme', theme);
   }, [theme]);
 
+  // Every view or project change must start from the top of the page
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+  }, [activePage, selectedProject]);
+
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
   };
@@ -118,7 +123,6 @@ export default function App() {
     } else {
       window.location.hash = page;
     }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSelectProject = (project, source = 'projects') => {
@@ -126,7 +130,6 @@ export default function App() {
     if (source) setProjectSource(source);
     setActivePage('project-detail');
     window.location.hash = 'project-detail';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (

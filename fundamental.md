@@ -165,21 +165,18 @@ runs.
 | Variable | Where | Purpose |
 |---|---|---|
 | `VITE_FIREBASE_*` | `.env` **and** hardcoded fallbacks | Firebase config |
-| `VITE_WEB3FORMS_KEY` | GitHub Actions secret | enquiry relay |
+| `VITE_EMAILJS_*` | `.env` (service ID, template ID, public key) | enquiry email relay |
 
-**The CI build injects the relay key from a repo secret**, set via
-`gh secret set VITE_WEB3FORMS_KEY`. The workflow's Build step has an `env:`
-block for it.
+**The enquiry relay is EmailJS**, configured via `VITE_EMAILJS_SERVICE_ID`,
+`VITE_EMAILJS_TEMPLATE_ID`, and `VITE_EMAILJS_PUBLIC_KEY` in `.env`
+(see `.env.example`). The submission is Firestore-first: the email is
+best-effort, and a missing EmailJS config never blocks the lead from saving.
 
 > The Firebase config is **duplicated as literal fallbacks** in
 > `firebaseService.js` (~line 28). That is why CI builds work without any
 > secrets. Anyone can read the project ID, API key and bucket from the
 > published bundle. Harmless for the API key, but it means rotating config
 > means editing the source, not just `.env`.
-
-The Web3Forms access key ships in the client bundle **by design** — it is
-scoped so it can only deliver to its paired inbox. Lock it to the site domain
-in the Web3Forms dashboard if that option is available.
 
 ---
 
