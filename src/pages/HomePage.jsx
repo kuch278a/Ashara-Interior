@@ -182,7 +182,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
       {/* 1. HERO SLIDESHOW */}
       <section 
         id="real-hero"
-        className="relative w-full h-[100svh] min-h-[600px] max-h-[900px] overflow-hidden cursor-pointer"
+        className="relative w-full aspect-[4/3] max-h-[85svh] overflow-hidden cursor-pointer"
         onClick={(e) => {
           // Prevent navigation if clicking arrows or buttons
           if (e.target.closest('button')) return;
@@ -283,7 +283,8 @@ export default function HomePage({ onNavigate, onSelectProject }) {
             aria-label="Scroll to featured work" 
             onClick={(e) => {
               e.stopPropagation();
-              window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+              const hero = document.getElementById('real-hero');
+              if (hero) window.scrollTo({ top: hero.offsetTop + hero.offsetHeight, behavior: 'smooth' });
             }}
             className="focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-full"
           >
