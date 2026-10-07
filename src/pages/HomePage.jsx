@@ -229,22 +229,17 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                     transition: 'transform 6000ms ease-out' 
                   }}
                 />
-                <div className="absolute inset-0 bg-black/45 pointer-events-none"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent pointer-events-none"></div>
               </div>
             );
           })}
         </div>
         
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-6 pointer-events-none">
+        <div className="absolute bottom-10 left-10 sm:bottom-16 sm:left-16 lg:bottom-20 lg:left-24 z-10 pr-10 sm:pr-16 lg:pr-24">
           {heroWorks[currentSlide] && (
-            <div className="max-w-4xl space-y-2">
-              <span className="block text-[11px] uppercase tracking-[0.3em] font-semibold text-white/90 animate-fade-in" key={`tag-${currentSlide}`}>
-                {(heroWorks[currentSlide].category || heroWorks[currentSlide].tag || 'Ashara Interiors').toUpperCase()}
-              </span>
-              <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-light text-white tracking-tight animate-fade-in" key={`title-${currentSlide}`} style={{ animationDelay: '150ms' }}>
-                {heroWorks[currentSlide].title}
-              </h1>
-            </div>
+            <h1 className="font-serif text-3xl sm:text-[40px] leading-tight sm:leading-[50px] font-light text-white tracking-tight max-w-4xl animate-fade-in" key={`title-${currentSlide}`} style={{ animationDelay: '150ms' }}>
+              {heroWorks[currentSlide].title}
+            </h1>
           )}
         </div>
 
