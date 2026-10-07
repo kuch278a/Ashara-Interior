@@ -11,9 +11,12 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
     const unsubscribe = subscribeToProjects((data) => {
       if (data && data.length > 0) {
         const sorted = [...data].sort((a, b) => {
-          const dateA = new Date(a.updatedAt || a.createdAt || 0).getTime();
-          const dateB = new Date(b.updatedAt || b.createdAt || 0).getTime();
-          return dateB - dateA;
+          if (a.updatedAt && b.updatedAt) {
+            const dateA = new Date(a.updatedAt).getTime();
+            const dateB = new Date(b.updatedAt).getTime();
+            if (dateA !== dateB) return dateB - dateA;
+          }
+          return Number(a.id) - Number(b.id);
         });
         setProjects(sorted);
       }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { DEFAULT_PROJECTS_LIST } from '../data/defaultData';
 import asset_1 from '../assets/p6_revenues.png';
-import ceoImage from '../assets/ceo_photo_original.png';
+import ceoImage from '../assets/michael_dessalegn.jpg';
 
 export default function AboutPage({ onNavigate, onSelectProject, isSection = false }) {
   const handleProjectClick = (projId) => {

@@ -388,6 +388,11 @@ export function mergeWithDefaultProjects(customList = []) {
 export function getInitialProjects() {
   if (typeof window !== 'undefined') {
     try {
+      if (localStorage.getItem('ashara_projects_v') !== '2024_cpr_v4') {
+        localStorage.removeItem('ashara_projects');
+        localStorage.setItem('ashara_projects_v', '2024_cpr_v4');
+        return DEFAULT_PROJECTS_LIST;
+      }
       const stored = localStorage.getItem('ashara_projects');
       if (stored) {
         const parsed = JSON.parse(stored);

@@ -90,102 +90,40 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
         </div>
       </section>
 
-      {/* 3. FULL-WIDTH IMAGE 2 */}
-      {gallery[1] && (
-        <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pb-12">
-          <div className="w-full aspect-[21/9] bg-gray-200 dark:bg-gray-800">
-            <img
-              src={gallery[1]}
-              alt="Project View 2"
-              loading="lazy"
-              decoding="async"
-              className="w-full h-full object-cover object-center"
-            />
-          </div>
-        </section>
-      )}
-
-      {/* 4. 2-COLUMN IMAGE GRID: Images 3 & 4 */}
-      {(gallery[2] || gallery[3]) && (
+      {/* 3. DYNAMIC PROJECT GALLERY: All designated images from the PDF */}
+      {gallery.length > 1 && (
         <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pb-12">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
-            {gallery[2] && (
-              <div className="aspect-[4/3] bg-gray-200 dark:bg-gray-800">
-                <img
-                  src={gallery[2]}
-                  alt="Project View 3"
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover object-center"
-                />
-              </div>
-            )}
-            {gallery[3] && (
-              <div className="aspect-[4/3] bg-gray-200 dark:bg-gray-800">
-                <img
-                  src={gallery[3]}
-                  alt="Project View 4"
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover object-center"
-                />
-              </div>
-            )}
+            {gallery.slice(1).map((imgUrl, idx) => {
+              // Give panoramic view to first secondary image and every 5th image
+              const isBanner = idx === 0 || idx % 5 === 0;
+              return (
+                <div
+                  key={idx}
+                  className={`${
+                    isBanner ? 'sm:col-span-2 aspect-[21/9]' : 'aspect-[4/3]'
+                  } w-full overflow-hidden bg-gray-200 dark:bg-gray-800 rounded-sm shadow-sm`}
+                >
+                  <img
+                    src={imgUrl}
+                    alt={`${activeProject.title} View ${idx + 2}`}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700 ease-out"
+                  />
+                </div>
+              );
+            })}
           </div>
         </section>
       )}
 
-      {/* 5. QUOTE BANNER: Sophia / Daniel Mesfin Quote matching Figma Image 5 */}
-      <section className="max-w-4xl mx-auto px-6 py-12 text-center">
+      {/* 4. QUOTE BANNER: Sophia / Daniel Mesfin Quote matching Figma */}
+      <section className="max-w-4xl mx-auto px-6 py-8 text-center">
         <blockquote className="font-serif italic text-2xl sm:text-3xl text-ashara-teal dark:text-white leading-relaxed font-light">
           “Design with passion, authenticity, and positivity to create spaces that inspire and uplift the soul.”
         </blockquote>
       </section>
-
-      {/* 6. 2-COLUMN IMAGE GRID: Images 5 & 6 */}
-      {(gallery[4] || gallery[5]) && (
-        <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 py-12">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
-            {gallery[4] && (
-              <div className="aspect-[4/3] bg-gray-200 dark:bg-gray-800">
-                <img
-                  src={gallery[4]}
-                  alt="Project View 5"
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover object-center"
-                />
-              </div>
-            )}
-            {gallery[5] && (
-              <div className="aspect-[4/3] bg-gray-200 dark:bg-gray-800">
-                <img
-                  src={gallery[5]}
-                  alt="Project View 6"
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover object-center"
-                />
-              </div>
-            )}
-          </div>
-        </section>
-      )}
-
-      {/* 7. FULL-WIDTH IMAGE: Image 7 */}
-      {gallery[6] && (
-        <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pb-16">
-          <div className="w-full aspect-[21/9] bg-gray-200 dark:bg-gray-800">
-            <img
-              src={gallery[6]}
-              alt="Project View 7"
-              loading="lazy"
-              decoding="async"
-              className="w-full h-full object-cover object-center"
-            />
-          </div>
-        </section>
-      )}
 
       {/* 8. ENQUIRE NOW Button (Outlined) */}
       <div className="text-center pt-8 pb-20">
