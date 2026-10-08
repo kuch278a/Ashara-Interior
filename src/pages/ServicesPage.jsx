@@ -62,8 +62,9 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
               <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-white font-normal">
                 How We Work
               </h1>
-              <p className="text-sm sm:text-base leading-relaxed text-white/90 font-light max-w-3xl mx-auto">
-                Ashara Interiors is an interior design, architecture, and build company passionate about creating inspiring spaces that radiate positivity and reflect our clients' unique identities. Specializing in governmental bureaus, commercial spaces, hotels, residential projects, and cultural landmarks, we offer comprehensive services ranging from stand-alone interior design to complete turnkey solutions. On larger projects, we seamlessly integrate with your existing team of architects and contractors, or provide end-to-end project management from concept to completion.
+              <p className="text-lg sm:text-base leading-relaxed text-white/90 font-light max-w-3xl mx-auto">
+                Ashara Interiors is an interior design, architecture, and build company passionate about creating inspiring spaces that radiate positivity and reflect our clients' unique identities. 
+                Specializing in governmental bureaus, commercial spaces, hotels, residential projects, and cultural landmarks, we offer comprehensive services ranging from stand-alone interior design to complete turnkey solutions. On larger projects, we seamlessly integrate with your existing team of architects and contractors, or provide end-to-end project management from concept to completion.
               </p>
             </div>
           </div>
