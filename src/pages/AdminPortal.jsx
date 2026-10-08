@@ -3,7 +3,7 @@ import {
   Users, Layers, Database, Plus,
   RefreshCw, ChevronRight, ArrowUpRight, Building2,
   CheckCircle2, SlidersHorizontal, Filter, Search, X,
-  LogOut, Quote
+  LogOut, Quote, Menu
 } from 'lucide-react';
 import {
   getConsultations, getDynamicProjects, saveProject, deleteProject,
@@ -56,6 +56,7 @@ export default function AdminPortal({ onNavigate }) {
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [uploadStatus,  setUploadStatus]  = useState({ active: false, stage: '', percent: 0 });
   const [copiedId,      setCopiedId]      = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (!adminUser) return;
@@ -205,58 +206,111 @@ export default function AdminPortal({ onNavigate }) {
       />
     );
   }
+
+  const NAV_CONFIG = [
+    { key: 'projects',     label: 'Projects Showcase', icon: Layers, count: projects.length },
+    { key: 'leads',        label: 'Client Enquiries',  icon: Users,  count: leads.length, badge: newLeadsCount },
+    { key: 'testimonials', label: 'Client Voices',     icon: Quote,  count: testimonials.length },
+  ];
+  const activeNav = NAV_CONFIG.find((n) => n.key === activeTab);
+
   return (
-    <div className="min-h-screen bg-[#F7F6F2] dark:bg-[#070E18] py-8 px-4 sm:px-8 lg:px-12 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto space-y-8">
-        <header className="bg-white/80 dark:bg-[#0C1726]/80 backdrop-blur-xl border border-gray-200/80 dark:border-white/10 p-5 sm:p-6 rounded-xs shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-5 relative overflow-hidden">
-          <div className="absolute -top-10 -left-10 w-40 h-40 bg-ashara-gold/10 rounded-full blur-2xl pointer-events-none" />
-          <div className="flex items-center gap-4 sm:gap-6">
-            <div className="w-12 h-12 rounded-xs bg-ashara-teal/10 dark:bg-ashara-gold/15 border border-ashara-teal/20 dark:border-ashara-gold/30 flex items-center justify-center shrink-0 shadow-inner">
-              <Building2 className="w-6 h-6 text-ashara-teal dark:text-white" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2.5 flex-wrap">
-                <span className="text-[9.5px] uppercase tracking-[0.3em] font-bold text-ashara-teal dark:text-white">STUDIO MANAGEMENT ATELIER</span>
-                <div className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wider ${isFirebaseConfigured ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/25' : 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/25'}`}>
-                  <span className={`w-1.5 h-1.5 rounded-full ${isFirebaseConfigured ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
-                  <Database className="w-2.5 h-2.5" />
-                  <span>{isFirebaseConfigured ? 'Live Cloud Sync' : 'Local Sandbox'}</span>
-                </div>
-              </div>
-              <h1 className="font-serif text-2xl sm:text-3xl text-ashara-teal dark:text-white font-normal mt-0.5">Ashara Executive Portal</h1>
-            </div>
-          </div>
-          <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
-            <button onClick={() => loadAllData(true)} disabled={isRefreshing}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-ashara-teal dark:text-white dark:text-white text-xs uppercase tracking-wider font-semibold rounded-xs transition border border-gray-200 dark:border-white/10 disabled:opacity-50" title="Synchronize database">
-              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-ashara-teal dark:text-white' : ''}`} />
-              <span className="hidden sm:inline">{isRefreshing ? 'Syncing...' : 'Sync'}</span>
-            </button>
-            <button onClick={() => onNavigate('home')}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 dark:border-white/15 text-xs uppercase tracking-wider font-semibold text-ashara-teal dark:text-white dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-xs transition">
-              <span>View Site</span><ArrowUpRight className="w-3.5 h-3.5 text-ashara-teal dark:text-white" />
-            </button>
-            <div className="h-6 w-px bg-gray-200 dark:bg-white/10 mx-1 hidden sm:block" />
-            <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs">
-              <div className="w-6 h-6 rounded-full bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-[10px] font-bold flex items-center justify-center">
-                {(adminUser.name || adminUser.email || 'D')[0].toUpperCase()}
-              </div>
-              <span className="text-xs font-mono text-ashara-teal dark:text-white truncate max-w-[140px]">{adminUser.email || 'Director'}</span>
-            </div>
-            <button onClick={handleLogout}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-rose-500/10 hover:bg-rose-500 hover:text-white border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs uppercase tracking-wider font-semibold rounded-xs transition duration-200" title="Sign Out">
-              <LogOut className="w-3.5 h-3.5" /><span>Sign Out</span>
-            </button>
-          </div>
-        </header>
+    <div className="min-h-screen lg:h-screen lg:overflow-hidden bg-[#F7F6F2] dark:bg-[#070E18] transition-colors duration-300 lg:grid lg:grid-cols-[270px_minmax(0,1fr)] lg:grid-rows-[auto_minmax(0,1fr)] lg:[grid-template-areas:'sidebar_header''sidebar_main']">
 
-        {notification && (
-          <div className={`p-4 rounded-xs text-xs uppercase tracking-wider font-semibold flex items-center justify-between shadow-lg border animate-slide-down ${notification.type === 'error' ? 'bg-rose-600 text-white border-rose-700' : notification.type === 'info' ? 'bg-ashara-teal text-white border-ashara-teal/80' : 'bg-[#1E4E4E] dark:bg-ashara-gold text-white dark:text-ashara-dark border-ashara-teal dark:border-ashara-gold'}`}>
-            <div className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0" /><span>{notification.message}</span></div>
-            <button onClick={() => setNotification(null)} className="p-1 hover:opacity-75 transition"><X className="w-4 h-4" /></button>
-          </div>
-        )}
+      {/* Mobile backdrop behind the sidebar drawer */}
+      {isSidebarOpen && (
+        <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden" onClick={() => setIsSidebarOpen(false)} />
+      )}
 
+      {/* ==================== SIDEBAR ==================== */}
+      <aside className={`[grid-area:sidebar] fixed inset-y-0 left-0 z-50 w-[280px] lg:w-auto lg:static lg:translate-x-0 bg-ashara-teal dark:bg-[#0C1726] border-r border-black/10 dark:border-white/10 flex flex-col overflow-y-auto transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+
+        {/* Brand */}
+        <div className="p-5 border-b border-white/10 relative">
+          <button onClick={() => setIsSidebarOpen(false)} className="absolute top-4 right-4 p-1.5 text-white/60 hover:text-white transition lg:hidden" aria-label="Close menu">
+            <X className="w-4 h-4" />
+          </button>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xs bg-ashara-gold/15 border border-ashara-gold/30 flex items-center justify-center shrink-0">
+              <Building2 className="w-5 h-5 text-ashara-gold" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[9px] uppercase tracking-[0.3em] font-bold text-ashara-gold">Studio Atelier</p>
+              <h2 className="font-serif text-lg text-white font-normal leading-tight truncate">Ashara Portal</h2>
+            </div>
+          </div>
+          <div className={`mt-4 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] font-semibold uppercase tracking-wider ${isFirebaseConfigured ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-400/25' : 'bg-amber-500/10 text-amber-300 border border-amber-400/25'}`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${isFirebaseConfigured ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+            <Database className="w-2.5 h-2.5" />
+            <span>{isFirebaseConfigured ? 'Live Cloud Sync' : 'Local Sandbox'}</span>
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <nav className="p-3 space-y-1">
+          <p className="px-3 pt-2 pb-1.5 text-[9px] uppercase tracking-[0.25em] font-bold text-white/35">Manage</p>
+          {NAV_CONFIG.map(({ key, label, icon: Icon, count, badge }) => (
+            <button key={key} onClick={() => { setActiveTab(key); setSearchQuery(''); setIsSidebarOpen(false); }}
+              className={`relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xs text-xs uppercase tracking-wider font-semibold transition-all ${activeTab === key ? 'bg-white/10 text-white' : 'text-white/55 hover:text-white hover:bg-white/5'}`}>
+              {activeTab === key && <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-ashara-gold rounded-full" />}
+              <Icon className="w-4 h-4 shrink-0" />
+              <span className="flex-1 text-left truncate">{label}</span>
+              {badge > 0 && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />}
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold shrink-0 ${badge > 0 ? 'bg-emerald-500 text-white' : activeTab === key ? 'bg-ashara-gold/20 text-ashara-gold' : 'bg-white/10 text-white/60'}`}>{count}</span>
+            </button>
+          ))}
+        </nav>
+
+        {/* User + Sign Out */}
+        <div className="mt-auto p-4 border-t border-white/10 space-y-3">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-8 h-8 rounded-full bg-ashara-gold text-ashara-dark text-xs font-bold flex items-center justify-center shrink-0">
+              {(adminUser.name || adminUser.email || 'D')[0].toUpperCase()}
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-white truncate">{adminUser.name || 'Studio Director'}</p>
+              <p className="text-[10px] font-mono text-white/50 truncate">{adminUser.email || 'Director'}</p>
+            </div>
+          </div>
+          <button onClick={handleLogout}
+            className="w-full inline-flex items-center justify-center gap-2 px-3.5 py-2 bg-rose-500/15 hover:bg-rose-500 border border-rose-400/25 hover:border-rose-500 text-rose-300 hover:text-white text-xs uppercase tracking-wider font-semibold rounded-xs transition duration-200">
+            <LogOut className="w-3.5 h-3.5" /><span>Sign Out</span>
+          </button>
+        </div>
+      </aside>
+
+      {/* ==================== HEADER ==================== */}
+      <header className="[grid-area:header] sticky top-0 z-30 bg-white/85 dark:bg-[#0C1726]/85 backdrop-blur-xl border-b border-gray-200/80 dark:border-white/10 px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-3 sm:gap-4">
+        <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden p-2 -ml-1 text-ashara-teal dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-xs transition" aria-label="Open menu">
+          <Menu className="w-5 h-5" />
+        </button>
+        <div className="min-w-0">
+          <p className="text-[9px] uppercase tracking-[0.3em] font-bold text-ashara-teal/60 dark:text-ashara-gold">Studio Management Atelier</p>
+          <h1 className="font-serif text-lg sm:text-xl text-ashara-teal dark:text-white font-normal truncate">{activeNav ? activeNav.label : 'Dashboard'}</h1>
+        </div>
+        <div className="ml-auto flex items-center gap-2">
+          {(activeTab === 'projects' || activeTab === 'testimonials') && (
+            <button onClick={activeTab === 'projects' ? handleOpenNewProject : handleOpenNewTestimonial}
+              className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 bg-ashara-teal hover:bg-ashara-teal-hover dark:bg-ashara-gold dark:hover:bg-ashara-gold/90 text-white dark:text-ashara-dark text-xs uppercase tracking-wider font-bold rounded-xs transition shadow-sm">
+              <Plus className="w-4 h-4 stroke-[2.5]" />
+              <span className="hidden sm:inline">{activeTab === 'projects' ? 'Add Project' : 'Add Testimonial'}</span>
+            </button>
+          )}
+          <button onClick={() => loadAllData(true)} disabled={isRefreshing} title="Synchronize database"
+            className="p-2 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 text-ashara-teal dark:text-white rounded-xs transition disabled:opacity-50">
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+          </button>
+          <button onClick={() => onNavigate('home')} title="View live site"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 border border-gray-300 dark:border-white/15 text-xs uppercase tracking-wider font-semibold text-ashara-teal dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-xs transition">
+            <span className="hidden md:inline">View Site</span><ArrowUpRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </header>
+
+      {/* ==================== MAIN ==================== */}
+      <main className="[grid-area:main] lg:overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 animate-fade-in">
+
+        {/* Stat Cards */}
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[
             { tab: 'leads',        label: 'Client Inquiries',      count: leads.length,        icon: <Users className="w-5 h-5" />,    color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20', sub: <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />{newLeadsCount} New Leads</span>, action: 'View matrix' },
@@ -280,80 +334,69 @@ export default function AdminPortal({ onNavigate }) {
           ))}
         </section>
 
-        <div className="bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 p-4 sm:p-5 rounded-xs shadow-xs space-y-4">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <nav className="flex items-center gap-1.5 p-1 bg-gray-100/80 dark:bg-white/5 rounded-xs border border-gray-200/60 dark:border-white/5 overflow-x-auto">
-              {[
-                { key: 'projects',     label: 'Projects Showcase', icon: <Layers className="w-4 h-4" />,   count: projects.length },
-                { key: 'leads',        label: 'Client Enquiries',  icon: <Users className="w-4 h-4" />,    count: leads.length, badge: newLeadsCount },
-                { key: 'testimonials', label: 'Client Voices',     icon: <Quote className="w-4 h-4" />,    count: testimonials.length },
-              ].map(({ key, label, icon, count, badge }) => (
-                <button key={key} onClick={() => { setActiveTab(key); setSearchQuery(''); }}
-                  className={`flex items-center gap-2 px-4 py-2 text-xs uppercase tracking-wider font-semibold rounded-xs transition-all whitespace-nowrap ${activeTab === key ? 'bg-white dark:bg-[#1E2E42] text-ashara-teal dark:text-white shadow-sm' : 'text-ashara-teal dark:text-white hover:text-ashara-teal dark:hover:text-white'}`}>
-                  {icon}<span>{label}</span>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono ${badge && badge > 0 ? 'bg-emerald-500 text-white font-bold' : activeTab === key ? 'bg-ashara-teal/10 dark:bg-ashara-gold/20 text-ashara-teal dark:text-white' : 'bg-gray-200/80 dark:bg-white/10 text-ashara-teal'}`}>{count}</span>
-                </button>
-              ))}
-            </nav>
-            <div className="flex items-center gap-3">
-              {activeTab === 'projects' && <button onClick={handleOpenNewProject} className="inline-flex items-center gap-2 px-4 py-2.5 bg-ashara-teal hover:bg-ashara-teal-hover dark:bg-ashara-gold dark:hover:bg-ashara-gold/90 text-white dark:text-ashara-dark text-xs uppercase tracking-wider font-bold rounded-xs transition shadow-sm"><Plus className="w-4 h-4 stroke-[2.5]" /><span>Add New Project</span></button>}
-              {activeTab === 'testimonials' && <button onClick={handleOpenNewTestimonial} className="inline-flex items-center gap-2 px-4 py-2.5 bg-ashara-teal hover:bg-ashara-teal-hover dark:bg-ashara-gold dark:hover:bg-ashara-gold/90 text-white dark:text-ashara-dark text-xs uppercase tracking-wider font-bold rounded-xs transition shadow-sm"><Plus className="w-4 h-4 stroke-[2.5]" /><span>Add Testimonial</span></button>}
-            </div>
+        {/* Toolbar: Search + Filters */}
+        <div className="bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 p-3 sm:p-4 rounded-xs shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <div className="relative flex-1 max-w-md">
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-ashara-teal dark:text-white" />
+            <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={activeTab === 'projects' ? 'Search projects...' : activeTab === 'leads' ? 'Search inquiries...' : 'Search reviews...'}
+              className="w-full pl-10 pr-8 py-2 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs text-xs text-ashara-teal dark:text-white placeholder-gray-400 focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold transition" />
+            {searchQuery && <button onClick={() => setSearchQuery('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ashara-teal dark:text-white hover:text-ashara-teal p-0.5"><X className="w-3.5 h-3.5" /></button>}
           </div>
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-3 border-t border-gray-100 dark:border-white/5">
-            <div className="relative flex-1 max-w-md">
-              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-ashara-teal dark:text-white" />
-              <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={activeTab === 'projects' ? 'Search projects...' : activeTab === 'leads' ? 'Search inquiries...' : 'Search reviews...'}
-                className="w-full pl-10 pr-8 py-2 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs text-xs text-ashara-teal dark:text-white placeholder-gray-400 focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold transition" />
-              {searchQuery && <button onClick={() => setSearchQuery('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ashara-teal dark:text-white hover:text-ashara-teal p-0.5"><X className="w-3.5 h-3.5" /></button>}
-            </div>
-            <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
-              {activeTab === 'projects' && (
-                <div className="flex items-center gap-1.5 text-xs text-ashara-teal dark:text-white">
-                  <Filter className="w-3.5 h-3.5" />
-                  <select value={projectCategoryFilter} onChange={(e) => setProjectCategoryFilter(e.target.value)}
-                    className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs text-xs text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal">
-                    <option value="ALL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">All Categories ({projects.length})</option>
-                    <option value="GOVERNMENTAL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Governmental</option>
-                    <option value="PRIVATE" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Private Entities</option>
-                    <option value="CORPORATION" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Corporations</option>
-                    <option value="COMMERCIAL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Commercial</option>
-                    <option value="RESIDENTIAL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Residential</option>
-                  </select>
-                </div>
-              )}
-              {activeTab === 'testimonials' && (
-                <div className="flex items-center gap-1.5 text-xs text-ashara-teal dark:text-white">
-                  <Filter className="w-3.5 h-3.5" />
-                  <select value={testimonialFilter} onChange={(e) => setTestimonialFilter(e.target.value)}
-                    className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs text-xs text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal">
-                    <option value="ALL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">All Project Links ({testimonials.length})</option>
-                    {projects.map((p) => <option key={p.id} value={p.id} className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">{p.title}</option>)}
-                  </select>
-                </div>
-              )}
-              {activeTab === 'leads' && (
-                <div className="flex items-center gap-1.5 text-xs text-ashara-teal dark:text-white">
-                  <SlidersHorizontal className="w-3.5 h-3.5" />
-                  <select value={leadStatusFilter} onChange={(e) => setLeadStatusFilter(e.target.value)}
-                    className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs text-xs text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal">
-                    <option value="ALL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">All Inquiries ({leads.length})</option>
-                    <option value="new" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">New Inquiries ({newLeadsCount})</option>
-                    <option value="contacted" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Contacted</option>
-                    <option value="completed" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Completed</option>
-                  </select>
-                </div>
-              )}
-            </div>
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 sm:ml-auto">
+            {activeTab === 'projects' && (
+              <div className="flex items-center gap-1.5 text-xs text-ashara-teal dark:text-white">
+                <Filter className="w-3.5 h-3.5" />
+                <select value={projectCategoryFilter} onChange={(e) => setProjectCategoryFilter(e.target.value)}
+                  className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs text-xs text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal">
+                  <option value="ALL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">All Categories ({projects.length})</option>
+                  <option value="GOVERNMENTAL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Governmental</option>
+                  <option value="PRIVATE" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Private Entities</option>
+                  <option value="CORPORATION" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Corporations</option>
+                  <option value="COMMERCIAL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Commercial</option>
+                  <option value="RESIDENTIAL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Residential</option>
+                </select>
+              </div>
+            )}
+            {activeTab === 'testimonials' && (
+              <div className="flex items-center gap-1.5 text-xs text-ashara-teal dark:text-white">
+                <Filter className="w-3.5 h-3.5" />
+                <select value={testimonialFilter} onChange={(e) => setTestimonialFilter(e.target.value)}
+                  className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs text-xs text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal">
+                  <option value="ALL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">All Project Links ({testimonials.length})</option>
+                  {projects.map((p) => <option key={p.id} value={p.id} className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">{p.title}</option>)}
+                </select>
+              </div>
+            )}
+            {activeTab === 'leads' && (
+              <div className="flex items-center gap-1.5 text-xs text-ashara-teal dark:text-white">
+                <SlidersHorizontal className="w-3.5 h-3.5" />
+                <select value={leadStatusFilter} onChange={(e) => setLeadStatusFilter(e.target.value)}
+                  className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs text-xs text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal">
+                  <option value="ALL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">All Inquiries ({leads.length})</option>
+                  <option value="new" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">New Inquiries ({newLeadsCount})</option>
+                  <option value="contacted" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Contacted</option>
+                  <option value="completed" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Completed</option>
+                </select>
+              </div>
+            )}
           </div>
         </div>
 
+        {/* Tab Content */}
         {activeTab === 'projects'     && <AdminProjectsTab     filteredProjects={filteredProjects}       searchQuery={searchQuery} onOpenNew={handleOpenNewProject}     onOpenEdit={handleOpenEditProject}     onDelete={setDeleteConfirm} />}
         {activeTab === 'leads'        && <AdminLeadsTab        filteredLeads={filteredLeads}              searchQuery={searchQuery} copiedId={copiedId}                   onCopy={handleCopy}                    onUpdateStatus={handleUpdateLeadStatus} onDelete={setDeleteConfirm} />}
         {activeTab === 'testimonials' && <AdminTestimonialsTab filteredTestimonials={filteredTestimonials} searchQuery={searchQuery} projects={projects}                  onOpenNew={handleOpenNewTestimonial}   onOpenEdit={handleOpenEditTestimonial} onDelete={setDeleteConfirm} />}
 
-      </div>
+      </main>
+
+      {/* Toast Notification */}
+      {notification && (
+        <div className={`fixed top-4 right-4 left-4 sm:left-auto sm:max-w-sm z-[60] p-4 rounded-xs text-xs uppercase tracking-wider font-semibold flex items-center justify-between shadow-lg border animate-slide-down ${notification.type === 'error' ? 'bg-rose-600 text-white border-rose-700' : notification.type === 'info' ? 'bg-ashara-teal text-white border-ashara-teal/80' : 'bg-[#1E4E4E] dark:bg-ashara-gold text-white dark:text-ashara-dark border-ashara-teal dark:border-ashara-gold'}`}>
+          <div className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0" /><span>{notification.message}</span></div>
+          <button onClick={() => setNotification(null)} className="p-1 hover:opacity-75 transition"><X className="w-4 h-4" /></button>
+        </div>
+      )}
 
       {isProjectModalOpen && (
         <AdminProjectModal
