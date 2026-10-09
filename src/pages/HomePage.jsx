@@ -41,9 +41,13 @@ export default function HomePage({ onNavigate, onSelectProject }) {
 
   const accordionRef = useRef(null);
 
-  const heroWorks = works.slice(0, 10);
-  // Works 11-16 feed the accordion; fall back to the first six so the section is never empty
-  const accordionWorks = works.length > 10 ? works.slice(10, 16) : works.slice(0, 6);
+  const explicitHeroWorks = works.filter(w => w.isHero);
+  const heroWorks = explicitHeroWorks.length > 0 ? explicitHeroWorks : works.slice(0, 10);
+
+  const explicitAccordionWorks = works.filter(w => w.isOurWorks);
+  const accordionWorks = explicitAccordionWorks.length > 0 
+    ? explicitAccordionWorks 
+    : (works.length > 10 ? works.slice(10, 16) : works.slice(0, 6));
 
   // Pause auto-advance and resume after a delay (mirrors the accordion indicator pattern)
   const pauseAndResumeTestimonials = () => {

@@ -80,6 +80,20 @@ export default function AdminProjectModal({
                     placeholder="e.g., CIVIC HEADQUARTERS" />
                 </div>
               </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" checked={editingProject.isHero || false}
+                    onChange={(e) => setEditingProject({ ...editingProject, isHero: e.target.checked })}
+                    className="w-4 h-4 text-ashara-teal border-gray-300 rounded focus:ring-ashara-teal" />
+                  <span className="text-[10px] uppercase tracking-wider font-bold text-ashara-teal dark:text-white">Show in Hero Section</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" checked={editingProject.isOurWorks || false}
+                    onChange={(e) => setEditingProject({ ...editingProject, isOurWorks: e.target.checked })}
+                    className="w-4 h-4 text-ashara-teal border-gray-300 rounded focus:ring-ashara-teal" />
+                  <span className="text-[10px] uppercase tracking-wider font-bold text-ashara-teal dark:text-white">Show in Our Works Section</span>
+                </label>
+              </div>
               <div>
                 <label className="block text-[10px] uppercase tracking-wider font-bold text-ashara-teal dark:text-white mb-1.5">Architectural Narrative *</label>
                 <textarea rows="3" required value={editingProject.description || ''}
