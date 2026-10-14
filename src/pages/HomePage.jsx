@@ -66,6 +66,8 @@ export default function HomePage({ onNavigate, onSelectProject }) {
   const activeTestimonial = testimonials.length > 0 ? currentTestimonial % testimonials.length : 0;
   // Keep the hero slide index valid when the project list changes from the CMS
   const activeHeroSlide = heroWorks.length > 0 ? currentSlide % heroWorks.length : 0;
+  // Keep the coverflow index valid when the project list changes from the CMS
+  const activeAccordion = accordionWorks.length > 0 ? activeAccordionIndex % accordionWorks.length : 0;
 
   // Pause auto-advance and resume after a delay (mirrors the accordion indicator pattern)
   const pauseAndResumeTestimonials = () => {
@@ -353,68 +355,90 @@ export default function HomePage({ onNavigate, onSelectProject }) {
           ))}
         </div>
 
-        {/* Desktop: Accordion Expanding Carousel with Floating Arrows */}
-        <div 
-          className="hidden md:flex relative flex-row h-[60svh] min-h-[500px] max-h-[700px] w-full gap-2 overflow-hidden rounded-none group"
+        {/* Desktop: 3D Coverflow Carousel with Perspective Transforms */}
+        <div
+          className="hidden md:block relative h-[430px] lg:h-[540px] xl:h-[610px] w-full overflow-hidden"
           onMouseEnter={() => setIsAccordionPaused(true)}
           onMouseLeave={() => setIsAccordionPaused(false)}
         >
-          {accordionWorks.map((work, index) => {
-            const isActive = activeAccordionIndex === index;
-            return (
-              <article
-                key={work.id}
-                onClick={() => handleCardClick(work)}
-                onMouseEnter={() => setActiveAccordionIndex(index)}
-                className={`relative cursor-pointer overflow-hidden transition-all duration-700 ease-in-out bg-gray-100 shrink-0 ${isActive ? 'flex-[4]' : 'flex-1'}`}
-              >
-                <img
-                  src={work.image}
-                  loading="lazy"
-                  decoding="async"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = work.fallbackImage;
+          <div
+            className="absolute inset-0"
+            style={{ perspective: '1400px' }}
+          >
+            {accordionWorks.map((work, index) => {
+              const len = accordionWorks.length;
+              // Shortest cyclic distance from the active card
+              let offset = index - activeAccordion;
+              if (offset > len / 2) offset -= len;
+              if (offset < -len / 2) offset += len;
+              const absOffset = Math.abs(offset);
+              const isActive = offset === 0;
+              const inFlow = absOffset <= 2;
+
+              return (
+                <article
+                  key={work.id}
+                  onClick={() => {
+                    if (isActive) {
+                      handleCardClick(work);
+                    } else {
+                      setActiveAccordionIndex(index);
+                      setIsAccordionPaused(true);
+                      setTimeout(() => setIsAccordionPaused(false), 5000);
+                    }
                   }}
-                  alt={work.title}
-                  className={`absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out ${isActive ? 'scale-105' : 'scale-100'}`}
-                />
-                <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/10 transition-opacity duration-300 ${isActive ? 'opacity-90' : 'opacity-70'}`}></div>
-                
-                <div className={`absolute inset-0 p-8 flex flex-col justify-end z-10 transition-opacity duration-500 delay-100 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
-                  <div className={`transform transition-transform duration-500 ease-out ${isActive ? 'translate-y-0' : 'translate-y-4'}`}>
-                    <h3 className={`font-serif text-2xl lg:text-3xl text-white font-light transition-all duration-500 overflow-hidden overflow-ellipsis ${isActive ? 'whitespace-normal' : 'whitespace-nowrap max-w-[80%]'}`}>
+                  className={`absolute left-1/2 top-1/2 w-[300px] lg:w-[380px] xl:w-[430px] aspect-[4/5] overflow-hidden bg-gray-100 transition-all duration-700 ease-out ${isActive ? '' : 'cursor-pointer'}`}
+                  style={{
+                    transform: `translate(-50%, -50%) translateX(${offset * 72}%) translateZ(${-absOffset * 200}px) rotateY(${-offset * 32}deg)`,
+                    zIndex: 20 - absOffset,
+                    opacity: inFlow ? 1 : 0,
+                    pointerEvents: inFlow ? 'auto' : 'none',
+                  }}
+                >
+                  <img
+                    src={work.image}
+                    loading="lazy"
+                    decoding="async"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = work.fallbackImage;
+                    }}
+                    alt={work.title}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent px-4 pb-3 pt-10">
+                    <h3 className={`font-serif text-white font-light leading-snug overflow-hidden ${isActive ? 'text-lg lg:text-xl whitespace-normal' : 'text-sm lg:text-base whitespace-nowrap text-ellipsis'}`}>
                       {work.title}
                     </h3>
                   </div>
-                </div>
-              </article>
-            );
-          })}
+                </article>
+              );
+            })}
+          </div>
 
           {/* Floating Large Arrows on the Left and Right Edges */}
-          <button 
-            type="button" 
-            aria-label="Previous Project" 
+          <button
+            type="button"
+            aria-label="Previous Project"
             onClick={(e) => {
               e.stopPropagation();
               const accLen = accordionWorks.length;
-              if (accLen > 0) setActiveAccordionIndex((activeAccordionIndex - 1 + accLen) % accLen);
+              if (accLen > 0) setActiveAccordionIndex((prev) => (prev - 1 + accLen) % accLen);
             }}
-            className="hidden md:block absolute left-4 md:left-10 top-1/2 -translate-y-1/2 z-30 text-white/60 hover:text-white transition-all duration-500 hover:-translate-x-2 hover:scale-110 focus:outline-none drop-shadow-xl"
+            className="hidden md:block absolute left-4 md:left-10 top-1/2 -translate-y-1/2 z-30 text-ashara-teal/50 hover:text-ashara-teal dark:text-white/60 dark:hover:text-white transition-all duration-500 hover:-translate-x-2 hover:scale-110 focus:outline-none"
           >
             <ChevronLeft className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 stroke-[1]" />
           </button>
-          
-          <button 
-            type="button" 
-            aria-label="Next Project" 
+
+          <button
+            type="button"
+            aria-label="Next Project"
             onClick={(e) => {
               e.stopPropagation();
               const accLen = accordionWorks.length;
-              if (accLen > 0) setActiveAccordionIndex((activeAccordionIndex + 1) % accLen);
+              if (accLen > 0) setActiveAccordionIndex((prev) => (prev + 1) % accLen);
             }}
-            className="hidden md:block absolute right-4 md:right-10 top-1/2 -translate-y-1/2 z-30 text-white/60 hover:text-white transition-all duration-500 hover:translate-x-2 hover:scale-110 focus:outline-none drop-shadow-xl"
+            className="hidden md:block absolute right-4 md:right-10 top-1/2 -translate-y-1/2 z-30 text-ashara-teal/50 hover:text-ashara-teal dark:text-white/60 dark:hover:text-white transition-all duration-500 hover:translate-x-2 hover:scale-110 focus:outline-none"
           >
             <ChevronRight className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 stroke-[1]" />
           </button>
@@ -432,12 +456,12 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                 setTimeout(() => setIsAccordionPaused(false), 5000); // Resume after 5 seconds
               }}
               className={`h-2.5 sm:h-3 transition-colors duration-500 ${
-                activeAccordionIndex === index 
-                  ? 'bg-ashara-teal w-10 sm:w-12' 
+                activeAccordion === index
+                  ? 'bg-ashara-teal w-10 sm:w-12'
                   : 'w-2.5 sm:w-3 bg-gray-300 dark:bg-white/15 hover:bg-ashara-teal/60'
               }`}
               aria-label={`Go to slide ${index + 1}`}
-              aria-current={activeAccordionIndex === index}
+              aria-current={activeAccordion === index}
             ></button>
           ))}
         </div>
