@@ -50,7 +50,7 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
         {/* Brand Logo & Title */}
         <button
           onClick={() => handleNavClick('home')}
-          className="flex items-center gap-4 text-left focus:outline-none group"
+          className="flex items-center gap-2.5 sm:gap-4 text-left focus:outline-none group"
           aria-label="Ashara Interior Design and Building"
         >
           <div className="flex items-center select-none group">
@@ -61,16 +61,16 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
                 decoding="async"
                 className="absolute top-[0%] left-1/2 -translate-x-1/2 w-[56px] max-w-none h-auto transition-transform duration-300 group-hover:scale-105 dark:brightness-0 dark:invert"
                 onError={(e) => {
-                  e.target.src = {asset_2};
+                  e.target.src = asset_2;
                 }}
               />
             </div>
           </div>
-          <div className="hidden sm:flex flex-col text-left">
-            <span className="font-sans uppercase tracking-[0.2em] text-ashara-teal dark:text-white font-bold text-[18px]">
+          <div className="flex flex-col text-left">
+            <span className="font-sans uppercase tracking-[0.2em] text-ashara-teal dark:text-white font-bold text-[15px] sm:text-[18px]">
               Ashara
             </span>
-            <span className="text-[9px] uppercase tracking-[0.3em] text-ashara-teal dark:text-white mt-0.5">
+            <span className="text-[7px] sm:text-[9px] uppercase tracking-[0.2em] sm:tracking-[0.3em] text-ashara-teal dark:text-white mt-0.5 whitespace-nowrap">
               Interior Design & Building
             </span>
           </div>
@@ -98,11 +98,11 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
           </nav>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             {/* Light / Dark Mode Toggle */}
             <button
               onClick={toggleTheme}
-              className="w-9 h-9 rounded-full flex items-center justify-center text-ashara-teal dark:text-white hover:text-ashara-teal dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition duration-200 focus:outline-none"
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-ashara-teal dark:text-white hover:text-ashara-teal dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition duration-200 focus:outline-none"
               aria-label={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
               title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
@@ -116,7 +116,7 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
             {/* Mobile Hamburger Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden w-9 h-9 rounded-full flex items-center justify-center text-ashara-teal dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition focus:outline-none"
+              className="md:hidden w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-ashara-teal dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition focus:outline-none"
               aria-label="Toggle Navigation Menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

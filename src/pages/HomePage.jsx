@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, ArrowUp, ChevronDown, ArrowRight } from 'lucide-react';
 import ClientsSection from '../components/ClientsSection';
 import Footer from '../components/Footer';
@@ -6,11 +6,11 @@ import ProjectsPage from './ProjectsPage';
 import ServicesPage from './ServicesPage';
 import AboutPage from './AboutPage';
 import ContactPage from './ContactPage';
-import { getInitialProjects, subscribeToProjects } from '../services/firebaseService';
+import { getInitialProjects, subscribeToProjects, getInitialTestimonials, subscribeToTestimonials } from '../services/firebaseService';
 
 const isDesktopView = () => window.matchMedia('(min-width: 768px)').matches;
 
-const TESTIMONIALS = [
+const FALLBACK_TESTIMONIALS = [
   {
     quote: "Ashara Interiors transformed our office space beyond our expectations. Their attention to detail and ability to deliver a luxurious, functional design within an incredibly tight deadline was remarkable.",
     author: "DEPUTY PRESIDENT'S OFFICE",
@@ -28,8 +28,21 @@ const TESTIMONIALS = [
   }
 ];
 
+// Map CMS testimonials (quote/clientName/organization) to the carousel shape (quote/author/company)
+const toCarouselTestimonials = (list) => {
+  const mapped = (Array.isArray(list) ? list : [])
+    .map((t) => ({
+      quote: t.quote,
+      author: t.clientName || t.author || '',
+      company: t.organization || t.company || ''
+    }))
+    .filter((t) => t.quote);
+  return mapped.length > 0 ? mapped : FALLBACK_TESTIMONIALS;
+};
+
 export default function HomePage({ onNavigate, onSelectProject }) {
   const [works, setWorks] = useState(() => getInitialProjects());
+  const [testimonials, setTestimonials] = useState(() => toCarouselTestimonials(getInitialTestimonials()));
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [activeAccordionIndex, setActiveAccordionIndex] = useState(0);
@@ -38,8 +51,8 @@ export default function HomePage({ onNavigate, onSelectProject }) {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [isTestimonialPaused, setIsTestimonialPaused] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
-
-  const accordionRef = useRef(null);
+  const [testimonialDrag, setTestimonialDrag] = useState(0);
+  const [isTestimonialDragging, setIsTestimonialDragging] = useState(false);
 
   const explicitHeroWorks = works.filter(w => w.isHero);
   const heroWorks = explicitHeroWorks.length > 0 ? explicitHeroWorks : works.slice(0, 10);
@@ -49,6 +62,11 @@ export default function HomePage({ onNavigate, onSelectProject }) {
     ? explicitAccordionWorks 
     : (works.length > 10 ? works.slice(10, 16) : works.slice(0, 6));
 
+  // Keep the slide index valid when the testimonial list changes from the CMS
+  const activeTestimonial = testimonials.length > 0 ? currentTestimonial % testimonials.length : 0;
+  // Keep the hero slide index valid when the project list changes from the CMS
+  const activeHeroSlide = heroWorks.length > 0 ? currentSlide % heroWorks.length : 0;
+
   // Pause auto-advance and resume after a delay (mirrors the accordion indicator pattern)
   const pauseAndResumeTestimonials = () => {
     setIsTestimonialPaused(true);
@@ -57,35 +75,44 @@ export default function HomePage({ onNavigate, onSelectProject }) {
 
   const handleTestimonialTouchStart = (e) => {
     setTouchStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+    setIsTestimonialDragging(true);
   };
 
-  const handleTestimonialTouchEnd = (e) => {
+  const handleTestimonialTouchMove = (e) => {
     if (touchStart === null) return;
-    const deltaX = e.changedTouches[0].clientX - touchStart.x;
-    const deltaY = e.changedTouches[0].clientY - touchStart.y;
-    // Only treat as a swipe when horizontal movement dominates vertical drift
-    if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+    const deltaX = e.touches[0].clientX - touchStart.x;
+    const deltaY = e.touches[0].clientY - touchStart.y;
+    // Follow the finger only on horizontal-dominant drags; let vertical page scroll win otherwise
+    setTestimonialDrag(Math.abs(deltaX) > Math.abs(deltaY) ? deltaX : 0);
+  };
+
+  const handleTestimonialTouchEnd = () => {
+    if (touchStart !== null && Math.abs(testimonialDrag) > 50) {
       setCurrentTestimonial((prev) =>
-        deltaX < 0
-          ? (prev + 1) % TESTIMONIALS.length
-          : (prev - 1 + TESTIMONIALS.length) % TESTIMONIALS.length
+        testimonialDrag < 0
+          ? (prev + 1) % testimonials.length
+          : (prev - 1 + testimonials.length) % testimonials.length
       );
       pauseAndResumeTestimonials();
     }
     setTouchStart(null);
+    setTestimonialDrag(0);
+    setIsTestimonialDragging(false);
   };
 
   const handleTestimonialTouchCancel = () => {
     setTouchStart(null);
+    setTestimonialDrag(0);
+    setIsTestimonialDragging(false);
   };
 
   useEffect(() => {
-    if (isTestimonialPaused) return;
+    if (isTestimonialPaused || isTestimonialDragging) return;
     const interval = setInterval(() => {
-      setCurrentTestimonial((prev) => (prev + 1) % TESTIMONIALS.length);
+      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
     }, 6000);
     return () => clearInterval(interval);
-  }, [isTestimonialPaused]);
+  }, [isTestimonialPaused, isTestimonialDragging, testimonials.length]);
 
   // Auto-advance accordion every 6 seconds (desktop showcase only)
   useEffect(() => {
@@ -96,24 +123,6 @@ export default function HomePage({ onNavigate, onSelectProject }) {
     }, 6000);
     return () => clearInterval(accordionTimer);
   }, [works, isAccordionPaused]);
-
-  // On mobile the accordion is a manual swipe carousel: keep the active card in sync with scrolling
-  useEffect(() => {
-    const container = accordionRef.current;
-    if (!container || isDesktopView()) return;
-    const handleAccordionScroll = () => {
-      if (isDesktopView()) return;
-      const firstCard = container.children[0];
-      if (!firstCard) return;
-      const step = firstCard.offsetWidth + 8;
-      const idx = Math.round(container.scrollLeft / step);
-      if (idx >= 0 && idx < accordionWorks.length) {
-        setActiveAccordionIndex((prev) => (idx === prev ? prev : idx));
-      }
-    };
-    container.addEventListener('scroll', handleAccordionScroll, { passive: true });
-    return () => container.removeEventListener('scroll', handleAccordionScroll);
-  }, [works]);
 
   const nextSlide = () => {
     const heroLen = heroWorks.length;
@@ -148,6 +157,15 @@ export default function HomePage({ onNavigate, onSelectProject }) {
         });
         setWorks(sorted);
       }
+    });
+    return () => {
+      if (typeof unsubscribe === 'function') unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = subscribeToTestimonials((data) => {
+      setTestimonials(toCarouselTestimonials(data));
     });
     return () => {
       if (typeof unsubscribe === 'function') unsubscribe();
@@ -193,8 +211,8 @@ export default function HomePage({ onNavigate, onSelectProject }) {
         <div className="absolute inset-0 pointer-events-none" style={{ transition: 'opacity 2000ms ease-in-out' }}>
           {heroWorks.map((work, index) => {
             const heroLen = heroWorks.length;
-            const isActive = index === currentSlide;
-            const isPrev = index === (currentSlide - 1 + heroLen) % heroLen;
+            const isActive = index === activeHeroSlide;
+            const isPrev = index === (activeHeroSlide - 1 + heroLen) % heroLen;
             let zIndex = 0;
             if (isActive) zIndex = 10;
             else if (isPrev) zIndex = 5;
@@ -206,7 +224,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                 aria-hidden={!isActive}
                 aria-current={isActive}
                 style={{
-                  transform: `translateX(${(index - currentSlide) * 100}%)`,
+                  transform: `translateX(${(index - activeHeroSlide) * 100}%)`,
                   zIndex,
                   transition: 'transform 800ms cubic-bezier(0.25, 1, 0.5, 1)',
                   pointerEvents: isActive ? 'auto' : 'none'
@@ -234,10 +252,10 @@ export default function HomePage({ onNavigate, onSelectProject }) {
           })}
         </div>
         
-        <div className="absolute bottom-10 left-10 sm:bottom-16 sm:left-16 lg:bottom-20 lg:left-24 z-10 pr-10 sm:pr-16 lg:pr-24">
-          {heroWorks[currentSlide] && (
-            <h1 className="font-serif text-3xl sm:text-[40px] leading-tight sm:leading-[50px] font-light text-white tracking-tight max-w-4xl animate-fade-in" key={`title-${currentSlide}`} style={{ animationDelay: '150ms' }}>
-              {heroWorks[currentSlide].title}
+        <div className="absolute bottom-20 left-6 pr-6 sm:bottom-16 sm:left-16 sm:pr-16 lg:bottom-20 lg:left-24 lg:pr-24 z-10">
+          {heroWorks[activeHeroSlide] && (
+            <h1 className="font-serif text-3xl sm:text-[40px] leading-tight sm:leading-[50px] font-light text-white tracking-tight max-w-4xl animate-fade-in" key={`title-${activeHeroSlide}`} style={{ animationDelay: '150ms' }}>
+              {heroWorks[activeHeroSlide].title}
             </h1>
           )}
         </div>
@@ -266,7 +284,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                 key={i}
                 type="button" 
                 onClick={(e) => { e.stopPropagation(); setCurrentSlide(i); }}
-                className={`h-2.5 sm:h-3 transition-colors duration-500 ${currentSlide === i ? 'bg-ashara-teal w-10 sm:w-12' : 'w-2.5 sm:w-3 bg-white/40 hover:bg-white'}`}
+                className={`h-2.5 sm:h-3 transition-colors duration-500 ${activeHeroSlide === i ? 'bg-ashara-teal w-10 sm:w-12' : 'w-2.5 sm:w-3 bg-white/40 hover:bg-white'}`}
                 aria-label={`Go to slide ${i + 1}`} 
                 aria-current={currentSlide === i}
               ></button>
@@ -309,10 +327,35 @@ export default function HomePage({ onNavigate, onSelectProject }) {
           <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1"></div>
         </div>
         
-        {/* Accordion Expanding Carousel with Floating Arrows */}
+        {/* Mobile: Two-by-Two Card Grid with Slide-Up Caption on Hover */}
+        <div className="md:hidden grid grid-cols-2 gap-2">
+          {accordionWorks.map((work) => (
+            <article
+              key={work.id}
+              onClick={() => handleCardClick(work)}
+              className="group relative cursor-pointer overflow-hidden bg-gray-100 aspect-[4/3]"
+            >
+              <img
+                src={work.image}
+                loading="lazy"
+                decoding="async"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = work.fallbackImage;
+                }}
+                alt={work.title}
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 group-active:scale-110"
+              />
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent px-3 pb-2.5 pt-10">
+                <h3 className="font-serif text-sm sm:text-base text-white font-light leading-snug">{work.title}</h3>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        {/* Desktop: Accordion Expanding Carousel with Floating Arrows */}
         <div 
-          ref={accordionRef}
-          className="relative flex flex-row h-[60svh] min-h-[400px] md:min-h-[500px] max-h-[700px] w-full gap-2 overflow-x-auto md:overflow-hidden snap-x snap-mandatory md:snap-none rounded-none group [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          className="hidden md:flex relative flex-row h-[60svh] min-h-[500px] max-h-[700px] w-full gap-2 overflow-hidden rounded-none group"
           onMouseEnter={() => setIsAccordionPaused(true)}
           onMouseLeave={() => setIsAccordionPaused(false)}
         >
@@ -323,7 +366,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                 key={work.id}
                 onClick={() => handleCardClick(work)}
                 onMouseEnter={() => setActiveAccordionIndex(index)}
-                className={`relative cursor-pointer overflow-hidden transition-all duration-700 ease-in-out bg-gray-100 shrink-0 snap-center w-[85vw] md:w-auto ${isActive ? 'md:flex-[4]' : 'md:flex-1'}`}
+                className={`relative cursor-pointer overflow-hidden transition-all duration-700 ease-in-out bg-gray-100 shrink-0 ${isActive ? 'flex-[4]' : 'flex-1'}`}
               >
                 <img
                   src={work.image}
@@ -338,9 +381,9 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                 />
                 <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/10 transition-opacity duration-300 ${isActive ? 'opacity-90' : 'opacity-70'}`}></div>
                 
-                <div className={`absolute inset-0 p-4 sm:p-6 md:p-8 flex flex-col justify-end z-10 transition-opacity duration-500 delay-100 ${isActive ? 'opacity-100' : 'opacity-100 md:opacity-0'}`}>
-                  <div className={`transform transition-transform duration-500 ease-out ${isActive ? 'translate-y-0' : 'translate-y-0 md:translate-y-4'}`}>
-                    <h3 className={`font-serif text-lg sm:text-xl md:text-2xl lg:text-3xl text-white font-light transition-all duration-500 overflow-hidden overflow-ellipsis ${isActive ? 'whitespace-normal' : 'whitespace-nowrap max-w-[90%] md:max-w-[80%]'}`}>
+                <div className={`absolute inset-0 p-8 flex flex-col justify-end z-10 transition-opacity duration-500 delay-100 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
+                  <div className={`transform transition-transform duration-500 ease-out ${isActive ? 'translate-y-0' : 'translate-y-4'}`}>
+                    <h3 className={`font-serif text-2xl lg:text-3xl text-white font-light transition-all duration-500 overflow-hidden overflow-ellipsis ${isActive ? 'whitespace-normal' : 'whitespace-nowrap max-w-[80%]'}`}>
                       {work.title}
                     </h3>
                   </div>
@@ -377,8 +420,8 @@ export default function HomePage({ onNavigate, onSelectProject }) {
           </button>
         </div>
 
-        {/* Carousel Indicators */}
-        <div className="mt-6 flex justify-center flex-wrap gap-1.5">
+        {/* Carousel Indicators (Desktop only) */}
+        <div className="mt-6 hidden md:flex justify-center flex-wrap gap-1.5">
           {accordionWorks.map((_, index) => (
             <button
               key={index}
@@ -387,10 +430,6 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                 setActiveAccordionIndex(index);
                 setIsAccordionPaused(true);
                 setTimeout(() => setIsAccordionPaused(false), 5000); // Resume after 5 seconds
-                if (!isDesktopView() && accordionRef.current) {
-                  const card = accordionRef.current.children[index];
-                  if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
-                }
               }}
               className={`h-2.5 sm:h-3 transition-colors duration-500 ${
                 activeAccordionIndex === index 
@@ -409,18 +448,23 @@ export default function HomePage({ onNavigate, onSelectProject }) {
             onClick={() => onNavigate && onNavigate('projects')}
             className="group relative inline-flex items-center justify-center overflow-hidden h-8 text-[12px] uppercase tracking-[0.25em] font-bold text-ashara-teal dark:text-white hover:text-ashara-teal transition-colors"
           >
-            {/* Invisible placeholder to maintain the button's size */}
-            <span className="invisible whitespace-nowrap">
+            {/* Mobile: always-visible label (no hover on touch devices) */}
+            <span className="md:hidden whitespace-nowrap">
               VIEW ALL PROJECTS
             </span>
-            
-            {/* Default State: Only Arrow */}
-            <span className="absolute inset-0 flex items-center justify-center transition-transform duration-500 group-hover:translate-y-[150%]">
+
+            {/* Desktop: invisible placeholder to maintain the button's size */}
+            <span className="hidden md:inline invisible whitespace-nowrap">
+              VIEW ALL PROJECTS
+            </span>
+
+            {/* Desktop Default State: Only Arrow */}
+            <span className="hidden md:flex absolute inset-0 items-center justify-center transition-transform duration-500 group-hover:translate-y-[150%]">
               <ChevronRight className="w-6 h-6" />
             </span>
-            
-            {/* Hover State: Only Text */}
-            <span className="absolute inset-0 flex items-center justify-center transition-transform duration-500 -translate-y-[150%] group-hover:translate-y-0">
+
+            {/* Desktop Hover State: Only Text */}
+            <span className="hidden md:flex absolute inset-0 items-center justify-center transition-transform duration-500 -translate-y-[150%] group-hover:translate-y-0">
               VIEW ALL PROJECTS
             </span>
           </button>
@@ -445,23 +489,29 @@ export default function HomePage({ onNavigate, onSelectProject }) {
         onMouseEnter={() => setIsTestimonialPaused(true)}
         onMouseLeave={() => setIsTestimonialPaused(false)}
         onTouchStart={handleTestimonialTouchStart}
+        onTouchMove={handleTestimonialTouchMove}
         onTouchEnd={handleTestimonialTouchEnd}
         onTouchCancel={handleTestimonialTouchCancel}
       >
         {/* Left Arrow */}
-        <button 
-          onClick={() => setCurrentTestimonial((prev) => (prev - 1 + TESTIMONIALS.length) % TESTIMONIALS.length)}
-          className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-300 hover:text-ashara-teal transition-colors hidden sm:block z-10"
+        <button
+          type="button"
+          aria-label="Previous testimonial"
+          onClick={() => {
+            setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+            pauseAndResumeTestimonials();
+          }}
+          className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-300 hover:text-ashara-teal transition-colors z-10 p-1"
         >
-          <ChevronLeft className="w-8 h-8 stroke-1" />
+          <ChevronLeft className="w-6 h-6 sm:w-8 sm:h-8 stroke-1" />
         </button>
 
         <div className="overflow-hidden w-full">
-          <div 
-            className="flex transition-transform duration-700 ease-in-out items-center"
-            style={{ transform: `translateX(-${currentTestimonial * 100}%)` }}
+          <div
+            className={`flex items-center ${isTestimonialDragging ? '' : 'transition-transform duration-700 ease-in-out'}`}
+            style={{ transform: `translateX(calc(-${activeTestimonial * 100}% + ${testimonialDrag}px))` }}
           >
-            {TESTIMONIALS.map((testimonial, idx) => (
+            {testimonials.map((testimonial, idx) => (
               <div 
                 key={idx}
                 className="w-full flex-shrink-0 px-8 sm:px-12 md:px-16"
@@ -482,16 +532,21 @@ export default function HomePage({ onNavigate, onSelectProject }) {
         </div>
 
         {/* Right Arrow */}
-        <button 
-          onClick={() => setCurrentTestimonial((prev) => (prev + 1) % TESTIMONIALS.length)}
-          className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-300 hover:text-ashara-teal transition-colors hidden sm:block z-10"
+        <button
+          type="button"
+          aria-label="Next testimonial"
+          onClick={() => {
+            setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+            pauseAndResumeTestimonials();
+          }}
+          className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-300 hover:text-ashara-teal transition-colors z-10 p-1"
         >
-          <ChevronRight className="w-8 h-8 stroke-1" />
+          <ChevronRight className="w-6 h-6 sm:w-8 sm:h-8 stroke-1" />
         </button>
 
         {/* Pagination Indicators */}
         <div className="flex justify-center gap-2 mt-8">
-          {TESTIMONIALS.map((_, idx) => (
+          {testimonials.map((_, idx) => (
             <button 
               key={idx}
               onClick={() => {
@@ -499,7 +554,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                 pauseAndResumeTestimonials();
               }}
               className={`w-2 h-2 rounded-none transition-colors ${
-                currentTestimonial === idx 
+                activeTestimonial === idx 
                   ? 'bg-ashara-teal' 
                   : 'bg-gray-300 dark:bg-white/15 hover:bg-gray-400'
               }`}
