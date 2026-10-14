@@ -4,8 +4,8 @@ import { Trash2, X, AlertCircle } from 'lucide-react';
 export default function AdminDeleteConfirm({ deleteConfirm, onCancel, onConfirm }) {
   if (!deleteConfirm) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-fade-in">
-      <div className="bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 w-full max-w-md p-6 rounded-xs shadow-2xl space-y-5">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
+      <div className="bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 w-full max-w-md p-6 rounded-sm shadow-2xl space-y-5">
         <div className="flex items-center gap-3 text-rose-500">
           <div className="w-10 h-10 rounded-full bg-rose-500/10 flex items-center justify-center shrink-0">
             <Trash2 className="w-5 h-5" />
@@ -21,7 +21,7 @@ export default function AdminDeleteConfirm({ deleteConfirm, onCancel, onConfirm 
             Cancel
           </button>
           <button type="button" onClick={onConfirm}
-            className="px-5 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs uppercase tracking-wider font-bold rounded-xs transition shadow-sm">
+            className="px-5 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs uppercase tracking-wider font-bold rounded-sm transition shadow-sm">
             Delete Permanently
           </button>
         </div>

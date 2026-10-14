@@ -44,7 +44,7 @@ export default function ClientsSection() {
               alt={client.alt}
               loading="lazy"
               decoding="async"
-              className="h-16 sm:h-24 w-full object-contain transition-all duration-300 hover:scale-110 cursor-pointer"
+              className="h-16 sm:h-24 w-full object-contain transition-all duration-300 hover:scale-110"
             />
           </div>
         ))}

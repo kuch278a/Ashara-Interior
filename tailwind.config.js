@@ -10,7 +10,6 @@ export default {
       fontFamily: {
         serif: ['"Cormorant Garamond"', '"Playfair Display"', 'Georgia', 'serif'],
         sans: ['"Plus Jakarta Sans"', '"Inter"', 'sans-serif'],
-        script: ['"Pinyon Script"', '"Alex Brush"', 'cursive'],
       },
       colors: {
         ashara: {
@@ -31,27 +30,7 @@ export default {
           charcoal: '#1A1816',
           dark: '#0A1525',
           gold: '#C5A880',
-        },
-        terion: {
-          charcoal: '#1A1816',
-          orange: '#DF6D27',
-          'orange-hover': '#C85C1B',
-          stone: '#78716C',
-          gray: '#9CA3AF',
-          muted: '#A8A29E',
-          bg: '#F5F4F0',
-          border: '#E2DCD5',
-          'card-dark': '#0D1724',
         }
-      },
-      boxShadow: {
-        'luxury': '0 20px 40px -15px rgba(30, 78, 78, 0.08)',
-        'luxury-lg': '0 30px 60px -20px rgba(30, 78, 78, 0.15)',
-      },
-      scale: {
-        '102': '1.02',
-        '103': '1.03',
-        '104': '1.04',
       }
     },
   },

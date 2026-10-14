@@ -50,7 +50,7 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
         {/* Brand Logo & Title */}
         <button
           onClick={() => handleNavClick('home')}
-          className="flex items-center gap-2.5 sm:gap-4 text-left focus:outline-none group"
+          className="flex items-center gap-2.5 sm:gap-4 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold group"
           aria-label="Ashara Interior Design and Building"
         >
           <div className="flex items-center select-none group">
@@ -102,7 +102,7 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
             {/* Light / Dark Mode Toggle */}
             <button
               onClick={toggleTheme}
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-ashara-teal dark:text-white hover:text-ashara-teal dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition duration-200 focus:outline-none"
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-ashara-teal dark:text-white hover:text-ashara-teal dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold"
               aria-label={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
               title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
@@ -116,8 +116,10 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
             {/* Mobile Hamburger Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-ashara-teal dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition focus:outline-none"
+              className="md:hidden w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-ashara-teal dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold"
               aria-label="Toggle Navigation Menu"
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -127,7 +129,7 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
 
       {/* Mobile Dropdown Menu */}
       {mobileMenuOpen && (
-        <div className="pointer-events-auto md:hidden w-full absolute top-full left-0 bg-white dark:bg-ashara-dark border-b border-gray-200 dark:border-white/10 shadow-lg animate-fade-in">
+        <div id="mobile-menu" className="pointer-events-auto md:hidden w-full absolute top-full left-0 bg-white dark:bg-ashara-dark border-b border-gray-200 dark:border-white/10 shadow-lg animate-fade-in">
           <div className="px-6 py-4 space-y-2">
             {navLinks.map((link) => {
               const isActive = activePage === link.id || (activePage === 'project-detail' && link.id === 'projects');
@@ -135,7 +137,7 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
                 <button
                   key={link.id}
                   onClick={() => handleNavClick(link.id)}
-                  className={`block w-full text-left px-4 py-3 rounded-lg text-[12px] uppercase tracking-[0.2em] font-bold transition-colors duration-200 ${
+                  className={`block w-full text-left px-4 py-3 rounded-lg text-[12px] uppercase tracking-[0.2em] font-bold transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-ashara-gold ${
                     isActive
                       ? 'bg-ashara-teal/10 dark:bg-white/10 text-ashara-teal dark:text-white'
                       : 'text-ashara-teal/60 dark:text-white/60 hover:bg-ashara-teal/5 dark:hover:bg-white/5 hover:text-ashara-teal dark:hover:text-white'

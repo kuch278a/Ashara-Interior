@@ -1,23 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Star, Quote } from 'lucide-react';
 import { DEFAULT_PROJECTS_LIST } from '../data/defaultData';
-import { getInitialProjects, subscribeToProjects, getInitialTestimonials, subscribeToTestimonials } from '../services/firebaseService';
+import { getInitialProjects, subscribeToProjects } from '../services/firebaseService';
 
 export default function ProjectDetailPage({ onNavigate, onSelectProject, project, source = 'projects' }) {
   // Live project resolution: fallback to first project or live project in storage
   const [allProjects, setAllProjects] = useState(() => getInitialProjects());
-  const [testimonials, setTestimonials] = useState(() => getInitialTestimonials());
-  
+
   useEffect(() => {
     const unsubProjects = subscribeToProjects((list) => {
       if (list && list.length > 0) setAllProjects(list);
     });
-    const unsubTestimonials = subscribeToTestimonials((list) => {
-      if (list && list.length > 0) setTestimonials(list);
-    });
     return () => {
       if (typeof unsubProjects === 'function') unsubProjects();
-      if (typeof unsubTestimonials === 'function') unsubTestimonials();
     };
   }, []);
 
@@ -29,20 +23,11 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
     activeProject.image || activeProject.fallbackImage,
     ...(Array.isArray(activeProject.gallery) && activeProject.gallery.length > 0
       ? activeProject.gallery.filter((img) => img && img !== activeProject.image)
-      : [
-          'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=90',
-          'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85',
-          'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=85',
-          'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=85'
-        ])
+      : [])
   ].filter(Boolean);
 
   // Dynamic recommendations: Other live projects from the list
   const recommendations = allProjects.filter((p) => String(p.id) !== String(activeProject.id)).slice(0, 2);
-
-  // Match testimonial linked specifically to this project, or fallback to general featured review
-  const projectTestimonial = testimonials.find((t) => String(t.projectId) === String(activeProject.id)) ||
-    testimonials.find((t) => !t.projectId && t.isFeatured);
 
   const handleRecommendationClick = (recProject) => {
     if (onSelectProject) {
@@ -151,7 +136,15 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
           {recommendations.map((rec) => (
             <article 
               key={rec.id}
+              role="button"
+              tabIndex={0}
               onClick={() => handleRecommendationClick(rec)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  if (e.key === ' ') e.preventDefault();
+                  handleRecommendationClick(rec);
+                }
+              }}
               className="group cursor-pointer break-inside-avoid relative overflow-hidden rounded-sm"
             >
               <div className="w-full relative overflow-hidden bg-gray-100 dark:bg-gray-800">

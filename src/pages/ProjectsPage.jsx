@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { getInitialProjects, subscribeToProjects } from '../services/firebaseService';
 
-import bannerImage from '../assets/projects_hero_banner.png';
-
 export default function ProjectsPage({ onNavigate, onSelectProject, isSection = false }) {
   const [projects, setProjects] = useState(() => getInitialProjects());
-  const [selectedFilter, setSelectedFilter] = useState('ALL');
 
   useEffect(() => {
     const unsubscribe = subscribeToProjects((data) => {
@@ -25,10 +22,6 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
       if (typeof unsubscribe === 'function') unsubscribe();
     };
   }, []);
-
-  const filteredProjects = selectedFilter === 'ALL'
-    ? projects
-    : projects.filter((p) => (p.category || p.tag) === selectedFilter);
 
   const handleProjectClick = (project) => {
     if (onSelectProject) {
@@ -50,10 +43,10 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
             </blockquote>
             <div className="space-y-2 pt-6">
               <p className="text-[12px] sm:text-sm uppercase tracking-[0.28em] font-bold text-white">
-                Daniel Mesfin
+                Michael Dessalegn
               </p>
               <p className="text-[11px] sm:text-xs uppercase tracking-[0.32em] font-bold text-white/90">
-                CREATIVE DIRECTOR
+                Founder, CEO and Architect
               </p>
             </div>
           </div>
@@ -74,16 +67,25 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
 
         {/* 2-Column Grid matching Figma */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12">
-          {(isSection ? filteredProjects.slice(0, 4) : filteredProjects).map((item) => (
+          {(isSection ? projects.slice(0, 4) : projects).map((item) => (
             <article
               key={item.id}
+              role="button"
+              tabIndex={0}
               onClick={() => handleProjectClick(item)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  if (e.key === ' ') e.preventDefault();
+                  handleProjectClick(item);
+                }
+              }}
               className="group cursor-pointer block"
             >
               {/* Photo */}
               <div className="w-full aspect-[4/3] overflow-hidden bg-gray-200 dark:bg-gray-800 mb-4">
                 <img
                   src={item.image}
+                  alt={item.title}
                   loading="lazy"
                   decoding="async"
                   onError={(e) => {

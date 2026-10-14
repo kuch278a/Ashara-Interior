@@ -6,7 +6,6 @@ export default function AdminProjectModal({
   projectImageFile, setProjectImageFile,
   projectImagePreview, setProjectImagePreview,
   projectGalleryFiles, setProjectGalleryFiles,
-  projectGalleryPreviews, setProjectGalleryPreviews,
   uploadStatus,
   onClose, onSubmit,
   formatFileSize,
@@ -14,7 +13,7 @@ export default function AdminProjectModal({
   if (!editingProject) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/75 backdrop-blur-sm animate-fade-in">
-      <div className="bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 w-full max-w-4xl max-h-[92vh] overflow-y-auto rounded-xs shadow-2xl space-y-6 p-6 sm:p-8">
+      <div className="bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 w-full max-w-4xl max-h-[92vh] overflow-y-auto rounded-sm shadow-2xl space-y-6 p-6 sm:p-8">
         <div className="flex items-center justify-between pb-4 border-b border-gray-200 dark:border-white/10">
           <div>
             <span className="text-[10px] uppercase tracking-[0.25em] text-ashara-teal dark:text-white font-bold">PROJECT SHOWCASE CURATOR</span>
@@ -34,12 +33,12 @@ export default function AdminProjectModal({
                 <span className="text-[10px] uppercase tracking-wider font-bold text-ashara-teal dark:text-white">Live Public Card Preview</span>
                 <span className="text-[9px] px-2 py-0.5 bg-ashara-teal/10 dark:bg-ashara-gold/15 text-ashara-teal dark:text-white font-semibold uppercase tracking-wider rounded">Real-time</span>
               </div>
-              <div className="border border-gray-200 dark:border-white/15 bg-gray-50 dark:bg-[#070E18] rounded-xs overflow-hidden shadow-md">
+              <div className="border border-gray-200 dark:border-white/15 bg-gray-50 dark:bg-[#070E18] rounded-sm overflow-hidden shadow-md">
                 <div className="aspect-[16/10] bg-gray-200 dark:bg-gray-800 relative overflow-hidden">
                   <img src={projectImagePreview || editingProject.image || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'} alt="Preview"
                     className="w-full h-full object-cover"
                     onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'; }} />
-                  <div className="absolute top-2.5 left-2.5 bg-black/75 text-white text-[9px] uppercase tracking-wider px-2 py-0.5 font-semibold rounded-xs">
+                  <div className="absolute top-2.5 left-2.5 bg-black/75 text-white text-[9px] uppercase tracking-wider px-2 py-0.5 font-semibold rounded-sm">
                     {editingProject.category || 'GOVERNMENTAL'}
                   </div>
                 </div>
@@ -55,7 +54,7 @@ export default function AdminProjectModal({
               <div>
                 <label className="block text-[10px] uppercase tracking-wider font-bold text-ashara-teal dark:text-white mb-1.5">Project Title *</label>
                 <input type="text" required value={editingProject.title} onChange={(e) => setEditingProject({ ...editingProject, title: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm text-ashara-teal dark:text-white rounded-xs focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold"
+                  className="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm text-ashara-teal dark:text-white rounded-sm focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold"
                   placeholder="e.g., Oromia Presidential Suites" />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -63,7 +62,10 @@ export default function AdminProjectModal({
                   <label className="block text-[10px] uppercase tracking-wider font-bold text-ashara-teal dark:text-white mb-1.5">Category Tag *</label>
                   <select value={editingProject.category || editingProject.tag || 'GOVERNMENTAL'}
                     onChange={(e) => setEditingProject({ ...editingProject, category: e.target.value, tag: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm text-ashara-teal dark:text-white rounded-xs focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold">
+                    className="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm text-ashara-teal dark:text-white rounded-sm focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold">
+                    <option value="INTERIOR" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">INTERIOR</option>
+                    <option value="LANDSCAPE" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">LANDSCAPE</option>
+                    <option value="ARCHITECTURE" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">ARCHITECTURE</option>
                     <option value="GOVERNMENTAL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">GOVERNMENTAL</option>
                     <option value="PRIVATE ORGANIZATION" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">PRIVATE ORGANIZATION</option>
                     <option value="PRIVATE CORPORATION" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">PRIVATE CORPORATION</option>
@@ -76,7 +78,7 @@ export default function AdminProjectModal({
                   <label className="block text-[10px] uppercase tracking-wider font-bold text-ashara-teal dark:text-white mb-1.5">Subtitle / Scope Tag</label>
                   <input type="text" value={editingProject.subtitle || ''}
                     onChange={(e) => setEditingProject({ ...editingProject, subtitle: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm text-ashara-teal dark:text-white rounded-xs focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm text-ashara-teal dark:text-white rounded-sm focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold"
                     placeholder="e.g., CIVIC HEADQUARTERS" />
                 </div>
               </div>
@@ -98,20 +100,20 @@ export default function AdminProjectModal({
                 <label className="block text-[10px] uppercase tracking-wider font-bold text-ashara-teal dark:text-white mb-1.5">Architectural Narrative *</label>
                 <textarea rows="3" required value={editingProject.description || ''}
                   onChange={(e) => setEditingProject({ ...editingProject, description: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm text-ashara-teal dark:text-white rounded-xs focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold resize-none"
+                  className="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm text-ashara-teal dark:text-white rounded-sm focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold resize-none"
                   placeholder="Describe the architectural highlights, materiality, lighting..." />
               </div>
               {/* Main Image Upload */}
               <div className="space-y-2">
                 <label className="block text-[10px] uppercase tracking-wider font-bold text-ashara-teal dark:text-white">Project Photography</label>
                 {projectImageFile ? (
-                  <div className="flex items-center justify-between p-3 bg-ashara-teal/5 dark:bg-ashara-gold/10 border border-ashara-teal/20 dark:border-ashara-gold/30 rounded-xs">
+                  <div className="flex items-center justify-between p-3 bg-ashara-teal/5 dark:bg-ashara-gold/10 border border-ashara-teal/20 dark:border-ashara-gold/30 rounded-sm">
                     <div className="flex items-center gap-2.5 min-w-0">
                       <CheckCircle className="w-4 h-4 text-ashara-teal dark:text-white shrink-0" />
                       <div className="min-w-0">
                         <p className="text-xs font-semibold text-ashara-teal dark:text-white truncate">{projectImageFile.name}</p>
                         <p className="text-[10px] text-ashara-teal dark:text-white flex items-center gap-1.5">
-                          <span>{formatFileSize(projectImageFile.size)}</span><span>�</span>
+                          <span>{formatFileSize(projectImageFile.size)}</span><span>•</span>
                           <span className="text-emerald-600 dark:text-emerald-400 font-medium">Smart Web Compression Enabled</span>
                         </p>
                       </div>
@@ -122,10 +124,10 @@ export default function AdminProjectModal({
                     </button>
                   </div>
                 ) : (
-                  <label className="flex flex-col items-center justify-center gap-1.5 w-full p-4 bg-gray-50 dark:bg-white/5 border-2 border-dashed border-gray-300 dark:border-white/15 hover:border-ashara-teal dark:hover:border-ashara-gold text-ashara-teal dark:text-white cursor-pointer transition-all duration-200 group rounded-xs">
+                  <label className="flex flex-col items-center justify-center gap-1.5 w-full p-4 bg-gray-50 dark:bg-white/5 border-2 border-dashed border-gray-300 dark:border-white/15 hover:border-ashara-teal dark:hover:border-ashara-gold text-ashara-teal dark:text-white cursor-pointer transition-all duration-200 group rounded-sm">
                     <Upload className="w-5 h-5 text-ashara-teal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-teal transition" />
                     <span className="text-xs uppercase tracking-wider font-semibold group-hover:text-ashara-teal dark:group-hover:text-ashara-teal transition">Upload high-resolution image file</span>
-                    <span className="text-[10px] text-ashara-teal dark:text-white font-light">Supports JPG, PNG, WEBP � automatically optimized for lightning-fast loading</span>
+                    <span className="text-[10px] text-ashara-teal dark:text-white font-light">Supports JPG, PNG, WEBP — automatically optimized for lightning-fast loading</span>
                     <input type="file" accept="image/*" className="hidden" onChange={(e) => {
                       const file = e.target.files[0];
                       if (file) { setProjectImageFile(file); const r = new FileReader(); r.onload = () => setProjectImagePreview(r.result); r.readAsDataURL(file); }
@@ -138,13 +140,13 @@ export default function AdminProjectModal({
                   {projectGalleryFiles.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
                       {projectGalleryFiles.map((file, idx) => (
-                        <div key={idx} className="flex items-center gap-2 p-2 bg-ashara-teal/5 dark:bg-ashara-gold/10 border border-ashara-teal/20 dark:border-ashara-gold/30 rounded-xs">
+                        <div key={idx} className="flex items-center gap-2 p-2 bg-ashara-teal/5 dark:bg-ashara-gold/10 border border-ashara-teal/20 dark:border-ashara-gold/30 rounded-sm">
                           <CheckCircle className="w-4 h-4 text-ashara-teal dark:text-white shrink-0" />
                           <div className="min-w-0">
                             <p className="text-xs font-semibold text-ashara-teal dark:text-white truncate max-w-[180px]">{file.name}</p>
                             <p className="text-[10px] text-ashara-teal dark:text-white">{formatFileSize(file.size)}</p>
                           </div>
-                          <button type="button" onClick={() => { setProjectGalleryFiles(prev => prev.filter((_, i) => i !== idx)); setProjectGalleryPreviews(prev => prev.filter((_, i) => i !== idx)); }}
+                          <button type="button" onClick={() => { setProjectGalleryFiles(prev => prev.filter((_, i) => i !== idx)); }}
                             className="text-ashara-teal dark:text-white hover:text-rose-500 dark:hover:text-rose-400 p-1 text-xs" title="Remove">
                             <X className="w-3.5 h-3.5" />
                           </button>
@@ -152,16 +154,15 @@ export default function AdminProjectModal({
                       ))}
                     </div>
                   ) : (
-                    <label className="flex flex-col items-center justify-center gap-1.5 w-full p-4 bg-gray-50 dark:bg-white/5 border-2 border-dashed border-gray-300 dark:border-white/15 hover:border-ashara-teal dark:hover:border-ashara-gold text-ashara-teal dark:text-white cursor-pointer transition-all duration-200 group rounded-xs">
+                    <label className="flex flex-col items-center justify-center gap-1.5 w-full p-4 bg-gray-50 dark:bg-white/5 border-2 border-dashed border-gray-300 dark:border-white/15 hover:border-ashara-teal dark:hover:border-ashara-gold text-ashara-teal dark:text-white cursor-pointer transition-all duration-200 group rounded-sm">
                       <Upload className="w-5 h-5 text-ashara-teal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-teal transition" />
                       <span className="text-xs uppercase tracking-wider font-semibold group-hover:text-ashara-teal dark:group-hover:text-ashara-teal transition">Upload gallery images (multiple)</span>
-                      <span className="text-[10px] text-ashara-teal dark:text-white font-light">Supports JPG, PNG, WEBP � will appear in project detail gallery grid</span>
+                      <span className="text-[10px] text-ashara-teal dark:text-white font-light">Supports JPG, PNG, WEBP — will appear in project detail gallery grid</span>
                       <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => {
                         const files = Array.from(e.target.files);
                         if (files.length > 0) {
                           const newFiles = [...projectGalleryFiles, ...files].slice(0, 8);
                           setProjectGalleryFiles(newFiles);
-                          files.forEach(file => { const r = new FileReader(); r.onload = () => setProjectGalleryPreviews(prev => [...prev, r.result]); r.readAsDataURL(file); });
                         }
                       }} />
                     </label>
@@ -171,7 +172,7 @@ export default function AdminProjectModal({
                       <p className="text-[9px] uppercase tracking-wider text-ashara-teal dark:text-white mb-1">Current gallery URLs:</p>
                       <div className="flex flex-wrap gap-2">
                         {editingProject.gallery.map((url, idx) => (
-                          <div key={idx} className="flex items-center gap-2 p-2 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs">
+                          <div key={idx} className="flex items-center gap-2 p-2 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-sm">
                             <img src={url} alt="" className="w-10 h-10 object-cover rounded" />
                             <input type="text" value={url} readOnly className="flex-1 px-2 py-1 bg-transparent text-[10px] text-ashara-teal dark:text-white truncate" />
                           </div>
@@ -184,7 +185,7 @@ export default function AdminProjectModal({
                 <div className="pt-1">
                   <p className="text-[9px] uppercase tracking-wider text-ashara-teal dark:text-white mb-1">Or paste image URL (Unsplash or cloud link)</p>
                   <input type="text" value={editingProject.image || ''} onChange={(e) => { setEditingProject({ ...editingProject, image: e.target.value }); setProjectImageFile(null); setProjectImagePreview(''); }}
-                    className="w-full px-3 py-2 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs text-ashara-teal dark:text-white rounded-xs focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold"
+                    className="w-full px-3 py-2 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs text-ashara-teal dark:text-white rounded-sm focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold"
                     placeholder="https://images.unsplash.com/..." />
                 </div>
               </div>
@@ -192,7 +193,7 @@ export default function AdminProjectModal({
           </div>
           {/* Upload Progress */}
           {uploadStatus.active && (
-            <div className="space-y-1.5 p-3 bg-ashara-teal/5 dark:bg-ashara-gold/10 border border-ashara-teal/20 dark:border-ashara-gold/20 rounded-xs">
+            <div className="space-y-1.5 p-3 bg-ashara-teal/5 dark:bg-ashara-gold/10 border border-ashara-teal/20 dark:border-ashara-gold/20 rounded-sm">
               <div className="flex items-center justify-between text-xs font-medium text-ashara-teal dark:text-white">
                 <span className="flex items-center gap-1.5"><Loader2 className="w-4 h-4 animate-spin" />{uploadStatus.stage}</span>
                 <span>{uploadStatus.percent}%</span>
@@ -207,7 +208,7 @@ export default function AdminProjectModal({
             <button type="button" onClick={onClose} disabled={uploadStatus.active}
               className="px-5 py-2.5 text-xs uppercase tracking-wider font-semibold text-ashara-teal dark:text-white hover:text-ashara-teal dark:hover:text-white transition">Cancel</button>
             <button type="submit" disabled={uploadStatus.active}
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-ashara-teal hover:bg-ashara-teal-hover dark:bg-ashara-gold dark:hover:bg-ashara-gold/90 text-white dark:text-ashara-dark text-xs uppercase tracking-wider font-bold transition shadow-sm disabled:opacity-50 rounded-xs">
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-ashara-teal hover:bg-ashara-teal-hover dark:bg-ashara-gold dark:hover:bg-ashara-gold/90 text-white dark:text-ashara-dark text-xs uppercase tracking-wider font-bold transition shadow-sm disabled:opacity-50 rounded-sm">
               {uploadStatus.active ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
               <span>{uploadStatus.active ? (uploadStatus.stage || 'Saving...') : 'Save Project to Portfolio'}</span>
             </button>

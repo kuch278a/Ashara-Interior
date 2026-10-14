@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   Users, Layers, Database, Plus,
   RefreshCw, ChevronRight, ArrowUpRight, Building2,
@@ -50,13 +50,13 @@ export default function AdminPortal({ onNavigate }) {
   const [projectImageFile,        setProjectImageFile]        = useState(null);
   const [projectImagePreview,     setProjectImagePreview]     = useState('');
   const [projectGalleryFiles,     setProjectGalleryFiles]     = useState([]);
-  const [projectGalleryPreviews,  setProjectGalleryPreviews]  = useState([]);
   const [editingTestimonial,     setEditingTestimonial]     = useState(null);
   const [isTestimonialModalOpen, setIsTestimonialModalOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [uploadStatus,  setUploadStatus]  = useState({ active: false, stage: '', percent: 0 });
   const [copiedId,      setCopiedId]      = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const toastTimerRef = useRef(null);
 
   useEffect(() => {
     if (!adminUser) return;
@@ -67,13 +67,16 @@ export default function AdminPortal({ onNavigate }) {
     return () => { if (typeof unsub === 'function') unsub(); };
   }, [adminUser]);
 
+  useEffect(() => () => { if (toastTimerRef.current) clearTimeout(toastTimerRef.current); }, []);
+
   const showToast = (message, type = 'success') => {
     setNotification({ message, type });
-    setTimeout(() => setNotification(null), 4500);
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = setTimeout(() => setNotification(null), 4500);
   };
   const handleCopy = (text, id) => {
     if (!text) return;
-    navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(text).catch(() => showToast('Could not copy to clipboard', 'error'));
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
     showToast('Copied to clipboard', 'info');
@@ -118,12 +121,12 @@ export default function AdminPortal({ onNavigate }) {
   };
   const handleOpenNewProject = () => {
     setEditingProject({ title: '', category: 'GOVERNMENTAL', tag: 'GOVERNMENTAL', subtitle: '', image: '', description: '' });
-    setProjectImageFile(null); setProjectImagePreview(''); setProjectGalleryFiles([]); setProjectGalleryPreviews([]);
+    setProjectImageFile(null); setProjectImagePreview(''); setProjectGalleryFiles([]);
     setIsProjectModalOpen(true);
   };
   const handleOpenEditProject = (proj) => {
     setEditingProject({ ...proj }); setProjectImageFile(null); setProjectImagePreview('');
-    setProjectGalleryFiles([]); setProjectGalleryPreviews([]); setIsProjectModalOpen(true);
+    setProjectGalleryFiles([]); setIsProjectModalOpen(true);
   };
   const handleSaveProject = async (e) => {
     e.preventDefault(); if (!editingProject) return;
@@ -148,10 +151,14 @@ export default function AdminPortal({ onNavigate }) {
         projectData.gallery = [...(projectData.gallery || []), ...galleryUrls];
       }
       setUploadStatus({ active: true, stage: 'Syncing with atelier database...', percent: 95 });
-      await saveProject(projectData);
+      const result = await saveProject(projectData);
+      if (result.success === false) {
+        showToast('Error saving project: ' + (result.error || 'Please try again.'), 'error');
+        return;
+      }
       setIsProjectModalOpen(false); setEditingProject(null);
-      setProjectImageFile(null); setProjectImagePreview(''); setProjectGalleryFiles([]); setProjectGalleryPreviews([]);
-      showToast(`Project "${projectData.title}" saved successfully`);
+      setProjectImageFile(null); setProjectImagePreview(''); setProjectGalleryFiles([]);
+      showToast(`Project "${projectData.title}" saved successfully` + (result.isLive === false ? ' (saved locally only — cloud unavailable)' : ''));
       await loadAllData();
     } catch { showToast('Error saving project. Please try again.', 'error'); }
     finally { setUploadStatus({ active: false, stage: '', percent: 0 }); }
@@ -164,9 +171,13 @@ export default function AdminPortal({ onNavigate }) {
   const handleSaveTestimonial = async (e) => {
     e.preventDefault(); if (!editingTestimonial) return;
     try {
-      await saveTestimonial(editingTestimonial);
+      const result = await saveTestimonial(editingTestimonial);
+      if (result.success === false) {
+        showToast('Error saving testimonial: ' + (result.error || 'Please try again.'), 'error');
+        return;
+      }
       setIsTestimonialModalOpen(false); setEditingTestimonial(null);
-      showToast('Client testimonial saved successfully');
+      showToast('Client testimonial saved successfully' + (result.isLive === false ? ' (saved locally only — cloud unavailable)' : ''));
       await loadAllData();
     } catch { showToast('Error saving testimonial. Please try again.', 'error'); }
   };
@@ -174,9 +185,12 @@ export default function AdminPortal({ onNavigate }) {
   const handleConfirmDelete = async () => {
     if (!deleteConfirm) return;
     try {
-      if (deleteConfirm.type === 'project')     { await deleteProject(deleteConfirm.id);     showToast('Project removed from portfolio'); }
-      if (deleteConfirm.type === 'testimonial') { await deleteTestimonial(deleteConfirm.id); showToast('Testimonial removed from studio records'); }
-      if (deleteConfirm.type === 'lead')        { await deleteConsultation(deleteConfirm.id); showToast('Inquiry removed from records'); }
+      let result, message;
+      if (deleteConfirm.type === 'project')     { result = await deleteProject(deleteConfirm.id);      message = 'Project removed from portfolio'; }
+      if (deleteConfirm.type === 'testimonial') { result = await deleteTestimonial(deleteConfirm.id);  message = 'Testimonial removed from studio records'; }
+      if (deleteConfirm.type === 'lead')        { result = await deleteConsultation(deleteConfirm.id); message = 'Inquiry removed from records'; }
+      if (result.success === false) { showToast('Failed to delete item: ' + (result.error || 'Please try again.'), 'error'); return; }
+      showToast(message + (result.isLive === false ? ' (saved locally only — cloud unavailable)' : ''));
       setDeleteConfirm(null); await loadAllData();
     } catch { showToast('Failed to delete item', 'error'); }
   };
@@ -231,7 +245,7 @@ export default function AdminPortal({ onNavigate }) {
             <X className="w-4 h-4" />
           </button>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xs bg-ashara-gold/15 border border-ashara-gold/30 flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-sm bg-ashara-gold/15 border border-ashara-gold/30 flex items-center justify-center shrink-0">
               <Building2 className="w-5 h-5 text-ashara-gold" />
             </div>
             <div className="min-w-0">
@@ -251,7 +265,7 @@ export default function AdminPortal({ onNavigate }) {
           <p className="px-3 pt-2 pb-1.5 text-[9px] uppercase tracking-[0.25em] font-bold text-white/35">Manage</p>
           {NAV_CONFIG.map(({ key, label, icon: Icon, count, badge }) => (
             <button key={key} onClick={() => { setActiveTab(key); setSearchQuery(''); setIsSidebarOpen(false); }}
-              className={`relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xs text-xs uppercase tracking-wider font-semibold transition-all ${activeTab === key ? 'bg-white/10 text-white' : 'text-white/55 hover:text-white hover:bg-white/5'}`}>
+              className={`relative w-full flex items-center gap-3 px-3 py-2.5 rounded-sm text-xs uppercase tracking-wider font-semibold transition-all ${activeTab === key ? 'bg-white/10 text-white' : 'text-white/55 hover:text-white hover:bg-white/5'}`}>
               {activeTab === key && <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-ashara-gold rounded-full" />}
               <Icon className="w-4 h-4 shrink-0" />
               <span className="flex-1 text-left truncate">{label}</span>
@@ -273,7 +287,7 @@ export default function AdminPortal({ onNavigate }) {
             </div>
           </div>
           <button onClick={handleLogout}
-            className="w-full inline-flex items-center justify-center gap-2 px-3.5 py-2 bg-rose-500/15 hover:bg-rose-500 border border-rose-400/25 hover:border-rose-500 text-rose-300 hover:text-white text-xs uppercase tracking-wider font-semibold rounded-xs transition duration-200">
+            className="w-full inline-flex items-center justify-center gap-2 px-3.5 py-2 bg-rose-500/15 hover:bg-rose-500 border border-rose-400/25 hover:border-rose-500 text-rose-300 hover:text-white text-xs uppercase tracking-wider font-semibold rounded-sm transition duration-200">
             <LogOut className="w-3.5 h-3.5" /><span>Sign Out</span>
           </button>
         </div>
@@ -281,7 +295,7 @@ export default function AdminPortal({ onNavigate }) {
 
       {/* ==================== HEADER ==================== */}
       <header className="[grid-area:header] sticky top-0 z-30 bg-white/85 dark:bg-[#0C1726]/85 backdrop-blur-xl border-b border-gray-200/80 dark:border-white/10 px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-3 sm:gap-4">
-        <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden p-2 -ml-1 text-ashara-teal dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-xs transition" aria-label="Open menu">
+        <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden p-2 -ml-1 text-ashara-teal dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-sm transition" aria-label="Open menu">
           <Menu className="w-5 h-5" />
         </button>
         <div className="min-w-0">
@@ -291,17 +305,17 @@ export default function AdminPortal({ onNavigate }) {
         <div className="ml-auto flex items-center gap-2">
           {(activeTab === 'projects' || activeTab === 'testimonials') && (
             <button onClick={activeTab === 'projects' ? handleOpenNewProject : handleOpenNewTestimonial}
-              className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 bg-ashara-teal hover:bg-ashara-teal-hover dark:bg-ashara-gold dark:hover:bg-ashara-gold/90 text-white dark:text-ashara-dark text-xs uppercase tracking-wider font-bold rounded-xs transition shadow-sm">
+              className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 bg-ashara-teal hover:bg-ashara-teal-hover dark:bg-ashara-gold dark:hover:bg-ashara-gold/90 text-white dark:text-ashara-dark text-xs uppercase tracking-wider font-bold rounded-sm transition shadow-sm">
               <Plus className="w-4 h-4 stroke-[2.5]" />
               <span className="hidden sm:inline">{activeTab === 'projects' ? 'Add Project' : 'Add Testimonial'}</span>
             </button>
           )}
           <button onClick={() => loadAllData(true)} disabled={isRefreshing} title="Synchronize database"
-            className="p-2 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 text-ashara-teal dark:text-white rounded-xs transition disabled:opacity-50">
+            className="p-2 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 text-ashara-teal dark:text-white rounded-sm transition disabled:opacity-50">
             <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
           </button>
           <button onClick={() => onNavigate('home')} title="View live site"
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 border border-gray-300 dark:border-white/15 text-xs uppercase tracking-wider font-semibold text-ashara-teal dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-xs transition">
+            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 border border-gray-300 dark:border-white/15 text-xs uppercase tracking-wider font-semibold text-ashara-teal dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-sm transition">
             <span className="hidden md:inline">View Site</span><ArrowUpRight className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -318,13 +332,13 @@ export default function AdminPortal({ onNavigate }) {
             { tab: 'testimonials', label: 'Client Voices',         count: testimonials.length, icon: <Quote className="w-5 h-5" />,   color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20', sub: <span className="text-ashara-teal dark:text-white font-light truncate">Project Reviews</span>, action: 'Manage' },
           ].map(({ tab, label, count, icon, color, sub, action }) => (
             <div key={tab} onClick={() => setActiveTab(tab)}
-              className={`p-5 bg-white dark:bg-[#0C1726] border rounded-xs shadow-xs hover:shadow-md transition-all cursor-pointer group ${activeTab === tab ? 'border-ashara-teal dark:border-ashara-gold ring-1 ring-ashara-teal dark:ring-ashara-gold' : 'border-gray-200 dark:border-white/10'}`}>
+              className={`p-5 bg-white dark:bg-[#0C1726] border rounded-sm shadow-sm hover:shadow-md transition-all cursor-pointer group ${activeTab === tab ? 'border-ashara-teal dark:border-ashara-gold ring-1 ring-ashara-teal dark:ring-ashara-gold' : 'border-gray-200 dark:border-white/10'}`}>
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-[10px] uppercase tracking-[0.25em] font-semibold text-ashara-teal dark:text-white">{label}</p>
                   <h3 className="font-serif text-3xl font-bold text-ashara-teal dark:text-white mt-1">{count}</h3>
                 </div>
-                <div className={`w-10 h-10 rounded-xs ${color} border flex items-center justify-center group-hover:scale-110 transition-transform`}>{icon}</div>
+                <div className={`w-10 h-10 rounded-sm ${color} border flex items-center justify-center group-hover:scale-110 transition-transform`}>{icon}</div>
               </div>
               <div className="mt-3 pt-3 border-t border-gray-100 dark:border-white/5 flex items-center justify-between text-xs">
                 {sub}
@@ -335,12 +349,12 @@ export default function AdminPortal({ onNavigate }) {
         </section>
 
         {/* Toolbar: Search + Filters */}
-        <div className="bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 p-3 sm:p-4 rounded-xs shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <div className="bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 p-3 sm:p-4 rounded-sm shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           <div className="relative flex-1 max-w-md">
             <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-ashara-teal dark:text-white" />
             <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={activeTab === 'projects' ? 'Search projects...' : activeTab === 'leads' ? 'Search inquiries...' : 'Search reviews...'}
-              className="w-full pl-10 pr-8 py-2 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs text-xs text-ashara-teal dark:text-white placeholder-gray-400 focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold transition" />
+              className="w-full pl-10 pr-8 py-2 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-sm text-xs text-ashara-teal dark:text-white placeholder-gray-400 focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold transition" />
             {searchQuery && <button onClick={() => setSearchQuery('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ashara-teal dark:text-white hover:text-ashara-teal p-0.5"><X className="w-3.5 h-3.5" /></button>}
           </div>
           <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 sm:ml-auto">
@@ -348,8 +362,11 @@ export default function AdminPortal({ onNavigate }) {
               <div className="flex items-center gap-1.5 text-xs text-ashara-teal dark:text-white">
                 <Filter className="w-3.5 h-3.5" />
                 <select value={projectCategoryFilter} onChange={(e) => setProjectCategoryFilter(e.target.value)}
-                  className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs text-xs text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal">
+                  className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-sm text-xs text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal">
                   <option value="ALL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">All Categories ({projects.length})</option>
+                  <option value="INTERIOR" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Interior</option>
+                  <option value="LANDSCAPE" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Landscape</option>
+                  <option value="ARCHITECTURE" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Architecture</option>
                   <option value="GOVERNMENTAL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Governmental</option>
                   <option value="PRIVATE" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Private Entities</option>
                   <option value="CORPORATION" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Corporations</option>
@@ -362,7 +379,7 @@ export default function AdminPortal({ onNavigate }) {
               <div className="flex items-center gap-1.5 text-xs text-ashara-teal dark:text-white">
                 <Filter className="w-3.5 h-3.5" />
                 <select value={testimonialFilter} onChange={(e) => setTestimonialFilter(e.target.value)}
-                  className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs text-xs text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal">
+                  className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-sm text-xs text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal">
                   <option value="ALL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">All Project Links ({testimonials.length})</option>
                   {projects.map((p) => <option key={p.id} value={p.id} className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">{p.title}</option>)}
                 </select>
@@ -372,7 +389,7 @@ export default function AdminPortal({ onNavigate }) {
               <div className="flex items-center gap-1.5 text-xs text-ashara-teal dark:text-white">
                 <SlidersHorizontal className="w-3.5 h-3.5" />
                 <select value={leadStatusFilter} onChange={(e) => setLeadStatusFilter(e.target.value)}
-                  className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xs text-xs text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal">
+                  className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-sm text-xs text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal">
                   <option value="ALL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">All Inquiries ({leads.length})</option>
                   <option value="new" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">New Inquiries ({newLeadsCount})</option>
                   <option value="contacted" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Contacted</option>
@@ -392,7 +409,7 @@ export default function AdminPortal({ onNavigate }) {
 
       {/* Toast Notification */}
       {notification && (
-        <div className={`fixed top-4 right-4 left-4 sm:left-auto sm:max-w-sm z-[60] p-4 rounded-xs text-xs uppercase tracking-wider font-semibold flex items-center justify-between shadow-lg border animate-slide-down ${notification.type === 'error' ? 'bg-rose-600 text-white border-rose-700' : notification.type === 'info' ? 'bg-ashara-teal text-white border-ashara-teal/80' : 'bg-[#1E4E4E] dark:bg-ashara-gold text-white dark:text-ashara-dark border-ashara-teal dark:border-ashara-gold'}`}>
+        <div className={`fixed top-4 right-4 left-4 sm:left-auto sm:max-w-sm z-[60] p-4 rounded-sm text-xs uppercase tracking-wider font-semibold flex items-center justify-between shadow-lg border animate-slide-down ${notification.type === 'error' ? 'bg-rose-600 text-white border-rose-700' : notification.type === 'info' ? 'bg-ashara-teal text-white border-ashara-teal/80' : 'bg-[#1E4E4E] dark:bg-ashara-gold text-white dark:text-ashara-dark border-ashara-teal dark:border-ashara-gold'}`}>
           <div className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0" /><span>{notification.message}</span></div>
           <button onClick={() => setNotification(null)} className="p-1 hover:opacity-75 transition"><X className="w-4 h-4" /></button>
         </div>
@@ -404,7 +421,6 @@ export default function AdminPortal({ onNavigate }) {
           projectImageFile={projectImageFile} setProjectImageFile={setProjectImageFile}
           projectImagePreview={projectImagePreview} setProjectImagePreview={setProjectImagePreview}
           projectGalleryFiles={projectGalleryFiles} setProjectGalleryFiles={setProjectGalleryFiles}
-          projectGalleryPreviews={projectGalleryPreviews} setProjectGalleryPreviews={setProjectGalleryPreviews}
           uploadStatus={uploadStatus} formatFileSize={formatFileSize}
           onClose={() => { if (!uploadStatus.active) { setIsProjectModalOpen(false); setProjectImageFile(null); setProjectImagePreview(''); }}}
           onSubmit={handleSaveProject}

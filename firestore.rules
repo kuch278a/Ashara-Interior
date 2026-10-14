@@ -3,29 +3,51 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // Admins are non-anonymous, signed-in users whose email is on the
+    // allowlist below. Anonymous sign-ins (used by the public site for
+    // reading) are explicitly rejected for every write path.
+    // UPDATE the email below to the admin account you created in
+    // Firebase Console > Authentication > Users.
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.firebase.sign_in_provider != 'anonymous'
+        && request.auth.token.email in ['admin@ashara.com'];
+    }
+
     // ──────────────────────────────────────────────
-    // PROJECTS — Public can read, only admins can write
+    // PROJECTS — public can read, only admins can write
     // ──────────────────────────────────────────────
     match /projects/{projectId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdmin();
     }
 
     // ──────────────────────────────────────────────
-    // BLOG POSTS — Public can read, only admins can write
+    // BLOG POSTS — public can read, only admins can write
     // ──────────────────────────────────────────────
     match /blog_posts/{postId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdmin();
     }
 
     // ──────────────────────────────────────────────
-    // TESTIMONIALS — Public can read (project detail pages),
+    // TESTIMONIALS — public can read (project detail pages),
     // only admins can write
     // ──────────────────────────────────────────────
     match /testimonials/{testimonialId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdmin();
+    }
+
+    // ──────────────────────────────────────────────
+    // DELETED DEFAULT MARKERS — tombstones that keep deleted
+    // default projects/testimonials from resurrecting.
+    // Any signed-in client (the site signs in anonymously) can read;
+    // only admins can write.
+    // ──────────────────────────────────────────────
+    match /deleted_defaults/{markerId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
     }
 
     // ──────────────────────────────────────────────
@@ -40,9 +62,9 @@ service cloud.firestore {
     //     capped, so the notification function cannot be abused as an
     //     open mail relay with huge payloads
     //
-    // READ requires a signed-in user: the leads contain real names,
-    // emails and phone numbers and must not be world-readable.
-    // The admin portal calls ensureFirebaseAuth() before reading.
+    // READ/UPDATE/DELETE are admin-only: the leads contain real names,
+    // emails and phone numbers and must never be exposed to
+    // anonymous or public users.
     // ──────────────────────────────────────────────
     match /consultations/{leadId} {
       allow create: if
@@ -66,9 +88,7 @@ service cloud.firestore {
         && request.resource.data.createdAt.size() <= 64
         && request.resource.data.status == 'new';
 
-      allow read: if request.auth != null;
-
-      allow update, delete: if request.auth != null;
+      allow read, update, delete: if isAdmin();
     }
 
     // ──────────────────────────────────────────────

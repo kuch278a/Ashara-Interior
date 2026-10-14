@@ -1,11 +1,11 @@
 import React from 'react';
-import { Quote, Plus, Star, Edit3, Trash2 } from 'lucide-react';
+import { Quote, Plus, Edit3, Trash2 } from 'lucide-react';
 
 export default function AdminTestimonialsTab({ filteredTestimonials, searchQuery, projects, onOpenNew, onOpenEdit, onDelete }) {
   return (
     <div className="space-y-6 animate-fade-in">
       {filteredTestimonials.length === 0 ? (
-        <div className="bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 p-12 text-center rounded-xs space-y-4">
+        <div className="bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 p-12 text-center rounded-sm space-y-4">
           <div className="w-12 h-12 rounded-full bg-ashara-teal/10 dark:bg-ashara-gold/15 text-ashara-teal dark:text-white flex items-center justify-center mx-auto">
             <Quote className="w-6 h-6" />
           </div>
@@ -16,7 +16,7 @@ export default function AdminTestimonialsTab({ filteredTestimonials, searchQuery
             </p>
           </div>
           <button onClick={onOpenNew}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-ashara-teal text-white text-xs uppercase tracking-wider font-semibold rounded-xs">
+            className="inline-flex items-center gap-2 px-4 py-2 bg-ashara-teal text-white text-xs uppercase tracking-wider font-semibold rounded-sm">
             <Plus className="w-4 h-4" /><span>Add First Testimonial</span>
           </button>
         </div>
@@ -25,7 +25,7 @@ export default function AdminTestimonialsTab({ filteredTestimonials, searchQuery
           {filteredTestimonials.map((t) => {
             const linkedProj = projects.find(p => String(p.id) === String(t.projectId));
             return (
-              <div key={t.id} className="bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 p-6 rounded-xs shadow-xs hover:shadow-md transition-all flex flex-col justify-between space-y-4 relative group">
+              <div key={t.id} className="bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 p-6 rounded-sm shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4 relative group">
                 <div className="flex items-center justify-end gap-2">
                   {linkedProj ? (
                     <span className="text-[9px] uppercase tracking-wider font-semibold px-2.5 py-0.5 rounded-full bg-ashara-teal/10 text-ashara-teal dark:text-white border border-ashara-teal/20 truncate max-w-[160px]">{linkedProj.title}</span>
@@ -38,7 +38,7 @@ export default function AdminTestimonialsTab({ filteredTestimonials, searchQuery
                   <div className="min-w-0">
                     <p className="text-xs font-semibold text-ashara-teal dark:text-white uppercase tracking-wider truncate">{t.clientName}</p>
                     <p className="text-[11px] text-ashara-teal dark:text-white truncate">
-                      {t.role && `${t.role} � `}<span className="font-medium text-ashara-teal dark:text-white">{t.organization}</span>
+                      {t.role && `${t.role} • `}<span className="font-medium text-ashara-teal dark:text-white">{t.organization}</span>
                     </p>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">

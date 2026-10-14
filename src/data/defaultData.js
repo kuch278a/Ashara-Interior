@@ -202,7 +202,7 @@ export const DEFAULT_PROJECTS_LIST = [
       new URL("../assets/projects/page_39_img_01.jpeg", import.meta.url).href,
       new URL("../assets/projects/page_40_img_01.jpeg", import.meta.url).href,
       new URL("../assets/projects/page_40_img_02.jpeg", import.meta.url).href,
-      new URL("../assets/projects/page_41_img_01.png", import.meta.url).href,
+      new URL("../assets/projects/page_41_img_01.jpeg", import.meta.url).href,
     ]
   },
   {

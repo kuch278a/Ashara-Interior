@@ -1,43 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, ArrowUp, ChevronDown, ArrowRight } from 'lucide-react';
 import ClientsSection from '../components/ClientsSection';
 import Footer from '../components/Footer';
 import ProjectsPage from './ProjectsPage';
 import ServicesPage from './ServicesPage';
 import AboutPage from './AboutPage';
-import ContactPage from './ContactPage';
+import { DEFAULT_TESTIMONIALS_LIST } from '../data/defaultData';
 import { getInitialProjects, subscribeToProjects, getInitialTestimonials, subscribeToTestimonials } from '../services/firebaseService';
 
 const isDesktopView = () => window.matchMedia('(min-width: 768px)').matches;
 
-const FALLBACK_TESTIMONIALS = [
-  {
-    quote: "Ashara Interiors transformed our office space beyond our expectations. Their attention to detail and ability to deliver a luxurious, functional design within an incredibly tight deadline was remarkable.",
-    author: "DEPUTY PRESIDENT'S OFFICE",
-    company: "PROSPERITY PARTY HEADQUARTERS"
-  },
-  {
-    quote: "The level of professionalism and artistic vision brought to our project was truly unmatched. They took our vague concepts and turned them into a breathtaking reality.",
-    author: "DIRECTOR OF OPERATIONS",
-    company: "AMIBARA PROPERTIES"
-  },
-  {
-    quote: "Working with Ashara was a seamless experience. Their bespoke approach to interior architecture gave our headquarters a timeless elegance that perfectly represents our brand.",
-    author: "HEAD OF INFRASTRUCTURE",
-    company: "MINISTRY OF REVENUES"
-  }
-];
-
-// Map CMS testimonials (quote/clientName/organization) to the carousel shape (quote/author/company)
+// Map CMS testimonials (quote/clientName/organization) to the carousel shape (quote/author/company).
+// Featured testimonials take priority; falls back to all, then to the CMS defaults.
 const toCarouselTestimonials = (list) => {
-  const mapped = (Array.isArray(list) ? list : [])
-    .map((t) => ({
-      quote: t.quote,
-      author: t.clientName || t.author || '',
-      company: t.organization || t.company || ''
-    }))
-    .filter((t) => t.quote);
-  return mapped.length > 0 ? mapped : FALLBACK_TESTIMONIALS;
+  const mapItem = (t) => ({
+    quote: t.quote,
+    author: t.clientName || t.author || '',
+    company: t.organization || t.company || ''
+  });
+  const pick = (source) => {
+    const items = Array.isArray(source) ? source : [];
+    const featured = items.filter((t) => t.isFeatured);
+    const chosen = featured.length > 0 ? featured : items;
+    return chosen.map(mapItem).filter((t) => t.quote);
+  };
+  const mapped = pick(list);
+  return mapped.length > 0 ? mapped : pick(DEFAULT_TESTIMONIALS_LIST);
 };
 
 export default function HomePage({ onNavigate, onSelectProject }) {
@@ -53,6 +41,26 @@ export default function HomePage({ onNavigate, onSelectProject }) {
   const [touchStart, setTouchStart] = useState(null);
   const [testimonialDrag, setTestimonialDrag] = useState(0);
   const [isTestimonialDragging, setIsTestimonialDragging] = useState(false);
+  const [isDesktopLayout, setIsDesktopLayout] = useState(() => isDesktopView());
+  const resumeTimersRef = useRef([]);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 768px)');
+    const handleChange = () => setIsDesktopLayout(mq.matches);
+    if (typeof mq.addEventListener === 'function') {
+      mq.addEventListener('change', handleChange);
+      return () => mq.removeEventListener('change', handleChange);
+    }
+    mq.addListener(handleChange);
+    return () => mq.removeListener(handleChange);
+  }, []);
+
+  useEffect(() => {
+    const timers = resumeTimersRef.current;
+    return () => {
+      timers.forEach((t) => clearTimeout(t));
+    };
+  }, []);
 
   const explicitHeroWorks = works.filter(w => w.isHero);
   const heroWorks = explicitHeroWorks.length > 0 ? explicitHeroWorks : works.slice(0, 10);
@@ -70,10 +78,14 @@ export default function HomePage({ onNavigate, onSelectProject }) {
   const activeAccordion = accordionWorks.length > 0 ? activeAccordionIndex % accordionWorks.length : 0;
 
   // Pause auto-advance and resume after a delay (mirrors the accordion indicator pattern)
-  const pauseAndResumeTestimonials = () => {
-    setIsTestimonialPaused(true);
-    setTimeout(() => setIsTestimonialPaused(false), 5000);
+  const scheduleResume = (setter) => {
+    setter(true);
+    const timer = setTimeout(() => setter(false), 5000);
+    resumeTimersRef.current.push(timer);
   };
+
+  const pauseAndResumeTestimonials = () => scheduleResume(setIsTestimonialPaused);
+  const pauseAndResumeAccordion = () => scheduleResume(setIsAccordionPaused);
 
   const handleTestimonialTouchStart = (e) => {
     setTouchStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
@@ -119,12 +131,12 @@ export default function HomePage({ onNavigate, onSelectProject }) {
   // Auto-advance accordion every 6 seconds (desktop showcase only)
   useEffect(() => {
     const accLen = accordionWorks.length;
-    if (accLen === 0 || isAccordionPaused || !isDesktopView()) return;
+    if (accLen === 0 || isAccordionPaused || !isDesktopLayout) return;
     const accordionTimer = setInterval(() => {
       setActiveAccordionIndex((prev) => (prev + 1) % accLen);
     }, 6000);
     return () => clearInterval(accordionTimer);
-  }, [works, isAccordionPaused]);
+  }, [works, isAccordionPaused, isDesktopLayout]);
 
   const nextSlide = () => {
     const heroLen = heroWorks.length;
@@ -148,14 +160,19 @@ export default function HomePage({ onNavigate, onSelectProject }) {
 
   useEffect(() => {
     const unsubscribe = subscribeToProjects((data) => {
-      if (data && data.length > 0) {
+      if (Array.isArray(data)) {
         const sorted = [...data].sort((a, b) => {
           if (a.updatedAt && b.updatedAt) {
             const dateA = new Date(a.updatedAt).getTime();
             const dateB = new Date(b.updatedAt).getTime();
             if (dateA !== dateB) return dateB - dateA;
           }
-          return Number(a.id) - Number(b.id);
+          const numericA = Number(a.id);
+          const numericB = Number(b.id);
+          if (!Number.isNaN(numericA) && !Number.isNaN(numericB)) {
+            return numericA - numericB;
+          }
+          return String(a.id).localeCompare(String(b.id));
         });
         setWorks(sorted);
       }
@@ -200,6 +217,13 @@ export default function HomePage({ onNavigate, onSelectProject }) {
     }
   };
 
+  const handleCardKeyDown = (e, action) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      action();
+    }
+  };
+
   return (
     <div className="bg-white dark:bg-ashara-dark animate-fade-in pb-0 transition-colors duration-300 relative">
       
@@ -224,7 +248,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                 key={work.id} 
                 className="absolute inset-0"
                 aria-hidden={!isActive}
-                aria-current={isActive}
+                aria-current={isActive ? 'true' : undefined}
                 style={{
                   transform: `translateX(${(index - activeHeroSlide) * 100}%)`,
                   zIndex,
@@ -287,8 +311,8 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                 type="button" 
                 onClick={(e) => { e.stopPropagation(); setCurrentSlide(i); }}
                 className={`h-2.5 sm:h-3 transition-colors duration-500 ${activeHeroSlide === i ? 'bg-ashara-teal w-10 sm:w-12' : 'w-2.5 sm:w-3 bg-white/40 hover:bg-white'}`}
-                aria-label={`Go to slide ${i + 1}`} 
-                aria-current={currentSlide === i}
+                aria-label={`Go to slide ${i + 1}`}
+                aria-current={activeHeroSlide === i ? 'true' : 'false'}
               ></button>
             ))}
           </div>
@@ -335,6 +359,9 @@ export default function HomePage({ onNavigate, onSelectProject }) {
             <article
               key={work.id}
               onClick={() => handleCardClick(work)}
+              onKeyDown={(e) => handleCardKeyDown(e, () => handleCardClick(work))}
+              role="button"
+              tabIndex={0}
               className="group relative cursor-pointer overflow-hidden bg-gray-100 aspect-[4/3]"
             >
               <img
@@ -383,10 +410,19 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                       handleCardClick(work);
                     } else {
                       setActiveAccordionIndex(index);
-                      setIsAccordionPaused(true);
-                      setTimeout(() => setIsAccordionPaused(false), 5000);
+                      pauseAndResumeAccordion();
                     }
                   }}
+                  onKeyDown={(e) => handleCardKeyDown(e, () => {
+                    if (isActive) {
+                      handleCardClick(work);
+                    } else {
+                      setActiveAccordionIndex(index);
+                      pauseAndResumeAccordion();
+                    }
+                  })}
+                  role="button"
+                  tabIndex={0}
                   className={`absolute left-1/2 top-1/2 w-[300px] lg:w-[380px] xl:w-[430px] aspect-[4/5] overflow-hidden bg-gray-100 transition-all duration-700 ease-out ${isActive ? '' : 'cursor-pointer'}`}
                   style={{
                     transform: `translate(-50%, -50%) translateX(${offset * 72}%) translateZ(${-absOffset * 200}px) rotateY(${-offset * 32}deg)`,
@@ -452,8 +488,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
               type="button"
               onClick={() => {
                 setActiveAccordionIndex(index);
-                setIsAccordionPaused(true);
-                setTimeout(() => setIsAccordionPaused(false), 5000); // Resume after 5 seconds
+                pauseAndResumeAccordion();
               }}
               className={`h-2.5 sm:h-3 transition-colors duration-500 ${
                 activeAccordion === index
@@ -461,7 +496,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                   : 'w-2.5 sm:w-3 bg-gray-300 dark:bg-white/15 hover:bg-ashara-teal/60'
               }`}
               aria-label={`Go to slide ${index + 1}`}
-              aria-current={activeAccordion === index}
+              aria-current={activeAccordion === index ? 'true' : 'false'}
             ></button>
           ))}
         </div>
@@ -538,7 +573,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
             {testimonials.map((testimonial, idx) => (
               <div 
                 key={idx}
-                className="w-full flex-shrink-0 px-8 sm:px-12 md:px-16"
+                className="w-full shrink-0 px-8 sm:px-12 md:px-16"
               >
                 <blockquote className="font-serif italic text-2xl sm:text-3xl md:text-4xl text-ashara-teal dark:text-white font-light leading-relaxed max-w-4xl mx-auto mb-8">
                   {testimonial.quote}
@@ -571,17 +606,20 @@ export default function HomePage({ onNavigate, onSelectProject }) {
         {/* Pagination Indicators */}
         <div className="flex justify-center gap-2 mt-8">
           {testimonials.map((_, idx) => (
-            <button 
+            <button
               key={idx}
+              type="button"
               onClick={() => {
                 setCurrentTestimonial(idx);
                 pauseAndResumeTestimonials();
               }}
               className={`w-2 h-2 rounded-none transition-colors ${
-                activeTestimonial === idx 
-                  ? 'bg-ashara-teal' 
+                activeTestimonial === idx
+                  ? 'bg-ashara-teal'
                   : 'bg-gray-300 dark:bg-white/15 hover:bg-gray-400'
               }`}
+              aria-label={`Go to testimonial ${idx + 1}`}
+              aria-current={activeTestimonial === idx ? 'true' : 'false'}
             ></button>
           ))}
         </div>

@@ -26,7 +26,7 @@ export async function compressImage(file, options = {}) {
     const objectUrl = URL.createObjectURL(file);
     const img = new Image();
 
-    img.onload = () => {
+    img.onload = async () => {
       URL.revokeObjectURL(objectUrl);
       try {
         let width = img.naturalWidth || img.width;
@@ -39,53 +39,71 @@ export async function compressImage(file, options = {}) {
           height = Math.round(height * ratio);
         }
 
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-
-        const ctx = canvas.getContext('2d');
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = 'high';
-        ctx.drawImage(img, 0, 0, width, height);
-
         // Determine best quality based on original size
         let targetQuality = quality;
         if (file.size > 5 * 1024 * 1024) {
           targetQuality = 0.78; // Aggressive compression for 5MB+ DSLR/phone photos
         }
 
-        const dataUrl = canvas.toDataURL('image/jpeg', targetQuality);
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
 
-        canvas.toBlob(
-          (blob) => {
-            if (!blob) {
-              readFileAsDataURL(file).then((fallbackUrl) => {
-                resolve({ file, dataUrl: fallbackUrl, wasCompressed: false });
-              });
-              return;
-            }
+        const encode = (w, h, q) => new Promise((resolve) => {
+          canvas.width = w;
+          canvas.height = h;
+          ctx.drawImage(img, 0, 0, w, h);
+          canvas.toBlob(resolve, 'image/jpeg', q);
+        });
 
-            const cleanBase = (file.name || 'image').replace(/\.[^/.]+$/, '');
-            const compressedFile = new File([blob], `${cleanBase}.jpg`, {
-              type: 'image/jpeg',
-              lastModified: Date.now()
-            });
+        let finalWidth = width;
+        let finalHeight = height;
+        let blob = await encode(finalWidth, finalHeight, targetQuality);
 
-            console.log(
-              `[ImageOptimizer] Optimized "${file.name}": ${(file.size / 1024).toFixed(0)} KB -> ${(compressedFile.size / 1024).toFixed(0)} KB (${Math.round((1 - compressedFile.size / file.size) * 100)}% reduction)`
-            );
+        // Enforce the maxSizeBytes target: step quality down first, then scale dimensions down
+        let effectiveQuality = targetQuality;
+        while (blob && blob.size > maxSizeBytes && effectiveQuality > 0.5) {
+          effectiveQuality = Math.max(0.5, effectiveQuality - 0.08);
+          blob = await encode(finalWidth, finalHeight, effectiveQuality);
+        }
+        while (blob && blob.size > maxSizeBytes && finalWidth > 640) {
+          finalWidth = Math.round(finalWidth * 0.85);
+          finalHeight = Math.round(finalHeight * 0.85);
+          blob = await encode(finalWidth, finalHeight, effectiveQuality);
+        }
 
-            resolve({
-              file: compressedFile,
-              dataUrl,
-              wasCompressed: true,
-              originalSize: file.size,
-              compressedSize: compressedFile.size
-            });
-          },
-          'image/jpeg',
-          targetQuality
+        if (!blob) {
+          readFileAsDataURL(file).then((fallbackUrl) => {
+            resolve({ file, dataUrl: fallbackUrl, wasCompressed: false });
+          });
+          return;
+        }
+
+        const dataUrl = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () => resolve(null);
+          reader.readAsDataURL(blob);
+        });
+
+        const cleanBase = (file.name || 'image').replace(/\.[^/.]+$/, '');
+        const compressedFile = new File([blob], `${cleanBase}.jpg`, {
+          type: 'image/jpeg',
+          lastModified: Date.now()
+        });
+
+        console.log(
+          `[ImageOptimizer] Optimized "${file.name}": ${(file.size / 1024).toFixed(0)} KB -> ${(compressedFile.size / 1024).toFixed(0)} KB (${Math.round((1 - compressedFile.size / file.size) * 100)}% reduction)`
         );
+
+        resolve({
+          file: compressedFile,
+          dataUrl,
+          wasCompressed: true,
+          originalSize: file.size,
+          compressedSize: compressedFile.size
+        });
       } catch (err) {
         console.warn('[ImageOptimizer] Canvas processing failed, falling back to original file:', err);
         readFileAsDataURL(file).then((dataUrl) => {

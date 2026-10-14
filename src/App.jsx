@@ -2,6 +2,7 @@ import React, { useState, useEffect, useLayoutEffect, lazy, Suspense } from 'rea
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import { DEFAULT_PROJECTS_LIST } from './data/defaultData';
+import { getInitialProjects } from './services/firebaseService';
 
 // Lazy-loaded Pages for instant initial load and optimal code-splitting
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -37,11 +38,17 @@ function canAccessAdmin() {
 }
 
 function getInitialPage() {
-  const hash = window.location.hash.replace(/^#\/?/, '').toLowerCase();
+  const rawHash = window.location.hash.replace(/^#\/?/, '');
+  const hash = rawHash.toLowerCase();
 
   // Admin is only accessible with the secret key
   if (hash === 'admin') {
     return canAccessAdmin() ? 'admin' : '404';
+  }
+
+  // Project detail accepts an id in the hash: #project-detail/<id>
+  if (/^project-detail(\/|$)/.test(hash)) {
+    return 'project-detail';
   }
 
   if (VALID_PAGES.includes(hash)) {
@@ -63,18 +70,39 @@ function getInitialPage() {
   return 'home';
 }
 
+function findProjectById(id) {
+  if (id === null || id === undefined) return DEFAULT_PROJECTS_LIST[0];
+  const list = getInitialProjects();
+  const found = list.find((p) => String(p.id) === String(id));
+  return found || DEFAULT_PROJECTS_LIST[0];
+}
+
+function getInitialSelectedProject() {
+  const rawHash = window.location.hash.replace(/^#\/?/, '');
+  const match = rawHash.match(/^project-detail\/(.+)$/i);
+  if (match) {
+    return findProjectById(decodeURIComponent(match[1]));
+  }
+  return DEFAULT_PROJECTS_LIST[0];
+}
+
 export default function App() {
   const [activePage, setActivePage] = useState(getInitialPage); // 'home' | 'projects' | 'services' | 'about' | 'contact' | 'admin' | 'project-detail'
-  const [selectedProject, setSelectedProject] = useState(DEFAULT_PROJECTS_LIST[0]);
+  const [selectedProject, setSelectedProject] = useState(getInitialSelectedProject);
   const [projectSource, setProjectSource] = useState('projects');
   const [theme, setTheme] = useState(() => {
-    return sessionStorage.getItem('theme') || 'light';
+    const stored = sessionStorage.getItem('theme');
+    if (stored) return stored;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
 
   useEffect(() => {
     const handleHashChange = () => {
       const page = getInitialPage();
       setActivePage(page);
+      if (page === 'project-detail') {
+        setSelectedProject(getInitialSelectedProject());
+      }
     };
     window.addEventListener('hashchange', handleHashChange);
     window.addEventListener('popstate', handleHashChange);
@@ -129,7 +157,7 @@ export default function App() {
     setSelectedProject(project);
     if (source) setProjectSource(source);
     setActivePage('project-detail');
-    window.location.hash = 'project-detail';
+    window.location.hash = 'project-detail/' + encodeURIComponent(project.id);
   };
 
   return (

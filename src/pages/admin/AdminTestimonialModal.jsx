@@ -1,11 +1,11 @@
 import React from 'react';
-import { X, Save, Star } from 'lucide-react';
+import { X, Save } from 'lucide-react';
 
 export default function AdminTestimonialModal({ editingTestimonial, setEditingTestimonial, projects, onClose, onSubmit }) {
   if (!editingTestimonial) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fade-in">
-      <div className="bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-xs shadow-2xl p-6 sm:p-8 space-y-5">
+      <div className="bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-sm shadow-2xl p-6 sm:p-8 space-y-5">
         <div className="flex items-center justify-between pb-3 border-b border-gray-200 dark:border-white/10">
           <div>
             <span className="text-[10px] uppercase tracking-[0.25em] text-ashara-teal dark:text-white font-bold">CLIENT SOCIAL PROOF</span>
@@ -20,13 +20,13 @@ export default function AdminTestimonialModal({ editingTestimonial, setEditingTe
             <div>
               <label className="block text-[10px] uppercase tracking-wider font-bold text-ashara-teal dark:text-white mb-1">Client Name / Rep *</label>
               <input type="text" required value={editingTestimonial.clientName || ''} onChange={(e) => setEditingTestimonial({ ...editingTestimonial, clientName: e.target.value })}
-                className="w-full px-3 py-2 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs text-ashara-teal dark:text-white rounded-xs focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold"
+                className="w-full px-3 py-2 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs text-ashara-teal dark:text-white rounded-sm focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold"
                 placeholder="e.g., Deputy President's Office" />
             </div>
             <div>
               <label className="block text-[10px] uppercase tracking-wider font-bold text-ashara-teal dark:text-white mb-1">Role / Title</label>
               <input type="text" value={editingTestimonial.role || ''} onChange={(e) => setEditingTestimonial({ ...editingTestimonial, role: e.target.value })}
-                className="w-full px-3 py-2 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs text-ashara-teal dark:text-white rounded-xs focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold"
+                className="w-full px-3 py-2 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs text-ashara-teal dark:text-white rounded-sm focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold"
                 placeholder="e.g., Executive Bureau" />
             </div>
           </div>
@@ -34,13 +34,13 @@ export default function AdminTestimonialModal({ editingTestimonial, setEditingTe
             <div>
               <label className="block text-[10px] uppercase tracking-wider font-bold text-ashara-teal dark:text-white mb-1">Organization / Company *</label>
               <input type="text" required value={editingTestimonial.organization || ''} onChange={(e) => setEditingTestimonial({ ...editingTestimonial, organization: e.target.value })}
-                className="w-full px-3 py-2 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs text-ashara-teal dark:text-white rounded-xs focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold"
+                className="w-full px-3 py-2 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs text-ashara-teal dark:text-white rounded-sm focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold"
                 placeholder="e.g., Prosperity Party HQ" />
             </div>
             <div>
               <label className="block text-[10px] uppercase tracking-wider font-bold text-ashara-teal dark:text-white mb-1">Linked Project</label>
               <select value={editingTestimonial.projectId || ''} onChange={(e) => setEditingTestimonial({ ...editingTestimonial, projectId: e.target.value })}
-                className="w-full px-3 py-2 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs text-ashara-teal dark:text-white rounded-xs focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold">
+                className="w-full px-3 py-2 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs text-ashara-teal dark:text-white rounded-sm focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold">
                 <option value="" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">General Studio Testimonial</option>
                 {projects.map((p) => <option key={p.id} value={p.id} className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">{p.title}</option>)}
               </select>
@@ -50,7 +50,7 @@ export default function AdminTestimonialModal({ editingTestimonial, setEditingTe
           <div>
             <label className="block text-[10px] uppercase tracking-wider font-bold text-ashara-teal dark:text-white mb-1">Client Quote / Review *</label>
             <textarea rows="4" required value={editingTestimonial.quote || ''} onChange={(e) => setEditingTestimonial({ ...editingTestimonial, quote: e.target.value })}
-              className="w-full px-3 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm text-ashara-teal dark:text-white rounded-xs focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold resize-none"
+              className="w-full px-3 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm text-ashara-teal dark:text-white rounded-sm focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold resize-none"
               placeholder="Paste or write the client testimonial quote here..." />
           </div>
           <div className="flex items-center gap-2 pt-1">
@@ -62,7 +62,7 @@ export default function AdminTestimonialModal({ editingTestimonial, setEditingTe
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-white/10">
             <button type="button" onClick={onClose} className="px-4 py-2 text-xs uppercase tracking-wider font-semibold text-ashara-teal dark:text-white">Cancel</button>
             <button type="submit"
-              className="inline-flex items-center gap-2 px-5 py-2 bg-ashara-teal hover:bg-ashara-teal-hover dark:bg-ashara-gold dark:hover:bg-ashara-gold/90 text-white dark:text-ashara-dark text-xs uppercase tracking-wider font-bold rounded-xs transition shadow-sm">
+              className="inline-flex items-center gap-2 px-5 py-2 bg-ashara-teal hover:bg-ashara-teal-hover dark:bg-ashara-gold dark:hover:bg-ashara-gold/90 text-white dark:text-ashara-dark text-xs uppercase tracking-wider font-bold rounded-sm transition shadow-sm">
               <Save className="w-4 h-4" /><span>Save Testimonial</span>
             </button>
           </div>

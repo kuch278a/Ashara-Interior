@@ -1,13 +1,42 @@
-import React from 'react';
-import { DEFAULT_PROJECTS_LIST } from '../data/defaultData';
-import asset_1 from '../assets/p6_revenues.png';
+import React, { useState, useEffect } from 'react';
+import { getInitialProjects, subscribeToProjects } from '../services/firebaseService';
+import asset_1 from '../assets/p6_revenues.jpg';
 import ceoImage from '../assets/michael_dessalegn.jpg';
 
 export default function AboutPage({ onNavigate, onSelectProject, isSection = false }) {
-  const handleProjectClick = (projId) => {
-    const proj = DEFAULT_PROJECTS_LIST.find((p) => p.id === projId) || DEFAULT_PROJECTS_LIST[0];
+  const [projects, setProjects] = useState(() => getInitialProjects());
+
+  useEffect(() => {
+    const unsubscribe = subscribeToProjects((data) => {
+      if (data && data.length > 0) {
+        const sorted = [...data].sort((a, b) => {
+          if (a.updatedAt && b.updatedAt) {
+            const dateA = new Date(a.updatedAt).getTime();
+            const dateB = new Date(b.updatedAt).getTime();
+            if (!Number.isNaN(dateA) && !Number.isNaN(dateB) && dateA !== dateB) {
+              return dateB - dateA;
+            }
+          }
+          const idA = Number(a.id);
+          const idB = Number(b.id);
+          if (!Number.isNaN(idA) && !Number.isNaN(idB) && idA !== idB) {
+            return idA - idB;
+          }
+          return 0;
+        });
+        setProjects(sorted);
+      }
+    });
+    return () => {
+      if (typeof unsubscribe === 'function') unsubscribe();
+    };
+  }, []);
+
+  const recentProjects = projects.slice(0, 3);
+
+  const handleProjectClick = (project) => {
     if (onSelectProject) {
-      onSelectProject(proj);
+      onSelectProject(project);
     } else if (onNavigate) {
       onNavigate('projects');
     }
@@ -53,11 +82,12 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
             </p>
             <p>
               At Ashara Workshop, we specialize in designing master plans, interior designs, and
-              architectural designs for a wide range of buildings, including residential,commercial,
-              mixed-use, governmental bureaus, and hotels. Our team of highly creative and 
-              services from project inception to completion, ensuring that we deliver exactly
-              what our clients desire and more. We boast a professional and creative team with
-              expertise in handling projects of varying scales
+              architectural designs for a wide range of buildings, including residential, commercial,
+              mixed-use, governmental bureaus, and hotels. Our team of highly creative and
+              experienced professionals delivers comprehensive services from project inception to
+              completion, ensuring that we deliver exactly what our clients desire and more. We
+              boast a professional and creative team with expertise in handling projects of varying
+              scales
             </p>
           </div>
         </div>
@@ -188,7 +218,7 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
       )}
 
       {/* 6. RECENT PROJECTS SECTION */}
-      {!isSection && (
+      {!isSection && recentProjects.length > 0 && (
         <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pt-8 pb-24 space-y-12 text-center">
           
           {/* Title with horizontal lines */}
@@ -202,45 +232,40 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
 
           {/* 2 Project Cards Grid matching Figma (text below image) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-12 text-left">
-            
-            {/* Card 1: Amibara Properties */}
-            <article 
-              onClick={() => handleProjectClick(5)}
-              className="group cursor-pointer block"
-            >
-              <div className="w-full aspect-[4/3] overflow-hidden bg-gray-200 mb-4">
-                <img
-                  src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=85"
-                  alt="Amibara Properties"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                />
-              </div>
-              <div>
-                <h4 className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white mb-1 group-hover:text-ashara-teal transition-colors">
-                  Amibara Properties
-                </h4>
-              </div>
-            </article>
-
-            {/* Card 2: Ministry of Revenues */}
-            <article 
-              onClick={() => handleProjectClick(6)}
-              className="group cursor-pointer block"
-            >
-              <div className="w-full aspect-[4/3] overflow-hidden bg-gray-200 mb-4">
-                <img
-                  src={asset_1}
-                  alt="Ministry of Revenues"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                />
-              </div>
-              <div>
-                <h4 className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white mb-1 group-hover:text-ashara-teal transition-colors">
-                  Ministry of Revenues
-                </h4>
-              </div>
-            </article>
-
+            {recentProjects.map((item) => (
+              <article
+                key={item.id}
+                role="button"
+                tabIndex={0}
+                onClick={() => handleProjectClick(item)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    if (e.key === ' ') e.preventDefault();
+                    handleProjectClick(item);
+                  }
+                }}
+                className="group cursor-pointer block"
+              >
+                <div className="w-full aspect-[4/3] overflow-hidden bg-gray-200 mb-4">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    loading="lazy"
+                    decoding="async"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = item.fallbackImage;
+                    }}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                  />
+                </div>
+                <div>
+                  <h4 className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white mb-1 group-hover:text-ashara-teal transition-colors">
+                    {item.title}
+                  </h4>
+                </div>
+              </article>
+            ))}
           </div>
 
           {/* View All Projects Link */}

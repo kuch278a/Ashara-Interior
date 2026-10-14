@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { submitConsultation } from '../services/firebaseService';
-import { Loader2, CheckCircle2, Phone, Mail, MessageSquare, MapPin } from 'lucide-react';
+import { Loader2, CheckCircle2, AlertCircle, Phone, Mail, MessageSquare, MapPin } from 'lucide-react';
 
 export default function ContactPage({ isSection = false }) {
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submittedId, setSubmittedId] = useState('');
+  const [submitError, setSubmitError] = useState(false);
   const [form, setForm] = useState({
     fullName: '',
     email: '',
@@ -16,20 +16,18 @@ export default function ContactPage({ isSection = false }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitError(false);
     try {
-      const res = await submitConsultation({
+      await submitConsultation({
         fullName: form.fullName,
         email: form.email,
         telephone: form.telephone,
         enquiry: form.enquiry
       });
-      if (res && res.id) {
-        setSubmittedId(res.id);
-      }
       setSubmitted(true);
     } catch (err) {
       console.error('Submission error:', err);
-      setSubmitted(true);
+      setSubmitError(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -115,12 +113,27 @@ export default function ContactPage({ isSection = false }) {
                 <button
                   onClick={() => {
                     setSubmitted(false);
-                    setSubmittedId('');
                     setForm({ fullName: '', email: '', telephone: '', enquiry: '' });
                   }}
                   className="mt-4 px-6 py-2 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-[11px] uppercase tracking-[0.2em] font-medium hover:bg-ashara-teal/90 transition"
                 >
                   Send Another Enquiry
+                </button>
+              </div>
+            ) : submitError ? (
+              <div className="bg-white/50 dark:bg-white/5 p-8 border border-red-300 dark:border-red-400/30 text-center space-y-4 shadow-sm animate-fade-in">
+                <div className="w-12 h-12 bg-red-500 text-white rounded-full flex items-center justify-center mx-auto">
+                  <AlertCircle className="w-6 h-6" />
+                </div>
+                <h3 className="font-serif text-2xl text-ashara-teal dark:text-white">Enquiry Submission Failed</h3>
+                <p className="text-sm text-ashara-teal dark:text-white max-w-sm mx-auto font-light leading-relaxed">
+                  Something went wrong and your enquiry was not sent. Please check your connection and try again.
+                </p>
+                <button
+                  onClick={() => setSubmitError(false)}
+                  className="mt-4 px-6 py-2 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-[11px] uppercase tracking-[0.2em] font-medium hover:bg-ashara-teal/90 transition"
+                >
+                  Try Again
                 </button>
               </div>
             ) : (
@@ -129,6 +142,7 @@ export default function ContactPage({ isSection = false }) {
                   <input
                     type="text"
                     required
+                    aria-label="Full Name"
                     placeholder="Full Name"
                     value={form.fullName}
                     onChange={(e) => setForm({ ...form, fullName: e.target.value })}
@@ -141,6 +155,7 @@ export default function ContactPage({ isSection = false }) {
                     <input
                       type="email"
                       required
+                      aria-label="Email Address"
                       placeholder="Email Address"
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -150,6 +165,7 @@ export default function ContactPage({ isSection = false }) {
                   <div>
                     <input
                       type="tel"
+                      aria-label="Telephone"
                       placeholder="Telephone"
                       value={form.telephone}
                       onChange={(e) => setForm({ ...form, telephone: e.target.value })}
@@ -162,6 +178,7 @@ export default function ContactPage({ isSection = false }) {
                   <textarea
                     rows="6"
                     required
+                    aria-label="Enquiry"
                     placeholder="Tell us about your enquiry - New construction / renovation / remodel."
                     value={form.enquiry}
                     onChange={(e) => setForm({ ...form, enquiry: e.target.value })}
