@@ -87,25 +87,25 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
       </section>
 
       {/* Page Container matching Navbar and Footer alignment */}
-      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
+      <div className="w-full px-6 sm:px-10 lg:px-16">
 
         {/* 2. PROJECT TITLE & ARCHITECTURAL NARRATIVE (2-Column Layout matching Figma) */}
-        <section className="py-14 sm:py-20">
+        <section className="py-14 sm:py-20 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 lg:gap-20 items-start">
             
             {/* Left: Title & Subtitle */}
             <div className="md:col-span-5 space-y-2.5">
-              <h1 className="font-serif text-3xl sm:text-4xl lg:text-[42px] leading-tight text-ashara-teal dark:text-white font-normal">
+              <h1 className="font-serif text-4xl sm:text-5xl lg:text-[52px] leading-tight text-ashara-teal dark:text-white font-normal">
                 {activeProject.title}
               </h1>
-              <p className="text-[11px] sm:text-[12px] uppercase tracking-[0.2em] font-sans font-medium text-gray-500 dark:text-gray-400">
+              <p className="text-[13px] sm:text-[14px] uppercase tracking-[0.2em] font-sans font-medium text-gray-500 dark:text-gray-400">
                 {categoryLabel}
               </p>
             </div>
 
             {/* Right: Architectural Narrative */}
             <div className="md:col-span-7">
-              <p className="text-sm sm:text-base leading-relaxed text-gray-700 dark:text-gray-300 font-light">
+              <p className="text-lg sm:text-xl leading-relaxed text-gray-700 dark:text-gray-300 font-light">
                 {activeProject.description}
               </p>
             </div>
@@ -114,7 +114,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
         </section>
 
         {/* 3. EDITORIAL GALLERY FLOW */}
-        <section className="space-y-6 lg:space-y-8">
+        <section className="space-y-6 lg:space-y-8 -mx-6 sm:-mx-10 lg:-mx-16">
           
           {/* Featured Wide Image 1 */}
           {featuredWide1 && (
@@ -132,7 +132,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
 
           {/* Horizontal Pair (2 columns) */}
           {pair1.length > 0 && (
-            <div className={`grid grid-cols-1 ${pair1.length > 1 ? 'sm:grid-cols-2' : ''} gap-6 lg:gap-8`}>
+            <div className={`max-w-[1400px] mx-auto grid grid-cols-1 ${pair1.length > 1 ? 'sm:grid-cols-2' : ''} gap-6 lg:gap-8`}>
               {pair1.map((imgUrl, idx) => (
                 <div key={idx} className="w-full aspect-[4/3] sm:aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
                   <img
@@ -157,7 +157,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
 
           {/* Portrait Pair (2 columns, taller aspect ratio matching Figma) */}
           {pair2.length > 0 && (
-            <div className={`grid grid-cols-1 ${pair2.length > 1 ? 'sm:grid-cols-2' : ''} gap-6 lg:gap-8`}>
+            <div className={`max-w-[1400px] mx-auto grid grid-cols-1 ${pair2.length > 1 ? 'sm:grid-cols-2' : ''} gap-6 lg:gap-8`}>
               {pair2.map((imgUrl, idx) => (
                 <div key={idx} className="w-full aspect-[3/4] sm:aspect-[4/5] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
                   <img
@@ -189,7 +189,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
 
           {/* Additional Gallery Images (if any) */}
           {remainingImages.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 pt-2">
+            <div className="max-w-[1400px] mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 pt-2">
               {remainingImages.map((imgUrl, idx) => (
                 <div key={idx} className="w-full aspect-[4/3] sm:aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
                   <img
@@ -230,7 +230,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
           </div>
 
           {/* 2 Project Cards Grid matching Figma */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 lg:gap-12 text-left">
+          <div className="max-w-[1700px] mx-auto grid grid-cols-1 sm:grid-cols-2 gap-8 lg:gap-12 text-left">
             {recommendations.map((rec) => (
               <article 
                 key={rec.id}
