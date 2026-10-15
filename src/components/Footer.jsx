@@ -34,7 +34,7 @@ export default function Footer({ onNavigate }) {
 
           {/* 2. Contact Info */}
           <div className="space-y-2 text-xs text-white/90">
-            <h4 className="font-bold text-sm text-white mb-4">Contact</h4>
+            <h4 className="font-bold text-[16px] text-white mb-4">Contact</h4>
             <p>
               <a href={SOCIAL_LINKS.phone} className="hover:text-white hover:underline transition">
                 +251 911 123 892
@@ -49,7 +49,7 @@ export default function Footer({ onNavigate }) {
 
           {/* 3. Address */}
           <div className="space-y-2 text-xs text-white/90">
-            <h4 className="font-bold text-sm text-white mb-4">Address</h4>
+            <h4 className="font-bold text-[16px] text-white mb-4">Address</h4>
             <p>Megenagna</p>
             <p>Infront of Ethio Ceramics</p>
             <p>Bete Sahlite-Mihret Building, 4th Floor</p>
@@ -72,8 +72,8 @@ export default function Footer({ onNavigate }) {
             </button>
           </nav>
 
-          {/* 5. Live Social Media Links */}
-          <div className="flex items-center gap-4 text-white pt-2 lg:pt-0">
+          {/* 5. Live Social Media Links — bottom right of the main footer row */}
+          <div className="flex items-center gap-4 text-white self-end lg:self-end pt-2 lg:pt-0">
             <a href={SOCIAL_LINKS.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="hover:scale-110 transition-transform">
               <Facebook className="w-5 h-5" fill="currentColor" />
             </a>

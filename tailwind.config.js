@@ -8,8 +8,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        serif: ['"Cormorant Garamond"', '"Playfair Display"', 'Georgia', 'serif'],
-        sans: ['"Plus Jakarta Sans"', '"Inter"', 'sans-serif'],
+        serif: ['"Source Serif 4"', 'Georgia', 'serif'],
+        sans: ['"Source Serif 4"', 'Georgia', 'serif'],
       },
       colors: {
         ashara: {

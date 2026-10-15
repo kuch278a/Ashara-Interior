@@ -60,7 +60,7 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
     };
   }, []);
 
-  const recentProjects = projects.slice(0, 3);
+  const recentProjects = projects.slice(0, 2);
 
   const toggleAccordion = (id) => {
     setOpenIndex(openIndex === id ? null : id);
@@ -134,7 +134,7 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
                 {/* Animated Body Content */}
                 {isOpen && (
                   <div className="pt-4 pl-8 sm:pl-12 pr-4 animate-fade-in">
-                    <p className="text-sm leading-relaxed text-ashara-teal dark:text-white font-light transition-colors duration-300">
+                    <p className="text-base leading-relaxed text-ashara-teal dark:text-white font-light transition-colors duration-300">
                       {item.content}
                     </p>
                   </div>
@@ -157,19 +157,19 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
 
       {/* 4. "Recent Projects" Section matching Figma */}
       {!isSection && recentProjects.length > 0 && (
-        <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pt-8 pb-24 space-y-12 text-center">
-          
+        <section className="max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-16 pt-8 pb-24 space-y-12 text-center">
+
           {/* Title with horizontal lines */}
-          <div className="flex items-center justify-center gap-6 max-w-5xl mx-auto">
-            <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1"></div>
-            <h3 className="font-serif text-2xl sm:text-3xl text-ashara-teal dark:text-white font-bold w-[210px] h-[60px] flex items-center justify-center whitespace-nowrap">
+          <div className="flex items-center justify-center gap-6 mb-12 w-full">
+            <div className="h-[5px] bg-gray-300 dark:bg-white/15 flex-1"></div>
+            <h3 className="font-serif text-3xl sm:text-4xl text-ashara-teal dark:text-white font-normal h-[72px] px-2 flex items-center justify-center whitespace-nowrap">
               Recent Projects
             </h3>
-            <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1"></div>
+            <div className="h-[5px] bg-gray-300 dark:bg-white/15 flex-1"></div>
           </div>
 
           {/* 2 Project Cards Grid matching Figma (text below image) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-12 text-left">
+          <div className="max-w-[1400px] mx-auto grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-16 text-left">
             {recentProjects.map((item) => (
               <article
                 key={item.id}
@@ -208,11 +208,12 @@ export default function ServicesPage({ onNavigate, onSelectProject, isSection = 
 
           {/* View All Projects Link */}
           <div className="pt-12 text-center">
-            <button 
+            <button
+              type="button"
               onClick={() => onNavigate && onNavigate('projects')}
-              className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.25em] font-semibold text-ashara-teal dark:text-white hover:text-ashara-teal transition-colors"
+              className="text-[16px] uppercase tracking-[0.2em] font-bold transition-colors duration-200 text-ashara-teal/60 dark:text-white/60 hover:text-ashara-teal dark:hover:text-white pb-1 border-b border-transparent hover:border-ashara-teal dark:hover:border-white focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold"
             >
-              VIEW ALL PROJECTS <span className="text-[12px] leading-none mb-0.5">&gt;</span>
+              VIEW ALL PROJECTS
             </button>
           </div>
 

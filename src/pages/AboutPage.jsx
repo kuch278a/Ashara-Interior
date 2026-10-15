@@ -32,7 +32,7 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
     };
   }, []);
 
-  const recentProjects = projects.slice(0, 3);
+  const recentProjects = projects.slice(0, 2);
 
   const handleProjectClick = (project) => {
     if (onSelectProject) {
@@ -53,10 +53,10 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
             style={{ backgroundImage: `url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=85')` }}
           />
           <div className="relative z-10 space-y-2 text-white">
-            <span className="text-[11px] uppercase tracking-[0.3em] font-semibold">
+            <span className="text-[20px] uppercase tracking-[0.3em] font-semibold">
               WE CREATE
             </span>
-            <h1 className="font-serif text-4xl sm:text-5xl font-normal">
+            <h1 className="font-serif text-5xl sm:text-6xl font-normal">
               About Us
             </h1>
           </div>
@@ -94,8 +94,8 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
       </section>
 
       {/* 3. FULL WIDTH IMAGE */}
-      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pb-20">
-        <div className="w-full aspect-[21/9] overflow-hidden bg-gray-200">
+      <section className="w-full px-8 sm:px-12 pt-8 pb-24">
+        <div className="w-full h-[360px] sm:h-[480px] lg:h-[600px] overflow-hidden bg-gray-200">
           <img
             src={asset_1}
             alt="Interior View"
@@ -107,11 +107,11 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
       {!isSection && (
         <>
           {/* 4. CEO STATEMENT (Image Left, Text Right) */}
-      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pb-12">
+      <section className="max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-16 pb-12">
         <div className="bg-[#EBF2F2] dark:bg-white/5 grid grid-cols-1 md:grid-cols-2">
           {/* Image & CEO Profile */}
           <div className="flex flex-col items-center justify-center p-8 sm:p-12 lg:p-14 order-last md:order-first">
-            <div className="w-full max-w-[360px] sm:max-w-[400px]">
+            <div className="w-full">
               <img
                 src={ceoImage}
                 alt="Michael Dessalegn - Founder, CEO and Architect"
@@ -126,10 +126,6 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
                     Founder, CEO and Architect
                   </p>
                 </div>
-
-                <blockquote className="font-serif italic text-sm sm:text-base leading-snug text-ashara-teal dark:text-white font-normal pl-3 border-l-2 border-ashara-teal/40 dark:border-ashara-gold/50">
-                  &ldquo;Design with passion, authenticity, and positivity to create spaces that inspire and uplift the soul.&rdquo;
-                </blockquote>
               </div>
             </div>
           </div>
@@ -145,7 +141,7 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
               &lsquo;We Customise Your Identity&rsquo;
             </p>
 
-            <div className="space-y-4 text-[13px] leading-relaxed text-ashara-teal dark:text-white font-normal">
+            <div className="space-y-4 text-[15px] leading-relaxed text-ashara-teal dark:text-white font-normal">
               <p>
                 Welcome to our world of design and construction magic! As the founder, CEO, and Architect of Ashara interior design and build firm, I am thrilled to share our passion for creating inspiring spaces that reflect your unique style and personality. With a commitment to authenticity and a positive attitude, we approach every project with enthusiasm and dedication.
               </p>
@@ -162,16 +158,16 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
 
 
       {/* 5. OUR MISSION (Text Left, Image Right) */}
-      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pb-12">
+      <section className="max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-16 pb-12">
         <div className="bg-[#EBF2F2] dark:bg-white/5 grid grid-cols-1 md:grid-cols-2">
           <div className="p-10 lg:p-16 flex flex-col justify-center">
             <div className="flex items-center gap-6 mb-6">
               <h3 className="font-serif text-2xl text-ashara-teal dark:text-white font-normal whitespace-nowrap">Our Mission</h3>
               <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1"></div>
             </div>
-            <div className="space-y-4 text-[13px] leading-relaxed text-ashara-teal dark:text-white font-normal">
+            <div className="space-y-4 text-[15px] leading-relaxed text-ashara-teal dark:text-white font-normal">
               <p>
-                Our mission is to design and create spaces that radiate positivity, evoke emotions of happiness and wellbeing, and reflect the individuality of our clients through customized solutions. 
+                Our mission is to design and create spaces that radiate positivity, evoke emotions of happiness and wellbeing, and reflect the individuality of our clients through customized solutions.
               </p>
               <p>
                 We strive to inspire and uplift those who interact with our designs, transforming spaces into meaningful and transformative environments.
@@ -189,7 +185,7 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
       </section>
 
       {/* 5. OUR VISION (Image Left, Text Right) */}
-      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pb-24">
+      <section className="max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-16 pb-24">
         <div className="bg-[#EBF2F2] dark:bg-white/5 grid grid-cols-1 md:grid-cols-2">
           <div className="h-[300px] md:h-auto order-last md:order-first">
             <img
@@ -203,7 +199,7 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
               <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1"></div>
               <h3 className="font-serif text-2xl text-ashara-teal dark:text-white font-normal whitespace-nowrap">Our Vision</h3>
             </div>
-            <div className="space-y-4 text-[13px] leading-relaxed text-ashara-teal dark:text-white font-normal">
+            <div className="space-y-4 text-[15px] leading-relaxed text-ashara-teal dark:text-white font-normal">
               <p>
                 Our vision is to be a leading interior design firm known for our commitment to positivity, customization, and creativity. We aim to continue creating spaces that bring joy, fulfillment, and inspiration to our clients, setting new standards in the industry for personalized and innovative design solutions. 
               </p>
@@ -219,19 +215,17 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
 
       {/* 6. RECENT PROJECTS SECTION */}
       {!isSection && recentProjects.length > 0 && (
-        <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pt-8 pb-24 space-y-12 text-center">
-          
+        <section className="max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-16 pt-8 pb-24 space-y-12 text-center">
+
           {/* Title with horizontal lines */}
-          <div className="flex items-center justify-center gap-6">
-            <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1 max-w-[120px]"></div>
-            <h3 className="font-serif text-2xl sm:text-3xl text-ashara-teal dark:text-white font-normal">
-              Recent Projects
-            </h3>
-            <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1 max-w-[120px]"></div>
+          <div className="flex items-center justify-center gap-6 mb-12 w-full">
+            <div className="h-[5px] bg-gray-300 dark:bg-white/15 flex-1"></div>
+            <h2 className="font-serif text-3xl sm:text-4xl text-ashara-teal dark:text-white font-normal h-[72px] px-2 flex items-center justify-center whitespace-nowrap">Recent Projects</h2>
+            <div className="h-[5px] bg-gray-300 dark:bg-white/15 flex-1"></div>
           </div>
 
           {/* 2 Project Cards Grid matching Figma (text below image) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-12 text-left">
+          <div className="max-w-[1400px] mx-auto grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-16 text-left">
             {recentProjects.map((item) => (
               <article
                 key={item.id}
@@ -270,11 +264,12 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
 
           {/* View All Projects Link */}
           <div className="pt-12 text-center">
-            <button 
+            <button
+              type="button"
               onClick={() => onNavigate && onNavigate('projects')}
-              className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.25em] font-semibold text-ashara-teal dark:text-white hover:text-ashara-teal transition-colors"
+              className="text-[16px] uppercase tracking-[0.2em] font-bold transition-colors duration-200 text-ashara-teal/60 dark:text-white/60 hover:text-ashara-teal dark:hover:text-white pb-1 border-b border-transparent hover:border-ashara-teal dark:hover:border-white focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold"
             >
-              VIEW ALL PROJECTS <span className="text-[12px] leading-none mb-0.5">&gt;</span>
+              VIEW ALL PROJECTS
             </button>
           </div>
 

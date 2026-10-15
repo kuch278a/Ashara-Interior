@@ -54,19 +54,19 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
       )}
 
       {/* PROJECTS SECTION */}
-      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pt-16 pb-24">
-        
+      <section className="max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-16 pt-16 pb-24">
+
         {/* Title with horizontal lines */}
-        <div className="flex items-center justify-center gap-6 mb-12 max-w-5xl mx-auto">
-          <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1"></div>
-          <h2 className="font-serif text-2xl sm:text-3xl text-ashara-teal dark:text-white font-bold w-[210px] h-[60px] flex items-center justify-center whitespace-nowrap">
+        <div className="flex items-center justify-center gap-6 mb-12 w-full">
+          <div className="h-[5px] bg-gray-300 dark:bg-white/15 flex-1"></div>
+          <h2 className="font-serif text-3xl sm:text-4xl text-ashara-teal dark:text-white font-normal h-[72px] px-2 flex items-center justify-center whitespace-nowrap">
             Projects
           </h2>
-          <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1"></div>
+          <div className="h-[5px] bg-gray-300 dark:bg-white/15 flex-1"></div>
         </div>
 
         {/* 2-Column Grid matching Figma */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12">
+        <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-16">
           {(isSection ? projects.slice(0, 4) : projects).map((item) => (
             <article
               key={item.id}

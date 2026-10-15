@@ -26,8 +26,8 @@ const CLIENTS = [
   { name: 'Ministry of Revenues', image: asset_8, alt: 'Ministry of Revenues' },
   { name: 'Addis Ababa Police', image: asset_9, alt: 'Addis Ababa Police' },
   { name: 'Oromia Police', image: asset_10, alt: 'Oromia Police' },
-  { name: 'United Beverages', image: asset_11, alt: 'United Beverages' },
-  { name: 'Amibara Properties', image: asset_12, alt: 'Amibara Properties' },
+  { name: 'United Beverages', image: asset_11, alt: 'United Beverages', large: true },
+  { name: 'Amibara Properties', image: asset_12, alt: 'Amibara Properties', large: true },
   { name: 'Hill Bottom Recreation', image: asset_13, alt: 'Hill Bottom Recreation' },
   { name: 'Mela Muziqa', image: asset_14, alt: 'Mela Muziqa' },
   { name: 'Ethiopian Air Force', image: asset_15, alt: 'Ethiopian Air Force' },
@@ -36,15 +36,15 @@ const CLIENTS = [
 export default function ClientsSection() {
   return (
     <div className="max-w-5xl mx-auto px-6 py-4">
-      <div className="flex flex-wrap justify-center items-center gap-x-10 gap-y-10 sm:gap-x-16 sm:gap-y-12">
+      <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-6 sm:gap-x-10 sm:gap-y-8">
         {CLIENTS.map((client, index) => (
-          <div key={index} className="flex items-center justify-center w-[120px] sm:w-[150px]">
+          <div key={index} className={`flex items-center justify-center ${client.large ? 'w-[200px] sm:w-[260px]' : 'w-[160px] sm:w-[210px]'}`}>
             <img
               src={client.image}
               alt={client.alt}
               loading="lazy"
               decoding="async"
-              className="h-16 sm:h-24 w-full object-contain transition-all duration-300 hover:scale-110"
+              className={`${client.large ? 'h-24 sm:h-32' : 'h-20 sm:h-28'} w-auto max-w-full object-contain transition-all duration-300 hover:scale-110`}
             />
           </div>
         ))}

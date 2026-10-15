@@ -2,7 +2,7 @@
 export const DEFAULT_PROJECTS_LIST = [
   {
     id: 1,
-    title: 'Prosperity Party Head Quarter PM Office',
+    title: 'Prosperity Party Office',
     category: 'INTERIOR',
     subtitle: 'Addis Ababa, Arada Sub-city, around Holy Trinity Cathedral Church | 2022 G.C.',
     image: new URL("../assets/projects/page_15_img_02.jpeg", import.meta.url).href,

@@ -434,7 +434,44 @@ export function mergeWithDefaultProjects(customList = [], extraTombstones = null
   customList.forEach((p) => {
     if (p && p.id !== undefined) {
       const existing = map.get(String(p.id)) || {};
-      map.set(String(p.id), { ...existing, ...p });
+      const mergedItem = { ...existing, ...p };
+
+      const isValidUrl = (url) => typeof url === 'string' && (
+        url.startsWith('http://') || 
+        url.startsWith('https://') || 
+        url.startsWith('data:') || 
+        url.startsWith('blob:') ||
+        url.startsWith('/src/') ||
+        url.startsWith('/assets/') ||
+        url.includes('/assets/projects/')
+      );
+
+      if (p.image && !isValidUrl(p.image)) {
+        mergedItem.image = existing.image || p.image;
+      }
+      if (p.fallbackImage && !isValidUrl(p.fallbackImage)) {
+        mergedItem.fallbackImage = existing.fallbackImage || existing.image || p.fallbackImage;
+      }
+
+      if (Array.isArray(p.gallery)) {
+        const sanitizedGallery = p.gallery.map((url, i) => {
+          if (!isValidUrl(url)) {
+            return (existing.gallery && existing.gallery[i]) || existing.image || null;
+          }
+          return url;
+        }).filter(Boolean);
+
+        if (Array.isArray(existing.gallery) && existing.gallery.length > 0) {
+          existing.gallery.forEach((defUrl) => {
+            if (defUrl && !sanitizedGallery.includes(defUrl)) {
+              sanitizedGallery.push(defUrl);
+            }
+          });
+        }
+        mergedItem.gallery = sanitizedGallery;
+      }
+
+      map.set(String(p.id), mergedItem);
     }
   });
   return Array.from(map.values());
@@ -446,9 +483,9 @@ export function mergeWithDefaultProjects(customList = [], extraTombstones = null
 export function getInitialProjects() {
   if (typeof window !== 'undefined') {
     try {
-      if (localStorage.getItem('ashara_projects_v') !== '2024_cpr_v4') {
+      if (localStorage.getItem('ashara_projects_v') !== '2024_cpr_v5') {
         localStorage.removeItem('ashara_projects');
-        localStorage.setItem('ashara_projects_v', '2024_cpr_v4');
+        localStorage.setItem('ashara_projects_v', '2024_cpr_v5');
         return DEFAULT_PROJECTS_LIST;
       }
       const stored = localStorage.getItem('ashara_projects');
