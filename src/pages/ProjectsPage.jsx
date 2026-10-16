@@ -66,7 +66,7 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
         </div>
 
         {/* 2-Column Grid matching Figma */}
-        <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-16">
+        <div className="max-w-[1400px] mx-auto grid grid-cols-1 sm:grid-cols-2 gap-x-6 sm:gap-x-10 gap-y-12 sm:gap-y-16">
           {(isSection ? projects.slice(0, 4) : projects).map((item) => (
             <article
               key={item.id}
@@ -82,7 +82,7 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
               className="group cursor-pointer block"
             >
               {/* Photo */}
-              <div className="w-full aspect-[4/3] overflow-hidden bg-gray-200 dark:bg-gray-800 mb-4">
+              <div className="w-full aspect-[4/3] sm:aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-gray-200 dark:bg-gray-800 mb-4">
                 <img
                   src={item.image}
                   alt={item.title}
@@ -98,7 +98,7 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
 
               {/* Text Below Image */}
               <div>
-                <h3 className="font-serif text-2xl text-ashara-teal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-teal transition-colors">
+                <h3 className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-teal transition-colors">
                   {item.title}
                 </h3>
               </div>

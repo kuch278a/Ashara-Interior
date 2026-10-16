@@ -28,11 +28,14 @@ function PageLoadingFallback() {
 // Public pages — 'admin' is intentionally excluded
 const VALID_PAGES = ['home', 'projects', 'services', 'about', 'contact', 'project-detail'];
 
-// Secret key required to access the admin portal
-// Access via: yoursite.com/?key=ashara-studio-2026#admin
-const ADMIN_SECRET_KEY = 'ashara-studio-2026';
+// Access key required to reach the admin portal (an obscurity layer only —
+// the real protection is Firebase Auth + Firestore/Storage rules).
+// Set VITE_ADMIN_ACCESS_KEY in .env (local) and GitHub secrets (CI).
+// Access via: yoursite.com/?key=<VITE_ADMIN_ACCESS_KEY>#admin
+const ADMIN_SECRET_KEY = import.meta.env?.VITE_ADMIN_ACCESS_KEY || '';
 
 function canAccessAdmin() {
+  if (!ADMIN_SECRET_KEY) return false;
   const params = new URLSearchParams(window.location.search);
   return params.get('key') === ADMIN_SECRET_KEY;
 }

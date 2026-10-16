@@ -48,15 +48,6 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
     }
   };
 
-  const formatCategory = (cat) => {
-    if (!cat) return 'INTERIOR DESIGN';
-    const upper = cat.trim().toUpperCase();
-    if (upper.includes('DESIGN')) return upper;
-    return `${upper} DESIGN`;
-  };
-
-  const categoryLabel = formatCategory(activeProject.category);
-
   const handleImageError = (e) => {
     e.target.onerror = null;
     const fallback = activeProject.fallbackImage || activeProject.image || DEFAULT_PROJECTS_LIST[0].image;
@@ -93,14 +84,11 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
         <section className="py-14 sm:py-20 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 lg:gap-20 items-start">
             
-            {/* Left: Title & Subtitle */}
-            <div className="md:col-span-5 space-y-2.5">
+            {/* Left: Title */}
+            <div className="md:col-span-5">
               <h1 className="font-serif text-4xl sm:text-5xl lg:text-[52px] leading-tight text-ashara-teal dark:text-white font-normal">
                 {activeProject.title}
               </h1>
-              <p className="text-[13px] sm:text-[14px] uppercase tracking-[0.2em] font-sans font-medium text-gray-500 dark:text-gray-400">
-                {categoryLabel}
-              </p>
             </div>
 
             {/* Right: Architectural Narrative */}
@@ -118,7 +106,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
           
           {/* Featured Wide Image 1 */}
           {featuredWide1 && (
-            <div className="w-full aspect-[16/9] sm:aspect-[16/10] max-h-[640px] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
+            <div className="w-full aspect-[4/3] sm:aspect-[16/9] lg:aspect-[16/10] max-h-[360px] sm:max-h-[520px] lg:max-h-[640px] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
               <img
                 src={featuredWide1}
                 alt={`${activeProject.title} View 1`}
@@ -131,10 +119,10 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
           )}
 
           {/* Horizontal Pair (2 columns) */}
-          {pair1.length > 0 && (
+          {pair1.length > 1 && (
             <div className={`max-w-[1400px] mx-auto grid grid-cols-1 ${pair1.length > 1 ? 'sm:grid-cols-2' : ''} gap-6 lg:gap-8`}>
               {pair1.map((imgUrl, idx) => (
-                <div key={idx} className="w-full aspect-[4/3] sm:aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
+                <div key={idx} className="w-full aspect-[4/3] sm:aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
                   <img
                     src={imgUrl}
                     alt={`${activeProject.title} Detail ${idx + 2}`}
@@ -159,7 +147,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
           {pair2.length > 0 && (
             <div className={`max-w-[1400px] mx-auto grid grid-cols-1 ${pair2.length > 1 ? 'sm:grid-cols-2' : ''} gap-6 lg:gap-8`}>
               {pair2.map((imgUrl, idx) => (
-                <div key={idx} className="w-full aspect-[3/4] sm:aspect-[4/5] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
+                <div key={idx} className="w-full h-[75vh] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
                   <img
                     src={imgUrl}
                     alt={`${activeProject.title} Vertical ${idx + 4}`}
@@ -175,7 +163,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
 
           {/* Featured Wide Image 2 */}
           {featuredWide2 && (
-            <div className="w-full aspect-[16/9] sm:aspect-[16/10] max-h-[640px] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
+            <div className="w-full aspect-[4/3] sm:aspect-[16/9] lg:aspect-[16/10] max-h-[360px] sm:max-h-[520px] lg:max-h-[640px] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
               <img
                 src={featuredWide2}
                 alt={`${activeProject.title} Panoramic`}
@@ -191,7 +179,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
           {remainingImages.length > 0 && (
             <div className="max-w-[1400px] mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 pt-2">
               {remainingImages.map((imgUrl, idx) => (
-                <div key={idx} className="w-full aspect-[4/3] sm:aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
+                <div key={idx} className="w-full aspect-[4/3] sm:aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
                   <img
                     src={imgUrl}
                     alt={`${activeProject.title} Extra ${idx + 7}`}
@@ -245,7 +233,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
                 }}
                 className="group cursor-pointer block"
               >
-                <div className="w-full aspect-[4/3] sm:aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
+                <div className="w-full aspect-[4/3] sm:aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
                   <img
                     src={rec.image}
                     loading="lazy"
@@ -259,14 +247,11 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
                   />
                 </div>
                 
-                {/* Title & Subtitle Below the Image */}
-                <div className="mt-4 space-y-1">
+                {/* Title Below the Image */}
+                <div className="mt-4">
                   <h4 className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white font-normal group-hover:text-ashara-teal-light dark:group-hover:text-ashara-gold transition-colors">
                     {rec.title}
                   </h4>
-                  <p className="text-[11px] sm:text-[12px] uppercase tracking-[0.2em] font-sans font-medium text-gray-500 dark:text-gray-400">
-                    {formatCategory(rec.category)}
-                  </p>
                 </div>
               </article>
             ))}

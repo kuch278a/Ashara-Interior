@@ -78,7 +78,7 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
 
         {/* Right Side Nav Links */}
         <div className="flex items-center gap-6 lg:gap-10">
-          <nav className="hidden md:flex items-center gap-6 lg:gap-8">
+          <nav className="hidden lg:flex items-center gap-6 lg:gap-8">
             {navLinks.map((link) => {
               const isActive = activePage === link.id || (activePage === 'project-detail' && link.id === 'projects');
               return (
@@ -116,7 +116,7 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
             {/* Mobile Hamburger Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-ashara-teal dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold"
+              className="lg:hidden w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-ashara-teal dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold"
               aria-label="Toggle Navigation Menu"
               aria-expanded={mobileMenuOpen}
               aria-controls="mobile-menu"
@@ -129,7 +129,7 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
 
       {/* Mobile Dropdown Menu */}
       {mobileMenuOpen && (
-        <div id="mobile-menu" className="pointer-events-auto md:hidden w-full absolute top-full left-0 bg-white dark:bg-ashara-dark border-b border-gray-200 dark:border-white/10 shadow-lg animate-fade-in">
+        <div id="mobile-menu" className="pointer-events-auto lg:hidden w-full absolute top-full left-0 bg-white dark:bg-ashara-dark border-b border-gray-200 dark:border-white/10 shadow-lg animate-fade-in">
           <div className="px-6 py-4 space-y-2">
             {navLinks.map((link) => {
               const isActive = activePage === link.id || (activePage === 'project-detail' && link.id === 'projects');

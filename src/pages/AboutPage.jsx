@@ -240,7 +240,7 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
                 }}
                 className="group cursor-pointer block"
               >
-                <div className="w-full aspect-[4/3] overflow-hidden bg-gray-200 mb-4">
+                <div className="w-full aspect-[4/3] sm:aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-gray-200 mb-4">
                   <img
                     src={item.image}
                     alt={item.title}

@@ -230,7 +230,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                 <img 
                   src={work.image} 
                   alt={work.title} 
-                  loading={index === 0 ? "eager" : "lazy"}
+                  loading="eager"
                   decoding="async" 
                   fetchPriority={index === 0 ? "high" : "auto"}
                   onError={(e) => {
@@ -364,7 +364,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
               onKeyDown={(e) => handleCardKeyDown(e, () => handleCardClick(work))}
               role="button"
               tabIndex={0}
-              className="group relative cursor-pointer overflow-hidden bg-gray-100 aspect-[7/5]"
+              className="group relative cursor-pointer overflow-hidden bg-gray-100 aspect-[7/5] lg:aspect-[16/10]"
             >
               <img
                 src={work.image}
