@@ -6,6 +6,8 @@ export default function ContactPage({ isSection = false }) {
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(false);
+  const [validationError, setValidationError] = useState('');
+  const [honeypot, setHoneypot] = useState('');
   const [form, setForm] = useState({
     fullName: '',
     email: '',
@@ -15,15 +17,59 @@ export default function ContactPage({ isSection = false }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setValidationError('');
     setSubmitError(false);
+
+    // 1. Bot Honeypot: Automated spam bots fill hidden inputs
+    if (honeypot) {
+      setSubmitted(true);
+      return;
+    }
+
+    // 2. Submission cooldown (prevent duplicate spam requests within 20s)
+    const lastSubmitTime = Number(sessionStorage.getItem('ashara_last_contact_time') || 0);
+    const now = Date.now();
+    if (now - lastSubmitTime < 20000) {
+      setValidationError('Please wait a moment before sending another enquiry.');
+      return;
+    }
+
+    // 3. Input sanitization and length validation aligned with Firestore rules
+    const cleanFullName = form.fullName.trim();
+    const cleanEmail = form.email.trim();
+    const cleanTelephone = form.telephone.trim();
+    const cleanEnquiry = form.enquiry.trim();
+
+    if (!cleanFullName || cleanFullName.length > 200) {
+      setValidationError('Please enter your full name (maximum 200 characters).');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!cleanEmail || cleanEmail.length > 320 || !emailRegex.test(cleanEmail)) {
+      setValidationError('Please provide a valid email address.');
+      return;
+    }
+
+    if (cleanTelephone.length > 40) {
+      setValidationError('Telephone number must not exceed 40 characters.');
+      return;
+    }
+
+    if (!cleanEnquiry || cleanEnquiry.length > 5000) {
+      setValidationError('Enquiry must be between 1 and 5000 characters.');
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
       await submitConsultation({
-        fullName: form.fullName,
-        email: form.email,
-        telephone: form.telephone,
-        enquiry: form.enquiry
+        fullName: cleanFullName,
+        email: cleanEmail,
+        telephone: cleanTelephone,
+        enquiry: cleanEnquiry
       });
+      sessionStorage.setItem('ashara_last_contact_time', String(Date.now()));
       setSubmitted(true);
     } catch (err) {
       console.error('Submission error:', err);
@@ -78,7 +124,7 @@ export default function ContactPage({ isSection = false }) {
               <div className="flex items-start gap-3.5">
                 <MessageSquare className="w-4 h-4 text-ashara-teal dark:text-white mt-1 shrink-0 stroke-[1.5]" />
                 <p className="leading-snug">
-                  WhatsApp <a href="https://wa.me/251907636463" target="_blank" rel="noreferrer" className="hover:text-ashara-teal dark:hover:text-white transition">+251 90 763 6463</a>
+                  WhatsApp <a href="https://wa.me/251907636463" target="_blank" rel="noopener noreferrer" className="hover:text-ashara-teal dark:hover:text-white transition">+251 90 763 6463</a>
                 </p>
               </div>
               
@@ -138,10 +184,32 @@ export default function ContactPage({ isSection = false }) {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
+                {validationError && (
+                  <div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs rounded-sm flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span>{validationError}</span>
+                  </div>
+                )}
+
+                {/* Honeypot field for spam bots */}
+                <div className="hidden" aria-hidden="true" style={{ display: 'none' }}>
+                  <label htmlFor="companyUrl">Company Website (Leave Blank)</label>
+                  <input
+                    id="companyUrl"
+                    type="text"
+                    name="companyUrl"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                  />
+                </div>
+
                 <div>
                   <input
                     type="text"
                     required
+                    maxLength={200}
                     aria-label="Full Name"
                     placeholder="Full Name"
                     value={form.fullName}
@@ -155,6 +223,7 @@ export default function ContactPage({ isSection = false }) {
                     <input
                       type="email"
                       required
+                      maxLength={320}
                       aria-label="Email Address"
                       placeholder="Email Address"
                       value={form.email}
@@ -165,6 +234,7 @@ export default function ContactPage({ isSection = false }) {
                   <div>
                     <input
                       type="tel"
+                      maxLength={40}
                       aria-label="Telephone"
                       placeholder="Telephone"
                       value={form.telephone}
@@ -178,6 +248,7 @@ export default function ContactPage({ isSection = false }) {
                   <textarea
                     rows="6"
                     required
+                    maxLength={5000}
                     aria-label="Enquiry"
                     placeholder="Tell us about your enquiry - New construction / renovation / remodel."
                     value={form.enquiry}

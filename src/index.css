@@ -7,6 +7,9 @@
     scroll-behavior: smooth;
     scroll-padding-top: 100px;
     color-scheme: light dark;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
   
   html.dark {
@@ -29,6 +32,35 @@
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-serif;
+    text-wrap: balance;
+  }
+
+  p, li, blockquote, dd {
+    text-wrap: pretty;
+  }
+
+  /* Optical image outlines to separate photography from background */
+  img:not([src*=".svg"]):not([src*="logo"]):not(.no-outline) {
+    outline: 1px solid rgba(0, 0, 0, 0.05);
+    outline-offset: -1px;
+  }
+
+  html.dark img:not([src*=".svg"]):not([src*="logo"]):not(.no-outline) {
+    outline: 1px solid rgba(255, 255, 255, 0.07);
+    outline-offset: -1px;
+  }
+
+  /* Accessible focus indicators */
+  :focus-visible {
+    outline: 2px solid #005F56;
+    outline-offset: 2px;
+  }
+  html.dark :focus-visible {
+    outline-color: #C5A880;
+  }
+
+  .tabular-nums, [data-numeric], time {
+    font-variant-numeric: tabular-nums;
   }
 
   input, textarea, select, button {

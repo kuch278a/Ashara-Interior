@@ -127,10 +127,21 @@ export default function AdminProjectModal({
                   <label className="flex flex-col items-center justify-center gap-1.5 w-full p-4 bg-gray-50 dark:bg-white/5 border-2 border-dashed border-gray-300 dark:border-white/15 hover:border-ashara-teal dark:hover:border-ashara-gold text-ashara-teal dark:text-white cursor-pointer transition-all duration-200 group rounded-sm">
                     <Upload className="w-5 h-5 text-ashara-teal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-teal transition" />
                     <span className="text-xs uppercase tracking-wider font-semibold group-hover:text-ashara-teal dark:group-hover:text-ashara-teal transition">Upload high-resolution image file</span>
-                    <span className="text-[10px] text-ashara-teal dark:text-white font-light">Supports JPG, PNG, WEBP — automatically optimized for lightning-fast loading</span>
-                    <input type="file" accept="image/*" className="hidden" onChange={(e) => {
-                      const file = e.target.files[0];
-                      if (file) { setProjectImageFile(file); const r = new FileReader(); r.onload = () => setProjectImagePreview(r.result); r.readAsDataURL(file); }
+                    <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden" onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      if (!file.type.startsWith('image/')) {
+                        alert('Invalid file format. Only JPG, PNG, WEBP, or GIF images are allowed.');
+                        return;
+                      }
+                      if (file.size > 10 * 1024 * 1024) {
+                        alert('Image file size exceeds 10MB limit. Please choose a smaller image.');
+                        return;
+                      }
+                      setProjectImageFile(file);
+                      const r = new FileReader();
+                      r.onload = () => setProjectImagePreview(r.result);
+                      r.readAsDataURL(file);
                     }} />
                   </label>
                 )}
@@ -157,11 +168,15 @@ export default function AdminProjectModal({
                     <label className="flex flex-col items-center justify-center gap-1.5 w-full p-4 bg-gray-50 dark:bg-white/5 border-2 border-dashed border-gray-300 dark:border-white/15 hover:border-ashara-teal dark:hover:border-ashara-gold text-ashara-teal dark:text-white cursor-pointer transition-all duration-200 group rounded-sm">
                       <Upload className="w-5 h-5 text-ashara-teal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-teal transition" />
                       <span className="text-xs uppercase tracking-wider font-semibold group-hover:text-ashara-teal dark:group-hover:text-ashara-teal transition">Upload gallery images (multiple)</span>
-                      <span className="text-[10px] text-ashara-teal dark:text-white font-light">Supports JPG, PNG, WEBP — will appear in project detail gallery grid</span>
-                      <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => {
-                        const files = Array.from(e.target.files);
-                        if (files.length > 0) {
-                          const newFiles = [...projectGalleryFiles, ...files].slice(0, 8);
+                      <span className="text-[10px] text-ashara-teal dark:text-white font-light">Supports JPG, PNG, WEBP — max 10MB per image (up to 8 images)</span>
+                      <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple className="hidden" onChange={(e) => {
+                        const files = Array.from(e.target.files || []);
+                        const validFiles = files.filter(f => f.type.startsWith('image/') && f.size <= 10 * 1024 * 1024);
+                        if (validFiles.length < files.length) {
+                          alert('Some files were ignored because they are not valid images or exceed the 10MB limit.');
+                        }
+                        if (validFiles.length > 0) {
+                          const newFiles = [...projectGalleryFiles, ...validFiles].slice(0, 8);
                           setProjectGalleryFiles(newFiles);
                         }
                       }} />
