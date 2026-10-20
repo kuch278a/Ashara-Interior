@@ -277,15 +277,16 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                     transition: 'transform 6000ms ease-out' 
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent pointer-events-none"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 via-45% to-transparent pointer-events-none"></div>
               </div>
             );
           })}
         </div>
         
-        <div className="absolute bottom-[80px] sm:bottom-[128px] left-4 pr-4 sm:left-16 sm:pr-16 lg:left-24 lg:pr-24 z-10">
+        {/* Hero Title - elevated on all phones to prevent collision with controls */}
+        <div className="absolute bottom-[125px] sm:bottom-[135px] lg:bottom-[140px] left-4 pr-4 sm:left-16 sm:pr-16 lg:left-24 lg:pr-24 z-10">
           {heroWorks[activeHeroSlide] && (
-            <h1 className="font-serif text-[42px] sm:text-[56px] leading-tight sm:leading-[64px] font-light text-white tracking-tight max-w-4xl" key={`title-${activeHeroSlide}`}>
+            <h1 className="font-serif text-[30px] sm:text-[44px] lg:text-[56px] leading-tight sm:leading-[52px] lg:leading-[64px] font-light text-white tracking-tight max-w-4xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]" key={`title-${activeHeroSlide}`}>
               {heroWorks[activeHeroSlide].title}
             </h1>
           )}
@@ -308,14 +309,15 @@ export default function HomePage({ onNavigate, onSelectProject }) {
           <ChevronRight className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 stroke-[1]" />
         </button>
 
-        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2">
-          <div className="flex gap-1.5">
+        {/* Carousel indicators + scroll hint positioned comfortably at the bottom */}
+        <div className="absolute bottom-7 sm:bottom-9 lg:bottom-11 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1.5 sm:gap-2">
+          <div className="flex gap-1.5 items-center">
             {heroWorks.map((_, i) => (
               <button 
                 key={i}
                 type="button" 
                 onClick={(e) => { e.stopPropagation(); setCurrentSlide(i); }}
-                className={`h-2.5 sm:h-3 transition-colors duration-500 ring-1 ${activeHeroSlide === i ? 'bg-[#165A5B] ring-white/70 w-10 sm:w-12' : 'w-2.5 sm:w-3 bg-[#165A5B]/60 ring-white/40 hover:bg-[#165A5B]'}`}
+                className={`h-2 sm:h-2.5 transition-all duration-300 ring-1 ${activeHeroSlide === i ? 'bg-[#165A5B] ring-white/70 w-8 sm:w-11' : 'w-2 sm:w-2.5 bg-white/40 ring-white/30 hover:bg-white/80'}`}
                 aria-label={`Go to slide ${i + 1}`}
                 aria-current={activeHeroSlide === i ? 'true' : 'false'}
               ></button>
