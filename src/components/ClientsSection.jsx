@@ -36,9 +36,9 @@ const CLIENTS = [
 export default function ClientsSection() {
   return (
     <div className="max-w-5xl mx-auto px-6 py-4">
-      <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-6 sm:gap-x-10 sm:gap-y-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-6 gap-y-6 sm:gap-x-10 sm:gap-y-8 items-center justify-items-center">
         {CLIENTS.map((client, index) => (
-          <div key={index} className={`flex items-center justify-center ${client.large ? 'w-[200px] sm:w-[260px]' : 'w-[160px] sm:w-[210px]'}`}>
+          <div key={index} className="flex items-center justify-center w-full">
             <img
               src={client.image}
               alt={client.alt}
