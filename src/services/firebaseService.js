@@ -448,16 +448,16 @@ export function mergeWithDefaultProjects(customList = [], extraTombstones = null
         url.includes('/assets/projects/')
       );
 
-      if (p.image && !isValidUrl(p.image)) {
+      if (p.image && (!isValidUrl(p.image) || (p.image.startsWith('/assets/') && existing.image))) {
         mergedItem.image = existing.image || p.image;
       }
-      if (p.fallbackImage && !isValidUrl(p.fallbackImage)) {
+      if (p.fallbackImage && (!isValidUrl(p.fallbackImage) || (p.fallbackImage.startsWith('/assets/') && existing.fallbackImage))) {
         mergedItem.fallbackImage = existing.fallbackImage || existing.image || p.fallbackImage;
       }
 
       if (Array.isArray(p.gallery)) {
         const sanitizedGallery = p.gallery.map((url, i) => {
-          if (!isValidUrl(url)) {
+          if (!isValidUrl(url) || (url.startsWith('/assets/') && existing.gallery && existing.gallery[i])) {
             return (existing.gallery && existing.gallery[i]) || existing.image || null;
           }
           return url;
@@ -485,9 +485,9 @@ export function mergeWithDefaultProjects(customList = [], extraTombstones = null
 export function getInitialProjects() {
   if (typeof window !== 'undefined') {
     try {
-      if (localStorage.getItem('ashara_projects_v') !== '2024_cpr_v5') {
+      if (localStorage.getItem('ashara_projects_v') !== '2024_cpr_v6') {
         localStorage.removeItem('ashara_projects');
-        localStorage.setItem('ashara_projects_v', '2024_cpr_v5');
+        localStorage.setItem('ashara_projects_v', '2024_cpr_v6');
         return DEFAULT_PROJECTS_LIST;
       }
       const stored = localStorage.getItem('ashara_projects');

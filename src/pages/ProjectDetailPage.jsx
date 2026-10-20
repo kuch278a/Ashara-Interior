@@ -2,6 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { DEFAULT_PROJECTS_LIST } from '../data/defaultData';
 import { getInitialProjects, subscribeToProjects } from '../services/firebaseService';
 
+// Curated luxury architectural and interior photography fallbacks ensuring every project
+// displays the full, magazine-grade 8-image architectural layout in both desktop and mobile viewports.
+const EDITORIAL_FALLBACK_IMAGES = [
+  'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=90',
+  'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85',
+  'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=85',
+  'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=85',
+  'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=1800&q=85',
+  'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1800&q=85',
+  'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1800&q=85',
+  'https://images.unsplash.com/photo-1600573472591-ee6b68d14c68?auto=format&fit=crop&w=1800&q=85',
+];
+
 export default function ProjectDetailPage({ onNavigate, onSelectProject, project, source = 'projects' }) {
   // Live project resolution: fallback to first project or live project in storage
   const [allProjects, setAllProjects] = useState(() => getInitialProjects());
@@ -18,26 +31,28 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
   // Find latest active project from live data if project prop has matching id
   const activeProject = (project && allProjects.find((p) => String(p.id) === String(project.id))) || project || allProjects[0] || DEFAULT_PROJECTS_LIST[0];
 
-  // Guaranteed unique, valid list of gallery images starting with the main hero image
-  const gallery = Array.from(new Set([
+  // 1. Gather all unique valid project images starting with the main hero image
+  const projectImages = Array.from(new Set([
     activeProject.image || activeProject.fallbackImage,
     ...(Array.isArray(activeProject.gallery) ? activeProject.gallery : [])
   ].filter(Boolean)));
 
-  const heroImage = gallery[0] || activeProject.fallbackImage;
-  const extraImages = gallery.slice(1);
+  // 2. Pad up to at least 9 images so all editorial slots (Hero + 8 layout images) are fully populated
+  const fullGallery = [...projectImages];
+  let fallbackIdx = 0;
+  while (fullGallery.length < 9) {
+    fullGallery.push(EDITORIAL_FALLBACK_IMAGES[fallbackIdx % EDITORIAL_FALLBACK_IMAGES.length]);
+    fallbackIdx++;
+  }
 
-  // Group images according to the architectural editorial layout from Figma:
-  // 1. Featured wide shot (extra[0])
-  const featuredWide1 = extraImages[0] || null;
-  // 2. Horizontal pair (extra[1], extra[2])
-  const pair1 = extraImages.slice(1, 3);
-  // 3. Vertical / portrait pair (extra[3], extra[4])
-  const pair2 = extraImages.slice(3, 5);
-  // 4. Featured wide shot 2 (extra[5])
-  const featuredWide2 = extraImages[5] || null;
-  // 5. Any remaining images (extra[6] and beyond)
-  const remainingImages = extraImages.slice(6);
+  // 3. Map into the exact 8 editorial slots
+  const heroImage = fullGallery[0];
+  const featuredWide1 = fullGallery[1];
+  const pair1 = [fullGallery[2], fullGallery[3]];
+  const pair2 = [fullGallery[4], fullGallery[5]];
+  const featuredWide2 = fullGallery[6];
+  const pair3 = [fullGallery[7], fullGallery[8]];
+  const remainingImages = fullGallery.slice(9);
 
   // Dynamic recommendations: Other live projects from the list
   const recommendations = allProjects.filter((p) => String(p.id) !== String(activeProject.id)).slice(0, 2);
@@ -53,11 +68,6 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
     const fallback = activeProject.fallbackImage || activeProject.image || DEFAULT_PROJECTS_LIST[0].image;
     if (fallback && e.target.src !== fallback) {
       e.target.src = fallback;
-    } else {
-      const container = e.target.closest('.overflow-hidden');
-      if (container) {
-        container.style.display = 'none';
-      }
     }
   };
 
@@ -105,36 +115,32 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
         <section className="space-y-6 lg:space-y-8 -mx-6 sm:-mx-10 lg:-mx-16">
           
           {/* Featured Wide Image 1 */}
-          {featuredWide1 && (
-            <div className="w-full aspect-[4/3] sm:aspect-[16/9] lg:aspect-[16/10] max-h-[360px] sm:max-h-[520px] lg:max-h-[640px] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
-              <img
-                src={featuredWide1}
-                alt={`${activeProject.title} View 1`}
-                loading="lazy"
-                decoding="async"
-                onError={handleImageError}
-                className="w-full h-full object-cover object-center"
-              />
-            </div>
-          )}
+          <div className="w-full aspect-[4/3] sm:aspect-[16/9] lg:aspect-[16/10] max-h-[360px] sm:max-h-[520px] lg:max-h-[640px] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
+            <img
+              src={featuredWide1}
+              alt={`${activeProject.title} View 1`}
+              loading="lazy"
+              decoding="async"
+              onError={handleImageError}
+              className="w-full h-full object-cover object-center"
+            />
+          </div>
 
-          {/* Horizontal Pair (2 columns) */}
-          {pair1.length > 1 && (
-            <div className={`max-w-[1400px] mx-auto grid grid-cols-1 ${pair1.length > 1 ? 'sm:grid-cols-2' : ''} gap-6 lg:gap-8`}>
-              {pair1.map((imgUrl, idx) => (
-                <div key={idx} className="w-full aspect-[4/3] sm:aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
-                  <img
-                    src={imgUrl}
-                    alt={`${activeProject.title} Detail ${idx + 2}`}
-                    loading="lazy"
-                    decoding="async"
-                    onError={handleImageError}
-                    className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700 ease-out"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
+          {/* Horizontal Pair 1 (2 columns) */}
+          <div className="max-w-[1400px] mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
+            {pair1.map((imgUrl, idx) => (
+              <div key={idx} className="w-full aspect-[4/3] sm:aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
+                <img
+                  src={imgUrl}
+                  alt={`${activeProject.title} Detail ${idx + 2}`}
+                  loading="lazy"
+                  decoding="async"
+                  onError={handleImageError}
+                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700 ease-out"
+                />
+              </div>
+            ))}
+          </div>
 
           {/* Editorial Philosophy Quote */}
           <div className="py-20 sm:py-28 text-center max-w-4xl mx-auto px-4">
@@ -143,46 +149,58 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
             </blockquote>
           </div>
 
-          {/* Portrait Pair (2 columns, taller aspect ratio matching Figma) */}
-          {pair2.length > 0 && (
-            <div className={`max-w-[1400px] mx-auto grid grid-cols-1 ${pair2.length > 1 ? 'sm:grid-cols-2' : ''} gap-6 lg:gap-8`}>
-              {pair2.map((imgUrl, idx) => (
-                <div key={idx} className="w-full h-[75vh] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
-                  <img
-                    src={imgUrl}
-                    alt={`${activeProject.title} Vertical ${idx + 4}`}
-                    loading="lazy"
-                    decoding="async"
-                    onError={handleImageError}
-                    className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700 ease-out"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
+          {/* Portrait Pair 2 (2 columns, vertical aspect ratio matching Figma) */}
+          <div className="max-w-[1400px] mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
+            {pair2.map((imgUrl, idx) => (
+              <div key={idx} className="w-full h-[60vh] sm:h-[75vh] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
+                <img
+                  src={imgUrl}
+                  alt={`${activeProject.title} Vertical ${idx + 4}`}
+                  loading="lazy"
+                  decoding="async"
+                  onError={handleImageError}
+                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700 ease-out"
+                />
+              </div>
+            ))}
+          </div>
 
           {/* Featured Wide Image 2 */}
-          {featuredWide2 && (
-            <div className="w-full aspect-[4/3] sm:aspect-[16/9] lg:aspect-[16/10] max-h-[360px] sm:max-h-[520px] lg:max-h-[640px] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
-              <img
-                src={featuredWide2}
-                alt={`${activeProject.title} Panoramic`}
-                loading="lazy"
-                decoding="async"
-                onError={handleImageError}
-                className="w-full h-full object-cover object-center"
-              />
-            </div>
-          )}
+          <div className="w-full aspect-[4/3] sm:aspect-[16/9] lg:aspect-[16/10] max-h-[360px] sm:max-h-[520px] lg:max-h-[640px] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
+            <img
+              src={featuredWide2}
+              alt={`${activeProject.title} Panoramic`}
+              loading="lazy"
+              decoding="async"
+              onError={handleImageError}
+              className="w-full h-full object-cover object-center"
+            />
+          </div>
 
-          {/* Additional Gallery Images (if any) */}
+          {/* Additional Pair 3 (2 columns) */}
+          <div className="max-w-[1400px] mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 pt-2">
+            {pair3.map((imgUrl, idx) => (
+              <div key={idx} className="w-full aspect-[4/3] sm:aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
+                <img
+                  src={imgUrl}
+                  alt={`${activeProject.title} Extra ${idx + 7}`}
+                  loading="lazy"
+                  decoding="async"
+                  onError={handleImageError}
+                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700 ease-out"
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Any remaining images beyond 9 */}
           {remainingImages.length > 0 && (
             <div className="max-w-[1400px] mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 pt-2">
               {remainingImages.map((imgUrl, idx) => (
                 <div key={idx} className="w-full aspect-[4/3] sm:aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
                   <img
                     src={imgUrl}
-                    alt={`${activeProject.title} Extra ${idx + 7}`}
+                    alt={`${activeProject.title} Extra ${idx + 9}`}
                     loading="lazy"
                     decoding="async"
                     onError={handleImageError}
@@ -195,7 +213,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
 
         </section>
 
-        {/* 4. INQUIRE NOW BUTTON (Outlined, uppercase, tracked) */}
+        {/* 4. INQUIRE NOW BUTTON */}
         <div className="text-center pt-16 sm:pt-20 pb-20 sm:pb-24">
           <button
             onClick={() => onNavigate('contact')}
@@ -238,10 +256,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
                     src={rec.image}
                     loading="lazy"
                     decoding="async"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = rec.fallbackImage;
-                    }}
+                    onError={handleImageError}
                     alt={rec.title}
                     className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
                   />
