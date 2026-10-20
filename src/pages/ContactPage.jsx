@@ -83,9 +83,9 @@ export default function ContactPage({ isSection = false }) {
     <div className="bg-[#EBF2F2] dark:bg-ashara-dark min-h-screen animate-fade-in transition-colors duration-300">
       
       {/* 1. HERO HEADER matching Figma */}
-      <section className="w-full py-24 sm:py-32 px-6 lg:px-12 text-center">
+      <section className="w-full py-16 sm:py-24 lg:py-32 px-5 sm:px-6 lg:px-12 text-center">
         <div className="max-w-3xl mx-auto">
-          <p className="font-serif text-2xl sm:text-3xl text-ashara-teal dark:text-white leading-relaxed">
+          <p className="font-serif text-xl sm:text-2xl lg:text-3xl text-ashara-teal dark:text-white leading-relaxed">
             If you would like to discuss your project, schedule an appointment or arrange to view more of our extensive portfolio please contact us on the details below.
           </p>
         </div>
@@ -97,8 +97,8 @@ export default function ContactPage({ isSection = false }) {
       </div>
 
       {/* 2. 2-COLUMN SECTION (Contact Info + Form) */}
-      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pb-20">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-20 items-start pt-4">
+      <section className="max-w-6xl mx-auto px-5 sm:px-10 lg:px-16 pb-16 sm:pb-20">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 sm:gap-12 lg:gap-20 items-start pt-4">
           
           {/* Left Column: Contact Info */}
           <div className="md:col-span-5 space-y-8">

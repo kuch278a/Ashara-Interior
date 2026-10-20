@@ -249,9 +249,9 @@ export default function HomePage({ onNavigate, onSelectProject }) {
           })}
         </div>
         
-        <div className="absolute bottom-[128px] left-6 pr-6 sm:left-16 sm:pr-16 lg:left-24 lg:pr-24 z-10">
+        <div className="absolute bottom-[80px] sm:bottom-[128px] left-4 pr-4 sm:left-16 sm:pr-16 lg:left-24 lg:pr-24 z-10">
           {heroWorks[activeHeroSlide] && (
-            <h1 className="font-serif text-3xl sm:text-[40px] leading-tight sm:leading-[50px] font-light text-white tracking-tight max-w-4xl" key={`title-${activeHeroSlide}`}>
+            <h1 className="font-serif text-2xl sm:text-[40px] leading-tight sm:leading-[50px] font-light text-white tracking-tight max-w-4xl" key={`title-${activeHeroSlide}`}>
               {heroWorks[activeHeroSlide].title}
             </h1>
           )}
@@ -303,11 +303,11 @@ export default function HomePage({ onNavigate, onSelectProject }) {
       </section>
 
       {/* 2. PHILOSOPHY QUOTE (White background) */}
-      <section className="max-w-6xl mx-auto px-6 text-center pt-44 pb-48">
-        <span className="block text-[20px] uppercase tracking-[0.3em] font-semibold text-ashara-teal dark:text-white mb-6">
+      <section className="max-w-6xl mx-auto px-5 sm:px-6 text-center pt-16 pb-16 sm:pt-28 sm:pb-28 lg:pt-44 lg:pb-48">
+        <span className="block text-[14px] sm:text-[20px] uppercase tracking-[0.3em] font-semibold text-ashara-teal dark:text-white mb-4 sm:mb-6">
           WELCOME
         </span>
-        <blockquote className="font-serif italic text-4xl sm:text-5xl text-ashara-teal dark:text-white leading-snug font-normal transition-colors duration-300 max-w-6xl mx-auto">
+        <blockquote className="font-serif italic text-2xl sm:text-4xl lg:text-5xl text-ashara-teal dark:text-white leading-snug font-normal transition-colors duration-300 max-w-6xl mx-auto">
           “Design with passion, authenticity, and positivity
           <br />
           to create spaces that inspire and uplift the soul.”
@@ -315,7 +315,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
       </section>
 
       {/* 3. OUR WORKS - Title with lines & Accordion */}
-      <section className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 text-center pt-12 pb-24">
+      <section className="max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 text-center pt-8 sm:pt-12 pb-14 sm:pb-24">
         
         {/* Title with horizontal lines */}
         <div className="flex items-center justify-center gap-6 mb-12 w-full">
@@ -397,7 +397,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
       </section>
 
       {/* 4. OUR CLIENTS */}
-      <section className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 text-center pt-16 pb-24">
+      <section className="max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 text-center pt-8 sm:pt-16 pb-12 sm:pb-24">
         <div className="flex items-center justify-center gap-6 mb-12 w-full">
           <div className="h-[5px] bg-gray-300 dark:bg-white/15 flex-1"></div>
           <h2 className="font-serif text-3xl sm:text-4xl text-ashara-teal dark:text-white font-normal w-[260px] h-[72px] flex items-center justify-center">
@@ -410,7 +410,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
 
       {/* 5. TESTIMONIAL CAROUSEL */}
       <section 
-        className="max-w-4xl mx-auto px-6 text-center pt-24 pb-40 relative touch-pan-y"
+        className="max-w-4xl mx-auto px-6 text-center pt-12 sm:pt-24 pb-20 sm:pb-40 relative touch-pan-y"
         onMouseEnter={() => setIsTestimonialPaused(true)}
         onMouseLeave={() => setIsTestimonialPaused(false)}
         onTouchStart={handleTestimonialTouchStart}

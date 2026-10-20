@@ -52,11 +52,11 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
             className="absolute inset-0 bg-cover bg-center opacity-80"
             style={{ backgroundImage: `url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=85')` }}
           />
-          <div className="relative z-10 space-y-2 text-white">
-            <span className="text-[20px] uppercase tracking-[0.3em] font-semibold">
+          <div className="relative z-10 space-y-2 text-white px-4">
+            <span className="text-[14px] sm:text-[20px] uppercase tracking-[0.3em] font-semibold">
               WE CREATE
             </span>
-            <h1 className="font-serif text-5xl sm:text-6xl font-normal">
+            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal">
               About Us
             </h1>
           </div>
@@ -64,14 +64,14 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
       </section>
 
       {/* 2. TWO COLUMN INTRO */}
-      <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 py-20">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-20 items-start">
+      <section className="max-w-6xl mx-auto px-5 sm:px-10 lg:px-16 py-12 sm:py-20">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 sm:gap-12 lg:gap-20 items-start">
           <div className="md:col-span-5">
-            <h2 className="font-serif italic text-3xl sm:text-4xl text-ashara-teal dark:text-white font-light leading-tight">
+            <h2 className="font-serif italic text-2xl sm:text-3xl lg:text-4xl text-ashara-teal dark:text-white font-light leading-tight">
               We create luxury interiors that stand the test of time.
             </h2>
           </div>
-          <div className="md:col-span-7 space-y-6 text-[13px] leading-relaxed text-ashara-teal dark:text-white font-normal">
+          <div className="md:col-span-7 space-y-5 text-[13px] leading-relaxed text-ashara-teal dark:text-white font-normal">
             <p>
              Ashara Interiors is a company based in Addis Ababa, Ethiopia since 2021, that
              specializes in customizing spaces to enhance both their functionality and aesthetic

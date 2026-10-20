@@ -19,10 +19,10 @@ export default function Footer({ onNavigate }) {
       <div className="max-w-7xl mx-auto flex flex-col space-y-16">
         
         {/* Main Footer Row matching Figma */}
-        <div className="flex flex-col lg:flex-row justify-between items-start gap-10">
+        <div className="grid grid-cols-2 lg:flex lg:flex-row justify-between items-start gap-8 lg:gap-10">
           
-          {/* 1. Left: Brand Logo in White */}
-          <div className="flex-shrink-0">
+          {/* 1. Brand Logo in White */}
+          <div className="flex-shrink-0 col-span-2 sm:col-span-1">
             <button
               onClick={() => onNavigate('home')}
               className="group focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold hover:opacity-90 transition"
@@ -72,8 +72,8 @@ export default function Footer({ onNavigate }) {
             </button>
           </nav>
 
-          {/* 5. Live Social Media Links — bottom right of the main footer row */}
-          <div className="flex items-center gap-4 text-white self-end lg:self-end pt-2 lg:pt-0">
+          {/* 5. Social Links */}
+          <div className="flex items-center gap-4 text-white col-span-2 sm:col-span-1 lg:self-end pt-2 lg:pt-0">
             <a href={SOCIAL_LINKS.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="hover:scale-110 transition-transform">
               <Facebook className="w-5 h-5" fill="currentColor" />
             </a>
