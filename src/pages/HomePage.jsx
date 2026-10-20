@@ -285,7 +285,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
         
         <div className="absolute bottom-[160px] sm:bottom-[128px] left-4 pr-4 sm:left-16 sm:pr-16 lg:left-24 lg:pr-24 z-10">
           {heroWorks[activeHeroSlide] && (
-            <h1 className="font-serif text-[42px] sm:text-[56px] leading-tight sm:leading-[64px] font-light text-white tracking-tight max-w-4xl" key={`title-${activeHeroSlide}`}>
+            <h1 className="font-serif text-[28px] sm:text-[56px] leading-tight sm:leading-[64px] font-light text-white tracking-tight max-w-4xl" key={`title-${activeHeroSlide}`}>
               {heroWorks[activeHeroSlide].title}
             </h1>
           )}
