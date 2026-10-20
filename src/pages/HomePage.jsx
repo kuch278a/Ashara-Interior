@@ -34,6 +34,8 @@ export default function HomePage({ onNavigate, onSelectProject }) {
   const [touchStart, setTouchStart] = useState(null);
   const [testimonialDrag, setTestimonialDrag] = useState(0);
   const [isTestimonialDragging, setIsTestimonialDragging] = useState(false);
+  const [heroTouchStart, setHeroTouchStart] = useState(null);
+  const [isHeroDragging, setIsHeroDragging] = useState(false);
   const resumeTimersRef = useRef([]);
 
   useEffect(() => {
@@ -67,6 +69,35 @@ export default function HomePage({ onNavigate, onSelectProject }) {
   };
 
   const pauseAndResumeTestimonials = () => scheduleResume(setIsTestimonialPaused);
+  const pauseAndResumeHero = () => scheduleResume(setIsHeroPaused);
+
+  const handleHeroTouchStart = (e) => {
+    setHeroTouchStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+    setIsHeroDragging(true);
+  };
+
+  const handleHeroTouchEnd = (e) => {
+    if (heroTouchStart !== null) {
+      const deltaX = e.changedTouches[0].clientX - heroTouchStart.x;
+      const deltaY = e.changedTouches[0].clientY - heroTouchStart.y;
+      if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+        const heroLen = heroWorks.length;
+        if (heroLen > 0) {
+          setCurrentSlide((prev) =>
+            deltaX < 0 ? (prev + 1) % heroLen : (prev - 1 + heroLen) % heroLen
+          );
+          pauseAndResumeHero();
+        }
+      }
+    }
+    setHeroTouchStart(null);
+    setIsHeroDragging(false);
+  };
+
+  const handleHeroTouchCancel = () => {
+    setHeroTouchStart(null);
+    setIsHeroDragging(false);
+  };
 
   const handleTestimonialTouchStart = (e) => {
     setTouchStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
@@ -201,9 +232,12 @@ export default function HomePage({ onNavigate, onSelectProject }) {
       {/* 1. HERO SLIDESHOW */}
       <section 
         id="real-hero"
-        className="relative w-full h-screen supports-[height:100svh]:h-[100svh] overflow-hidden"
+        className="relative w-full h-screen supports-[height:100svh]:h-[100svh] overflow-hidden touch-pan-y"
         onMouseEnter={() => setIsHeroPaused(true)}
         onMouseLeave={() => setIsHeroPaused(false)}
+        onTouchStart={handleHeroTouchStart}
+        onTouchEnd={handleHeroTouchEnd}
+        onTouchCancel={handleHeroTouchCancel}
       >
         <div className="absolute inset-0 pointer-events-none" style={{ transition: 'opacity 2000ms ease-in-out' }}>
           {heroWorks.map((work, index) => {
