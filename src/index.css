@@ -128,13 +128,83 @@ html.dark ::-webkit-scrollbar-thumb:hover {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #0A1525;
+  background: #FFFFFF;
   transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+
+html.dark #ashara-loader {
+  background: #0A1525;
 }
 
 #ashara-loader.fade-out {
   opacity: 0;
   visibility: hidden;
+}
+
+/* Light theme high-contrast DNA colors for white background */
+#ashara-loader .dna-dot.strand-a {
+  background: #1E4E4E; /* Deep Ashara Teal */
+  box-shadow: 0 0 8px rgba(30, 78, 78, 0.35);
+}
+
+#ashara-loader .dna-dot.strand-b {
+  background: #C5A880; /* Ashara Gold */
+  box-shadow: 0 0 8px rgba(197, 168, 128, 0.45);
+}
+
+#ashara-loader .dna-vertical .dna-bar {
+  background: linear-gradient(90deg, rgba(30, 78, 78, 0.35), rgba(197, 168, 128, 0.35));
+  box-shadow: none;
+}
+
+#ashara-loader .dna-horizontal .dna-bar {
+  background: linear-gradient(180deg, rgba(30, 78, 78, 0.35), rgba(197, 168, 128, 0.35));
+  box-shadow: none;
+}
+
+#ashara-loader .loader-brand-name {
+  color: #1E4E4E;
+}
+
+#ashara-loader .loader-brand-sub {
+  color: #5F5A54;
+  opacity: 0.85;
+}
+
+#ashara-loader .loader-tagline {
+  color: #9C9083;
+}
+
+/* Dark mode overrides */
+html.dark #ashara-loader .dna-dot.strand-a {
+  background: #C5A880;
+  box-shadow: 0 0 10px rgba(197, 168, 128, 0.8);
+}
+
+html.dark #ashara-loader .dna-dot.strand-b {
+  background: #2DD4BF;
+  box-shadow: 0 0 10px rgba(45, 212, 191, 0.8);
+}
+
+html.dark #ashara-loader .dna-vertical .dna-bar {
+  background: linear-gradient(90deg, rgba(197, 168, 128, 0.75), rgba(45, 212, 191, 0.75));
+}
+
+html.dark #ashara-loader .dna-horizontal .dna-bar {
+  background: linear-gradient(180deg, rgba(197, 168, 128, 0.75), rgba(45, 212, 191, 0.75));
+}
+
+html.dark #ashara-loader .loader-brand-name {
+  color: #C5A880;
+}
+
+html.dark #ashara-loader .loader-brand-sub {
+  color: #C5A880;
+  opacity: 0.75;
+}
+
+html.dark #ashara-loader .loader-tagline {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 /* ==========================================================================

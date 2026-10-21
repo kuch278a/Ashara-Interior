@@ -19,7 +19,7 @@ import DnaHelixLoader from './components/DnaHelixLoader';
 function PageLoadingFallback() {
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center py-24 animate-fade-in">
-      <DnaHelixLoader size="md" orientation="vertical" label="Loading Ashara..." />
+      <DnaHelixLoader size="md" orientation="horizontal" label="Loading Ashara..." />
     </div>
   );
 }
