@@ -40,14 +40,25 @@
   }
 
   /* Optical image outlines to separate photography from background */
-  img:not([src*=".svg"]):not([src*="logo"]):not(.no-outline) {
+  img:not([src*=".svg"]):not([src*="logo"]):not([src*="Logo"]):not([src*="client_logos"]):not(.no-outline):not(.client-logo-img) {
     outline: 1px solid rgba(0, 0, 0, 0.05);
     outline-offset: -1px;
   }
 
-  html.dark img:not([src*=".svg"]):not([src*="logo"]):not(.no-outline) {
+  html.dark img:not([src*=".svg"]):not([src*="logo"]):not([src*="Logo"]):not([src*="client_logos"]):not(.no-outline):not(.client-logo-img) {
     outline: 1px solid rgba(255, 255, 255, 0.07);
     outline-offset: -1px;
+  }
+
+  .no-outline,
+  .client-logo-img,
+  [data-no-outline],
+  img.no-outline,
+  img.client-logo-img {
+    outline: none !important;
+    outline-offset: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
   }
 
   /* Accessible focus indicators */

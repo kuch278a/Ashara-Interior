@@ -11,7 +11,7 @@ export default function AsharaLogo({ className = 'text-ashara-teal', textClassNa
         alt="Ashara Interior Design and Building"
         decoding="async"
         style={{ height: size, width: 'auto' }}
-        className={`object-contain transition-transform duration-300 group-hover:scale-105 ${light ? 'brightness-0 invert' : ''}`}
+        className={`object-contain transition-transform duration-300 group-hover:scale-105 no-outline outline-none ${light ? 'brightness-0 invert' : ''}`}
         onError={(e) => {
           e.target.style.display = 'none';
         }}

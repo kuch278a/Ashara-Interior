@@ -59,7 +59,7 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
                 src={asset_1}
                 alt="Ashara Interior Design and Building"
                 decoding="async"
-                className="absolute top-[0%] left-1/2 -translate-x-1/2 w-[56px] max-w-none h-auto transition-transform duration-300 group-hover:scale-105 dark:brightness-0 dark:invert"
+                className="absolute top-[0%] left-1/2 -translate-x-1/2 w-[56px] max-w-none h-auto transition-transform duration-300 group-hover:scale-105 dark:brightness-0 dark:invert no-outline outline-none"
                 onError={(e) => {
                   e.target.src = asset_2;
                 }}

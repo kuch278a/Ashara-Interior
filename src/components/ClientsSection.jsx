@@ -17,19 +17,19 @@ import asset_15 from '../assets/client_logos/ethiopian_air_force.png';
 
 const CLIENTS = [
   { name: 'Artificial Intelligence Institute', image: asset_1, alt: 'Artificial Intelligence Institute' },
-  { name: 'Prosperity Party', image: asset_2, alt: 'Prosperity Party' },
+  { name: 'Prosperity Party', image: asset_2, alt: 'Prosperity Party', darkClass: 'dark:brightness-125 dark:drop-shadow-[0_1px_2px_rgba(255,255,255,0.25)]' },
   { name: 'Ministry of Revenues', image: asset_3, alt: 'Ministry of Revenues' },
-  { name: 'Customs Commission', image: asset_4, alt: 'Customs Commission' },
+  { name: 'Customs Commission', image: asset_4, alt: 'Customs Commission', darkClass: 'dark:brightness-125 dark:drop-shadow-[0_1px_2px_rgba(255,255,255,0.25)]' },
   { name: 'FBC Media', image: asset_5, alt: 'FBC Media' },
-  { name: 'Ethiopian Press Agency', image: asset_6, alt: 'Ethiopian Press Agency' },
-  { name: 'Policy Studies Institute', image: asset_7, alt: 'Policy Studies Institute' },
-  { name: "Oromia President's Office", image: asset_8, alt: "Oromia President's Office" },
-  { name: 'Addis Ababa Police', image: asset_9, alt: 'Addis Ababa Police' },
-  { name: 'Oromia Police', image: asset_10, alt: 'Oromia Police' },
-  { name: 'United Beverages', image: asset_11, alt: 'United Beverages', large: true },
-  { name: 'Amibara Properties', image: asset_12, alt: 'Amibara Properties', large: true },
-  { name: 'Hill Bottom Recreation', image: asset_13, alt: 'Hill Bottom Recreation' },
-  { name: 'Mela Muziqa', image: asset_14, alt: 'Mela Muziqa' },
+  { name: 'Ethiopian Press Agency', image: asset_6, alt: 'Ethiopian Press Agency', darkClass: 'dark:brightness-110' },
+  { name: 'Policy Studies Institute', image: asset_7, alt: 'Policy Studies Institute', darkClass: 'dark:brightness-125' },
+  { name: "Oromia President's Office", image: asset_8, alt: "Oromia President's Office", darkClass: 'dark:brightness-110' },
+  { name: 'Addis Ababa Police', image: asset_9, alt: 'Addis Ababa Police', darkClass: 'dark:brightness-125 dark:contrast-115' },
+  { name: 'Oromia Police', image: asset_10, alt: 'Oromia Police', darkClass: 'dark:brightness-125 dark:contrast-115' },
+  { name: 'United Beverages', image: asset_11, alt: 'United Beverages', large: true, darkClass: 'dark:brightness-150 dark:contrast-125 dark:drop-shadow-[0_1px_2px_rgba(255,255,255,0.25)]' },
+  { name: 'Amibara Properties', image: asset_12, alt: 'Amibara Properties', large: true, darkClass: 'dark:brightness-150 dark:contrast-115 dark:drop-shadow-[0_1px_2px_rgba(255,255,255,0.25)]' },
+  { name: 'Hill Bottom Recreation', image: asset_13, alt: 'Hill Bottom Recreation', darkClass: 'dark:brightness-0 dark:invert dark:opacity-90' },
+  { name: 'Mela Muziqa', image: asset_14, alt: 'Mela Muziqa', darkClass: 'dark:brightness-0 dark:invert dark:opacity-90' },
   { name: 'Ethiopian Air Force', image: asset_15, alt: 'Ethiopian Air Force' },
 ];
 
@@ -44,7 +44,7 @@ export default function ClientsSection() {
               alt={client.alt}
               loading="lazy"
               decoding="async"
-              className={`${client.large ? 'h-24 sm:h-32' : 'h-20 sm:h-28'} w-auto max-w-full object-contain transition-all duration-300 hover:scale-110`}
+              className={`${client.large ? 'h-24 sm:h-32' : 'h-20 sm:h-28'} ${client.darkClass || ''} w-auto max-w-full object-contain transition-all duration-300 hover:scale-110 no-outline client-logo-img outline-none border-0 shadow-none`}
             />
           </div>
         ))}
