@@ -32,8 +32,8 @@ const CLIENTS = [
   { name: "Oromia President's Office", image: asset_8, alt: "Oromia President's Office" },
   { name: 'Addis Ababa Police', image: asset_9, alt: 'Addis Ababa Police' },
   { name: 'Oromia Police', image: asset_10, alt: 'Oromia Police' },
-  { name: 'United Beverages', image: asset_11, darkImage: asset_11_dark, alt: 'United Beverages', large: true },
-  { name: 'Amibara Properties', image: asset_12, darkImage: asset_12_dark, alt: 'Amibara Properties', large: true },
+  { name: 'United Beverages', image: asset_11, darkImage: asset_11_dark, alt: 'United Beverages' },
+  { name: 'Amibara Properties', image: asset_12, darkImage: asset_12_dark, alt: 'Amibara Properties' },
   { name: 'Hill Bottom Recreation', image: asset_13, darkImage: asset_13_dark, alt: 'Hill Bottom Recreation' },
   { name: 'Mela Muziqa', image: asset_14, darkImage: asset_14_dark, alt: 'Mela Muziqa' },
   { name: 'Ethiopian Air Force', image: asset_15, alt: 'Ethiopian Air Force' },
@@ -41,17 +41,20 @@ const CLIENTS = [
 
 export default function ClientsSection() {
   return (
-    <div className="max-w-5xl mx-auto px-6 py-4">
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-6 gap-y-6 sm:gap-x-10 sm:gap-y-8 items-center justify-items-center">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-8 gap-y-10 sm:gap-x-12 sm:gap-y-14 items-center justify-items-center">
         {CLIENTS.map((client, index) => (
-          <div key={index} className="flex items-center justify-center w-full">
+          <div
+            key={index}
+            className={`flex items-center justify-center w-full h-24 sm:h-28 md:h-32 p-2 ${index === CLIENTS.length - 1 ? 'col-span-2 sm:col-span-1' : ''}`}
+          >
             {/* Light Mode image */}
             <img
               src={client.image}
               alt={client.alt}
               loading="lazy"
               decoding="async"
-              className={`${client.large ? 'h-20 sm:h-24' : 'h-16 sm:h-20'} ${client.darkImage ? 'dark:hidden' : ''} w-auto max-w-full object-contain transition-all duration-300 hover:scale-105 no-outline client-logo-img outline-none border-0 shadow-none`}
+              className={`h-20 sm:h-24 md:h-28 ${client.darkImage ? 'dark:hidden' : ''} w-auto max-w-full object-contain transition-all duration-300 hover:scale-110 no-outline client-logo-img outline-none border-0 shadow-none`}
             />
             {/* Dedicated Dark Mode image for perfect high-contrast vector clarity */}
             {client.darkImage && (
@@ -60,7 +63,7 @@ export default function ClientsSection() {
                 alt={client.alt}
                 loading="lazy"
                 decoding="async"
-                className={`${client.large ? 'h-20 sm:h-24' : 'h-16 sm:h-20'} hidden dark:block w-auto max-w-full object-contain transition-all duration-300 hover:scale-105 no-outline client-logo-img outline-none border-0 shadow-none`}
+                className={`h-20 sm:h-24 md:h-28 hidden dark:block w-auto max-w-full object-contain transition-all duration-300 hover:scale-110 no-outline client-logo-img outline-none border-0 shadow-none`}
               />
             )}
           </div>
