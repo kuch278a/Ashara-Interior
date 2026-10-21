@@ -137,50 +137,184 @@ html.dark ::-webkit-scrollbar-thumb:hover {
   visibility: hidden;
 }
 
-/* 3D Cube Flip Loader */
-.loader-scene {
-  width: 64px;
-  height: 64px;
-  perspective: 520px;
-  margin-bottom: 32px;
-  animation: loaderFadeIn 0.8s ease-out both;
+/* ==========================================================================
+   CSS 3D DNA Helix Loader
+   ========================================================================== */
+.dna-helix-wrapper {
+  perspective: 900px;
 }
 
-.loader-cube {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-  animation: cubeFlip 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
-}
-
-.loader-face {
-  position: absolute;
-  inset: 0;
+/* Vertical Double Helix */
+.dna-helix.dna-vertical {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-family: 'Source Serif 4', serif;
-  font-size: 34px;
-  font-weight: 600;
-  line-height: 1;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: inset 0 0 20px rgba(10, 21, 37, 0.25);
+  gap: 7px;
+  perspective: 800px;
+  transform-style: preserve-3d;
+  transform: rotateZ(-12deg);
 }
 
-.loader-face-front  { transform: rotateY(0deg) translateZ(32px);   background: #C5A880; color: #0A1525; }
-.loader-face-right  { transform: rotateY(90deg) translateZ(32px);  background: #1E4E4E; color: #C5A880; }
-.loader-face-back   { transform: rotateY(180deg) translateZ(32px); background: #DF6D27; color: #FFFFFF; }
-.loader-face-left   { transform: rotateY(-90deg) translateZ(32px); background: #C5A880; color: #0A1525; }
-.loader-face-top    { transform: rotateX(90deg) translateZ(32px);  background: #1E4E4E; color: #C5A880; }
-.loader-face-bottom { transform: rotateX(-90deg) translateZ(32px); background: #DF6D27; color: #FFFFFF; }
+.dna-helix-sm.dna-vertical .dna-rung {
+  width: 44px;
+  height: 6px;
+}
+.dna-helix-sm.dna-vertical .dna-dot {
+  width: 6px;
+  height: 6px;
+}
+.dna-helix-sm.dna-vertical .dna-bar {
+  height: 1.5px;
+}
 
-@keyframes cubeFlip {
-  0%, 15%  { transform: rotateX(-12deg) rotateY(0deg); }
-  25%, 40% { transform: rotateX(-12deg) rotateY(-90deg); }
-  50%, 65% { transform: rotateX(-12deg) rotateY(-180deg); }
-  75%, 90% { transform: rotateX(-12deg) rotateY(-270deg); }
-  100%     { transform: rotateX(-12deg) rotateY(-360deg); }
+.dna-helix-md.dna-vertical .dna-rung {
+  width: 68px;
+  height: 8px;
+}
+.dna-helix-md.dna-vertical .dna-dot {
+  width: 8px;
+  height: 8px;
+}
+.dna-helix-md.dna-vertical .dna-bar {
+  height: 2px;
+}
+
+.dna-helix-lg.dna-vertical .dna-rung {
+  width: 96px;
+  height: 12px;
+}
+.dna-helix-lg.dna-vertical .dna-dot {
+  width: 12px;
+  height: 12px;
+}
+.dna-helix-lg.dna-vertical .dna-bar {
+  height: 3px;
+}
+
+/* Base Pair Rung */
+.dna-vertical .dna-rung {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transform-style: preserve-3d;
+  animation: dnaSpinVertical 2.2s linear infinite;
+  animation-delay: calc(var(--i) * -0.155s);
+  will-change: transform;
+}
+
+@keyframes dnaSpinVertical {
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(360deg);
+  }
+}
+
+/* Horizontal Double Helix */
+.dna-helix.dna-horizontal {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  perspective: 800px;
+  transform-style: preserve-3d;
+  transform: rotateZ(0deg);
+}
+
+.dna-horizontal .dna-rung {
+  position: relative;
+  width: 8px;
+  height: 68px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  transform-style: preserve-3d;
+  animation: dnaSpinHorizontal 2.2s linear infinite;
+  animation-delay: calc(var(--i) * -0.155s);
+  will-change: transform;
+}
+
+.dna-helix-h-sm.dna-horizontal .dna-rung {
+  width: 6px;
+  height: 44px;
+}
+.dna-helix-h-sm.dna-horizontal .dna-dot {
+  width: 6px;
+  height: 6px;
+}
+.dna-helix-h-sm.dna-horizontal .dna-bar {
+  width: 1.5px;
+}
+
+.dna-helix-h-md.dna-horizontal .dna-rung {
+  width: 8px;
+  height: 68px;
+}
+.dna-helix-h-md.dna-horizontal .dna-dot {
+  width: 8px;
+  height: 8px;
+}
+.dna-helix-h-md.dna-horizontal .dna-bar {
+  width: 2px;
+}
+
+.dna-helix-h-lg.dna-horizontal .dna-rung {
+  width: 12px;
+  height: 96px;
+}
+.dna-helix-h-lg.dna-horizontal .dna-dot {
+  width: 12px;
+  height: 12px;
+}
+.dna-helix-h-lg.dna-horizontal .dna-bar {
+  width: 3px;
+}
+
+@keyframes dnaSpinHorizontal {
+  0% {
+    transform: rotateX(0deg);
+  }
+  100% {
+    transform: rotateX(360deg);
+  }
+}
+
+/* Luminous Strand Dots & Hydrogen Base Bridge */
+.dna-dot {
+  border-radius: 9999px;
+  flex-shrink: 0;
+  transform: translateZ(0);
+}
+
+.dna-dot.strand-a {
+  background: #C5A880; /* Ashara Champagne Gold */
+  box-shadow: 0 0 10px rgba(197, 168, 128, 0.8), 0 0 20px rgba(197, 168, 128, 0.35);
+}
+
+.dna-dot.strand-b {
+  background: #2DD4BF; /* Luminous Architectural Teal */
+  box-shadow: 0 0 10px rgba(45, 212, 191, 0.8), 0 0 20px rgba(45, 212, 191, 0.35);
+}
+
+.dna-vertical .dna-bar {
+  flex: 1;
+  margin: 0 4px;
+  background: linear-gradient(90deg, rgba(197, 168, 128, 0.75), rgba(45, 212, 191, 0.75));
+  border-radius: 9999px;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.25);
+}
+
+.dna-horizontal .dna-bar {
+  flex: 1;
+  margin: 4px 0;
+  background: linear-gradient(180deg, rgba(197, 168, 128, 0.75), rgba(45, 212, 191, 0.75));
+  border-radius: 9999px;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.25);
 }
 
 /* Brand lockup */

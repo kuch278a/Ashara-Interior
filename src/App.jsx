@@ -13,14 +13,13 @@ const ContactPage = lazy(() => import('./pages/ContactPage'));
 const ProjectDetailPage = lazy(() => import('./pages/ProjectDetailPage'));
 const AdminPortal = lazy(() => import('./pages/AdminPortal'));
 
-// Minimal elegant fallback for route transitions
+import DnaHelixLoader from './components/DnaHelixLoader';
+
+// Luxury DNA Double-Helix fallback for route transitions
 function PageLoadingFallback() {
   return (
-    <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-4 py-20">
-      <div className="w-8 h-8 border-2 border-ashara-teal/30 dark:border-ashara-gold/30 border-t-ashara-teal dark:border-t-ashara-gold rounded-full animate-spin"></div>
-      <span className="text-[11px] tracking-[0.3em] uppercase text-ashara-teal dark:text-white font-sans">
-        Loading...
-      </span>
+    <div className="min-h-[60vh] flex flex-col items-center justify-center py-24 animate-fade-in">
+      <DnaHelixLoader size="md" orientation="vertical" label="Loading Ashara..." />
     </div>
   );
 }
