@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSS 3D DNA Helix Loader | White & Dark Luxury Showcases</title>
+  <link rel="stylesheet" href="/src/index.css" />
+  <style>
+    :root {
+      --bg: #FFFFFF;
+      --text-title: #1E4E4E;
+      --text-sub: #5F5A54;
+      --card-bg: rgba(0, 0, 0, 0.02);
+      --card-border: rgba(0, 0, 0, 0.08);
+      --card-shadow: 0 16px 36px -12px rgba(30, 78, 78, 0.1);
+    }
+
+    body.dark-mode {
+      --bg: #0A1525;
+      --text-title: #C5A880;
+      --text-sub: rgba(255, 255, 255, 0.6);
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Source Serif 4', Georgia, serif;
+      color: var(--text-title);
+      overflow-x: hidden;
+      padding: 40px 20px;
+      box-sizing: border-box;
+      transition: background-color 0.4s ease, color 0.4s ease;
+    }
+
+    .preview-header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .preview-title {
+      font-size: 32px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-title);
+      margin: 0 0 8px 0;
+      font-weight: 600;
+      transition: color 0.4s ease;
+    }
+
+    .preview-subtitle {
+      font-size: 13px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--text-sub);
+      margin: 0;
+      font-weight: 300;
+      transition: color 0.4s ease;
+    }
+
+    .theme-toggle-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 36px;
+    }
+
+    .theme-toggle-btn {
+      padding: 10px 22px;
+      border-radius: 9999px;
+      font-family: sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      background: #FFFFFF;
+      color: #1E4E4E;
+      transition: all 0.25s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .theme-toggle-btn.active {
+      background: #1E4E4E;
+      color: #FFFFFF;
+      border-color: #1E4E4E;
+    }
+
+    body.dark-mode .theme-toggle-btn {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: #0A1525;
+      color: #FAF8F5;
+    }
+
+    body.dark-mode .theme-toggle-btn.active {
+      background: #C5A880;
+      color: #0A1525;
+      border-color: #C5A880;
+    }
+
+    .grid-showcase {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 32px;
+      max-width: 1050px;
+      width: 100%;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 38px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+      backdrop-filter: blur(8px);
+      box-shadow: var(--card-shadow);
+      transition: all 0.4s ease;
+    }
+
+    .card-title {
+      font-size: 12px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-sub);
+      margin-top: 24px;
+      font-family: sans-serif;
+      transition: color 0.4s ease;
+    }
+
+    /* Light Theme DNA Color Adjustments */
+    body:not(.dark-mode) .dna-dot.strand-a {
+      background: #1E4E4E; /* Deep Ashara Teal */
+      box-shadow: 0 0 10px rgba(30, 78, 78, 0.4);
+    }
+
+    body:not(.dark-mode) .dna-dot.strand-b {
+      background: #C5A880; /* Ashara Gold */
+      box-shadow: 0 0 10px rgba(197, 168, 128, 0.5);
+    }
+
+    body:not(.dark-mode) .dna-vertical .dna-bar {
+      background: linear-gradient(90deg, rgba(30, 78, 78, 0.4), rgba(197, 168, 128, 0.4));
+      box-shadow: none;
+    }
+
+    body:not(.dark-mode) .dna-horizontal .dna-bar {
+      background: linear-gradient(180deg, rgba(30, 78, 78, 0.4), rgba(197, 168, 128, 0.4));
+      box-shadow: none;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="preview-header">
+    <h1 class="preview-title">CSS 3D DNA Helix Loader</h1>
+    <p class="preview-subtitle">Ashara Interior Design & Building</p>
+  </header>
+
+  <div class="theme-toggle-bar">
+    <button id="btn-white" class="theme-toggle-btn active" onclick="setTheme('white')">White Background</button>
+    <button id="btn-dark" class="theme-toggle-btn" onclick="setTheme('dark')">Dark Background</button>
+  </div>
+
+  <main class="grid-showcase">
+    
+    <!-- 1. White / Light Mode Signature Loader -->
+    <div class="card">
+      <div class="dna-helix dna-vertical dna-helix-md">
+        <div class="dna-rung" style="--i: 0"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 1"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 2"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 3"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 4"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 5"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 6"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 7"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 8"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 9"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 10"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 11"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 12"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 13"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+      </div>
+      <div class="card-title">Preloader Scale (Medium)</div>
+    </div>
+
+    <!-- 2. Full Brand Lockup on Background -->
+    <div class="card">
+      <div class="dna-helix dna-vertical dna-helix-sm" style="margin-bottom: 20px;">
+        <div class="dna-rung" style="--i: 0"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 1"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 2"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 3"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 4"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 5"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 6"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 7"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 8"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 9"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 10"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 11"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 12"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 13"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+      </div>
+      <div style="text-align: center;">
+        <div style="font-weight: 700; font-size: 20px; letter-spacing: 0.22em; text-transform: uppercase;">Ashara</div>
+        <div style="font-size: 11px; letter-spacing: 0.28em; opacity: 0.75; text-transform: uppercase; margin-top: 4px;">Interior Design and Building</div>
+      </div>
+      <div class="card-title">Brand Lockup View</div>
+    </div>
+
+    <!-- 3. Horizontal Ribbon View -->
+    <div class="card">
+      <div class="dna-helix dna-horizontal dna-helix-h-md">
+        <div class="dna-rung" style="--i: 0"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 1"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 2"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 3"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 4"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 5"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 6"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 7"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 8"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 9"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 10"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 11"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 12"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+        <div class="dna-rung" style="--i: 13"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+      </div>
+      <div class="card-title">Horizontal Strand</div>
+    </div>
+
+  </main>
+
+  <script>
+    function setTheme(theme) {
+      if (theme === 'dark') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('btn-dark').classList.add('active');
+        document.getElementById('btn-white').classList.remove('active');
+      } else {
+        document.body.classList.remove('dark-mode');
+        document.getElementById('btn-white').classList.add('active');
+        document.getElementById('btn-dark').classList.remove('active');
+      }
+    }
+  </script>
+
+</body>
+</html>
