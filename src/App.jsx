@@ -92,11 +92,7 @@ export default function App() {
   const [activePage, setActivePage] = useState(getInitialPage); // 'home' | 'projects' | 'services' | 'about' | 'contact' | 'admin' | 'project-detail'
   const [selectedProject, setSelectedProject] = useState(getInitialSelectedProject);
   const [projectSource, setProjectSource] = useState('projects');
-  const [theme, setTheme] = useState(() => {
-    const stored = sessionStorage.getItem('theme');
-    if (stored) return stored;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  });
+  const [theme, setTheme] = useState('light');
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -134,7 +130,6 @@ export default function App() {
     } else {
       root.classList.remove('dark');
     }
-    sessionStorage.setItem('theme', theme);
   }, [theme]);
 
   // Every view or project change must start from the top of the page

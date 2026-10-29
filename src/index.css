@@ -511,8 +511,24 @@ html.dark #ashara-loader .loader-tagline {
   z-index: 40;
 }
 
-.social-share-container:hover .social-tooltip-wrapper,
-.social-share-container:focus-within .social-tooltip-wrapper,
+/* Show on hover only for devices with a real pointer (prevents sticky
+   tooltips on touch, where a tap leaves :hover latched) */
+@media (hover: hover) and (pointer: fine) {
+  .social-share-container:hover .social-tooltip-wrapper {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: translateX(-50%) translateY(0) scale(1) !important;
+  }
+}
+
+/* Keyboard navigation only — :focus-visible does not match mouse clicks or taps */
+.social-share-container:has(.social-share-btn:focus-visible) .social-tooltip-wrapper {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transform: translateX(-50%) translateY(0) scale(1) !important;
+}
+
+/* "Copied!" confirmation tooltip (time-limited via JS) */
 .social-tooltip-wrapper.is-copied {
   opacity: 1 !important;
   pointer-events: auto !important;
