@@ -35,7 +35,7 @@ function SocialTooltip({ label, dotColor, copied = false }) {
         </span>
         {/* Arrow Caret */}
         <span
-          className={`absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] border-4 border-transparent${copied ? ' border-t-emerald-600 transition-colors' : ' border-t-gray-950/95'}`}
+          className={`absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] border-4 border-transparent transition-colors${copied ? ' border-t-emerald-600' : ' border-t-gray-950/95'}`}
         />
       </div>
     </div>
