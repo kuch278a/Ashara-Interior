@@ -173,9 +173,13 @@ Ashara-Interior/
 │   │   ├── ClientsSection.jsx      # Clean 5-column responsive client logo grid
 │   │   ├── DnaHelixLoader.jsx      # 3D Horizontal DNA double helix loader
 │   │   ├── Footer.jsx              # Footer with social share reveals & copy link
-│   │   └── Navbar.jsx              # Header, scroll progress bar, theme switcher
+│   │   ├── Navbar.jsx              # Header, scroll progress bar, theme switcher
+│   │   ├── ProjectCard.jsx         # Shared Our Works project card (mobile & desktop grids)
+│   │   └── SectionTitle.jsx        # Section heading flanked by horizontal rules
 │   ├── data/
 │   │   └── defaultData.js          # Built-in projects, testimonials & mock data
+│   ├── hooks/
+│   │   └── useTouchSwipe.js        # Shared touch-swipe handling (hero & testimonial carousel)
 │   ├── pages/
 │   │   ├── admin/                  # Modular CMS tabs and modal dialogs
 │   │   ├── AboutPage.jsx           # Studio narrative, atelier workspace & pillars

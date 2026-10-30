@@ -58,6 +58,8 @@ if (isFirebaseConfigured) {
 
 export { db, auth, storage };
 
+const isCloudReady = () => Boolean(isFirebaseConfigured && db);
+
 /**
  * Automatically ensure an active Firebase Auth session for Super Admin actions.
  * Guarantees that Firestore security rules (requiring request.auth != null) grant full access.
@@ -76,6 +78,20 @@ export async function ensureFirebaseAuth() {
   return null;
 }
 
+// Tiny localStorage JSON helpers shared across the service
+function readLocalJson(key, fallback) {
+  try {
+    const stored = localStorage.getItem(key);
+    return stored === null ? fallback : JSON.parse(stored);
+  } catch (e) {
+    return fallback;
+  }
+}
+
+function writeLocalJson(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
 /**
  * Backup an item before it is deleted
  */
@@ -87,16 +103,15 @@ export async function backupDeletedItem(collectionName, itemObj) {
       originalCollection: collectionName,
       deletedAt: new Date().toISOString()
     };
-    
-    if (isFirebaseConfigured && db) {
+
+    if (isCloudReady()) {
       await ensureFirebaseAuth();
       await addDoc(collection(db, 'deleted_items'), backupData);
     }
-    
-    const backups = JSON.parse(localStorage.getItem('ashara_deleted_items') || '[]');
+
+    const backups = readLocalJson('ashara_deleted_items', []);
     backups.push(backupData);
-    const pruned = backups.slice(-50);
-    localStorage.setItem('ashara_deleted_items', JSON.stringify(pruned));
+    writeLocalJson('ashara_deleted_items', backups.slice(-50));
   } catch (err) {
     console.warn('Backup of deleted item failed:', err);
   }
@@ -105,11 +120,8 @@ export async function backupDeletedItem(collectionName, itemObj) {
 const DELETED_DEFAULTS_KEY = 'ashara_deleted_defaults';
 
 function getLocalTombstones() {
-  try {
-    return new Set(JSON.parse(localStorage.getItem(DELETED_DEFAULTS_KEY) || '[]').map(String));
-  } catch (e) {
-    return new Set();
-  }
+  const stored = readLocalJson(DELETED_DEFAULTS_KEY, []);
+  return new Set(Array.isArray(stored) ? stored.map(String) : []);
 }
 
 function unionTombstones(extraTombstones) {
@@ -125,11 +137,11 @@ async function addTombstone(id) {
   try {
     const tombstones = getLocalTombstones();
     tombstones.add(key);
-    localStorage.setItem(DELETED_DEFAULTS_KEY, JSON.stringify(Array.from(tombstones)));
+    writeLocalJson(DELETED_DEFAULTS_KEY, Array.from(tombstones));
   } catch (e) {
     console.warn('Failed to record deletion locally:', e);
   }
-  if (isFirebaseConfigured && db) {
+  if (isCloudReady()) {
     try {
       await ensureFirebaseAuth();
       await setDoc(doc(db, 'deleted_defaults', key), { deletedAt: new Date().toISOString() }, { merge: true });
@@ -141,7 +153,7 @@ async function addTombstone(id) {
 
 async function fetchRemoteTombstones() {
   const tombstones = getLocalTombstones();
-  if (isFirebaseConfigured && db) {
+  if (isCloudReady()) {
     try {
       await ensureFirebaseAuth();
       const snapshot = await getDocs(collection(db, 'deleted_defaults'));
@@ -188,13 +200,7 @@ export async function uploadImage(file, folder = 'images', onProgress = null) {
   if (isFirebaseConfigured && storage) {
     try {
       // Ensure user has auth context if Anonymous Auth is available
-      if (auth && !auth.currentUser) {
-        try {
-          await signInAnonymously(auth);
-        } catch (authErr) {
-          // Silent catch — Firebase project might have Anonymous Auth disabled
-        }
-      }
+      await ensureFirebaseAuth();
 
       const timestamp = Date.now();
       const safeName = (fileToUpload.name || 'image.jpg').replace(/[^a-zA-Z0-9._-]/g, '_');
@@ -331,7 +337,7 @@ export async function submitConsultation(inquiryData) {
   };
 
   let firestoreId = null;
-  if (isFirebaseConfigured && db) {
+  if (isCloudReady()) {
     try {
       const docRef = await addDoc(collection(db, 'consultations'), {
         ...payload
@@ -347,17 +353,12 @@ export async function submitConsultation(inquiryData) {
   const emailed = await sendEnquiryEmail(payload);
 
   // Always keep local storage in sync as well
-  let localList = [];
-  try {
-    localList = JSON.parse(localStorage.getItem('ashara_consultations') || JSON.stringify(DEFAULT_CONSULTATION_LEADS));
-  } catch (e) {
-    localList = [...DEFAULT_CONSULTATION_LEADS];
-  }
+  const localList = [...readLocalJson('ashara_consultations', DEFAULT_CONSULTATION_LEADS)];
 
   const localId = firestoreId || ('lead_' + Date.now());
   const localLead = { ...payload, id: localId };
   localList.unshift(localLead);
-  localStorage.setItem('ashara_consultations', JSON.stringify(localList));
+  writeLocalJson('ashara_consultations', localList);
 
   return { success: true, id: localId, isLive: Boolean(firestoreId), emailed };
 }
@@ -366,7 +367,7 @@ export async function submitConsultation(inquiryData) {
  * Fetch all consultation inquiries for Admin Portal
  */
 export async function getConsultations() {
-  if (isFirebaseConfigured && db) {
+  if (isCloudReady()) {
     try {
       // Ensure active auth session so Firestore security rules grant access
       await ensureFirebaseAuth();
@@ -399,29 +400,74 @@ export async function getConsultations() {
   }
 
   // Return stored local inquiries (even an empty list — deleting all leads must stick)
-  const localList = localStorage.getItem('ashara_consultations');
-  if (localList) {
-    try {
-      const parsed = JSON.parse(localList);
-      if (Array.isArray(parsed)) {
-        return parsed;
-      }
-    } catch (e) {}
+  const stored = readLocalJson('ashara_consultations', null);
+  if (Array.isArray(stored)) {
+    return stored;
   }
 
   // Seed default consultation leads (minus any the admin has deleted) so the matrix is never blank on first run
   const tombstones = getLocalTombstones();
   const seeded = DEFAULT_CONSULTATION_LEADS.filter(l => !tombstones.has(String(l.id)));
-  localStorage.setItem('ashara_consultations', JSON.stringify(seeded));
+  writeLocalJson('ashara_consultations', seeded);
   return seeded;
 }
 
+/**
+ * Update consultation inquiry status ('new' | 'contacted' | 'completed')
+ */
+export async function updateConsultationStatus(leadId, newStatus) {
+  const isLocalOnlyId = String(leadId).startsWith('lead_');
+  if (isCloudReady() && !isLocalOnlyId) {
+    try {
+      await ensureFirebaseAuth();
+      await setDoc(doc(db, 'consultations', String(leadId)), { status: newStatus }, { merge: true });
+    } catch (error) {
+      console.error('Firestore update consultation status error:', error);
+    }
+  }
+
+  const localList = readLocalJson('ashara_consultations', []);
+  const updated = localList.map(item => String(item.id) === String(leadId) ? { ...item, status: newStatus } : item);
+  writeLocalJson('ashara_consultations', updated);
+  return { success: true };
+}
+
+/**
+ * Delete a consultation inquiry
+ */
+export async function deleteConsultation(leadId) {
+  const localList = readLocalJson('ashara_consultations', []);
+  const itemToBackup = localList.find(i => String(i.id) === String(leadId));
+  if (itemToBackup) {
+    await backupDeletedItem('consultations', itemToBackup);
+  }
+  if (DEFAULT_CONSULTATION_LEADS.some(i => String(i.id) === String(leadId))) {
+    await addTombstone(leadId);
+  }
+
+  const isLocalOnlyId = String(leadId).startsWith('lead_');
+  if (isCloudReady() && !isLocalOnlyId) {
+    try {
+      await ensureFirebaseAuth();
+      await deleteDoc(doc(db, 'consultations', String(leadId)));
+    } catch (error) {
+      console.error('Firestore delete consultation error:', error);
+      return { success: true, isLive: false, error: error?.message || 'Cloud delete failed.' };
+    }
+  }
+
+  const updated = localList.filter(item => String(item.id) !== String(leadId));
+  writeLocalJson('ashara_consultations', updated);
+  return { success: true, isLive: isCloudReady() && !isLocalOnlyId };
+}
+
 // ----------------------------------------------------
-// 2. DYNAMIC PROJECTS CMS (Instant Local Cache + Real-Time Sync)
+// 2. DYNAMIC CONTENT CMS (Instant Local Cache + Real-Time Sync)
 // ----------------------------------------------------
 
 /**
- * Merge custom/edited projects onto the default projects list by matching IDs
+ * Merge custom/edited projects onto the default projects list by matching IDs.
+ * Sanitizes image/gallery URLs so stale relative paths fall back to default art.
  */
 export function mergeWithDefaultProjects(customList = [], extraTombstones = null) {
   const tombstones = unionTombstones(extraTombstones);
@@ -439,9 +485,9 @@ export function mergeWithDefaultProjects(customList = [], extraTombstones = null
       const mergedItem = { ...existing, ...p };
 
       const isValidUrl = (url) => typeof url === 'string' && (
-        url.startsWith('http://') || 
-        url.startsWith('https://') || 
-        url.startsWith('data:') || 
+        url.startsWith('http://') ||
+        url.startsWith('https://') ||
+        url.startsWith('data:') ||
         url.startsWith('blob:') ||
         url.startsWith('/src/') ||
         url.startsWith('/assets/') ||
@@ -480,267 +526,8 @@ export function mergeWithDefaultProjects(customList = [], extraTombstones = null
 }
 
 /**
- * Synchronously read cached projects for instant 0ms initial render
+ * Merge custom/edited testimonials onto the default list by matching IDs
  */
-export function getInitialProjects() {
-  if (typeof window !== 'undefined') {
-    try {
-      if (localStorage.getItem('ashara_projects_v') !== '2024_cpr_v6') {
-        localStorage.removeItem('ashara_projects');
-        localStorage.setItem('ashara_projects_v', '2024_cpr_v6');
-        return DEFAULT_PROJECTS_LIST;
-      }
-      const stored = localStorage.getItem('ashara_projects');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          return mergeWithDefaultProjects(parsed);
-        }
-      }
-    } catch (e) {}
-  }
-  return DEFAULT_PROJECTS_LIST;
-}
-
-/**
- * Real-time subscription to project updates:
- * Fires callback INSTANTLY with cached data, listens to local updates (0ms),
- * and syncs with Cloud Firestore in real time.
- */
-export function subscribeToProjects(callback) {
-  if (typeof callback !== 'function') return () => {};
-
-  // 1. Immediate initial callback with 0ms cached data
-  callback(getInitialProjects());
-
-  // 2. In-window real-time event listener (0ms response when Admin saves)
-  const handleCustomEvent = (e) => {
-    if (e.detail && Array.isArray(e.detail)) {
-      callback(e.detail);
-    }
-  };
-
-  // 3. Cross-tab storage listener
-  const handleStorageEvent = (e) => {
-    if (e.key === 'ashara_projects' && e.newValue) {
-      try {
-        const parsed = JSON.parse(e.newValue);
-        if (Array.isArray(parsed)) {
-          callback(mergeWithDefaultProjects(parsed));
-        }
-      } catch (err) {}
-    }
-  };
-
-  if (typeof window !== 'undefined') {
-    window.addEventListener('ashara_projects_updated', handleCustomEvent);
-    window.addEventListener('storage', handleStorageEvent);
-  }
-
-  // 4. Cloud Firestore live onSnapshot listener
-  let firestoreUnsub = null;
-  let cancelled = false;
-  if (isFirebaseConfigured && db) {
-    ensureFirebaseAuth().then(async () => {
-      if (cancelled) return;
-      try {
-        const tombstones = await fetchRemoteTombstones();
-        if (cancelled) return;
-        firestoreUnsub = onSnapshot(collection(db, 'projects'), (snapshot) => {
-          const remoteDocs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-          const merged = mergeWithDefaultProjects(remoteDocs, tombstones);
-          try {
-            localStorage.setItem('ashara_projects', JSON.stringify(merged));
-          } catch (e) {
-            console.warn('Local projects cache write failed:', e);
-          }
-          callback(merged);
-        }, (err) => {
-          console.warn('Firestore projects real-time listener error:', err);
-        });
-      } catch (err) {
-        console.warn('Could not establish Firestore projects listener:', err);
-      }
-    });
-  }
-
-  return () => {
-    cancelled = true;
-    if (typeof window !== 'undefined') {
-      window.removeEventListener('ashara_projects_updated', handleCustomEvent);
-      window.removeEventListener('storage', handleStorageEvent);
-    }
-    if (typeof firestoreUnsub === 'function') {
-      firestoreUnsub();
-    }
-  };
-}
-
-/**
- * Get all studio projects (Firestore with fallback to cached/default list)
- */
-export async function getDynamicProjects() {
-  const localProjects = getInitialProjects();
-
-  if (isFirebaseConfigured && db) {
-    try {
-      await ensureFirebaseAuth();
-      const tombstones = await fetchRemoteTombstones();
-      const snapshot = await getDocs(collection(db, 'projects'));
-      if (!snapshot.empty) {
-        const remoteDocs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-        const merged = mergeWithDefaultProjects(remoteDocs, tombstones);
-        try {
-          localStorage.setItem('ashara_projects', JSON.stringify(merged));
-        } catch (e) {
-          console.warn('Local projects cache write failed:', e);
-        }
-        return merged;
-      }
-    } catch (error) {
-      console.warn('Firestore projects fetch failed, using cached list:', error);
-    }
-  }
-
-  return localProjects;
-}
-
-/**
- * Save or update a project in CMS with INSTANT local broadcast and cloud persistence
- */
-export async function saveProject(projectData) {
-  const id = projectData.id ? String(projectData.id) : 'proj_' + Date.now();
-  const payload = { ...projectData, id, updatedAt: new Date().toISOString() };
-
-  // 1. INSTANT LOCAL CACHE & BROADCAST (0ms lag on client UI)
-  const currentList = getInitialProjects();
-  const existingIdx = currentList.findIndex(p => String(p.id) === String(id));
-  if (existingIdx >= 0) {
-    currentList[existingIdx] = { ...currentList[existingIdx], ...payload };
-  } else {
-    currentList.push(payload);
-  }
-  const merged = mergeWithDefaultProjects(currentList);
-  try {
-    localStorage.setItem('ashara_projects', JSON.stringify(merged));
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('ashara_projects_updated', { detail: merged }));
-    }
-  } catch (e) {
-    console.error('Local project cache write failed:', e);
-    return { success: false, id, isLive: false, error: 'Could not save locally: browser storage is full or unavailable.' };
-  }
-
-  // 2. PERSIST TO CLOUD FIRESTORE
-  if (isFirebaseConfigured && db) {
-    try {
-      await ensureFirebaseAuth();
-      await setDoc(doc(db, 'projects', id), payload, { merge: true });
-      return { success: true, id, isLive: true };
-    } catch (error) {
-      console.error('Firestore save project error:', error);
-      return { success: true, id, isLive: false, error: error?.message || 'Cloud sync failed.' };
-    }
-  }
-
-  return { success: true, id, isLive: false };
-}
-
-/**
- * Delete a project from CMS with INSTANT local broadcast and cloud deletion
- */
-export async function deleteProject(projectId) {
-  const id = String(projectId);
-
-  const currentAll = getInitialProjects();
-  const itemToBackup = currentAll.find(p => String(p.id) === id);
-  if (itemToBackup) {
-    await backupDeletedItem('projects', itemToBackup);
-  }
-  if (DEFAULT_PROJECTS_LIST.some(p => String(p.id) === id)) {
-    await addTombstone(id);
-  }
-
-  // 1. INSTANT LOCAL CACHE & BROADCAST
-  const currentList = getInitialProjects().filter(p => String(p.id) !== id);
-  try {
-    localStorage.setItem('ashara_projects', JSON.stringify(currentList));
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('ashara_projects_updated', { detail: currentList }));
-    }
-  } catch (e) {
-    console.error('Local project cache write failed:', e);
-    return { success: false, isLive: false, error: 'Could not delete locally: browser storage is full or unavailable.' };
-  }
-
-  // 2. DELETE FROM CLOUD FIRESTORE
-  if (isFirebaseConfigured && db) {
-    try {
-      await ensureFirebaseAuth();
-      await deleteDoc(doc(db, 'projects', id));
-    } catch (error) {
-      console.error('Firestore delete project error:', error);
-      return { success: true, isLive: false, error: error?.message || 'Cloud delete failed.' };
-    }
-  }
-
-  return { success: true, isLive: Boolean(isFirebaseConfigured && db) };
-}
-
-
-/**
- * Update consultation inquiry status ('new' | 'contacted' | 'completed')
- */
-export async function updateConsultationStatus(leadId, newStatus) {
-  const isLocalOnlyId = String(leadId).startsWith('lead_');
-  if (isFirebaseConfigured && db && !isLocalOnlyId) {
-    try {
-      await ensureFirebaseAuth();
-      await setDoc(doc(db, 'consultations', String(leadId)), { status: newStatus }, { merge: true });
-    } catch (error) {
-      console.error('Firestore update consultation status error:', error);
-    }
-  }
-
-  const localList = JSON.parse(localStorage.getItem('ashara_consultations') || '[]');
-  const updated = localList.map(item => String(item.id) === String(leadId) ? { ...item, status: newStatus } : item);
-  localStorage.setItem('ashara_consultations', JSON.stringify(updated));
-  return { success: true };
-}
-
-/**
- * Delete a consultation inquiry
- */
-export async function deleteConsultation(leadId) {
-  const localList = JSON.parse(localStorage.getItem('ashara_consultations') || '[]');
-  const itemToBackup = localList.find(i => String(i.id) === String(leadId));
-  if (itemToBackup) {
-    await backupDeletedItem('consultations', itemToBackup);
-  }
-  if (DEFAULT_CONSULTATION_LEADS.some(i => String(i.id) === String(leadId))) {
-    await addTombstone(leadId);
-  }
-
-  const isLocalOnlyId = String(leadId).startsWith('lead_');
-  if (isFirebaseConfigured && db && !isLocalOnlyId) {
-    try {
-      await ensureFirebaseAuth();
-      await deleteDoc(doc(db, 'consultations', String(leadId)));
-    } catch (error) {
-      console.error('Firestore delete consultation error:', error);
-      return { success: true, isLive: false, error: error?.message || 'Cloud delete failed.' };
-    }
-  }
-
-  const updated = localList.filter(item => String(item.id) !== String(leadId));
-  localStorage.setItem('ashara_consultations', JSON.stringify(updated));
-  return { success: true, isLive: Boolean(isFirebaseConfigured && db) && !isLocalOnlyId };
-}
-
-// ----------------------------------------------------
-// 4. DYNAMIC TESTIMONIALS CMS (Instant Local Cache + Real-Time Sync)
-// ----------------------------------------------------
-
 export function mergeWithDefaultTestimonials(customList = [], extraTombstones = null) {
   const tombstones = unionTombstones(extraTombstones);
   const map = new Map();
@@ -758,185 +545,280 @@ export function mergeWithDefaultTestimonials(customList = [], extraTombstones = 
   return Array.from(map.values());
 }
 
-export function getInitialTestimonials() {
-  if (typeof window !== 'undefined') {
-    try {
-      const stored = localStorage.getItem('ashara_testimonials');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          return mergeWithDefaultTestimonials(parsed);
-        }
-      }
-    } catch (e) {}
-  }
-  return mergeWithDefaultTestimonials([]);
-}
-
-export function subscribeToTestimonials(callback) {
-  if (typeof callback !== 'function') return () => {};
-
-  callback(getInitialTestimonials());
-
-  const handleCustomEvent = (e) => {
-    if (e.detail && Array.isArray(e.detail)) {
-      callback(e.detail);
-    }
-  };
-
-  const handleStorageEvent = (e) => {
-    if (e.key === 'ashara_testimonials' && e.newValue) {
-      try {
-        const parsed = JSON.parse(e.newValue);
-        if (Array.isArray(parsed)) {
-          callback(mergeWithDefaultTestimonials(parsed));
-        }
-      } catch (err) {}
-    }
-  };
-
-  if (typeof window !== 'undefined') {
-    window.addEventListener('ashara_testimonials_updated', handleCustomEvent);
-    window.addEventListener('storage', handleStorageEvent);
-  }
-
-  let firestoreUnsub = null;
-  let cancelled = false;
-  if (isFirebaseConfigured && db) {
-    ensureFirebaseAuth().then(async () => {
-      if (cancelled) return;
-      try {
-        const tombstones = await fetchRemoteTombstones();
-        if (cancelled) return;
-        firestoreUnsub = onSnapshot(collection(db, 'testimonials'), (snapshot) => {
-          const remoteDocs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-          const merged = mergeWithDefaultTestimonials(remoteDocs, tombstones);
-          try {
-            localStorage.setItem('ashara_testimonials', JSON.stringify(merged));
-          } catch (e) {
-            console.warn('Local testimonials cache write failed:', e);
-          }
-          callback(merged);
-        }, (error) => {
-          console.warn('Firestore testimonials realtime sync error:', error);
-        });
-      } catch (err) {
-        console.warn('Firestore testimonials listener init error:', err);
-      }
-    });
-  }
-
-  return () => {
-    cancelled = true;
+/**
+ * Shared collection service powering both the projects and testimonials CMS.
+ * Contract: synchronous instant cache (getInitial), real-time subscriptions
+ * (in-window events + cross-tab storage + Firestore onSnapshot), and writes
+ * that broadcast locally first, then persist to the cloud with fallback.
+ * All writes return { success, id?, isLive, error? }.
+ */
+function createCollectionService({
+  collectionName,          // Firestore collection name
+  storageKey,              // localStorage cache key
+  eventName,               // in-window broadcast event name
+  defaults,                // built-in default list
+  mergeFn,                 // (customList, extraTombstones) => merged list
+  idPrefix,                // prefix for newly generated ids
+  label,                   // human-readable name for log messages
+  cacheVersion = null,     // optional { key, value } stale-cache reset check
+  prependNew = false,      // insert new items at the front instead of the end
+  findBackupItem,          // (id, currentAll) => item to back up before delete
+  getFallback              // () => list returned when nothing valid is cached
+}) {
+  /**
+   * Synchronously read the cached list for instant 0ms initial render
+   */
+  const getInitial = () => {
     if (typeof window !== 'undefined') {
-      window.removeEventListener('ashara_testimonials_updated', handleCustomEvent);
-      window.removeEventListener('storage', handleStorageEvent);
+      try {
+        if (cacheVersion && localStorage.getItem(cacheVersion.key) !== cacheVersion.value) {
+          localStorage.removeItem(storageKey);
+          localStorage.setItem(cacheVersion.key, cacheVersion.value);
+          return defaults;
+        }
+        const stored = readLocalJson(storageKey, null);
+        if (Array.isArray(stored)) {
+          return mergeFn(stored);
+        }
+      } catch (e) {}
     }
-    if (typeof firestoreUnsub === 'function') {
-      firestoreUnsub();
-    }
+    return getFallback();
   };
-}
 
-export async function getDynamicTestimonials() {
-  const local = getInitialTestimonials();
+  /**
+   * Real-time subscription: fires the callback INSTANTLY with cached data,
+   * listens to local updates (0ms), and syncs with Cloud Firestore.
+   */
+  const subscribeTo = (callback) => {
+    if (typeof callback !== 'function') return () => {};
 
-  if (isFirebaseConfigured && db) {
-    try {
-      await ensureFirebaseAuth();
-      const tombstones = await fetchRemoteTombstones();
-      const snapshot = await getDocs(collection(db, 'testimonials'));
-      if (!snapshot.empty) {
-        const remoteDocs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-        const merged = mergeWithDefaultTestimonials(remoteDocs, tombstones);
+    // 1. Immediate initial callback with 0ms cached data
+    callback(getInitial());
+
+    // 2. In-window real-time event listener (0ms response when Admin saves)
+    const handleCustomEvent = (e) => {
+      if (e.detail && Array.isArray(e.detail)) {
+        callback(e.detail);
+      }
+    };
+
+    // 3. Cross-tab storage listener
+    const handleStorageEvent = (e) => {
+      if (e.key === storageKey && e.newValue) {
         try {
-          localStorage.setItem('ashara_testimonials', JSON.stringify(merged));
-        } catch (e) {
-          console.warn('Local testimonials cache write failed:', e);
-        }
-        return merged;
+          const parsed = JSON.parse(e.newValue);
+          if (Array.isArray(parsed)) {
+            callback(mergeFn(parsed));
+          }
+        } catch (err) {}
       }
-    } catch (error) {
-      console.warn('Firestore testimonials fetch failed, using cached list:', error);
-    }
-  }
+    };
 
-  return local;
-}
-
-export async function saveTestimonial(testimonialData) {
-  const id = testimonialData.id ? String(testimonialData.id) : 'test_' + Date.now();
-  const payload = { ...testimonialData, id, updatedAt: new Date().toISOString() };
-
-  const currentList = getInitialTestimonials();
-  const existingIdx = currentList.findIndex(t => String(t.id) === String(id));
-  if (existingIdx >= 0) {
-    currentList[existingIdx] = { ...currentList[existingIdx], ...payload };
-  } else {
-    currentList.unshift(payload);
-  }
-  const merged = mergeWithDefaultTestimonials(currentList);
-  try {
-    localStorage.setItem('ashara_testimonials', JSON.stringify(merged));
     if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('ashara_testimonials_updated', { detail: merged }));
+      window.addEventListener(eventName, handleCustomEvent);
+      window.addEventListener('storage', handleStorageEvent);
     }
-  } catch (e) {
-    console.error('Local testimonial cache write failed:', e);
-    return { success: false, id, isLive: false, error: 'Could not save locally: browser storage is full or unavailable.' };
-  }
 
-  if (isFirebaseConfigured && db) {
+    // 4. Cloud Firestore live onSnapshot listener
+    let firestoreUnsub = null;
+    let cancelled = false;
+    if (isCloudReady()) {
+      ensureFirebaseAuth().then(async () => {
+        if (cancelled) return;
+        try {
+          const tombstones = await fetchRemoteTombstones();
+          if (cancelled) return;
+          firestoreUnsub = onSnapshot(collection(db, collectionName), (snapshot) => {
+            const remoteDocs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+            const merged = mergeFn(remoteDocs, tombstones);
+            try {
+              writeLocalJson(storageKey, merged);
+            } catch (e) {
+              console.warn(`Local ${label} cache write failed:`, e);
+            }
+            callback(merged);
+          }, (err) => {
+            console.warn(`Firestore ${label} real-time listener error:`, err);
+          });
+        } catch (err) {
+          console.warn(`Could not establish Firestore ${label} listener:`, err);
+        }
+      });
+    }
+
+    return () => {
+      cancelled = true;
+      if (typeof window !== 'undefined') {
+        window.removeEventListener(eventName, handleCustomEvent);
+        window.removeEventListener('storage', handleStorageEvent);
+      }
+      if (typeof firestoreUnsub === 'function') {
+        firestoreUnsub();
+      }
+    };
+  };
+
+  /**
+   * Get all items (Firestore with fallback to cached/default list)
+   */
+  const getDynamic = async () => {
+    const localList = getInitial();
+
+    if (isCloudReady()) {
+      try {
+        await ensureFirebaseAuth();
+        const tombstones = await fetchRemoteTombstones();
+        const snapshot = await getDocs(collection(db, collectionName));
+        if (!snapshot.empty) {
+          const remoteDocs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+          const merged = mergeFn(remoteDocs, tombstones);
+          try {
+            writeLocalJson(storageKey, merged);
+          } catch (e) {
+            console.warn(`Local ${label} cache write failed:`, e);
+          }
+          return merged;
+        }
+      } catch (error) {
+        console.warn(`Firestore ${label} fetch failed, using cached list:`, error);
+      }
+    }
+
+    return localList;
+  };
+
+  /**
+   * Save or update an item with INSTANT local broadcast and cloud persistence
+   */
+  const save = async (itemData) => {
+    const id = itemData.id ? String(itemData.id) : idPrefix + Date.now();
+    const payload = { ...itemData, id, updatedAt: new Date().toISOString() };
+
+    // 1. INSTANT LOCAL CACHE & BROADCAST (0ms lag on client UI)
+    const currentList = getInitial();
+    const existingIdx = currentList.findIndex(item => String(item.id) === String(id));
+    if (existingIdx >= 0) {
+      currentList[existingIdx] = { ...currentList[existingIdx], ...payload };
+    } else if (prependNew) {
+      currentList.unshift(payload);
+    } else {
+      currentList.push(payload);
+    }
+    const merged = mergeFn(currentList);
     try {
-      await ensureFirebaseAuth();
-      await setDoc(doc(db, 'testimonials', id), payload, { merge: true });
-      return { success: true, id, isLive: true };
-    } catch (error) {
-      console.error('Firestore save testimonial error, saved locally:', error);
-      return { success: true, id, isLive: false, error: error?.message || 'Cloud sync failed.' };
+      writeLocalJson(storageKey, merged);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent(eventName, { detail: merged }));
+      }
+    } catch (e) {
+      console.error(`Local ${label} cache write failed:`, e);
+      return { success: false, id, isLive: false, error: 'Could not save locally: browser storage is full or unavailable.' };
     }
-  }
 
-  return { success: true, id, isLive: false };
+    // 2. PERSIST TO CLOUD FIRESTORE
+    if (isCloudReady()) {
+      try {
+        await ensureFirebaseAuth();
+        await setDoc(doc(db, collectionName, id), payload, { merge: true });
+        return { success: true, id, isLive: true };
+      } catch (error) {
+        console.error(`Firestore save ${label} error:`, error);
+        return { success: true, id, isLive: false, error: error?.message || 'Cloud sync failed.' };
+      }
+    }
+
+    return { success: true, id, isLive: false };
+  };
+
+  /**
+   * Delete an item with INSTANT local broadcast and cloud deletion
+   */
+  const remove = async (itemId) => {
+    const id = String(itemId);
+
+    const currentAll = getInitial();
+    const itemToBackup = findBackupItem(id, currentAll);
+    if (itemToBackup) {
+      await backupDeletedItem(collectionName, itemToBackup);
+    }
+    if (defaults.some(item => String(item.id) === id)) {
+      await addTombstone(id);
+    }
+
+    // 1. INSTANT LOCAL CACHE & BROADCAST
+    const currentList = currentAll.filter(item => String(item.id) !== id);
+    try {
+      writeLocalJson(storageKey, currentList);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent(eventName, { detail: currentList }));
+      }
+    } catch (e) {
+      console.error(`Local ${label} cache write failed:`, e);
+      return { success: false, isLive: false, error: 'Could not delete locally: browser storage is full or unavailable.' };
+    }
+
+    // 2. DELETE FROM CLOUD FIRESTORE
+    if (isCloudReady()) {
+      try {
+        await ensureFirebaseAuth();
+        await deleteDoc(doc(db, collectionName, id));
+      } catch (error) {
+        console.error(`Firestore delete ${label} error:`, error);
+        return { success: true, isLive: false, error: error?.message || 'Cloud delete failed.' };
+      }
+    }
+
+    return { success: true, isLive: isCloudReady() };
+  };
+
+  return { getInitial, subscribeTo, getDynamic, save, remove };
 }
 
-export async function deleteTestimonial(testimonialId) {
-  const id = String(testimonialId);
-  const localList = JSON.parse(localStorage.getItem('ashara_testimonials') || '[]');
-  const itemToBackup = localList.find(t => String(t.id) === id) || DEFAULT_TESTIMONIALS_LIST.find(t => String(t.id) === id);
-  if (itemToBackup) {
-    await backupDeletedItem('testimonials', itemToBackup);
-  }
-  if (DEFAULT_TESTIMONIALS_LIST.some(t => String(t.id) === id)) {
-    await addTombstone(id);
-  }
+// --- Projects CMS: versioned cache; new items appended; backups from the merged list ---
+const projectsService = createCollectionService({
+  collectionName: 'projects',
+  storageKey: 'ashara_projects',
+  eventName: 'ashara_projects_updated',
+  defaults: DEFAULT_PROJECTS_LIST,
+  mergeFn: mergeWithDefaultProjects,
+  idPrefix: 'proj_',
+  label: 'project',
+  cacheVersion: { key: 'ashara_projects_v', value: '2024_cpr_v6' },
+  findBackupItem: (id, currentAll) => currentAll.find(p => String(p.id) === id),
+  getFallback: () => DEFAULT_PROJECTS_LIST
+});
 
-  const currentList = getInitialTestimonials().filter(t => String(t.id) !== id);
-  try {
-    localStorage.setItem('ashara_testimonials', JSON.stringify(currentList));
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('ashara_testimonials_updated', { detail: currentList }));
-    }
-  } catch (e) {
-    console.error('Local testimonial cache write failed:', e);
-    return { success: false, isLive: false, error: 'Could not delete locally: browser storage is full or unavailable.' };
-  }
+// --- Testimonials CMS: new items prepended; backups from the raw cache or defaults ---
+const testimonialsService = createCollectionService({
+  collectionName: 'testimonials',
+  storageKey: 'ashara_testimonials',
+  eventName: 'ashara_testimonials_updated',
+  defaults: DEFAULT_TESTIMONIALS_LIST,
+  mergeFn: mergeWithDefaultTestimonials,
+  idPrefix: 'test_',
+  label: 'testimonial',
+  prependNew: true,
+  findBackupItem: (id) =>
+    readLocalJson('ashara_testimonials', []).find(t => String(t.id) === id) ||
+    DEFAULT_TESTIMONIALS_LIST.find(t => String(t.id) === id),
+  getFallback: () => mergeWithDefaultTestimonials([])
+});
 
-  if (isFirebaseConfigured && db) {
-    try {
-      await ensureFirebaseAuth();
-      await deleteDoc(doc(db, 'testimonials', id));
-    } catch (error) {
-      console.error('Firestore delete testimonial error:', error);
-      return { success: true, isLive: false, error: error?.message || 'Cloud delete failed.' };
-    }
-  }
+// Re-export under the original names so every importer keeps working
+export const getInitialProjects = projectsService.getInitial;
+export const subscribeToProjects = projectsService.subscribeTo;
+export const getDynamicProjects = projectsService.getDynamic;
+export const saveProject = projectsService.save;
+export const deleteProject = projectsService.remove;
 
-  return { success: true, isLive: Boolean(isFirebaseConfigured && db) };
-}
+export const getInitialTestimonials = testimonialsService.getInitial;
+export const subscribeToTestimonials = testimonialsService.subscribeTo;
+export const getDynamicTestimonials = testimonialsService.getDynamic;
+export const saveTestimonial = testimonialsService.save;
+export const deleteTestimonial = testimonialsService.remove;
 
 // ----------------------------------------------------
-// 5. AUTHENTICATION HELPERS
+// 3. AUTHENTICATION HELPERS
 // ----------------------------------------------------
 
 export async function loginAdminUser(email, password) {

@@ -13,6 +13,35 @@ const SOCIAL_LINKS = {
   email: 'mailto:info@ashara.com',
 };
 
+// Floating tooltip pill (label + colored dot + caret) shared by the social
+// link buttons and the copy-link button. `dotColor` renders a brand swatch;
+// `copied` switches to the emerald "Copied!" confirmation variant.
+function SocialTooltip({ label, dotColor, copied = false }) {
+  return (
+    <div role="tooltip" className={`social-tooltip-wrapper${copied ? ' is-copied' : ''}`}>
+      <div
+        className={`relative px-2.5 py-1 text-[11px] font-sans font-medium tracking-wide text-white backdrop-blur-md rounded-md shadow-2xl whitespace-nowrap flex items-center gap-1.5 border transition-all duration-200 ${
+          copied
+            ? 'bg-emerald-600 border-emerald-400 text-white shadow-emerald-600/40'
+            : 'bg-gray-950/95 border-white/15'
+        }`}
+      >
+        <span
+          className={`w-1.5 h-1.5 rounded-full flex-shrink-0 transition-colors${copied ? ' bg-white animate-pulse' : dotColor ? '' : ' bg-ashara-gold'}`}
+          style={!copied && dotColor ? { background: dotColor } : undefined}
+        />
+        <span className={copied ? 'font-semibold tracking-wider uppercase' : ''}>
+          {label}
+        </span>
+        {/* Arrow Caret */}
+        <span
+          className={`absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] border-4 border-transparent${copied ? ' border-t-emerald-600 transition-colors' : ' border-t-gray-950/95'}`}
+        />
+      </div>
+    </div>
+  );
+}
+
 export default function Footer({ onNavigate }) {
   const [copied, setCopied] = useState(false);
   const [copyFeedbackTimer, setCopyFeedbackTimer] = useState(null);
@@ -123,10 +152,10 @@ export default function Footer({ onNavigate }) {
   return (
     <footer className="bg-ashara-teal text-white pt-16 pb-8 px-6 sm:px-10 lg:px-16 mt-auto">
       <div className="max-w-7xl mx-auto flex flex-col space-y-16">
-        
+
         {/* Main Footer Row matching Figma */}
         <div className="grid grid-cols-2 lg:flex lg:flex-row justify-between items-start gap-8 lg:gap-10">
-          
+
           {/* 1. Brand Logo in White */}
           <div className="flex-shrink-0 col-span-2 sm:col-span-1">
             <button
@@ -183,17 +212,7 @@ export default function Footer({ onNavigate }) {
             {footerSocials.map((item) => (
               <div key={item.id} className="social-share-container">
                 {/* Floating Tooltip */}
-                <div role="tooltip" className="social-tooltip-wrapper">
-                  <div className="relative px-2.5 py-1 text-[11px] font-sans font-medium tracking-wide text-white bg-gray-950/95 backdrop-blur-md rounded-md shadow-2xl whitespace-nowrap flex items-center gap-1.5 border border-white/15">
-                    <span
-                      className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                      style={{ background: item.brandColor }}
-                    />
-                    <span>{item.tooltip}</span>
-                    {/* Arrow Caret */}
-                    <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] border-4 border-transparent border-t-gray-950/95" />
-                  </div>
-                </div>
+                <SocialTooltip label={item.tooltip} dotColor={item.brandColor} />
 
                 {/* Social Button with Brand-Colour Reveal */}
                 <a
@@ -217,33 +236,7 @@ export default function Footer({ onNavigate }) {
             {/* URL-Copy Button with "Copied!" confirmation */}
             <div className="social-share-container">
               {/* Floating Tooltip with Dynamic "Copied!" message */}
-              <div
-                role="tooltip"
-                className={`social-tooltip-wrapper ${copied ? 'is-copied' : ''}`}
-              >
-                <div
-                  className={`relative px-2.5 py-1 text-[11px] font-sans font-medium tracking-wide text-white backdrop-blur-md rounded-md shadow-2xl whitespace-nowrap flex items-center gap-1.5 border transition-all duration-200 ${
-                    copied
-                      ? 'bg-emerald-600 border-emerald-400 text-white shadow-emerald-600/40'
-                      : 'bg-gray-950/95 border-white/15'
-                  }`}
-                >
-                  <span
-                    className={`w-1.5 h-1.5 rounded-full flex-shrink-0 transition-colors ${
-                      copied ? 'bg-white animate-pulse' : 'bg-ashara-gold'
-                    }`}
-                  />
-                  <span className={copied ? 'font-semibold tracking-wider uppercase' : ''}>
-                    {copied ? 'Copied!' : 'Copy Link'}
-                  </span>
-                  {/* Arrow Caret */}
-                  <span
-                    className={`absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] border-4 border-transparent transition-colors ${
-                      copied ? 'border-t-emerald-600' : 'border-t-gray-950/95'
-                    }`}
-                  />
-                </div>
-              </div>
+              <SocialTooltip label={copied ? 'Copied!' : 'Copy Link'} copied={copied} />
 
               {/* Copy Button */}
               <button

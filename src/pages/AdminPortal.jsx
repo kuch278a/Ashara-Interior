@@ -20,6 +20,39 @@ import AdminProjectModal     from './admin/AdminProjectModal';
 import AdminTestimonialModal from './admin/AdminTestimonialModal';
 import AdminDeleteConfirm    from './admin/AdminDeleteConfirm';
 
+const FILTER_OPTION_CLASS = 'bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white';
+
+// Toolbar filter dropdown shared by the projects, testimonials, and leads tabs
+function FilterSelect({ icon: Icon, value, onChange, options }) {
+  return (
+    <div className="flex items-center gap-1.5 text-xs text-ashara-teal dark:text-white">
+      <Icon className="w-3.5 h-3.5" />
+      <select
+        value={value}
+        onChange={onChange}
+        className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-sm text-xs text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal"
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value} className={FILTER_OPTION_CLASS}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+const PROJECT_CATEGORY_OPTIONS = [
+  { value: 'INTERIOR', label: 'Interior' },
+  { value: 'LANDSCAPE', label: 'Landscape' },
+  { value: 'ARCHITECTURE', label: 'Architecture' },
+  { value: 'GOVERNMENTAL', label: 'Governmental' },
+  { value: 'PRIVATE', label: 'Private Entities' },
+  { value: 'CORPORATION', label: 'Corporations' },
+  { value: 'COMMERCIAL', label: 'Commercial' },
+  { value: 'RESIDENTIAL', label: 'Residential' }
+];
+
 export default function AdminPortal({ onNavigate }) {
   const [adminUser, setAdminUser] = useState(() => {
     try {
@@ -359,43 +392,36 @@ export default function AdminPortal({ onNavigate }) {
           </div>
           <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 sm:ml-auto">
             {activeTab === 'projects' && (
-              <div className="flex items-center gap-1.5 text-xs text-ashara-teal dark:text-white">
-                <Filter className="w-3.5 h-3.5" />
-                <select value={projectCategoryFilter} onChange={(e) => setProjectCategoryFilter(e.target.value)}
-                  className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-sm text-xs text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal">
-                  <option value="ALL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">All Categories ({projects.length})</option>
-                  <option value="INTERIOR" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Interior</option>
-                  <option value="LANDSCAPE" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Landscape</option>
-                  <option value="ARCHITECTURE" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Architecture</option>
-                  <option value="GOVERNMENTAL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Governmental</option>
-                  <option value="PRIVATE" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Private Entities</option>
-                  <option value="CORPORATION" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Corporations</option>
-                  <option value="COMMERCIAL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Commercial</option>
-                  <option value="RESIDENTIAL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Residential</option>
-                </select>
-              </div>
+              <FilterSelect
+                icon={Filter}
+                value={projectCategoryFilter}
+                onChange={(e) => setProjectCategoryFilter(e.target.value)}
+                options={[{ value: 'ALL', label: `All Categories (${projects.length})` }, ...PROJECT_CATEGORY_OPTIONS]}
+              />
             )}
             {activeTab === 'testimonials' && (
-              <div className="flex items-center gap-1.5 text-xs text-ashara-teal dark:text-white">
-                <Filter className="w-3.5 h-3.5" />
-                <select value={testimonialFilter} onChange={(e) => setTestimonialFilter(e.target.value)}
-                  className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-sm text-xs text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal">
-                  <option value="ALL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">All Project Links ({testimonials.length})</option>
-                  {projects.map((p) => <option key={p.id} value={p.id} className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">{p.title}</option>)}
-                </select>
-              </div>
+              <FilterSelect
+                icon={Filter}
+                value={testimonialFilter}
+                onChange={(e) => setTestimonialFilter(e.target.value)}
+                options={[
+                  { value: 'ALL', label: `All Project Links (${testimonials.length})` },
+                  ...projects.map((p) => ({ value: p.id, label: p.title }))
+                ]}
+              />
             )}
             {activeTab === 'leads' && (
-              <div className="flex items-center gap-1.5 text-xs text-ashara-teal dark:text-white">
-                <SlidersHorizontal className="w-3.5 h-3.5" />
-                <select value={leadStatusFilter} onChange={(e) => setLeadStatusFilter(e.target.value)}
-                  className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-sm text-xs text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal">
-                  <option value="ALL" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">All Inquiries ({leads.length})</option>
-                  <option value="new" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">New Inquiries ({newLeadsCount})</option>
-                  <option value="contacted" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Contacted</option>
-                  <option value="completed" className="bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white">Completed</option>
-                </select>
-              </div>
+              <FilterSelect
+                icon={SlidersHorizontal}
+                value={leadStatusFilter}
+                onChange={(e) => setLeadStatusFilter(e.target.value)}
+                options={[
+                  { value: 'ALL', label: `All Inquiries (${leads.length})` },
+                  { value: 'new', label: `New Inquiries (${newLeadsCount})` },
+                  { value: 'contacted', label: 'Contacted' },
+                  { value: 'completed', label: 'Completed' }
+                ]}
+              />
             )}
           </div>
         </div>
