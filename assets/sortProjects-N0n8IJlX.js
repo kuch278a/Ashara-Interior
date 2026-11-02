@@ -1,0 +1,1 @@
+function e(e){return[...e].sort((e,t)=>{if(e.updatedAt&&t.updatedAt){let n=new Date(e.updatedAt).getTime(),r=new Date(t.updatedAt).getTime();if(!Number.isNaN(n)&&!Number.isNaN(r)&&n!==r)return r-n}let n=Number(e.id),r=Number(t.id);return!Number.isNaN(n)&&!Number.isNaN(r)&&n!==r?n-r:String(e.id).localeCompare(String(t.id))})}export{e as t};
