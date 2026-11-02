@@ -33,14 +33,27 @@ export default defineConfig({
             if (id.includes('lucide-react')) {
               return 'vendor-icons';
             }
-            if (id.includes('react') || id.includes('react-dom')) {
+            if (id.includes('react') || id.includes('react-dom') || id.includes('scheduler')) {
               return 'vendor-react';
             }
-            if (id.includes('firebase/app') || id.includes('firebase/auth')) {
-              return 'vendor-firebase-core';
+            if (id.includes('@emailjs')) {
+              return 'vendor-emailjs';
             }
-            if (id.includes('firebase/firestore') || id.includes('firebase/storage')) {
-              return 'vendor-firebase-db';
+            // The whole Firebase SDK plus its transitive deps (idb,
+            // protobufjs/grpc-web, websocket transport) loads on demand
+            // after first paint — one chunk, so it never leaks into the
+            // eager entry graph.
+            if (
+              id.includes('firebase') ||
+              id.includes('idb') ||
+              id.includes('protobuf') ||
+              id.includes('@grpc') ||
+              id.includes('/long/') ||
+              id.includes('websocket') ||
+              id.includes('http-parser') ||
+              id.includes('re2js')
+            ) {
+              return 'vendor-firebase';
             }
             return 'vendor-misc';
           }

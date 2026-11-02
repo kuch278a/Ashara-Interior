@@ -1,4 +1,3 @@
-import emailjs from '@emailjs/browser';
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import {
   getFirestore,
@@ -17,8 +16,21 @@ import {
   signOut
 } from 'firebase/auth';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { DEFAULT_PROJECTS_LIST, DEFAULT_CONSULTATION_LEADS, DEFAULT_TESTIMONIALS_LIST } from '../data/defaultData.js';
+import { DEFAULT_CONSULTATION_LEADS, DEFAULT_PROJECTS_LIST, DEFAULT_TESTIMONIALS_LIST } from '../data/defaultData.js';
 import { compressImage } from '../utils/imageOptimizer.js';
+import {
+  readLocalJson,
+  writeLocalJson,
+  getLocalTombstones,
+  mergeWithDefaultProjects,
+  mergeWithDefaultTestimonials,
+  getInitialProjects,
+  getInitialTestimonials
+} from './localCache.js';
+
+// Re-export the SDK-free cache reads under the historical names so every
+// importer keeps working unchanged.
+export { getInitialProjects, getInitialTestimonials };
 
 // Firebase configuration from environment variables only.
 // Never hardcode live keys here — .env is gitignored and CI injects
@@ -56,15 +68,13 @@ if (isFirebaseConfigured) {
   }
 }
 
-export { db, auth, storage };
-
 const isCloudReady = () => Boolean(isFirebaseConfigured && db);
 
 /**
  * Automatically ensure an active Firebase Auth session for Super Admin actions.
  * Guarantees that Firestore security rules (requiring request.auth != null) grant full access.
  */
-export async function ensureFirebaseAuth() {
+async function ensureFirebaseAuth() {
   if (isFirebaseConfigured && auth) {
     if (auth.currentUser) return auth.currentUser;
     try {
@@ -78,24 +88,10 @@ export async function ensureFirebaseAuth() {
   return null;
 }
 
-// Tiny localStorage JSON helpers shared across the service
-function readLocalJson(key, fallback) {
-  try {
-    const stored = localStorage.getItem(key);
-    return stored === null ? fallback : JSON.parse(stored);
-  } catch (e) {
-    return fallback;
-  }
-}
-
-function writeLocalJson(key, value) {
-  localStorage.setItem(key, JSON.stringify(value));
-}
-
 /**
  * Backup an item before it is deleted
  */
-export async function backupDeletedItem(collectionName, itemObj) {
+async function backupDeletedItem(collectionName, itemObj) {
   if (!itemObj) return;
   try {
     const backupData = {
@@ -117,27 +113,12 @@ export async function backupDeletedItem(collectionName, itemObj) {
   }
 }
 
-const DELETED_DEFAULTS_KEY = 'ashara_deleted_defaults';
-
-function getLocalTombstones() {
-  const stored = readLocalJson(DELETED_DEFAULTS_KEY, []);
-  return new Set(Array.isArray(stored) ? stored.map(String) : []);
-}
-
-function unionTombstones(extraTombstones) {
-  const tombstones = getLocalTombstones();
-  if (extraTombstones) {
-    extraTombstones.forEach((id) => tombstones.add(String(id)));
-  }
-  return tombstones;
-}
-
 async function addTombstone(id) {
   const key = String(id);
   try {
     const tombstones = getLocalTombstones();
     tombstones.add(key);
-    writeLocalJson(DELETED_DEFAULTS_KEY, Array.from(tombstones));
+    writeLocalJson('ashara_deleted_defaults', Array.from(tombstones));
   } catch (e) {
     console.warn('Failed to record deletion locally:', e);
   }
@@ -173,7 +154,7 @@ async function fetchRemoteTombstones() {
  * Upload an image file with automatic client-side compression,
  * real-time progress callbacks, and resilient timeout fallback.
  * @param {File} file - The image file to upload
- * @param {string} folder - Storage folder (e.g. 'projects', 'blog')
+ * @param {string} folder - Storage folder (e.g. 'projects')
  * @param {Function} [onProgress] - Optional progress callback ({ stage, percent })
  * @returns {{ success: boolean, url?: string, isCloud?: boolean, isFallback?: boolean, error?: string }}
  */
@@ -241,7 +222,9 @@ export async function uploadImage(file, folder = 'images', onProgress = null) {
         setTimeout(() => {
           try {
             uploadTask.cancel();
-          } catch (e) { }
+          } catch {
+            // cancel is best-effort — the timeout rejection below still fires
+          }
           reject(new Error('Storage upload timeout: exceeded 12 seconds'));
         }, 12000);
       });
@@ -314,6 +297,8 @@ async function sendEnquiryEmail(payload) {
   };
 
   try {
+    // Loaded on demand so the EmailJS bundle stays off the public page chunks
+    const { default: emailjs } = await import('@emailjs/browser');
     const response = await emailjs.send(serviceId, templateId, templateParams, publicKey);
     if (response.status === 200) {
       return true;
@@ -466,86 +451,6 @@ export async function deleteConsultation(leadId) {
 // ----------------------------------------------------
 
 /**
- * Merge custom/edited projects onto the default projects list by matching IDs.
- * Sanitizes image/gallery URLs so stale relative paths fall back to default art.
- */
-export function mergeWithDefaultProjects(customList = [], extraTombstones = null) {
-  const tombstones = unionTombstones(extraTombstones);
-  const map = new Map();
-  // 1. Seed base default projects (skipping defaults the admin has deleted)
-  DEFAULT_PROJECTS_LIST.forEach((p) => {
-    if (!tombstones.has(String(p.id))) {
-      map.set(String(p.id), { ...p });
-    }
-  });
-  // 2. Overlay custom or saved projects
-  customList.forEach((p) => {
-    if (p && p.id !== undefined) {
-      const existing = map.get(String(p.id)) || {};
-      const mergedItem = { ...existing, ...p };
-
-      const isValidUrl = (url) => typeof url === 'string' && (
-        url.startsWith('http://') ||
-        url.startsWith('https://') ||
-        url.startsWith('data:') ||
-        url.startsWith('blob:') ||
-        url.startsWith('/src/') ||
-        url.startsWith('/assets/') ||
-        url.includes('/assets/projects/')
-      );
-
-      if (p.image && (!isValidUrl(p.image) || (p.image.startsWith('/assets/') && existing.image))) {
-        mergedItem.image = existing.image || p.image;
-      }
-      if (p.fallbackImage && (!isValidUrl(p.fallbackImage) || (p.fallbackImage.startsWith('/assets/') && existing.fallbackImage))) {
-        mergedItem.fallbackImage = existing.fallbackImage || existing.image || p.fallbackImage;
-      }
-
-      if (Array.isArray(p.gallery)) {
-        const sanitizedGallery = p.gallery.map((url, i) => {
-          if (!isValidUrl(url) || (url.startsWith('/assets/') && existing.gallery && existing.gallery[i])) {
-            return (existing.gallery && existing.gallery[i]) || existing.image || null;
-          }
-          return url;
-        }).filter(Boolean);
-
-        if (Array.isArray(existing.gallery) && existing.gallery.length > 0) {
-          existing.gallery.forEach((defUrl) => {
-            if (defUrl && !sanitizedGallery.includes(defUrl)) {
-              sanitizedGallery.push(defUrl);
-            }
-          });
-        }
-        mergedItem.gallery = sanitizedGallery;
-      }
-
-      map.set(String(p.id), mergedItem);
-    }
-  });
-  return Array.from(map.values());
-}
-
-/**
- * Merge custom/edited testimonials onto the default list by matching IDs
- */
-export function mergeWithDefaultTestimonials(customList = [], extraTombstones = null) {
-  const tombstones = unionTombstones(extraTombstones);
-  const map = new Map();
-  DEFAULT_TESTIMONIALS_LIST.forEach((t) => {
-    if (!tombstones.has(String(t.id))) {
-      map.set(String(t.id), { ...t });
-    }
-  });
-  customList.forEach((t) => {
-    if (t && t.id !== undefined) {
-      const existing = map.get(String(t.id)) || {};
-      map.set(String(t.id), { ...existing, ...t });
-    }
-  });
-  return Array.from(map.values());
-}
-
-/**
  * Shared collection service powering both the projects and testimonials CMS.
  * Contract: synchronous instant cache (getInitial), real-time subscriptions
  * (in-window events + cross-tab storage + Firestore onSnapshot), and writes
@@ -558,33 +463,12 @@ function createCollectionService({
   eventName,               // in-window broadcast event name
   defaults,                // built-in default list
   mergeFn,                 // (customList, extraTombstones) => merged list
+  getInitial,              // () => synchronously cached list (localCache)
   idPrefix,                // prefix for newly generated ids
   label,                   // human-readable name for log messages
-  cacheVersion = null,     // optional { key, value } stale-cache reset check
   prependNew = false,      // insert new items at the front instead of the end
-  findBackupItem,          // (id, currentAll) => item to back up before delete
-  getFallback              // () => list returned when nothing valid is cached
+  findBackupItem           // (id, currentAll) => item to back up before delete
 }) {
-  /**
-   * Synchronously read the cached list for instant 0ms initial render
-   */
-  const getInitial = () => {
-    if (typeof window !== 'undefined') {
-      try {
-        if (cacheVersion && localStorage.getItem(cacheVersion.key) !== cacheVersion.value) {
-          localStorage.removeItem(storageKey);
-          localStorage.setItem(cacheVersion.key, cacheVersion.value);
-          return defaults;
-        }
-        const stored = readLocalJson(storageKey, null);
-        if (Array.isArray(stored)) {
-          return mergeFn(stored);
-        }
-      } catch (e) {}
-    }
-    return getFallback();
-  };
-
   /**
    * Real-time subscription: fires the callback INSTANTLY with cached data,
    * listens to local updates (0ms), and syncs with Cloud Firestore.
@@ -610,7 +494,9 @@ function createCollectionService({
           if (Array.isArray(parsed)) {
             callback(mergeFn(parsed));
           }
-        } catch (err) {}
+        } catch {
+          // ignore cross-tab parse races
+        }
       }
     };
 
@@ -781,11 +667,10 @@ const projectsService = createCollectionService({
   eventName: 'ashara_projects_updated',
   defaults: DEFAULT_PROJECTS_LIST,
   mergeFn: mergeWithDefaultProjects,
+  getInitial: getInitialProjects,
   idPrefix: 'proj_',
   label: 'project',
-  cacheVersion: { key: 'ashara_projects_v', value: '2024_cpr_v6' },
-  findBackupItem: (id, currentAll) => currentAll.find(p => String(p.id) === id),
-  getFallback: () => DEFAULT_PROJECTS_LIST
+  findBackupItem: (id, currentAll) => currentAll.find(p => String(p.id) === id)
 });
 
 // --- Testimonials CMS: new items prepended; backups from the raw cache or defaults ---
@@ -795,23 +680,21 @@ const testimonialsService = createCollectionService({
   eventName: 'ashara_testimonials_updated',
   defaults: DEFAULT_TESTIMONIALS_LIST,
   mergeFn: mergeWithDefaultTestimonials,
+  getInitial: getInitialTestimonials,
   idPrefix: 'test_',
   label: 'testimonial',
   prependNew: true,
   findBackupItem: (id) =>
     readLocalJson('ashara_testimonials', []).find(t => String(t.id) === id) ||
-    DEFAULT_TESTIMONIALS_LIST.find(t => String(t.id) === id),
-  getFallback: () => mergeWithDefaultTestimonials([])
+    DEFAULT_TESTIMONIALS_LIST.find(t => String(t.id) === id)
 });
 
 // Re-export under the original names so every importer keeps working
-export const getInitialProjects = projectsService.getInitial;
 export const subscribeToProjects = projectsService.subscribeTo;
 export const getDynamicProjects = projectsService.getDynamic;
 export const saveProject = projectsService.save;
 export const deleteProject = projectsService.remove;
 
-export const getInitialTestimonials = testimonialsService.getInitial;
 export const subscribeToTestimonials = testimonialsService.subscribeTo;
 export const getDynamicTestimonials = testimonialsService.getDynamic;
 export const saveTestimonial = testimonialsService.save;
@@ -847,7 +730,9 @@ export async function logoutAdminUser() {
   if (isFirebaseConfigured && auth) {
     try {
       await signOut(auth);
-    } catch (e) { }
+    } catch {
+      // sign-out is best-effort; local session is always cleared below
+    }
   }
   sessionStorage.removeItem('ashara_admin_auth');
   return { success: true };

@@ -1,6 +1,9 @@
 import React from 'react';
 import { X, Save, Loader2, Upload, CheckCircle } from 'lucide-react';
 
+// Matches the accept hints on both file inputs
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
 export default function AdminProjectModal({
   editingProject, setEditingProject,
   projectImageFile, setProjectImageFile,
@@ -129,8 +132,10 @@ export default function AdminProjectModal({
                     <span className="text-xs uppercase tracking-wider font-semibold group-hover:text-ashara-teal dark:group-hover:text-ashara-teal transition">Upload high-resolution image file</span>
                     <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden" onChange={(e) => {
                       const file = e.target.files?.[0];
+                      // Reset so re-selecting the same file fires onChange again
+                      e.target.value = '';
                       if (!file) return;
-                      if (!file.type.startsWith('image/')) {
+                      if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
                         alert('Invalid file format. Only JPG, PNG, WEBP, or GIF images are allowed.');
                         return;
                       }
@@ -171,13 +176,21 @@ export default function AdminProjectModal({
                       <span className="text-[10px] text-ashara-teal dark:text-white font-light">Supports JPG, PNG, WEBP — max 10MB per image (up to 8 images)</span>
                       <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple className="hidden" onChange={(e) => {
                         const files = Array.from(e.target.files || []);
-                        const validFiles = files.filter(f => f.type.startsWith('image/') && f.size <= 10 * 1024 * 1024);
+                        // Reset so re-selecting the same files fires onChange again
+                        e.target.value = '';
+                        const validFiles = files.filter(f => ALLOWED_IMAGE_TYPES.includes(f.type) && f.size <= 10 * 1024 * 1024);
                         if (validFiles.length < files.length) {
                           alert('Some files were ignored because they are not valid images or exceed the 10MB limit.');
                         }
                         if (validFiles.length > 0) {
-                          const newFiles = [...projectGalleryFiles, ...validFiles].slice(0, 8);
-                          setProjectGalleryFiles(newFiles);
+                          const room = Math.max(0, 8 - projectGalleryFiles.length);
+                          const accepted = validFiles.slice(0, room);
+                          if (accepted.length < validFiles.length) {
+                            alert(`Gallery is limited to 8 images — ${validFiles.length - accepted.length} file(s) were not added.`);
+                          }
+                          if (accepted.length > 0) {
+                            setProjectGalleryFiles([...projectGalleryFiles, ...accepted]);
+                          }
                         }
                       }} />
                     </label>

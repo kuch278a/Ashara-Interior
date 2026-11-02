@@ -52,7 +52,6 @@
 
   .no-outline,
   .client-logo-img,
-  [data-no-outline],
   img.no-outline,
   img.client-logo-img {
     outline: none !important;
@@ -68,10 +67,6 @@
   }
   html.dark :focus-visible {
     outline-color: #C5A880;
-  }
-
-  .tabular-nums, [data-numeric], time {
-    font-variant-numeric: tabular-nums;
   }
 
   input, textarea, select, button {

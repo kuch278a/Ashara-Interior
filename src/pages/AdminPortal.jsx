@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import {
   Users, Layers, Database, Plus,
   RefreshCw, ChevronRight, ArrowUpRight, Building2,
@@ -62,7 +62,9 @@ export default function AdminPortal({ onNavigate }) {
       if (parsed && parsed.email) return parsed;
       sessionStorage.removeItem('ashara_admin_auth');
       return null;
-    } catch (e) { return null; }
+    } catch {
+      return null;
+    }
   });
   const [loginEmail,    setLoginEmail]    = useState('');
   const [loginPassword, setLoginPassword] = useState('');
@@ -89,30 +91,56 @@ export default function AdminPortal({ onNavigate }) {
   const [uploadStatus,  setUploadStatus]  = useState({ active: false, stage: '', percent: 0 });
   const [copiedId,      setCopiedId]      = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isDeleting,    setIsDeleting]    = useState(false);
   const toastTimerRef = useRef(null);
+  // Id of the lead whose status update is in flight (guards concurrent updates)
+  const updatingLeadRef = useRef(null);
+
+  // Defined before the effects below, which reference them in dependency
+  // arrays — a const referenced before its declaration throws (TDZ).
+  const showToast = useCallback((message, type = 'success') => {
+    setNotification({ message, type });
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = setTimeout(() => setNotification(null), 4500);
+  }, []);
+
+  const loadAllData = useCallback(async (isManualRefresh = false) => {
+    if (isManualRefresh) setIsRefreshing(true);
+    try {
+      const [leadsData, projectsData, testimonialsData] = await Promise.all([
+        getConsultations(), getDynamicProjects(), getDynamicTestimonials()
+      ]);
+      setLeads(leadsData || []); setProjects(projectsData || []);
+      setTestimonials(testimonialsData || []);
+      if (isManualRefresh) showToast('Atelier database synchronized');
+    } catch { showToast('Could not sync remote data. Offline cache active.', 'error'); }
+    finally { setIsRefreshing(false); }
+  }, [showToast]);
 
   useEffect(() => {
     if (!adminUser) return;
     loadAllData();
     const unsub = subscribeToTestimonials((list) => {
-      if (list && list.length > 0) setTestimonials(list);
+      // Empty lists are legitimate (e.g. last testimonial deleted in
+      // another tab) and must propagate instead of being dropped.
+      if (Array.isArray(list)) setTestimonials(list);
     });
     return () => { if (typeof unsub === 'function') unsub(); };
-  }, [adminUser]);
+  }, [adminUser, loadAllData]);
 
   useEffect(() => () => { if (toastTimerRef.current) clearTimeout(toastTimerRef.current); }, []);
 
-  const showToast = (message, type = 'success') => {
-    setNotification({ message, type });
-    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
-    toastTimerRef.current = setTimeout(() => setNotification(null), 4500);
-  };
-  const handleCopy = (text, id) => {
+  const handleCopy = async (text, id) => {
     if (!text) return;
-    navigator.clipboard.writeText(text).catch(() => showToast('Could not copy to clipboard', 'error'));
-    setCopiedId(id);
-    setTimeout(() => setCopiedId(null), 2000);
-    showToast('Copied to clipboard', 'info');
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
+      showToast('Copied to clipboard', 'info');
+    } catch {
+      // Also catches origins where navigator.clipboard is unavailable
+      showToast('Could not copy to clipboard', 'error');
+    }
   };
   const formatFileSize = (bytes) => {
     if (!bytes) return '';
@@ -133,24 +161,17 @@ export default function AdminPortal({ onNavigate }) {
     await logoutAdminUser(); setAdminUser(null); setLoginEmail(''); setLoginPassword('');
     showToast('Signed out of Studio Atelier', 'info');
   };
-  const loadAllData = async (isManualRefresh = false) => {
-    if (isManualRefresh) setIsRefreshing(true);
-    try {
-      const [leadsData, projectsData, testimonialsData] = await Promise.all([
-        getConsultations(), getDynamicProjects(), getDynamicTestimonials()
-      ]);
-      setLeads(leadsData || []); setProjects(projectsData || []);
-      setTestimonials(testimonialsData || []);
-      if (isManualRefresh) showToast('Atelier database synchronized');
-    } catch { showToast('Could not sync remote data. Offline cache active.', 'error'); }
-    finally { setIsRefreshing(false); }
-  };
   const handleUpdateLeadStatus = async (leadId, newStatus) => {
+    // Ignore a second change while the first is still in flight, so the UI
+    // can never end up showing a status that was not the last one persisted
+    if (updatingLeadRef.current === leadId) return;
+    updatingLeadRef.current = leadId;
     try {
       await updateConsultationStatus(leadId, newStatus);
       setLeads(prev => prev.map(l => String(l.id) === String(leadId) ? { ...l, status: newStatus } : l));
       showToast(`Lead marked as ${newStatus.toUpperCase()}`);
     } catch { showToast('Failed to update lead status', 'error'); }
+    finally { updatingLeadRef.current = null; }
   };
   const handleOpenNewProject = () => {
     setEditingProject({ title: '', category: 'GOVERNMENTAL', tag: 'GOVERNMENTAL', subtitle: '', image: '', description: '' });
@@ -163,25 +184,39 @@ export default function AdminPortal({ onNavigate }) {
   };
   const handleSaveProject = async (e) => {
     e.preventDefault(); if (!editingProject) return;
-    setUploadStatus({ active: true, stage: 'Preparing project data...', percent: 10 });
+    setUploadStatus({ active: true, stage: 'Preparing project data...', percent: 5 });
     try {
       let projectData = { ...editingProject };
       if (projectImageFile) {
         const r = await uploadImage(projectImageFile, 'projects', (p) => {
-          setUploadStatus({ active: true, stage: p.stage === 'compressing' ? 'Optimizing architectural photo...' : `Uploading (${p.percent}%)...`, percent: p.percent });
+          const fp = p.stage === 'done' ? 100 : p.percent;
+          setUploadStatus({ active: true, stage: p.stage === 'compressing' ? 'Optimizing architectural photo...' : `Uploading main image (${p.percent}%)...`, percent: 5 + Math.round(fp * 0.35) });
         });
         if (r.success) { projectData.image = r.url; }
         else { showToast('Image processing failed: ' + (r.error || 'Unknown error'), 'error'); setUploadStatus({ active: false, stage: '', percent: 0 }); return; }
       }
       if (projectGalleryFiles.length > 0) {
         const galleryUrls = [];
+        let failed = 0;
         for (let i = 0; i < projectGalleryFiles.length; i++) {
-          setUploadStatus({ active: true, stage: `Uploading gallery image ${i + 1} of ${projectGalleryFiles.length}...`, percent: 40 + Math.round((i / projectGalleryFiles.length) * 50) });
-          const r = await uploadImage(projectGalleryFiles[i], 'projects');
+          const r = await uploadImage(projectGalleryFiles[i], 'projects', (p) => {
+            const fp = p.stage === 'done' ? 100 : p.percent;
+            setUploadStatus({
+              active: true,
+              stage: `Uploading gallery image ${i + 1} of ${projectGalleryFiles.length}...`,
+              percent: 40 + Math.round(((i + fp / 100) / projectGalleryFiles.length) * 50)
+            });
+          });
           if (r.success) { galleryUrls.push(r.url); }
-          else { showToast(`Gallery image ${i + 1} failed: ` + (r.error || 'Unknown error'), 'error'); setUploadStatus({ active: false, stage: '', percent: 0 }); return; }
+          else { failed++; console.warn(`Gallery image ${i + 1} failed:`, r.error || 'Unknown error'); }
         }
-        projectData.gallery = [...(projectData.gallery || []), ...galleryUrls];
+        // Keep what succeeded so one bad file never blocks the whole save
+        if (failed > 0) {
+          showToast(`${failed} of ${projectGalleryFiles.length} gallery image(s) failed to upload and were skipped`, 'error');
+        }
+        if (galleryUrls.length > 0) {
+          projectData.gallery = [...(projectData.gallery || []), ...galleryUrls];
+        }
       }
       setUploadStatus({ active: true, stage: 'Syncing with atelier database...', percent: 95 });
       const result = await saveProject(projectData);
@@ -216,7 +251,8 @@ export default function AdminPortal({ onNavigate }) {
   };
 
   const handleConfirmDelete = async () => {
-    if (!deleteConfirm) return;
+    if (!deleteConfirm || isDeleting) return;
+    setIsDeleting(true);
     try {
       let result, message;
       if (deleteConfirm.type === 'project')     { result = await deleteProject(deleteConfirm.id);      message = 'Project removed from portfolio'; }
@@ -226,6 +262,7 @@ export default function AdminPortal({ onNavigate }) {
       showToast(message + (result.isLive === false ? ' (saved locally only — cloud unavailable)' : ''));
       setDeleteConfirm(null); await loadAllData();
     } catch { showToast('Failed to delete item', 'error'); }
+    finally { setIsDeleting(false); }
   };
   const newLeadsCount = useMemo(() => leads.filter(l => (l.status || 'new').toLowerCase() === 'new').length, [leads]);
   const filteredProjects = useMemo(() => projects.filter(p => {
@@ -465,6 +502,7 @@ export default function AdminPortal({ onNavigate }) {
         deleteConfirm={deleteConfirm}
         onCancel={() => setDeleteConfirm(null)}
         onConfirm={handleConfirmDelete}
+        isDeleting={isDeleting}
       />
 
     </div>

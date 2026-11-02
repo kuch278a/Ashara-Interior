@@ -40,9 +40,8 @@ firestore-debug.log
 ui-debug.log
 .firebase/
 
-# Client logos
-client_logos/*
-
-# Test files
+# Test artifacts
+playwright-report/
+test-results/
 test-email.html
 test-email.js

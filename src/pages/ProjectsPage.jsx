@@ -1,21 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { getInitialProjects, subscribeToProjects } from '../services/firebaseService';
+import sortProjects from '../utils/sortProjects';
+import { handleImageError } from '../utils/imageFallback';
 
-export default function ProjectsPage({ onNavigate, onSelectProject, isSection = false }) {
+export default function ProjectsPage({ onSelectProject }) {
   const [projects, setProjects] = useState(() => getInitialProjects());
 
   useEffect(() => {
     const unsubscribe = subscribeToProjects((data) => {
-      if (data && data.length > 0) {
-        const sorted = [...data].sort((a, b) => {
-          if (a.updatedAt && b.updatedAt) {
-            const dateA = new Date(a.updatedAt).getTime();
-            const dateB = new Date(b.updatedAt).getTime();
-            if (dateA !== dateB) return dateB - dateA;
-          }
-          return Number(a.id) - Number(b.id);
-        });
-        setProjects(sorted);
+      if (Array.isArray(data)) {
+        setProjects(sortProjects(data));
       }
     });
     return () => {
@@ -29,31 +23,27 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
     }
   };
 
-  const displayedList = isSection ? projects.slice(0, 4) : projects;
-
   return (
     <div className="bg-[#FAF8F5] dark:bg-ashara-dark min-h-screen animate-fade-in transition-colors duration-300">
-      
+
       {/* Terracotta Banner matching Figma */}
-      {!isSection && (
-        <section 
-          className="bg-[#DF6D27] text-white min-h-[100svh] px-6 lg:px-12 flex flex-col items-center justify-center text-center relative overflow-hidden"
-        >
-          <div className="max-w-4xl mx-auto space-y-6 relative z-10 w-full">
-            <blockquote className="font-serif italic text-3xl sm:text-4xl lg:text-[56px] font-light leading-snug">
-              “Design with passion, authenticity, and positivity to create spaces that inspire and uplift the soul.”
-            </blockquote>
-            <div className="space-y-2 pt-6">
-              <p className="text-[12px] sm:text-sm uppercase tracking-[0.28em] font-bold text-white">
-                Michael Dessalegn
-              </p>
-              <p className="text-[11px] sm:text-xs uppercase tracking-[0.32em] font-bold text-white/90">
-                Founder, CEO and Architect
-              </p>
-            </div>
+      <section
+        className="bg-[#DF6D27] text-white min-h-[100svh] px-6 lg:px-12 flex flex-col items-center justify-center text-center relative overflow-hidden"
+      >
+        <div className="max-w-4xl mx-auto space-y-6 relative z-10 w-full">
+          <blockquote className="font-serif italic text-3xl sm:text-4xl lg:text-[56px] font-light leading-snug">
+            “Design with passion, authenticity, and positivity to create spaces that inspire and uplift the soul.”
+          </blockquote>
+          <div className="space-y-2 pt-6">
+            <p className="text-[12px] sm:text-sm uppercase tracking-[0.28em] font-bold text-white">
+              Michael Dessalegn
+            </p>
+            <p className="text-[11px] sm:text-xs uppercase tracking-[0.32em] font-bold text-white/90">
+              Founder, CEO and Architect
+            </p>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
       {/* PROJECTS SECTION */}
       <section className="max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-16 pt-16 pb-24">
@@ -69,7 +59,7 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
 
         {/* 2-Column Grid matching Figma */}
         <div className="max-w-[1400px] mx-auto grid grid-cols-1 sm:grid-cols-2 gap-x-6 sm:gap-x-10 gap-y-12 sm:gap-y-16">
-            {displayedList.map((item) => (
+            {projects.map((item) => (
               <article
                 key={item.id}
                 role="button"
@@ -90,10 +80,7 @@ export default function ProjectsPage({ onNavigate, onSelectProject, isSection = 
                     alt={item.title}
                     loading="lazy"
                     decoding="async"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = item.fallbackImage;
-                    }}
+                    onError={(e) => handleImageError(e, item.fallbackImage)}
                     className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
                   />
                 </div>

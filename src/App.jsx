@@ -2,7 +2,7 @@ import React, { useState, useEffect, useLayoutEffect, lazy, Suspense } from 'rea
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import { DEFAULT_PROJECTS_LIST } from './data/defaultData';
-import { getInitialProjects } from './services/firebaseService';
+import { getInitialProjects } from './services/localCache';
 
 // Lazy-loaded Pages for instant initial load and optimal code-splitting
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -83,7 +83,15 @@ function getInitialSelectedProject() {
   const rawHash = window.location.hash.replace(/^#\/?/, '');
   const match = rawHash.match(/^project-detail\/(.+)$/i);
   if (match) {
-    return findProjectById(decodeURIComponent(match[1]));
+    // Malformed percent sequences (e.g. "#project-detail/50%") must never
+    // crash the app — fall back to the default project instead.
+    let id = match[1];
+    try {
+      id = decodeURIComponent(match[1]);
+    } catch {
+      // keep the raw id when decoding fails
+    }
+    return findProjectById(id);
   }
   return DEFAULT_PROJECTS_LIST[0];
 }
@@ -91,7 +99,6 @@ function getInitialSelectedProject() {
 export default function App() {
   const [activePage, setActivePage] = useState(getInitialPage); // 'home' | 'projects' | 'services' | 'about' | 'contact' | 'admin' | 'project-detail'
   const [selectedProject, setSelectedProject] = useState(getInitialSelectedProject);
-  const [projectSource, setProjectSource] = useState('projects');
   const [theme, setTheme] = useState('light');
 
   useEffect(() => {
@@ -150,9 +157,8 @@ export default function App() {
     }
   };
 
-  const handleSelectProject = (project, source = 'projects') => {
+  const handleSelectProject = (project) => {
     setSelectedProject(project);
-    if (source) setProjectSource(source);
     setActivePage('project-detail');
     window.location.hash = 'project-detail/' + encodeURIComponent(project.id);
   };
@@ -198,10 +204,9 @@ export default function App() {
           )}
 
           {activePage === 'project-detail' && (
-            <ProjectDetailPage 
-              project={selectedProject} 
-              source={projectSource}
-              onNavigate={handleNavigate} 
+            <ProjectDetailPage
+              project={selectedProject}
+              onNavigate={handleNavigate}
               onSelectProject={handleSelectProject}
             />
           )}

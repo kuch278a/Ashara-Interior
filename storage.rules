@@ -12,12 +12,14 @@ service firebase.storage {
         && request.auth.token.email in ['admin@ashara.com'];
     }
 
-    // Images folder — admins can upload, anyone can read
+    // Images folder — admins can upload, anyone can read.
+    // SVG is deliberately excluded: it is scriptable and the folder is
+    // served publicly to visitors.
     match /images/{allPaths=**} {
       allow read: if true;
       allow write: if isAdmin()
                    && request.resource.size < 10 * 1024 * 1024  // Max 10MB
-                   && request.resource.contentType.matches('image/.*');
+                   && request.resource.contentType.matches('image/(jpeg|jpg|png|webp|gif)');
     }
 
     // Default — deny everything else

@@ -15,7 +15,6 @@ export default function DnaHelixLoader({
   size = 'md',
   className = '',
   label = 'Loading...',
-  showBrand = false,
 }) {
   // 14 rungs form a complete, elegant double-helix pitch
   const rungs = Array.from({ length: 14 }, (_, i) => i);
@@ -42,18 +41,6 @@ export default function DnaHelixLoader({
           </div>
         ))}
       </div>
-
-      {/* Optional Brand Typography Lockup */}
-      {showBrand && (
-        <div className="dna-brand-lockup flex flex-col items-center mt-5 text-center">
-          <span className="font-serif font-bold text-2xl tracking-[0.24em] uppercase text-ashara-gold dark:text-ashara-gold">
-            Ashara
-          </span>
-          <span className="font-serif font-light text-xs tracking-[0.32em] uppercase text-ashara-gold/80 dark:text-ashara-gold/80 mt-1">
-            Interior Design and Building
-          </span>
-        </div>
-      )}
 
       {/* Optional Text Label */}
       {label && (

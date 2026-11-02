@@ -1,30 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { getInitialProjects, subscribeToProjects } from '../services/firebaseService';
+import sortProjects from '../utils/sortProjects';
+import { handleImageError } from '../utils/imageFallback';
 import asset_1 from '../assets/p6_revenues.jpg';
 import ceoImage from '../assets/michael_dessalegn.jpg';
 
-export default function AboutPage({ onNavigate, onSelectProject, isSection = false }) {
+export default function AboutPage({ onNavigate, onSelectProject }) {
   const [projects, setProjects] = useState(() => getInitialProjects());
 
   useEffect(() => {
     const unsubscribe = subscribeToProjects((data) => {
-      if (data && data.length > 0) {
-        const sorted = [...data].sort((a, b) => {
-          if (a.updatedAt && b.updatedAt) {
-            const dateA = new Date(a.updatedAt).getTime();
-            const dateB = new Date(b.updatedAt).getTime();
-            if (!Number.isNaN(dateA) && !Number.isNaN(dateB) && dateA !== dateB) {
-              return dateB - dateA;
-            }
-          }
-          const idA = Number(a.id);
-          const idB = Number(b.id);
-          if (!Number.isNaN(idA) && !Number.isNaN(idB) && idA !== idB) {
-            return idA - idB;
-          }
-          return 0;
-        });
-        setProjects(sorted);
+      if (Array.isArray(data)) {
+        setProjects(sortProjects(data));
       }
     });
     return () => {
@@ -104,9 +91,7 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
         </div>
       </section>
 
-      {!isSection && (
-        <>
-          {/* 4. CEO STATEMENT (Image Left, Text Right) */}
+      {/* 4. CEO STATEMENT (Image Left, Text Right) */}
       <section className="max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-16 pb-12">
         <div className="bg-[#EBF2F2] dark:bg-white/5 grid grid-cols-1 md:grid-cols-2">
           {/* Image & CEO Profile */}
@@ -210,11 +195,9 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
           </div>
         </div>
       </section>
-        </>
-      )}
 
       {/* 6. RECENT PROJECTS SECTION */}
-      {!isSection && recentProjects.length > 0 && (
+      {recentProjects.length > 0 && (
         <section className="max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-16 pt-8 pb-24 space-y-12 text-center">
 
           {/* Title with horizontal lines */}
@@ -246,10 +229,7 @@ export default function AboutPage({ onNavigate, onSelectProject, isSection = fal
                     alt={item.title}
                     loading="lazy"
                     decoding="async"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = item.fallbackImage;
-                    }}
+                    onError={(e) => handleImageError(e, item.fallbackImage)}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                   />
                 </div>

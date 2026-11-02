@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, Moon, Sun } from 'lucide-react';
 import asset_1 from '../assets/Ashara logo/Ashara Logo.png';
 import asset_2 from '../assets/client_logos/ashara_logo_teal.png';
+import { handleImageError } from '../utils/imageFallback';
 
 export default function Navbar({ activePage, setActivePage, theme, toggleTheme }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
+  // Progress width is driven via ref to avoid re-rendering the sticky
+  // header on every scroll event; only the isScrolled boolean is state.
+  const progressRef = useRef(null);
 
   const navLinks = [
     { id: 'home', label: 'Home' },
@@ -20,8 +23,8 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
     const handleScroll = () => {
       const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
       const currentScroll = window.scrollY;
-      if (totalScroll > 0) {
-        setScrollProgress((currentScroll / totalScroll) * 100);
+      if (totalScroll > 0 && progressRef.current) {
+        progressRef.current.style.width = `${(currentScroll / totalScroll) * 100}%`;
       }
       setIsScrolled(currentScroll > 20);
     };
@@ -40,9 +43,10 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
       isScrolled ? 'shadow-md border-transparent' : 'border-b border-gray-200 dark:border-white/10'
     }`}>
       {/* Real-time Scroll Progress Indicator Bar */}
-      <div 
+      <div
+        ref={progressRef}
         className="absolute top-0 left-0 h-[2px] bg-gradient-to-r from-ashara-teal via-ashara-gold to-ashara-terracotta z-50 transition-all duration-150 ease-out"
-        style={{ width: `${scrollProgress}%` }}
+        style={{ width: '0%' }}
       />
 
       <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-4 sm:py-5 flex items-center justify-between">
@@ -60,9 +64,7 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
                 alt="Ashara Interior Design and Building"
                 decoding="async"
                 className="absolute top-[0%] left-1/2 -translate-x-1/2 w-[56px] max-w-none h-auto transition-transform duration-300 group-hover:scale-105 dark:brightness-0 dark:invert no-outline outline-none"
-                onError={(e) => {
-                  e.target.src = asset_2;
-                }}
+                onError={(e) => handleImageError(e, asset_2)}
               />
             </div>
           </div>

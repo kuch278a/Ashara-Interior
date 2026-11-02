@@ -5,6 +5,8 @@ import Footer from '../components/Footer';
 import SectionTitle from '../components/SectionTitle';
 import ProjectCard from '../components/ProjectCard';
 import useTouchSwipe from '../hooks/useTouchSwipe';
+import sortProjects from '../utils/sortProjects';
+import { handleImageError } from '../utils/imageFallback';
 import { DEFAULT_TESTIMONIALS_LIST } from '../data/defaultData';
 import { getInitialProjects, subscribeToProjects, getInitialTestimonials, subscribeToTestimonials } from '../services/firebaseService';
 
@@ -114,25 +116,12 @@ export default function HomePage({ onNavigate, onSelectProject }) {
       setCurrentSlide((prev) => (prev + 1) % heroLen);
     }, 6000);
     return () => clearInterval(timer);
-  }, [works, isHeroPaused]);
+  }, [works, isHeroPaused, heroWorks.length]);
 
   useEffect(() => {
     const unsubscribe = subscribeToProjects((data) => {
       if (Array.isArray(data)) {
-        const sorted = [...data].sort((a, b) => {
-          if (a.updatedAt && b.updatedAt) {
-            const dateA = new Date(a.updatedAt).getTime();
-            const dateB = new Date(b.updatedAt).getTime();
-            if (dateA !== dateB) return dateB - dateA;
-          }
-          const numericA = Number(a.id);
-          const numericB = Number(b.id);
-          if (!Number.isNaN(numericA) && !Number.isNaN(numericB)) {
-            return numericA - numericB;
-          }
-          return String(a.id).localeCompare(String(b.id));
-        });
-        setWorks(sorted);
+        setWorks(sortProjects(data));
       }
     });
     return () => {
@@ -211,13 +200,10 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                 <img
                   src={work.image}
                   alt={work.title}
-                  loading="eager"
+                  loading={index === 0 ? 'eager' : 'lazy'}
                   decoding="async"
                   fetchPriority={index === 0 ? "high" : "auto"}
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = work.fallbackImage;
-                  }}
+                  onError={(e) => handleImageError(e, work.fallbackImage)}
                   className="w-full h-full object-cover"
                   style={{
                     transform: isActive ? 'scale(1.02)' : 'scale(1)',

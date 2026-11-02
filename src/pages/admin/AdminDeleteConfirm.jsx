@@ -1,7 +1,7 @@
 import React from 'react';
-import { Trash2, X, AlertCircle } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 
-export default function AdminDeleteConfirm({ deleteConfirm, onCancel, onConfirm }) {
+export default function AdminDeleteConfirm({ deleteConfirm, onCancel, onConfirm, isDeleting }) {
   if (!deleteConfirm) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
@@ -16,13 +16,13 @@ export default function AdminDeleteConfirm({ deleteConfirm, onCancel, onConfirm 
           Are you sure you want to remove <span className="font-semibold text-ashara-teal dark:text-white">"{deleteConfirm.title}"</span>? This action cannot be undone.
         </p>
         <div className="flex items-center justify-end gap-3 pt-2">
-          <button type="button" onClick={onCancel}
-            className="px-4 py-2 text-xs uppercase tracking-wider font-semibold text-ashara-teal dark:text-white hover:text-ashara-teal dark:hover:text-white transition">
+          <button type="button" onClick={onCancel} disabled={isDeleting}
+            className="px-4 py-2 text-xs uppercase tracking-wider font-semibold text-ashara-teal dark:text-white hover:text-ashara-teal dark:hover:text-white transition disabled:opacity-50">
             Cancel
           </button>
-          <button type="button" onClick={onConfirm}
-            className="px-5 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs uppercase tracking-wider font-bold rounded-sm transition shadow-sm">
-            Delete Permanently
+          <button type="button" onClick={onConfirm} disabled={isDeleting}
+            className="px-5 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs uppercase tracking-wider font-bold rounded-sm transition shadow-sm disabled:opacity-50">
+            {isDeleting ? 'Deleting...' : 'Delete Permanently'}
           </button>
         </div>
       </div>

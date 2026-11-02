@@ -5,7 +5,7 @@
 
 [![Live Site](https://img.shields.io/badge/Live_Site-GitHub_Pages-005F56?style=for-the-badge&logo=github)](https://kuch278a.github.io/Ashara-Interior)
 [![React](https://img.shields.io/badge/React-18.3-61DAFB?style=for-the-badge&logo=react)](https://react.dev/)
-[![Vite](https://img.shields.io/badge/Vite-5.0-646CFF?style=for-the-badge&logo=vite)](https://vitejs.dev/)
+[![Vite](https://img.shields.io/badge/Vite-8.3-646CFF?style=for-the-badge&logo=vite)](https://vitejs.dev/)
 [![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 [![Firebase](https://img.shields.io/badge/Firebase-Firestore_%26_Auth-FFCA28?style=for-the-badge&logo=firebase)](https://firebase.google.com/)
 
@@ -32,11 +32,11 @@
 
 ## 🌟 Overview
 
-**Ashara Interiors** is a high-performance luxury web platform engineered with **React 18**, **Vite 5**, and **Tailwind CSS 3**, backed by **Google Firebase** (Firestore, Authentication, Storage). It celebrates Ethiopian monumental civic heritage and contemporary architectural rigor — seamlessly pairing public storytelling with a bespoke content management system for studio projects, client testimonials, and consultation inquiries.
+**Ashara Interiors** is a high-performance luxury web platform engineered with **React 18**, **Vite 8**, and **Tailwind CSS 3**, backed by **Google Firebase** (Firestore, Authentication, Storage). It celebrates Ethiopian monumental civic heritage and contemporary architectural rigor — seamlessly pairing public storytelling with a bespoke content management system for studio projects, client testimonials, and consultation inquiries.
 
 ### Visual & Architectural Highlights
 - **Harmonious Dual Themes**: Initializes in an airy, warm Light Mode (`#E8EDF2` / `#FAF8F5`) with custom geometric tile background patterns (`bg_pattern.svg`), alongside a one-click toggle to a luxury Dark Mode (`#0A1525` sapphire night with `bg_pattern_dark.svg`).
-- **Editorial Typography**: Pairing *Cormorant Garamond* serif headings, *Plus Jakarta Sans* interface typography, and *Pinyon Script* decorative flourishes.
+- **Editorial Typography**: *Source Serif 4* variable font — serif display headings and interface typography in one family.
 - **Pure CSS 3D DNA Helix Preloader**: A horizontal double-helix loader with rotating strand nodes and smooth fade-out state.
 - **Social Interaction Row**: Brand-colored reveals on hover, floating tooltip labels, and an interactive "Copy Link" button with an animated confirmation pill badge.
 - **Distortion-Free Logo Rendering**: Clean vector & transparent PNG client emblems with dedicated optical outline exclusions.
@@ -46,23 +46,22 @@
 ## ✨ Key Features & User Experience
 
 ### 🏠 Home Page — Continuous Multi-Section Experience
-- **Full-Screen Hero Slideshow**: Auto cross-fade (2s transition, 6s interval), slide indicators with animated progress fill, keyboard arrow navigation, and touch swipe gestures.
+- **Full-Screen Hero Slideshow**: Auto-advancing cross-fade (6s interval) with slide indicators, prev/next arrows, and touch swipe gestures.
 - **Philosophy Narrative**: Editorial quote section with balanced serif typography and warm terracotta quotation accents.
-- **Our Works: Accordion Panel Carousel**: Dynamic horizontal expanding panels with cubic-bezier transitions, hover-to-expand, and autoplay.
+- **Our Works**: Responsive project card grid — 2×2 on mobile with slide-up captions, 2-column hover-reveal grid on desktop.
 - **Services Showcase**: "How We Work" atelier philosophy coupled with a multi-tier service suite (Residential, Commercial, Civic, Turnkey Construction).
 - **About Us Snapshot**: Studio lineage, atelier values, and 3 Core Architectural Pillars.
 - **Client Emblems Showcase**: Responsive 5-column grid featuring prestigious Ethiopian governmental, broadcasting, and corporate partner logos.
-- **Testimonial Carousel**: Verified client testimonials with 5-star ratings, quotes, and client attribution.
+- **Testimonial Carousel**: Featured client testimonials with quotes and client attribution, swipeable with drag-follow.
 - **Direct Consultation Section**: Integrated contact inquiry form with validation, WhatsApp click-to-chat, direct phone dial, and email dispatch.
 
 ### 🎯 Dedicated Page Isolation & Routing
 - Clicking any header navigation link (**`HOME`**, **`PROJECTS`**, **`SERVICES`**, **`ABOUT`**, **`CONTACT`**) isolates and renders **ONLY that selected page** with dedicated scroll preservation and clean URL hash navigation.
 
-### 🖼️ Projects Page — Pure CSS Masonry Portfolio
-- Zero-JavaScript layout utilizing modern CSS Grid with `grid-auto-flow: dense` for organic masonry cards.
-- Multi-column responsive layout (1 column on mobile → 2 on tablet → 3 to 4 on widescreen).
-- Interactive category filtering (All, Governmental, Private, Commercial, Corporate).
-- Card hover physics: subtle elevation, image zoom, and signature Ashara teal label reveal.
+### 🖼️ Projects Page — Editorial Portfolio Grid
+- Responsive CSS Grid layout (1 column on mobile → 2 columns from `sm` up).
+- Card hover physics: subtle elevation, image zoom, and keyboard-accessible cards (Enter/Space).
+- Broken-image fallback chain keeps cards presentable even when a CMS image URL fails.
 
 ### 📄 Project Detail Page — Immersive Architectural Case Study
 - Full-bleed hero photography with high-resolution details.
@@ -70,31 +69,6 @@
 - Full-width feature images and dual-column gallery grids.
 - Contextual "Recommended Projects" showcase and direct consultation booking trigger.
 
----
-
-## 🏛️ Client Showcase & Portfolio
-
-Ashara Interior Design & Building has delivered turnkey interiors and monumental civic architectural work for leading institutions across Ethiopia:
-
-| Client Institution | Sector / Scope |
-| :--- | :--- |
-| **Artificial Intelligence Institute (EAII)** | National AI research campus & executive facilities |
-| **Prosperity Party Headquarters** | Presidential executive suite & convention hall |
-| **Ministry of Revenues** | Monumental civic headquarters & executive spaces |
-| **Customs Commission** | Federal command & conference installations |
-| **Fana Broadcasting Corporate (FBC)** | Modern high-definition studio & media atelier |
-| **Ethiopian Press Agency** | National publishing newsrooms & corporate offices |
-| **Policy Studies Institute** | Research think-tank chambers & libraries |
-| **Oromia President's Office** | Regional presidential executive chambers |
-| **Addis Ababa Police Commission** | Metropolitan civic headquarters |
-| **Oromia Police Commission** | Security headquarters & administrative suites |
-| **United Beverages** | Neoclassical commercial head office & lounge |
-| **Amibara Properties** | Commercial real estate headquarters |
-| **Hill Bottom Recreation Center** | Luxury leisure, wellness & hospitality interiors |
-| **Mela Muziqa** | Creative acoustic studio & lounge design |
-| **Ethiopian Air Force** | Civic military headquarters installations |
-
----
 
 ## 🔐 Admin Portal & CMS
 
@@ -107,8 +81,8 @@ The studio CMS is hidden from the public navigation and protected via a secret U
 | Module | Functionality |
 | :--- | :--- |
 | **Projects Manager** | Create, update, and delete projects. Upload hero images + up to 8 gallery photos. Changes reflect instantly on live public pages without rebuilding. |
-| **Consultation Leads** | View incoming consultation inquiries in real time. Manage statuses (`New`, `Contacted`, `Archived`). One-click actions to contact via WhatsApp or Email. |
-| **Testimonials Manager** | Manage client reviews with star ratings, client names, and project associations. |
+| **Consultation Leads** | View incoming consultation inquiries in real time. Manage statuses (`New`, `Contacted`, `Completed`). One-click actions to contact via WhatsApp or Email. |
+| **Testimonials Manager** | Manage client reviews with client names, organizations, and project associations. |
 | **Live Database State** | Real-time Firebase connection health indicator with automatic local cache fallbacks. |
 
 ---
@@ -118,7 +92,7 @@ The studio CMS is hidden from the public navigation and protected via a secret U
 - **DNA Helix Preloader** (`DnaHelixLoader.jsx`): Pure CSS 3D rotating double helix with horizontal strand nodes, dynamic perspective, and clean white-mode aesthetic.
 - **Top Scroll Progress Indicator**: Real-time fixed gradient bar (`ashara-teal` → `ashara-gold` → `ashara-terracotta`) tracking viewport scroll depth.
 - **Social Media Share Buttons**:
-  - Brand-colored hover reveals: Instagram (`#E1306C`), Facebook (`#1877F2`), LinkedIn (`#0A66C2`), TikTok (`#000000`), Telegram (`#229ED9`).
+  - Brand-colored hover reveals: Instagram (`#E1306C`), Facebook (`#1877F2`), LinkedIn (`#0A66C2`), TikTok (`#000000`), WhatsApp (`#25D366`).
   - Floating label tooltips on hover.
   - Interactive **Copy Link** button with a click animation that triggers a green **"Copied!"** confirmation pill badge.
 - **Optical Outline Management**: Photography features a 1px soft optical border to ground images, while client emblems and brand marks use `.no-outline` rules to ensure transparent, crisp logos.
@@ -127,28 +101,12 @@ The studio CMS is hidden from the public navigation and protected via a secret U
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: [React 18](https://react.dev/) + [Vite 5](https://vitejs.dev/)
+- **Frontend**: [React 18](https://react.dev/) + [Vite 8](https://vitejs.dev/)
 - **Styling**: [Tailwind CSS 3](https://tailwindcss.com/) + Custom CSS3 3D animations
-- **Backend / Database**: [Firebase v10](https://firebase.google.com/) (Firestore, Auth, Storage)
+- **Backend / Database**: [Firebase v12](https://firebase.google.com/) (Firestore, Auth, Storage)
 - **Icons**: [Lucide React](https://lucide.dev/)
-- **Fonts**: Cormorant Garamond, Plus Jakarta Sans, Pinyon Script
+- **Fonts**: Source Serif 4 (Google Fonts, variable)
 - **Hosting & CI/CD**: GitHub Pages + GitHub Actions
-
----
-
-## 🎨 Design System & Palette
-
-```css
-/* Signature Brand Palette */
---ashara-teal:        #005F56;  /* Primary brand mark, navigation, titles */
---ashara-teal-dark:   #1E4E4E;  /* Project cards & deep headers */
---ashara-gold:        #C5A880;  /* Luxury borders, active indicators, stars */
---ashara-terracotta:  #DF6D27;  /* Accent badges and CTAs */
---ashara-charcoal:    #1A1816;  /* High-contrast body typography */
---ashara-cream:       #FAF8F5;  /* Light mode container background */
---ashara-dark:        #0A1525;  /* Sapphire dark mode body */
---ashara-sand:        #D5CDC4;  /* Muted typography in dark mode */
-```
 
 ---
 
@@ -158,14 +116,18 @@ The studio CMS is hidden from the public navigation and protected via a secret U
 Ashara-Interior/
 ├── .github/
 │   └── workflows/
-│       └── deploy.yml              # Automated GitHub Pages CI/CD workflow
+│       ├── deploy.yml              # Automated GitHub Pages CI/CD workflow
+│       └── tests.yml               # Lint + build + Playwright e2e on every push/PR
 ├── public/
 │   ├── 404.html                    # SPA hash router fallback for GitHub Pages
-│   └── robots.txt                  # Search engine directives (protects admin routes)
+│   ├── favicon.png                 # Browser tab and app icon
+│   ├── og-image.png                # Social share preview image
+│   └── robots.txt                  # Search engine directives (allow all)
 ├── src/
 │   ├── assets/
 │   │   ├── Ashara logo/            # High-res official brand marks
-│   │   ├── client_logos/           # 15 Institutional client emblems (PNG)
+│   │   ├── client_logos/           # Institutional client emblems + dark variants (PNG)
+│   │   ├── projects/               # Portfolio photography served by the site (145 images)
 │   │   ├── bg_pattern.svg          # Light mode geometric background pattern
 │   │   └── bg_pattern_dark.svg     # Dark mode geometric background pattern
 │   ├── components/
@@ -187,16 +149,27 @@ Ashara-Interior/
 │   │   ├── ContactPage.jsx         # Booking form, map details & direct contact actions
 │   │   ├── HomePage.jsx            # Multi-section continuous studio scroll
 │   │   ├── ProjectDetailPage.jsx   # Architectural case study & gallery
-│   │   ├── ProjectsPage.jsx        # CSS Masonry portfolio with category filter
+│   │   ├── ProjectsPage.jsx        # Two-column editorial portfolio grid
 │   │   └── ServicesPage.jsx        # 4-tier service showcase & workflow accordion
 │   ├── services/
-│   │   └── firebaseService.js      # Firestore database CRUD, Auth & Storage logic
+│   │   ├── firebaseService.js      # Firestore CRUD, Auth, Storage & real-time sync
+│   │   └── localCache.js           # SDK-free localStorage cache & default-list merges
 │   ├── utils/
-│   │   └── imageOptimizer.js       # Client-side image compression
+│   │   ├── imageFallback.js        # Shared <img> onError fallback handler
+│   │   ├── imageOptimizer.js       # Client-side image compression
+│   │   └── sortProjects.js         # Shared project ordering (updatedAt → id)
 │   ├── App.jsx                     # Top-level routing, dark mode & layout shell
 │   ├── index.css                   # Global styles, 3D keyframes & outline rules
-│   └── main.jsx                    # Application entry mount
-├── index.html                      # HTML5 template, DNA preloader & SEO metadata
+│   └── main.jsx                    # Application entry mount + root error boundary
+├── tests/
+│   └── e2e/                        # Playwright e2e suite (routing, admin gate, regressions)
+├── AGENTS.md                        # Conventions & contracts for AI coding agents
+├── eslint.config.js                 # ESLint flat config (correctness-focused rules)
+├── playwright.config.js             # Playwright config (boots dev server, Chromium)
+├── index.html                       # HTML5 template, DNA preloader & SEO metadata
+├── firestore.rules                 # Firestore security rules (admin allowlist, public reads)
+├── storage.rules                   # Cloud Storage security rules (admin-only image uploads)
+├── firebase.json                   # Rules deployment wiring for the Firebase CLI
 ├── tailwind.config.js              # Custom color tokens, fonts & luxury shadows
 └── vite.config.js                  # Vite configuration with relative base URL
 ```
@@ -229,32 +202,49 @@ npm run build
 ```
 The compiled, optimized distribution bundle will be output to `/dist`.
 
+### Linting & Tests
+```bash
+npm run lint        # ESLint (react-hooks, no-undef, unused vars)
+npm run test:e2e    # Playwright e2e suite (first run: npx playwright install chromium)
+```
+The e2e suite boots the dev server automatically and covers hash routing, the
+admin gate, contact-form validation, and regression tests for past defects.
+
 ---
 
 ## 🔑 Environment Variables
 
-The project includes built-in fallback configurations for the Ashara Studio Firebase project. To supply your own credentials, create a `.env` file in the root directory:
+All credentials come from environment variables (never hardcoded) — `.env` is gitignored and CI injects the values from GitHub secrets. Create a `.env` file in the root directory (see `.env.example`):
 
 ```env
+# Firebase (CMS backend)
 VITE_FIREBASE_API_KEY=your_firebase_api_key
 VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=your_project_id
 VITE_FIREBASE_STORAGE_BUCKET=your_project.firebasestorage.app
 VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 VITE_FIREBASE_APP_ID=your_app_id
+
+# EmailJS (enquiry notification emails)
+VITE_EMAILJS_SERVICE_ID=your_service_id
+VITE_EMAILJS_TEMPLATE_ID=your_template_id
+VITE_EMAILJS_PUBLIC_KEY=your_public_key
+
+# Admin portal access key (URL gate: ?key=<value>#admin)
+VITE_ADMIN_ACCESS_KEY=your_admin_access_key
 ```
 
 ---
 
 ## 🌐 CI/CD & Live Deployment
 
-The repository uses GitHub Actions for continuous automated deployment on every commit pushed to the `main` branch.
+The repository uses GitHub Actions. A **Tests** workflow (`.github/workflows/tests.yml`) runs lint, build, and the Playwright e2e suite on every push and pull request to `main`; deployment to GitHub Pages runs separately via `deploy.yml` on pushes to `main`.
 
 ### Automated GitHub Pages Workflow
 Whenever changes are pushed to `main`:
 1. GitHub Actions checks out the repository.
-2. Sets up Node.js and installs dependencies via `npm ci`.
-3. Runs `npm run build` using the configured base path (`/Ashara-Interior/`).
+2. Sets up Node.js and installs dependencies via `npm install`.
+3. Runs `npm run build` with a relative base path (`./`), which is what makes the subpath deployment work.
 4. Deploys the static bundle to the `gh-pages` deployment branch.
 
 To push an update:

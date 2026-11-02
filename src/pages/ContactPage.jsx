@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { submitConsultation } from '../services/firebaseService';
 import { Loader2, CheckCircle2, AlertCircle, Phone, Mail, MessageSquare, MapPin } from 'lucide-react';
 
-export default function ContactPage({ isSection = false }) {
+export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(false);

@@ -6,10 +6,10 @@
 
 export async function compressImage(file, options = {}) {
   const {
-    maxWidth = 1920,
+    maxWidth = 1600,
     maxHeight = 1280,
-    quality = 0.82,
-    maxSizeBytes = 400 * 1024 // 400KB target
+    quality = 0.72,
+    maxSizeBytes = 200 * 1024 // 200KB target — web delivery weight
   } = options;
 
   if (!file || !file.type || !file.type.startsWith('image/')) {
@@ -42,7 +42,7 @@ export async function compressImage(file, options = {}) {
         // Determine best quality based on original size
         let targetQuality = quality;
         if (file.size > 5 * 1024 * 1024) {
-          targetQuality = 0.78; // Aggressive compression for 5MB+ DSLR/phone photos
+          targetQuality = 0.65; // Aggressive compression for 5MB+ DSLR/phone photos
         }
 
         const canvas = document.createElement('canvas');

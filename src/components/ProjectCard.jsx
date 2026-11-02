@@ -1,4 +1,5 @@
 import React from 'react';
+import { handleImageError } from '../utils/imageFallback';
 
 // Project card shared by both Our Works grids: variant="mobile" is the 2x2
 // grid card (4/3 aspect, always-visible bottom caption); variant="desktop"
@@ -23,10 +24,7 @@ export default function ProjectCard({ work, onSelect, variant }) {
         src={work.image}
         loading="lazy"
         decoding="async"
-        onError={(e) => {
-          e.target.onerror = null;
-          e.target.src = work.fallbackImage;
-        }}
+        onError={(e) => handleImageError(e, work.fallbackImage)}
         alt={work.title}
         className={`absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out ${isMobile ? 'group-hover:scale-110 group-active:scale-110' : 'group-hover:scale-105'}`}
       />

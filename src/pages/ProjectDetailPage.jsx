@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DEFAULT_PROJECTS_LIST } from '../data/defaultData';
 import { getInitialProjects, subscribeToProjects } from '../services/firebaseService';
+import { handleImageError as sharedImageError } from '../utils/imageFallback';
 
 // Curated luxury architectural and interior photography fallbacks ensuring every project
 // displays the full, magazine-grade 8-image architectural layout in both desktop and mobile viewports.
@@ -15,13 +16,13 @@ const EDITORIAL_FALLBACK_IMAGES = [
   'https://images.unsplash.com/photo-1600573472591-ee6b68d14c68?auto=format&fit=crop&w=1800&q=85',
 ];
 
-export default function ProjectDetailPage({ onNavigate, onSelectProject, project, source = 'projects' }) {
+export default function ProjectDetailPage({ onNavigate, onSelectProject, project }) {
   // Live project resolution: fallback to first project or live project in storage
   const [allProjects, setAllProjects] = useState(() => getInitialProjects());
 
   useEffect(() => {
     const unsubProjects = subscribeToProjects((list) => {
-      if (list && list.length > 0) setAllProjects(list);
+      if (Array.isArray(list)) setAllProjects(list);
     });
     return () => {
       if (typeof unsubProjects === 'function') unsubProjects();
@@ -256,7 +257,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
                     src={rec.image}
                     loading="lazy"
                     decoding="async"
-                    onError={handleImageError}
+                    onError={(e) => sharedImageError(e, rec.fallbackImage)}
                     alt={rec.title}
                     className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
                   />
