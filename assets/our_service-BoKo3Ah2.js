@@ -1,0 +1,1 @@
+var e=new URL(`our_service-CEI7PVc2.jpg`,import.meta.url).href;export{e as t};
