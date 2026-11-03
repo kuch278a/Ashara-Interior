@@ -1,5 +1,8 @@
-import React from 'react';
-import { X, Save, Loader2, Upload, CheckCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import {
+  X, Save, Loader2, Upload, CheckCircle,
+  Plus, Trash2, ArrowLeft, ArrowRight, Link2
+} from 'lucide-react';
 
 // Matches the accept hints on both file inputs
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -13,7 +16,46 @@ export default function AdminProjectModal({
   onClose, onSubmit,
   formatFileSize,
 }) {
+  const [newGalleryUrl, setNewGalleryUrl] = useState('');
+
   if (!editingProject) return null;
+
+  const currentGalleryList = editingProject.gallery || [];
+  const totalGalleryCount = currentGalleryList.length + projectGalleryFiles.length;
+
+  const handleAddGalleryUrl = () => {
+    const trimmed = newGalleryUrl.trim();
+    if (!trimmed) return;
+    if (totalGalleryCount >= 8) {
+      alert('Gallery is limited to 8 images maximum.');
+      return;
+    }
+    setEditingProject({
+      ...editingProject,
+      gallery: [...currentGalleryList, trimmed]
+    });
+    setNewGalleryUrl('');
+  };
+
+  const handleRemoveGalleryUrl = (indexToRemove) => {
+    setEditingProject({
+      ...editingProject,
+      gallery: currentGalleryList.filter((_, i) => i !== indexToRemove)
+    });
+  };
+
+  const handleMoveGalleryUrl = (index, direction) => {
+    const targetIndex = index + direction;
+    if (targetIndex < 0 || targetIndex >= currentGalleryList.length) return;
+    const reordered = [...currentGalleryList];
+    const item = reordered[index];
+    reordered[index] = reordered[targetIndex];
+    reordered[targetIndex] = item;
+    setEditingProject({
+      ...editingProject,
+      gallery: reordered
+    });
+  };
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/75 backdrop-blur-sm animate-fade-in">
       <div className="bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 w-full max-w-4xl max-h-[92vh] overflow-y-auto rounded-sm shadow-2xl space-y-6 p-6 sm:p-8">
@@ -150,40 +192,132 @@ export default function AdminProjectModal({
                     }} />
                   </label>
                 )}
-                {/* Gallery Upload */}
-                <div className="space-y-2 pt-4 border-t border-gray-200 dark:border-white/10">
-                  <label className="block text-[10px] uppercase tracking-wider font-bold text-ashara-teal dark:text-white">Gallery Images (Sub-images for Detail Page)</label>
-                  {projectGalleryFiles.length > 0 ? (
-                    <div className="flex flex-wrap gap-2">
-                      {projectGalleryFiles.map((file, idx) => (
-                        <div key={idx} className="flex items-center gap-2 p-2 bg-ashara-teal/5 dark:bg-ashara-gold/10 border border-ashara-teal/20 dark:border-ashara-gold/30 rounded-sm">
-                          <CheckCircle className="w-4 h-4 text-ashara-teal dark:text-white shrink-0" />
-                          <div className="min-w-0">
-                            <p className="text-xs font-semibold text-ashara-teal dark:text-white truncate max-w-[180px]">{file.name}</p>
-                            <p className="text-[10px] text-ashara-teal dark:text-white">{formatFileSize(file.size)}</p>
+                {/* Gallery Manager */}
+                <div className="space-y-3 pt-4 border-t border-gray-200 dark:border-white/10">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-[10px] uppercase tracking-wider font-bold text-ashara-teal dark:text-white">
+                      Gallery Images (Sub-images for Detail Page)
+                    </label>
+                    <span className="text-[10px] font-mono font-medium text-ashara-teal/70 dark:text-ashara-gold">
+                      {totalGalleryCount}/8 slots used
+                    </span>
+                  </div>
+
+                  {/* Active Gallery Photos with reorder & delete */}
+                  {currentGalleryList.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-[9px] uppercase tracking-wider text-ashara-teal/70 dark:text-white/70 font-semibold">
+                        Active Gallery Photos ({currentGalleryList.length}) — Reorder or remove:
+                      </p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1">
+                        {currentGalleryList.map((url, idx) => (
+                          <div key={idx} className="flex items-center gap-2 p-2 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-sm">
+                            <div className="relative w-12 h-12 shrink-0 bg-gray-200 dark:bg-gray-800 rounded overflow-hidden">
+                              <img src={url} alt={`Gallery ${idx + 1}`} className="w-full h-full object-cover"
+                                onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=400&q=80'; }} />
+                              <span className="absolute bottom-0 right-0 bg-black/75 text-white text-[8px] font-mono px-1">#{idx + 1}</span>
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="text-[10px] font-mono text-ashara-teal dark:text-white truncate" title={url}>{url}</p>
+                            </div>
+                            <div className="flex items-center gap-0.5 shrink-0">
+                              <button
+                                type="button"
+                                disabled={idx === 0}
+                                onClick={() => handleMoveGalleryUrl(idx, -1)}
+                                className="p-1 text-ashara-teal dark:text-white hover:bg-gray-200 dark:hover:bg-white/10 rounded-sm disabled:opacity-20 disabled:hover:bg-transparent"
+                                title="Move left/up"
+                              >
+                                <ArrowLeft className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                type="button"
+                                disabled={idx === currentGalleryList.length - 1}
+                                onClick={() => handleMoveGalleryUrl(idx, 1)}
+                                className="p-1 text-ashara-teal dark:text-white hover:bg-gray-200 dark:hover:bg-white/10 rounded-sm disabled:opacity-20 disabled:hover:bg-transparent"
+                                title="Move right/down"
+                              >
+                                <ArrowRight className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveGalleryUrl(idx)}
+                                className="p-1 text-rose-500 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-sm transition"
+                                title="Remove photo from gallery"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
                           </div>
-                          <button type="button" onClick={() => { setProjectGalleryFiles(prev => prev.filter((_, i) => i !== idx)); }}
-                            className="text-ashara-teal dark:text-white hover:text-rose-500 dark:hover:text-rose-400 p-1 text-xs" title="Remove">
-                            <X className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
-                  ) : (
+                  )}
+
+                  {/* Add photo by direct URL */}
+                  <div className="flex items-center gap-2 pt-1">
+                    <div className="relative flex-1">
+                      <Link2 className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                      <input
+                        type="url"
+                        value={newGalleryUrl}
+                        onChange={(e) => setNewGalleryUrl(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddGalleryUrl(); } }}
+                        placeholder="Paste image URL to add to gallery (https://...)"
+                        disabled={totalGalleryCount >= 8}
+                        className="w-full pl-9 pr-3 py-2 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs text-ashara-teal dark:text-white rounded-sm focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold disabled:opacity-50"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleAddGalleryUrl}
+                      disabled={!newGalleryUrl.trim() || totalGalleryCount >= 8}
+                      className="px-3.5 py-2 bg-ashara-teal hover:bg-ashara-teal-hover dark:bg-ashara-gold dark:hover:bg-ashara-gold/90 text-white dark:text-ashara-dark text-xs font-semibold rounded-sm transition flex items-center gap-1.5 disabled:opacity-40 shrink-0"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Add URL</span>
+                    </button>
+                  </div>
+
+                  {/* Pending file uploads for gallery */}
+                  {projectGalleryFiles.length > 0 && (
+                    <div className="space-y-1.5">
+                      <p className="text-[9px] uppercase tracking-wider text-ashara-teal/70 dark:text-white/70 font-semibold">
+                        Queued for Upload ({projectGalleryFiles.length}):
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {projectGalleryFiles.map((file, idx) => (
+                          <div key={idx} className="flex items-center gap-2 p-2 bg-ashara-teal/5 dark:bg-ashara-gold/10 border border-ashara-teal/20 dark:border-ashara-gold/30 rounded-sm">
+                            <CheckCircle className="w-4 h-4 text-ashara-teal dark:text-white shrink-0" />
+                            <div className="min-w-0">
+                              <p className="text-xs font-semibold text-ashara-teal dark:text-white truncate max-w-[180px]">{file.name}</p>
+                              <p className="text-[10px] text-ashara-teal dark:text-white">{formatFileSize(file.size)}</p>
+                            </div>
+                            <button type="button" onClick={() => { setProjectGalleryFiles(prev => prev.filter((_, i) => i !== idx)); }}
+                              className="text-ashara-teal dark:text-white hover:text-rose-500 dark:hover:text-rose-400 p-1 text-xs" title="Remove">
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Upload button for gallery images */}
+                  {totalGalleryCount < 8 && (
                     <label className="flex flex-col items-center justify-center gap-1.5 w-full p-4 bg-gray-50 dark:bg-white/5 border-2 border-dashed border-gray-300 dark:border-white/15 hover:border-ashara-teal dark:hover:border-ashara-gold text-ashara-teal dark:text-white cursor-pointer transition-all duration-200 group rounded-sm">
                       <Upload className="w-5 h-5 text-ashara-teal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-teal transition" />
-                      <span className="text-xs uppercase tracking-wider font-semibold group-hover:text-ashara-teal dark:group-hover:text-ashara-teal transition">Upload gallery images (multiple)</span>
-                      <span className="text-[10px] text-ashara-teal dark:text-white font-light">Supports JPG, PNG, WEBP — max 10MB per image (up to 8 images)</span>
+                      <span className="text-xs uppercase tracking-wider font-semibold group-hover:text-ashara-teal dark:group-hover:text-ashara-teal transition">Upload gallery image files</span>
+                      <span className="text-[10px] text-ashara-teal/70 dark:text-white/70 font-light">Supports JPG, PNG, WEBP — up to {8 - totalGalleryCount} more image(s)</span>
                       <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple className="hidden" onChange={(e) => {
                         const files = Array.from(e.target.files || []);
-                        // Reset so re-selecting the same files fires onChange again
                         e.target.value = '';
                         const validFiles = files.filter(f => ALLOWED_IMAGE_TYPES.includes(f.type) && f.size <= 10 * 1024 * 1024);
                         if (validFiles.length < files.length) {
-                          alert('Some files were ignored because they are not valid images or exceed the 10MB limit.');
+                          alert('Some files were ignored because they are not valid images or exceed 10MB.');
                         }
                         if (validFiles.length > 0) {
-                          const room = Math.max(0, 8 - projectGalleryFiles.length);
+                          const room = Math.max(0, 8 - totalGalleryCount);
                           const accepted = validFiles.slice(0, room);
                           if (accepted.length < validFiles.length) {
                             alert(`Gallery is limited to 8 images — ${validFiles.length - accepted.length} file(s) were not added.`);
@@ -194,19 +328,6 @@ export default function AdminProjectModal({
                         }
                       }} />
                     </label>
-                  )}
-                  {(editingProject.gallery && editingProject.gallery.length > 0) && (
-                    <div className="pt-2">
-                      <p className="text-[9px] uppercase tracking-wider text-ashara-teal dark:text-white mb-1">Current gallery URLs:</p>
-                      <div className="flex flex-wrap gap-2">
-                        {editingProject.gallery.map((url, idx) => (
-                          <div key={idx} className="flex items-center gap-2 p-2 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-sm">
-                            <img src={url} alt="" className="w-10 h-10 object-cover rounded" />
-                            <input type="text" value={url} readOnly className="flex-1 px-2 py-1 bg-transparent text-[10px] text-ashara-teal dark:text-white truncate" />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
                   )}
                 </div>
                 {/* URL input fallback */}

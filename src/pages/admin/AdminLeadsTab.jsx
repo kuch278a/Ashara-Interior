@@ -1,9 +1,87 @@
 import React from 'react';
-import { Users, Mail, Phone, Clock, MessageSquare, Copy, Check, Trash2 } from 'lucide-react';
+import {
+  Users, Mail, Phone, Clock, MessageSquare, Copy, Check, Trash2,
+  FileSpreadsheet, FileJson
+} from 'lucide-react';
 
 export default function AdminLeadsTab({ filteredLeads, searchQuery, copiedId, onCopy, onUpdateStatus, onDelete }) {
+  const handleExportCsv = () => {
+    if (filteredLeads.length === 0) return;
+    const headers = ['ID', 'Date', 'Full Name', 'Email', 'Telephone', 'Status', 'Inquiry Message'];
+    const rows = filteredLeads.map((lead) => [
+      lead.id || '',
+      lead.createdAt ? new Date(lead.createdAt).toISOString() : '',
+      lead.fullName || '',
+      lead.email || '',
+      lead.telephone || '',
+      lead.status || 'new',
+      (lead.enquiry || lead.message || '').replace(/"/g, '""')
+    ]);
+    const csvContent = [
+      headers.join(','),
+      ...rows.map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+    ].join('\r\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `ashara-consultation-leads-${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleExportJson = () => {
+    if (filteredLeads.length === 0) return;
+    const jsonString = JSON.stringify(filteredLeads, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `ashara-consultation-leads-${new Date().toISOString().slice(0, 10)}.json`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-6">
+      {filteredLeads.length > 0 && (
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 rounded-sm shadow-sm">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] uppercase tracking-wider font-bold text-ashara-teal/70 dark:text-ashara-gold">
+              Consultation Leads
+            </span>
+            <span className="text-xs font-semibold px-2 py-0.5 bg-ashara-teal/10 dark:bg-white/10 text-ashara-teal dark:text-white rounded-full">
+              {filteredLeads.length} record{filteredLeads.length === 1 ? '' : 's'}
+            </span>
+          </div>
+          <div className="flex items-center gap-2 self-end sm:self-auto">
+            <button
+              type="button"
+              onClick={handleExportCsv}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 hover:bg-emerald-50 dark:bg-white/5 dark:hover:bg-emerald-950/30 border border-gray-200 hover:border-emerald-400 dark:border-white/10 text-ashara-teal dark:text-white text-xs font-medium rounded-sm transition"
+              title="Download consultation inquiries as CSV spreadsheet"
+            >
+              <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span>Export CSV</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleExportJson}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 hover:bg-ashara-teal/10 dark:bg-white/5 dark:hover:bg-white/10 border border-gray-200 hover:border-ashara-teal dark:border-white/10 text-ashara-teal dark:text-white text-xs font-medium rounded-sm transition"
+              title="Download consultation inquiries as JSON"
+            >
+              <FileJson className="w-3.5 h-3.5 text-ashara-teal dark:text-ashara-gold" />
+              <span>Export JSON</span>
+            </button>
+          </div>
+        </div>
+      )}
+
       {filteredLeads.length === 0 ? (
         <div className="p-16 text-center bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 rounded-sm space-y-4">
           <div className="w-14 h-14 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto">

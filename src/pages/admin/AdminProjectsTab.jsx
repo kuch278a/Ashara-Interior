@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layers, Plus, Edit3, Trash2 } from 'lucide-react';
+import { Layers, Plus, Edit3, Trash2, Image as ImageIcon } from 'lucide-react';
 
 export default function AdminProjectsTab({
   filteredProjects,
@@ -40,8 +40,20 @@ export default function AdminProjectsTab({
                 <img src={proj.image} alt={proj.title}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'; }} />
-                <div className="absolute top-3 left-3 bg-black/75 backdrop-blur-sm text-white text-[9px] uppercase tracking-wider px-2.5 py-1 font-semibold rounded-sm border border-white/15">
-                  {proj.category || proj.tag || 'GOVERNMENTAL'}
+                <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 items-center">
+                  <span className="bg-black/75 backdrop-blur-sm text-white text-[9px] uppercase tracking-wider px-2.5 py-1 font-semibold rounded-sm border border-white/15">
+                    {proj.category || proj.tag || 'GOVERNMENTAL'}
+                  </span>
+                  {proj.isHero && (
+                    <span className="bg-ashara-gold/90 text-ashara-dark text-[9px] uppercase tracking-wider px-2 py-1 font-bold rounded-sm backdrop-blur-sm">
+                      Hero
+                    </span>
+                  )}
+                  {proj.isOurWorks && (
+                    <span className="bg-emerald-600/90 text-white text-[9px] uppercase tracking-wider px-2 py-1 font-bold rounded-sm backdrop-blur-sm">
+                      Our Works
+                    </span>
+                  )}
                 </div>
                 <button onClick={() => onOpenEdit(proj)}
                   className="absolute bottom-3 right-3 p-2 bg-white/90 dark:bg-ashara-charcoal/90 text-ashara-teal dark:text-white rounded-sm shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-ashara-teal hover:text-white dark:hover:bg-ashara-gold dark:hover:text-ashara-dark"
@@ -58,7 +70,14 @@ export default function AdminProjectsTab({
                   <p className="text-xs text-ashara-teal dark:text-white font-light line-clamp-3 leading-relaxed">{proj.description}</p>
                 </div>
                 <div className="pt-3.5 border-t border-gray-100 dark:border-white/5 flex items-center justify-between text-xs">
-                  <span className="text-[10px] font-mono text-ashara-teal dark:text-white">ID: {String(proj.id).slice(-8)}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-mono text-ashara-teal/70 dark:text-white/70">ID: {String(proj.id).slice(-8)}</span>
+                    <span className="text-[10px] text-gray-300 dark:text-white/20">•</span>
+                    <span className="text-[10px] text-ashara-teal/80 dark:text-white/80 flex items-center gap-1 font-medium">
+                      <ImageIcon className="w-3 h-3 text-ashara-teal/60 dark:text-ashara-gold" />
+                      {(proj.gallery?.length || 0) + (proj.image ? 1 : 0)} photos
+                    </span>
+                  </div>
                   <div className="flex items-center gap-1">
                     <button onClick={() => onOpenEdit(proj)}
                       className="p-1.5 text-ashara-teal hover:text-ashara-teal dark:text-white dark:hover:text-white transition rounded-sm hover:bg-gray-100 dark:hover:bg-white/5"

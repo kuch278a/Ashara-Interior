@@ -3,7 +3,7 @@ import {
   Users, Layers, Database, Plus,
   RefreshCw, ChevronRight, ArrowUpRight, Building2,
   CheckCircle2, SlidersHorizontal, Filter, Search, X,
-  LogOut, Quote, Menu
+  LogOut, Quote, Menu, Download, UploadCloud
 } from 'lucide-react';
 import {
   getConsultations, getDynamicProjects, saveProject, deleteProject,
@@ -92,6 +92,9 @@ export default function AdminPortal({ onNavigate }) {
   const [copiedId,      setCopiedId]      = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDeleting,    setIsDeleting]    = useState(false);
+  const fileRestoreInputRef = useRef(null);
+  const [restoreCandidate, setRestoreCandidate] = useState(null);
+  const [isRestoring, setIsRestoring] = useState(false);
   const toastTimerRef = useRef(null);
   // Id of the lead whose status update is in flight (guards concurrent updates)
   const updatingLeadRef = useRef(null);
@@ -264,6 +267,124 @@ export default function AdminPortal({ onNavigate }) {
     } catch { showToast('Failed to delete item', 'error'); }
     finally { setIsDeleting(false); }
   };
+
+  const handleExportCatalog = () => {
+    try {
+      const backupData = {
+        format: 'ashara-interiors-catalog-backup',
+        version: '1.0',
+        exportedAt: new Date().toISOString(),
+        counts: {
+          projects: projects.length,
+          testimonials: testimonials.length,
+          leads: leads.length,
+        },
+        projects,
+        testimonials,
+        leads,
+      };
+      const dataStr = JSON.stringify(backupData, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `ashara-studio-backup-${new Date().toISOString().slice(0, 10)}.json`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      showToast('Studio catalog backup downloaded successfully');
+    } catch {
+      showToast('Failed to export catalog backup', 'error');
+    }
+  };
+
+  const handleFileSelectForRestore = (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const parsed = JSON.parse(event.target.result);
+        const hasProjects = Array.isArray(parsed.projects) && parsed.projects.length > 0;
+        const hasTestimonials = Array.isArray(parsed.testimonials) && parsed.testimonials.length > 0;
+        const hasLeads = Array.isArray(parsed.leads) && parsed.leads.length > 0;
+
+        if (!hasProjects && !hasTestimonials && !hasLeads) {
+          showToast('Invalid backup file: no projects, testimonials, or leads found', 'error');
+          return;
+        }
+
+        setRestoreCandidate({
+          projects: hasProjects ? parsed.projects : [],
+          testimonials: hasTestimonials ? parsed.testimonials : [],
+          leads: hasLeads ? parsed.leads : [],
+          exportedAt: parsed.exportedAt || null,
+        });
+      } catch {
+        showToast('Could not parse JSON backup file', 'error');
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const handleExecuteRestore = async () => {
+    if (!restoreCandidate || isRestoring) return;
+    setIsRestoring(true);
+    try {
+      let restoredProjectsCount = 0;
+      let restoredTestimonialsCount = 0;
+
+      if (restoreCandidate.projects.length > 0) {
+        for (const proj of restoreCandidate.projects) {
+          if (proj && (proj.title || proj.id)) {
+            const res = await saveProject(proj);
+            if (res.success !== false) restoredProjectsCount++;
+          }
+        }
+      }
+
+      if (restoreCandidate.testimonials.length > 0) {
+        for (const test of restoreCandidate.testimonials) {
+          if (test && (test.clientName || test.id)) {
+            const res = await saveTestimonial(test);
+            if (res.success !== false) restoredTestimonialsCount++;
+          }
+        }
+      }
+
+      if (restoreCandidate.leads.length > 0) {
+        try {
+          const currentLeads = [...(leads || [])];
+          const existingIds = new Set(currentLeads.map((l) => String(l.id)));
+          let addedLeads = 0;
+          restoreCandidate.leads.forEach((l) => {
+            if (l && l.id && !existingIds.has(String(l.id))) {
+              currentLeads.push(l);
+              addedLeads++;
+            }
+          });
+          if (addedLeads > 0) {
+            localStorage.setItem('ashara_consultations', JSON.stringify(currentLeads));
+          }
+        } catch (err) {
+          console.warn('Leads restore cache error:', err);
+        }
+      }
+
+      await loadAllData(true);
+      showToast(
+        `Catalog restored: ${restoredProjectsCount} project(s), ${restoredTestimonialsCount} review(s) merged.`
+      );
+      setRestoreCandidate(null);
+    } catch {
+      showToast('Error restoring catalog data', 'error');
+    } finally {
+      setIsRestoring(false);
+    }
+  };
   const newLeadsCount = useMemo(() => leads.filter(l => (l.status || 'new').toLowerCase() === 'new').length, [leads]);
   const filteredProjects = useMemo(() => projects.filter(p => {
     const s = !searchQuery || (p.title||'').toLowerCase().includes(searchQuery.toLowerCase()) || (p.subtitle||'').toLowerCase().includes(searchQuery.toLowerCase()) || (p.description||'').toLowerCase().includes(searchQuery.toLowerCase());
@@ -373,6 +494,31 @@ export default function AdminPortal({ onNavigate }) {
           <h1 className="font-serif text-lg sm:text-xl text-ashara-teal dark:text-white font-normal truncate">{activeNav ? activeNav.label : 'Dashboard'}</h1>
         </div>
         <div className="ml-auto flex items-center gap-2">
+          {/* Backup & Restore Controls */}
+          <div className="flex items-center gap-1 border-r border-gray-200 dark:border-white/10 pr-2 mr-0.5">
+            <button
+              onClick={handleExportCatalog}
+              title="Export Studio Catalog Backup (JSON)"
+              className="p-2 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 text-ashara-teal dark:text-white rounded-sm transition"
+            >
+              <Download className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => fileRestoreInputRef.current?.click()}
+              title="Restore Studio Catalog (JSON)"
+              className="p-2 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 text-ashara-teal dark:text-white rounded-sm transition"
+            >
+              <UploadCloud className="w-4 h-4" />
+            </button>
+            <input
+              type="file"
+              ref={fileRestoreInputRef}
+              accept=".json,application/json"
+              onChange={handleFileSelectForRestore}
+              className="hidden"
+            />
+          </div>
+
           {(activeTab === 'projects' || activeTab === 'testimonials') && (
             <button onClick={activeTab === 'projects' ? handleOpenNewProject : handleOpenNewTestimonial}
               className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 bg-ashara-teal hover:bg-ashara-teal-hover dark:bg-ashara-gold dark:hover:bg-ashara-gold/90 text-white dark:text-ashara-dark text-xs uppercase tracking-wider font-bold rounded-sm transition shadow-sm">
@@ -504,6 +650,67 @@ export default function AdminPortal({ onNavigate }) {
         onConfirm={handleConfirmDelete}
         isDeleting={isDeleting}
       />
+
+      {/* Restore Catalog Confirmation Modal */}
+      {restoreCandidate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 rounded-sm shadow-2xl p-6 sm:p-8 max-w-md w-full space-y-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-ashara-teal/10 dark:bg-ashara-gold/15 text-ashara-teal dark:text-ashara-gold flex items-center justify-center shrink-0">
+                <UploadCloud className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-serif text-lg font-bold text-ashara-teal dark:text-white">
+                  Restore Studio Catalog
+                </h3>
+                <p className="text-xs text-ashara-teal/70 dark:text-white/70">
+                  Confirm catalog data import
+                </p>
+              </div>
+            </div>
+
+            <div className="p-4 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-sm space-y-2 text-xs text-ashara-teal dark:text-white">
+              <p className="font-semibold uppercase tracking-wider text-[10px] text-ashara-teal/70 dark:text-ashara-gold">
+                Found in backup file:
+              </p>
+              <ul className="space-y-1 font-mono text-xs">
+                <li>• {restoreCandidate.projects.length} Architectural Project(s)</li>
+                <li>• {restoreCandidate.testimonials.length} Client Testimonial(s)</li>
+                <li>• {restoreCandidate.leads.length} Consultation Lead(s)</li>
+              </ul>
+              {restoreCandidate.exportedAt && (
+                <p className="text-[10px] text-gray-400 dark:text-white/40 pt-1">
+                  Created: {new Date(restoreCandidate.exportedAt).toLocaleString()}
+                </p>
+              )}
+            </div>
+
+            <p className="text-xs text-ashara-teal/80 dark:text-white/80 leading-relaxed">
+              This will merge the backup items with your current studio catalog and sync them with both local cache and Firestore.
+            </p>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setRestoreCandidate(null)}
+                disabled={isRestoring}
+                className="px-4 py-2 text-xs uppercase tracking-wider font-semibold text-ashara-teal dark:text-white hover:opacity-75 transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleExecuteRestore}
+                disabled={isRestoring}
+                className="inline-flex items-center gap-2 px-5 py-2 bg-ashara-teal hover:bg-ashara-teal-hover dark:bg-ashara-gold dark:hover:bg-ashara-gold/90 text-white dark:text-ashara-dark text-xs uppercase tracking-wider font-bold rounded-sm transition shadow-sm disabled:opacity-50"
+              >
+                {isRestoring ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <UploadCloud className="w-3.5 h-3.5" />}
+                <span>{isRestoring ? 'Restoring...' : 'Confirm & Restore'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
