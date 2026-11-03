@@ -4,6 +4,8 @@ import sortProjects from '../utils/sortProjects';
 import { handleImageError } from '../utils/imageFallback';
 import asset_1 from '../assets/p6_revenues.jpg';
 import ceoImage from '../assets/michael_dessalegn.jpg';
+import ourServiceImg from '../assets/our_service.jpg';
+import visionImg from '../assets/projects/stitched_adama_lounge.jpeg';
 
 export default function AboutPage({ onNavigate, onSelectProject }) {
   const [projects, setProjects] = useState(() => getInitialProjects());
@@ -74,7 +76,7 @@ export default function AboutPage({ onNavigate, onSelectProject }) {
               experienced professionals delivers comprehensive services from project inception to
               completion, ensuring that we deliver exactly what our clients desire and more. We
               boast a professional and creative team with expertise in handling projects of varying
-              scales
+              scales.
             </p>
           </div>
         </div>
@@ -144,7 +146,7 @@ export default function AboutPage({ onNavigate, onSelectProject }) {
 
       {/* 5. OUR MISSION (Text Left, Image Right) */}
       <section className="max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-16 pb-12">
-        <div className="bg-[#EBF2F2] dark:bg-white/5 grid grid-cols-1 md:grid-cols-2">
+        <div className="bg-[#EBF2F2] dark:bg-white/5 grid grid-cols-1 md:grid-cols-2 rounded-sm overflow-hidden group">
           <div className="p-10 lg:p-16 flex flex-col justify-center">
             <div className="flex items-center gap-6 mb-6">
               <h3 className="font-serif text-2xl text-ashara-teal dark:text-white font-normal whitespace-nowrap">Our Mission</h3>
@@ -159,11 +161,12 @@ export default function AboutPage({ onNavigate, onSelectProject }) {
               </p>
             </div>
           </div>
-          <div className="h-[300px] md:h-auto">
+          <div className="h-[300px] md:h-auto overflow-hidden">
             <img  
-              src={asset_1}
-              alt="Our Mission"
-              className="w-full h-full object-cover"
+              src={ourServiceImg}
+              alt="Our Mission — Architectural Craftsmanship"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              onError={(e) => handleImageError(e, asset_1)}
             />
           </div>
         </div>
@@ -171,12 +174,13 @@ export default function AboutPage({ onNavigate, onSelectProject }) {
 
       {/* 5. OUR VISION (Image Left, Text Right) */}
       <section className="max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-16 pb-24">
-        <div className="bg-[#EBF2F2] dark:bg-white/5 grid grid-cols-1 md:grid-cols-2">
-          <div className="h-[300px] md:h-auto order-last md:order-first">
+        <div className="bg-[#EBF2F2] dark:bg-white/5 grid grid-cols-1 md:grid-cols-2 rounded-sm overflow-hidden group">
+          <div className="h-[300px] md:h-auto order-last md:order-first overflow-hidden">
             <img
-              src={asset_1}
-              alt="Our Vision"
-              className="w-full h-full object-cover"
+              src={visionImg}
+              alt="Our Vision — Monumental Spaces"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              onError={(e) => handleImageError(e, asset_1)}
             />
           </div>
           <div className="p-10 lg:p-16 flex flex-col justify-center">
@@ -189,7 +193,7 @@ export default function AboutPage({ onNavigate, onSelectProject }) {
                 Our vision is to be a leading interior design firm known for our commitment to positivity, customization, and creativity. We aim to continue creating spaces that bring joy, fulfillment, and inspiration to our clients, setting new standards in the industry for personalized and innovative design solutions. 
               </p>
               <p>
-                Through our work, we aspire to make a positive impact on the lives of those who experience our designs, fostering connections and enhancing well-being through the power of thoughtful and intentional spaces
+                Through our work, we aspire to make a positive impact on the lives of those who experience our designs, fostering connections and enhancing well-being through the power of thoughtful and intentional spaces.
               </p>
             </div>
           </div>

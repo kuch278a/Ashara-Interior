@@ -216,9 +216,9 @@ export default function HomePage({ onNavigate, onSelectProject }) {
           })}
         </div>
 
-        <div className="absolute bottom-[160px] sm:bottom-[128px] left-4 pr-4 sm:left-16 sm:pr-16 lg:left-24 lg:pr-24 z-10">
+        <div className="absolute bottom-[140px] sm:bottom-[110px] left-4 pr-4 sm:left-12 sm:pr-12 lg:left-20 lg:pr-20 z-10 max-w-3xl">
           {heroWorks[activeHeroSlide] && (
-            <h1 className="font-serif text-[28px] sm:text-[56px] leading-tight sm:leading-[64px] font-light text-white tracking-tight max-w-4xl" key={`title-${activeHeroSlide}`}>
+            <h1 key={`title-${activeHeroSlide}`} className="font-serif text-[20px] sm:text-[32px] md:text-[38px] lg:text-[42px] leading-snug sm:leading-[44px] lg:leading-[48px] font-light text-white tracking-tight drop-shadow-md animate-fade-in">
               {heroWorks[activeHeroSlide].title}
             </h1>
           )}
@@ -377,7 +377,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
         </button>
 
         {/* Pagination Indicators */}
-        <div className="flex justify-center gap-2 mt-8">
+        <div className="flex justify-center items-center gap-2 mt-8">
           {testimonials.map((_, idx) => (
             <button
               key={idx}
@@ -386,10 +386,10 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                 setCurrentTestimonial(idx);
                 pauseAndResumeTestimonials();
               }}
-              className={`w-2 h-2 rounded-none transition-colors ${
+              className={`h-1.5 rounded-full transition-all duration-300 ${
                 activeTestimonial === idx
-                  ? 'bg-ashara-teal'
-                  : 'bg-gray-300 dark:bg-white/15 hover:bg-gray-400'
+                  ? 'w-8 bg-ashara-teal dark:bg-ashara-gold'
+                  : 'w-2 bg-gray-300 dark:bg-white/20 hover:bg-gray-400 dark:hover:bg-white/40'
               }`}
               aria-label={`Go to testimonial ${idx + 1}`}
               aria-current={activeTestimonial === idx ? 'true' : 'false'}

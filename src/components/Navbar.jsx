@@ -33,14 +33,27 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Close mobile drawer on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setMobileMenuOpen(false);
+    };
+    if (mobileMenuOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [mobileMenuOpen]);
+
   const handleNavClick = (id) => {
     setActivePage(id);
     setMobileMenuOpen(false);
   };
 
   return (
-    <header className={`sticky top-0 z-50 w-full transition-all duration-300 pointer-events-auto bg-white dark:bg-ashara-dark ${
-      isScrolled ? 'shadow-md border-transparent' : 'border-b border-gray-200 dark:border-white/10'
+    <header className={`sticky top-0 z-50 w-full transition-all duration-300 pointer-events-auto ${
+      isScrolled
+        ? 'bg-white/95 dark:bg-ashara-dark/95 backdrop-blur-md shadow-md border-transparent'
+        : 'bg-white dark:bg-ashara-dark border-b border-gray-200 dark:border-white/10'
     }`}>
       {/* Real-time Scroll Progress Indicator Bar */}
       <div
@@ -131,26 +144,37 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
 
       {/* Mobile Dropdown Menu */}
       {mobileMenuOpen && (
-        <div id="mobile-menu" className="pointer-events-auto lg:hidden w-full absolute top-full left-0 bg-white dark:bg-ashara-dark border-b border-gray-200 dark:border-white/10 shadow-lg animate-fade-in">
-          <div className="px-6 py-4 space-y-2">
-            {navLinks.map((link) => {
-              const isActive = activePage === link.id || (activePage === 'project-detail' && link.id === 'projects');
-              return (
-                <button
-                  key={link.id}
-                  onClick={() => handleNavClick(link.id)}
-                  className={`block w-full text-left px-4 py-3 rounded-lg text-[12px] uppercase tracking-[0.2em] font-bold transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-ashara-gold ${
-                    isActive
-                      ? 'bg-ashara-teal/10 dark:bg-white/10 text-ashara-teal dark:text-white'
-                      : 'text-ashara-teal/60 dark:text-white/60 hover:bg-ashara-teal/5 dark:hover:bg-white/5 hover:text-ashara-teal dark:hover:text-white'
-                  }`}
-                >
-                  {link.label}
-                </button>
-              );
-            })}
+        <>
+          {/* Backdrop overlay */}
+          <div
+            className="fixed inset-0 top-[73px] bg-black/40 backdrop-blur-sm z-40 lg:hidden animate-fade-in"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-hidden="true"
+          />
+          <div id="mobile-menu" className="pointer-events-auto lg:hidden w-full absolute top-full left-0 z-50 bg-white/95 dark:bg-ashara-dark/95 backdrop-blur-md border-b border-gray-200 dark:border-white/10 shadow-xl animate-fade-in">
+            <div className="px-6 py-4 space-y-1.5">
+              {navLinks.map((link) => {
+                const isActive = activePage === link.id || (activePage === 'project-detail' && link.id === 'projects');
+                return (
+                  <button
+                    key={link.id}
+                    onClick={() => handleNavClick(link.id)}
+                    className={`relative block w-full text-left px-4 py-3 rounded-sm text-[12px] uppercase tracking-[0.2em] font-bold transition-all duration-200 focus-visible:ring-2 focus-visible:ring-ashara-gold ${
+                      isActive
+                        ? 'bg-ashara-teal/10 dark:bg-white/10 text-ashara-teal dark:text-white pl-6'
+                        : 'text-ashara-teal/60 dark:text-white/60 hover:bg-ashara-teal/5 dark:hover:bg-white/5 hover:text-ashara-teal dark:hover:text-white'
+                    }`}
+                  >
+                    {isActive && (
+                      <span className="absolute left-2.5 top-1/2 -translate-y-1/2 w-1 h-4 bg-ashara-gold rounded-full" />
+                    )}
+                    {link.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </header>
   );

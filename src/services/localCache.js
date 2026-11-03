@@ -35,9 +35,11 @@ function unionTombstones(extraTombstones) {
   return tombstones;
 }
 
+export const CURRENT_PROJECTS_CACHE_VERSION = '2024_cpr_v7';
+
 /**
  * Merge custom/edited projects onto the default projects list by matching IDs.
- * Sanitizes image/gallery URLs so stale relative paths fall back to default art.
+ * Sanitizes image/gallery URLs so stale relative paths or outdated build hashes fall back to default art.
  */
 export function mergeWithDefaultProjects(customList = [], extraTombstones = null) {
   const tombstones = unionTombstones(extraTombstones);
@@ -48,45 +50,57 @@ export function mergeWithDefaultProjects(customList = [], extraTombstones = null
       map.set(String(p.id), { ...p });
     }
   });
+
+  const isCustomCloudUrl = (url) => typeof url === 'string' && (
+    url.startsWith('data:') ||
+    url.startsWith('blob:') ||
+    url.includes('firebasestorage.googleapis.com') ||
+    url.includes('images.unsplash.com') ||
+    (!url.includes('/assets/') && !url.includes('localhost') && !url.includes('127.0.0.1') && (url.startsWith('http://') || url.startsWith('https://')))
+  );
+
+  const isValidUrl = (url) => typeof url === 'string' && (
+    url.startsWith('http://') ||
+    url.startsWith('https://') ||
+    url.startsWith('data:') ||
+    url.startsWith('blob:') ||
+    url.startsWith('/src/') ||
+    url.startsWith('/assets/') ||
+    url.includes('/assets/projects/')
+  );
+
   // 2. Overlay custom or saved projects
   customList.forEach((p) => {
     if (p && p.id !== undefined) {
       const existing = map.get(String(p.id)) || {};
       const mergedItem = { ...existing, ...p };
 
-      const isValidUrl = (url) => typeof url === 'string' && (
-        url.startsWith('http://') ||
-        url.startsWith('https://') ||
-        url.startsWith('data:') ||
-        url.startsWith('blob:') ||
-        url.startsWith('/src/') ||
-        url.startsWith('/assets/') ||
-        url.includes('/assets/projects/')
-      );
-
-      if (p.image && (!isValidUrl(p.image) || (p.image.startsWith('/assets/') && existing.image))) {
-        mergedItem.image = existing.image || p.image;
-      }
-      if (p.fallbackImage && (!isValidUrl(p.fallbackImage) || (p.fallbackImage.startsWith('/assets/') && existing.fallbackImage))) {
-        mergedItem.fallbackImage = existing.fallbackImage || existing.image || p.fallbackImage;
+      // If this is a built-in default project with fresh bundled photography
+      if (existing.image) {
+        // Only override if the custom project has an actual cloud upload or custom external URL
+        if (!p.image || !isCustomCloudUrl(p.image)) {
+          mergedItem.image = existing.image;
+        }
+        if (!p.fallbackImage || !isCustomCloudUrl(p.fallbackImage)) {
+          mergedItem.fallbackImage = existing.fallbackImage || existing.image;
+        }
+      } else {
+        if (p.image && (!isValidUrl(p.image) || p.image.startsWith('/assets/'))) {
+          mergedItem.image = existing.image || p.image;
+        }
+        if (p.fallbackImage && (!isValidUrl(p.fallbackImage) || p.fallbackImage.startsWith('/assets/'))) {
+          mergedItem.fallbackImage = existing.fallbackImage || existing.image || p.fallbackImage;
+        }
       }
 
       if (Array.isArray(p.gallery)) {
-        const sanitizedGallery = p.gallery.map((url, i) => {
-          if (!isValidUrl(url) || (url.startsWith('/assets/') && existing.gallery && existing.gallery[i])) {
-            return (existing.gallery && existing.gallery[i]) || existing.image || null;
-          }
-          return url;
-        }).filter(Boolean);
-
-        if (Array.isArray(existing.gallery) && existing.gallery.length > 0) {
-          existing.gallery.forEach((defUrl) => {
-            if (defUrl && !sanitizedGallery.includes(defUrl)) {
-              sanitizedGallery.push(defUrl);
-            }
-          });
+        if (existing.gallery && existing.gallery.length > 0) {
+          // If built-in default project, preserve fresh bundled gallery and append genuine cloud uploads
+          const customCloudGallery = p.gallery.filter(isCustomCloudUrl);
+          mergedItem.gallery = Array.from(new Set([...existing.gallery, ...customCloudGallery]));
+        } else {
+          mergedItem.gallery = p.gallery.filter(isValidUrl);
         }
-        mergedItem.gallery = sanitizedGallery;
       }
 
       map.set(String(p.id), mergedItem);
@@ -122,9 +136,9 @@ export function mergeWithDefaultTestimonials(customList = [], extraTombstones = 
 export function getInitialProjects() {
   if (typeof window !== 'undefined') {
     try {
-      if (localStorage.getItem('ashara_projects_v') !== '2024_cpr_v6') {
+      if (localStorage.getItem('ashara_projects_v') !== CURRENT_PROJECTS_CACHE_VERSION) {
         localStorage.removeItem('ashara_projects');
-        localStorage.setItem('ashara_projects_v', '2024_cpr_v6');
+        localStorage.setItem('ashara_projects_v', CURRENT_PROJECTS_CACHE_VERSION);
         return DEFAULT_PROJECTS_LIST;
       }
       const stored = readLocalJson('ashara_projects', null);
