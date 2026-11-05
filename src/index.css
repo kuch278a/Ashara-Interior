@@ -800,4 +800,342 @@ html.dark .morph-label {
   50% { opacity: 1; transform: scale(1.02); }
 }
 
+/* ==========================================================================
+   Ashara Logo Morphing Suite (Architectural Emblem & Liquid Squircle Morph)
+   ========================================================================== */
+.ashara-morph-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  user-select: none;
+  perspective: 1000px;
+}
+
+/* Sizing scales */
+.ashara-size-sm .ashara-morph-frame-box {
+  width: 64px;
+  height: 64px;
+}
+.ashara-size-sm .ashara-emblem-core {
+  width: 44px;
+  height: 44px;
+}
+
+.ashara-size-md .ashara-morph-frame-box {
+  width: 96px;
+  height: 96px;
+}
+.ashara-size-md .ashara-emblem-core {
+  width: 66px;
+  height: 66px;
+}
+
+.ashara-size-lg .ashara-morph-frame-box {
+  width: 124px;
+  height: 124px;
+}
+.ashara-size-lg .ashara-emblem-core {
+  width: 86px;
+  height: 86px;
+}
+
+.ashara-size-xl .ashara-morph-frame-box {
+  width: 148px;
+  height: 148px;
+}
+.ashara-size-xl .ashara-emblem-core {
+  width: 104px;
+  height: 104px;
+}
+
+/* Frame box containing the frame, halo, ripples, and emblem */
+.ashara-morph-frame-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-style: preserve-3d;
+  margin-bottom: 24px;
+}
+
+/* Ambient Radial Halo behind the emblem */
+.ashara-morph-halo {
+  position: absolute;
+  inset: -15%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(197, 168, 128, 0.32) 0%, rgba(30, 78, 78, 0.12) 55%, transparent 75%);
+  filter: blur(12px);
+  animation: asharaHaloPulse 3.6s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 1;
+}
+
+html.dark .ashara-morph-halo {
+  background: radial-gradient(circle, rgba(197, 168, 128, 0.45) 0%, rgba(45, 212, 191, 0.22) 50%, transparent 75%);
+  filter: blur(16px);
+}
+
+/* Concentric Resonant Radar Ripples */
+.ashara-morph-ripple {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(197, 168, 128, 0.4);
+  pointer-events: none;
+  z-index: 2;
+  animation: asharaRadarWave 3.6s cubic-bezier(0.2, 0.8, 0.4, 1) infinite;
+}
+
+.ashara-morph-ripple.ripple-1 {
+  animation-delay: 0s;
+}
+
+.ashara-morph-ripple.ripple-2 {
+  animation-delay: 1.8s;
+}
+
+html.dark .ashara-morph-ripple {
+  border-color: rgba(197, 168, 128, 0.6);
+}
+
+/* Morphing Architectural Frame */
+.ashara-morph-frame {
+  position: absolute;
+  inset: 0;
+  border: 1.5px solid transparent;
+  background:
+    linear-gradient(#FAF6EF, #FAF6EF) padding-box,
+    linear-gradient(135deg, rgba(197, 168, 128, 0.9) 0%, rgba(30, 78, 78, 0.3) 50%, rgba(197, 168, 128, 0.9) 100%) border-box;
+  box-shadow:
+    0 10px 30px -10px rgba(197, 168, 128, 0.35),
+    inset 0 0 14px rgba(197, 168, 128, 0.15);
+  animation: asharaFrameMorph 6s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  z-index: 3;
+}
+
+html.dark .ashara-morph-frame {
+  background:
+    linear-gradient(#0A1525, #0A1525) padding-box,
+    linear-gradient(135deg, rgba(197, 168, 128, 0.95) 0%, rgba(45, 212, 191, 0.5) 50%, rgba(197, 168, 128, 0.95) 100%) border-box;
+  box-shadow:
+    0 10px 35px -8px rgba(197, 168, 128, 0.5),
+    inset 0 0 16px rgba(45, 212, 191, 0.2);
+}
+
+/* Precision corner tick marks for architectural blueprint aesthetics */
+.ashara-morph-frame .frame-corner {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-color: #C5A880;
+  border-style: solid;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+.ashara-morph-frame .corner-tl { top: -2px; left: -2px; border-width: 1.5px 0 0 1.5px; }
+.ashara-morph-frame .corner-tr { top: -2px; right: -2px; border-width: 1.5px 1.5px 0 0; }
+.ashara-morph-frame .corner-br { bottom: -2px; right: -2px; border-width: 0 1.5px 1.5px 0; }
+.ashara-morph-frame .corner-bl { bottom: -2px; left: -2px; border-width: 0 0 1.5px 1.5px; }
+
+/* The Ashara Emblem Core */
+.ashara-emblem-core {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  overflow: hidden;
+  animation: asharaEmblemBreathe 3.6s ease-in-out infinite alternate;
+}
+
+.ashara-emblem-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  user-select: none;
+  filter: drop-shadow(0 2px 8px rgba(30, 78, 78, 0.2));
+  transition: filter 0.4s ease;
+}
+
+html.dark .ashara-emblem-img {
+  filter: drop-shadow(0 0 14px rgba(197, 168, 128, 0.65)) brightness(1.25) contrast(1.1);
+}
+
+/* Biometric Light Sweep Sheen (Ridge-Bound Alpha Mask) */
+.ashara-shimmer-sweep {
+  position: absolute;
+  inset: 0;
+  -webkit-mask-image: url(/ashara-emblem.png);
+  mask-image: url(/ashara-emblem.png);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  background: linear-gradient(
+    115deg,
+    transparent 20%,
+    rgba(197, 168, 128, 0.4) 38%,
+    rgba(224, 182, 107, 0.95) 48%,
+    rgba(255, 255, 255, 1.0) 52%,
+    rgba(197, 168, 128, 0.4) 62%,
+    transparent 80%
+  );
+  background-size: 260% 260%;
+  animation: asharaRidgeSweep 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+
+html.dark .ashara-shimmer-sweep {
+  background: linear-gradient(
+    115deg,
+    transparent 20%,
+    rgba(45, 212, 191, 0.4) 36%,
+    rgba(197, 168, 128, 0.95) 48%,
+    rgba(255, 255, 255, 1.0) 52%,
+    rgba(45, 212, 191, 0.5) 64%,
+    transparent 80%
+  );
+  background-size: 260% 260%;
+}
+
+/* Typography Brand Lockup */
+.ashara-morph-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  z-index: 6;
+}
+
+.ashara-brand-name {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  font-size: 24px;
+  text-transform: uppercase;
+  color: #1E4E4E;
+  line-height: 1.2;
+  margin-bottom: 5px;
+  padding-left: 0.3em;
+}
+
+html.dark .ashara-brand-name {
+  color: #C5A880;
+}
+
+.ashara-brand-sub {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-weight: 400;
+  letter-spacing: 0.32em;
+  font-size: 11.5px;
+  text-transform: uppercase;
+  color: #5F5A54;
+  opacity: 0.9;
+  line-height: 1.2;
+  padding-left: 0.32em;
+}
+
+html.dark .ashara-brand-sub {
+  color: #DFCDB2;
+  opacity: 0.85;
+}
+
+.ashara-brand-status {
+  margin-top: 14px;
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  color: #8C8275;
+  animation: asharaStatusPulse 2.4s ease-in-out infinite;
+}
+
+html.dark .ashara-brand-status {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* Keyframes */
+@keyframes asharaFrameMorph {
+  0% {
+    border-radius: 8px;
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    border-radius: 28%;
+    transform: rotate(45deg) scale(0.96);
+  }
+  50% {
+    border-radius: 50%;
+    transform: rotate(90deg) scale(1.05);
+  }
+  75% {
+    border-radius: 35% 65% 60% 40% / 45% 55% 45% 55%;
+    transform: rotate(135deg) scale(0.98);
+  }
+  100% {
+    border-radius: 8px;
+    transform: rotate(180deg) scale(1);
+  }
+}
+
+@keyframes asharaRadarWave {
+  0% {
+    transform: scale(0.65);
+    opacity: 0.75;
+  }
+  70% {
+    transform: scale(1.4);
+    opacity: 0.15;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+@keyframes asharaEmblemBreathe {
+  0% {
+    transform: scale(0.96) translateZ(0);
+  }
+  100% {
+    transform: scale(1.04) translateZ(10px);
+  }
+}
+
+@keyframes asharaHaloPulse {
+  0% {
+    transform: scale(0.88);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(1.15);
+    opacity: 0.95;
+  }
+}
+
+@keyframes asharaRidgeSweep {
+  0% {
+    background-position: 180% 0;
+  }
+  60%, 100% {
+    background-position: -80% 0;
+  }
+}
+
+@keyframes asharaStatusPulse {
+  0%, 100% {
+    opacity: 0.65;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 

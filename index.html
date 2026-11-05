@@ -77,6 +77,7 @@
     <link rel="preconnect" href="https://images.unsplash.com" />
     <link rel="dns-prefetch" href="https://images.unsplash.com" />
     <link rel="preload" as="image" href="/favicon.png" />
+    <link rel="preload" as="image" href="/ashara-emblem.png" />
     <!-- Variable-font range request: 2 woff2 files instead of 7 static styles -->
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300..700;1,300..400&display=swap" rel="stylesheet" />
 
@@ -109,131 +110,271 @@
         visibility: hidden;
         pointer-events: none;
       }
-      .morphing-square-container {
+      .ashara-morph-stage {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        user-select: none;
-        perspective: 900px;
-        margin-bottom: 28px;
-      }
-      .morph-square-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 6px;
         position: relative;
-        transform-style: preserve-3d;
-        animation: morphGridOrbit 6s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+        user-select: none;
+        perspective: 1000px;
       }
-      .morph-square-grid .morph-tile {
+      .ashara-size-lg .ashara-morph-frame-box {
+        width: 124px;
+        height: 124px;
+      }
+      .ashara-size-lg .ashara-emblem-core {
+        width: 86px;
+        height: 86px;
+      }
+      .ashara-morph-frame-box {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform-style: preserve-3d;
+        margin-bottom: 24px;
+      }
+      .ashara-morph-halo {
+        position: absolute;
+        inset: -15%;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(197, 168, 128, 0.32) 0%, rgba(30, 78, 78, 0.12) 55%, transparent 75%);
+        filter: blur(12px);
+        animation: asharaHaloPulse 3.6s ease-in-out infinite alternate;
+        pointer-events: none;
+        z-index: 1;
+      }
+      html.dark .ashara-morph-halo {
+        background: radial-gradient(circle, rgba(197, 168, 128, 0.45) 0%, rgba(45, 212, 191, 0.22) 50%, transparent 75%);
+        filter: blur(16px);
+      }
+      .ashara-morph-ripple {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 1px solid rgba(197, 168, 128, 0.4);
+        pointer-events: none;
+        z-index: 2;
+        animation: asharaRadarWave 3.6s cubic-bezier(0.2, 0.8, 0.4, 1) infinite;
+      }
+      .ashara-morph-ripple.ripple-1 {
+        animation-delay: 0s;
+      }
+      .ashara-morph-ripple.ripple-2 {
+        animation-delay: 1.8s;
+      }
+      html.dark .ashara-morph-ripple {
+        border-color: rgba(197, 168, 128, 0.6);
+      }
+      .ashara-morph-frame {
+        position: absolute;
+        inset: 0;
+        border: 1.5px solid transparent;
+        background:
+          linear-gradient(#FAF6EF, #FAF6EF) padding-box,
+          linear-gradient(135deg, rgba(197, 168, 128, 0.9) 0%, rgba(30, 78, 78, 0.3) 50%, rgba(197, 168, 128, 0.9) 100%) border-box;
+        box-shadow:
+          0 10px 30px -10px rgba(197, 168, 128, 0.35),
+          inset 0 0 14px rgba(197, 168, 128, 0.15);
+        animation: asharaFrameMorph 6s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+        z-index: 3;
+      }
+      html.dark .ashara-morph-frame {
+        background:
+          linear-gradient(#0A1525, #0A1525) padding-box,
+          linear-gradient(135deg, rgba(197, 168, 128, 0.95) 0%, rgba(45, 212, 191, 0.5) 50%, rgba(197, 168, 128, 0.95) 100%) border-box;
+        box-shadow:
+          0 10px 35px -8px rgba(197, 168, 128, 0.5),
+          inset 0 0 16px rgba(45, 212, 191, 0.2);
+      }
+      .ashara-morph-frame .frame-corner {
+        position: absolute;
+        width: 5px;
+        height: 5px;
+        border-color: #C5A880;
+        border-style: solid;
+        opacity: 0.8;
+      }
+      .ashara-morph-frame .corner-tl { top: -2px; left: -2px; border-width: 1.5px 0 0 1.5px; }
+      .ashara-morph-frame .corner-tr { top: -2px; right: -2px; border-width: 1.5px 1.5px 0 0; }
+      .ashara-morph-frame .corner-br { bottom: -2px; right: -2px; border-width: 0 1.5px 1.5px 0; }
+      .ashara-morph-frame .corner-bl { bottom: -2px; left: -2px; border-width: 0 0 1.5px 1.5px; }
+      .ashara-emblem-core {
+        position: relative;
+        z-index: 5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        overflow: hidden;
+        animation: asharaEmblemBreathe 3.6s ease-in-out infinite alternate;
+      }
+      .ashara-emblem-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
         display: block;
-        transform-style: preserve-3d;
-        will-change: transform, border-radius;
-        animation: morphQuadrant 2.4s ease-in-out infinite both;
-        animation-delay: calc(var(--sq-i, 0) * 0.22s);
+        user-select: none;
+        filter: drop-shadow(0 2px 8px rgba(30, 78, 78, 0.2));
       }
-      .morph-size-lg.morph-square-grid {
-        width: 76px;
-        height: 76px;
-        gap: 6px;
+      html.dark .ashara-emblem-img {
+        filter: drop-shadow(0 0 14px rgba(197, 168, 128, 0.65)) brightness(1.25) contrast(1.1);
       }
-      .morph-size-lg.morph-square-grid .morph-tile {
-        width: 35px;
-        height: 35px;
+      .ashara-shimmer-sweep {
+        position: absolute;
+        inset: 0;
+        -webkit-mask-image: url(/ashara-emblem.png);
+        mask-image: url(/ashara-emblem.png);
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background: linear-gradient(
+          115deg,
+          transparent 20%,
+          rgba(197, 168, 128, 0.4) 38%,
+          rgba(224, 182, 107, 0.95) 48%,
+          rgba(255, 255, 255, 1.0) 52%,
+          rgba(197, 168, 128, 0.4) 62%,
+          transparent 80%
+        );
+        background-size: 260% 260%;
+        animation: asharaRidgeSweep 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        pointer-events: none;
       }
-      .morph-color-dual .morph-tile:nth-child(odd) {
-        background: linear-gradient(135deg, #DFCDB2 0%, #C5A880 100%);
-        box-shadow: 0 0 16px rgba(197, 168, 128, 0.45);
+      html.dark .ashara-shimmer-sweep {
+        background: linear-gradient(
+          115deg,
+          transparent 20%,
+          rgba(45, 212, 191, 0.4) 36%,
+          rgba(197, 168, 128, 0.95) 48%,
+          rgba(255, 255, 255, 1.0) 52%,
+          rgba(45, 212, 191, 0.5) 64%,
+          transparent 80%
+        );
+        background-size: 260% 260%;
       }
-      .morph-color-dual .morph-tile:nth-child(even) {
-        background: linear-gradient(135deg, #2DD4BF 0%, #1E4E4E 100%);
-        box-shadow: 0 0 16px rgba(45, 212, 191, 0.45);
-      }
-      html.dark .morph-color-dual .morph-tile:nth-child(odd) {
-        background: linear-gradient(135deg, #F3E5D0 0%, #C5A880 100%);
-        box-shadow: 0 0 20px rgba(197, 168, 128, 0.7);
-      }
-      html.dark .morph-color-dual .morph-tile:nth-child(even) {
-        background: linear-gradient(135deg, #2DD4BF 0%, #115E59 100%);
-        box-shadow: 0 0 20px rgba(45, 212, 191, 0.7);
-      }
-      @keyframes morphGridOrbit {
-        0% { transform: rotate(0deg); }
-        25% { transform: rotate(90deg); }
-        50% { transform: rotate(180deg); }
-        75% { transform: rotate(270deg); }
-        100% { transform: rotate(360deg); }
-      }
-      @keyframes morphQuadrant {
-        0% {
-          transform: translate(0, 0) scale(1) rotate(0deg);
-          border-radius: 5px;
-        }
-        25% {
-          transform: translate(-3px, -3px) scale(0.82) rotate(45deg);
-          border-radius: 50%;
-        }
-        50% {
-          transform: translate(0, 0) scale(1.08) rotate(90deg);
-          border-radius: 12px;
-        }
-        75% {
-          transform: translate(3px, 3px) scale(0.88) rotate(180deg);
-          border-radius: 50%;
-        }
-        100% {
-          transform: translate(0, 0) scale(1) rotate(360deg);
-          border-radius: 5px;
-        }
-      }
-      .loader-brand {
+      .ashara-morph-brand {
         display: flex;
         flex-direction: column;
         align-items: center;
-        opacity: 1;
+        text-align: center;
+        z-index: 6;
       }
-      .loader-brand-name {
+      .ashara-brand-name {
         font-family: 'Source Serif 4', Georgia, serif;
         font-weight: 600;
         letter-spacing: 0.3em;
-        font-size: 26px;
+        font-size: 24px;
         text-transform: uppercase;
         color: #1E4E4E;
         line-height: 1.2;
-        margin-bottom: 6px;
+        margin-bottom: 5px;
         padding-left: 0.3em;
       }
-      html.dark .loader-brand-name {
+      html.dark .ashara-brand-name {
         color: #C5A880;
       }
-      .loader-brand-sub {
+      .ashara-brand-sub {
         font-family: 'Source Serif 4', Georgia, serif;
         font-weight: 400;
         letter-spacing: 0.32em;
-        font-size: 12px;
+        font-size: 11.5px;
         text-transform: uppercase;
         color: #5F5A54;
         opacity: 0.9;
         line-height: 1.2;
         padding-left: 0.32em;
       }
-      html.dark .loader-brand-sub {
+      html.dark .ashara-brand-sub {
         color: #DFCDB2;
-        opacity: 0.8;
+        opacity: 0.85;
       }
-      .loader-tagline {
-        margin-top: 16px;
+      .ashara-brand-status {
+        margin-top: 14px;
         font-family: 'Source Serif 4', Georgia, serif;
         font-style: italic;
         font-weight: 300;
-        font-size: 13.5px;
+        font-size: 13px;
         letter-spacing: 0.12em;
         color: #8C8275;
-        opacity: 1;
+        animation: asharaStatusPulse 2.4s ease-in-out infinite;
       }
-      html.dark .loader-tagline {
-        color: rgba(255, 255, 255, 0.7);
+      html.dark .ashara-brand-status {
+        color: rgba(255, 255, 255, 0.75);
+      }
+      @keyframes asharaFrameMorph {
+        0% {
+          border-radius: 8px;
+          transform: rotate(0deg) scale(1);
+        }
+        25% {
+          border-radius: 28%;
+          transform: rotate(45deg) scale(0.96);
+        }
+        50% {
+          border-radius: 50%;
+          transform: rotate(90deg) scale(1.05);
+        }
+        75% {
+          border-radius: 35% 65% 60% 40% / 45% 55% 45% 55%;
+          transform: rotate(135deg) scale(0.98);
+        }
+        100% {
+          border-radius: 8px;
+          transform: rotate(180deg) scale(1);
+        }
+      }
+      @keyframes asharaRadarWave {
+        0% {
+          transform: scale(0.65);
+          opacity: 0.75;
+        }
+        70% {
+          transform: scale(1.4);
+          opacity: 0.15;
+        }
+        100% {
+          transform: scale(1.6);
+          opacity: 0;
+        }
+      }
+      @keyframes asharaEmblemBreathe {
+        0% {
+          transform: scale(0.96) translateZ(0);
+        }
+        100% {
+          transform: scale(1.04) translateZ(10px);
+        }
+      }
+      @keyframes asharaHaloPulse {
+        0% {
+          transform: scale(0.88);
+          opacity: 0.55;
+        }
+        100% {
+          transform: scale(1.15);
+          opacity: 0.95;
+        }
+      }
+      @keyframes asharaRidgeSweep {
+        0% {
+          background-position: 180% 0;
+        }
+        60%, 100% {
+          background-position: -80% 0;
+        }
+      }
+      @keyframes asharaStatusPulse {
+        0%, 100% {
+          opacity: 0.65;
+        }
+        50% {
+          opacity: 1;
+        }
       }
     </style>
 
@@ -242,21 +383,36 @@
   </head>
   <body class="bg-white text-ashara-charcoal font-sans antialiased selection:bg-ashara-teal selection:text-white">
 
-    <!-- Premium Architectural CSS Morphing Square Loading Screen -->
+    <!-- Bespoke Architectural Ashara Logo Morphing Loading Screen -->
     <div id="ashara-loader" role="status" aria-live="polite">
-      <div class="morphing-square-container">
-        <div class="morph-square-grid morph-size-lg morph-color-dual">
-          <span class="morph-tile" style="--sq-i: 0"></span>
-          <span class="morph-tile" style="--sq-i: 1"></span>
-          <span class="morph-tile" style="--sq-i: 2"></span>
-          <span class="morph-tile" style="--sq-i: 3"></span>
+      <div class="ashara-morph-stage ashara-size-lg">
+        <div class="ashara-morph-frame-box">
+          <div class="ashara-morph-halo" aria-hidden="true"></div>
+          <div class="ashara-morph-ripple ripple-1" aria-hidden="true"></div>
+          <div class="ashara-morph-ripple ripple-2" aria-hidden="true"></div>
+          <div class="ashara-morph-frame" aria-hidden="true">
+            <span class="frame-corner corner-tl"></span>
+            <span class="frame-corner corner-tr"></span>
+            <span class="frame-corner corner-br"></span>
+            <span class="frame-corner corner-bl"></span>
+          </div>
+          <div class="ashara-emblem-core">
+            <img
+              src="/ashara-emblem.png"
+              alt="Ashara Fingerprint Emblem"
+              class="ashara-emblem-img"
+              decoding="async"
+              draggable="false"
+            />
+            <div class="ashara-shimmer-sweep" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="ashara-morph-brand">
+          <span class="ashara-brand-name">Ashara</span>
+          <span class="ashara-brand-sub">Interior Design and Building</span>
+          <p class="ashara-brand-status">Curating Luxury Spaces</p>
         </div>
       </div>
-      <div class="loader-brand">
-        <span class="loader-brand-name">Ashara</span>
-        <span class="loader-brand-sub">Interior Design and Building</span>
-      </div>
-      <p class="loader-tagline">Curating Luxury Spaces</p>
     </div>
 
     <div id="root"></div>

@@ -13,13 +13,13 @@ const ContactPage = lazy(() => import('./pages/ContactPage'));
 const ProjectDetailPage = lazy(() => import('./pages/ProjectDetailPage'));
 const AdminPortal = lazy(() => import('./pages/AdminPortal'));
 
-import MorphingSquareLoader from './components/MorphingSquareLoader';
+import AsharaMorphingLoader from './components/AsharaMorphingLoader';
 
-// Luxury CSS Morphing Square fallback for route transitions
+// Bespoke Ashara Logo Morphing fallback for route transitions
 function PageLoadingFallback() {
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center py-20 animate-fade-in">
-      <MorphingSquareLoader variant="grid" size="md" color="dual" label="Loading Ashara..." />
+      <AsharaMorphingLoader size="md" variant="full" label="Curating Luxury Spaces" />
     </div>
   );
 }
