@@ -17,21 +17,25 @@
   }
   
   body {
-    @apply font-sans text-ashara-charcoal dark:text-ashara-sand transition-colors duration-300;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    color: #262626;
     background-color: #E8EDF2;
     background-image: url('./assets/bg_pattern.svg');
     background-repeat: repeat;
     overflow-x: hidden;
+    transition-property: color, background-color;
+    transition-duration: 300ms;
   }
 
   html.dark body {
+    color: #DFCDB2;
     background-color: #0A1525;
     background-image: url('./assets/bg_pattern_dark.svg');
     background-repeat: repeat;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif;
+    font-family: 'Source Serif 4', Georgia, serif;
     text-wrap: balance;
   }
 
@@ -74,7 +78,12 @@
   }
 
   ::selection {
-    @apply bg-ashara-teal text-white dark:bg-ashara-gold dark:text-ashara-dark;
+    background-color: #1E4E4E;
+    color: #FFFFFF;
+  }
+  html.dark ::selection {
+    background-color: #C5A880;
+    color: #0A1525;
   }
 }
 
@@ -562,6 +571,7 @@ html.dark #ashara-loader .loader-tagline {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  -webkit-user-select: none;
   user-select: none;
   perspective: 900px;
 }
@@ -809,6 +819,7 @@ html.dark .morph-label {
   align-items: center;
   justify-content: center;
   position: relative;
+  -webkit-user-select: none;
   user-select: none;
   perspective: 1000px;
 }
@@ -956,6 +967,7 @@ html.dark .ashara-morph-frame {
   height: 100%;
   object-fit: contain;
   display: block;
+  -webkit-user-select: none;
   user-select: none;
   filter: drop-shadow(0 2px 8px rgba(30, 78, 78, 0.2));
   transition: filter 0.4s ease;
