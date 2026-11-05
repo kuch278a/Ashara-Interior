@@ -13,13 +13,13 @@ const ContactPage = lazy(() => import('./pages/ContactPage'));
 const ProjectDetailPage = lazy(() => import('./pages/ProjectDetailPage'));
 const AdminPortal = lazy(() => import('./pages/AdminPortal'));
 
-import DnaHelixLoader from './components/DnaHelixLoader';
+import MorphingSquareLoader from './components/MorphingSquareLoader';
 
-// Luxury DNA Double-Helix fallback for route transitions
+// Luxury CSS Morphing Square fallback for route transitions
 function PageLoadingFallback() {
   return (
-    <div className="min-h-[60vh] flex flex-col items-center justify-center py-24 animate-fade-in">
-      <DnaHelixLoader size="md" orientation="horizontal" label="Loading Ashara..." />
+    <div className="min-h-[60vh] flex flex-col items-center justify-center py-20 animate-fade-in">
+      <MorphingSquareLoader variant="grid" size="md" color="dual" label="Loading Ashara..." />
     </div>
   );
 }

@@ -554,4 +554,250 @@ html.dark #ashara-loader .loader-tagline {
   animation: checkmarkPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
+/* ==========================================================================
+   CSS Morphing Square Loader (Architectural Pure-CSS Geometric Suite)
+   ========================================================================== */
+.morphing-square-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  perspective: 900px;
+}
+
+/* Variant 1: 4-Quadrant Folding Grid (.morph-square-grid) */
+.morph-square-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px;
+  position: relative;
+  transform-style: preserve-3d;
+  animation: morphGridOrbit 6s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+
+.morph-square-grid .morph-tile {
+  display: block;
+  transform-style: preserve-3d;
+  will-change: transform, border-radius;
+  animation: morphQuadrant 2.4s ease-in-out infinite both;
+  animation-delay: calc(var(--sq-i, 0) * 0.22s);
+}
+
+.morph-size-sm.morph-square-grid {
+  width: 36px;
+  height: 36px;
+  gap: 3px;
+}
+.morph-size-sm.morph-square-grid .morph-tile {
+  width: 16px;
+  height: 16px;
+}
+
+.morph-size-md.morph-square-grid {
+  width: 56px;
+  height: 56px;
+  gap: 5px;
+}
+.morph-size-md.morph-square-grid .morph-tile {
+  width: 25px;
+  height: 25px;
+}
+
+.morph-size-lg.morph-square-grid {
+  width: 76px;
+  height: 76px;
+  gap: 6px;
+}
+.morph-size-lg.morph-square-grid .morph-tile {
+  width: 35px;
+  height: 35px;
+}
+
+@keyframes morphGridOrbit {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(90deg); }
+  50% { transform: rotate(180deg); }
+  75% { transform: rotate(270deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes morphQuadrant {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    border-radius: 5px;
+  }
+  25% {
+    transform: translate(-3px, -3px) scale(0.82) rotate(45deg);
+    border-radius: 50%;
+  }
+  50% {
+    transform: translate(0, 0) scale(1.08) rotate(90deg);
+    border-radius: 12px;
+  }
+  75% {
+    transform: translate(3px, 3px) scale(0.88) rotate(180deg);
+    border-radius: 50%;
+  }
+  100% {
+    transform: translate(0, 0) scale(1) rotate(360deg);
+    border-radius: 5px;
+  }
+}
+
+/* Variant 2: Single 3D Morphing Squircle (.morph-square-single) */
+.morph-square-single {
+  position: relative;
+  transform-style: preserve-3d;
+  will-change: transform, border-radius;
+  animation: morphSquircle3D 3s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+}
+
+.morph-size-sm.morph-square-single { width: 32px; height: 32px; }
+.morph-size-md.morph-square-single { width: 50px; height: 50px; }
+.morph-size-lg.morph-square-single { width: 72px; height: 72px; }
+
+@keyframes morphSquircle3D {
+  0% {
+    transform: perspective(400px) rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1);
+    border-radius: 6px;
+  }
+  25% {
+    transform: perspective(400px) rotateX(180deg) rotateY(0deg) rotateZ(90deg) scale(0.78);
+    border-radius: 50%;
+  }
+  50% {
+    transform: perspective(400px) rotateX(180deg) rotateY(180deg) rotateZ(180deg) scale(1.12);
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  }
+  75% {
+    transform: perspective(400px) rotateX(360deg) rotateY(180deg) rotateZ(270deg) scale(0.82);
+    border-radius: 50%;
+  }
+  100% {
+    transform: perspective(400px) rotateX(360deg) rotateY(360deg) rotateZ(360deg) scale(1);
+    border-radius: 6px;
+  }
+}
+
+/* Variant 3: Concentric Dual Morphing Square Frames (.morph-square-concentric) */
+.morph-square-concentric {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-style: preserve-3d;
+}
+
+.morph-size-sm.morph-square-concentric { width: 36px; height: 36px; }
+.morph-size-md.morph-square-concentric { width: 56px; height: 56px; }
+.morph-size-lg.morph-square-concentric { width: 80px; height: 80px; }
+
+.morph-square-concentric .concentric-outer {
+  position: absolute;
+  inset: 0;
+  border-width: 2px;
+  border-style: solid;
+  animation: morphConcentricOuter 3.2s ease-in-out infinite;
+}
+
+.morph-square-concentric .concentric-inner {
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  animation: morphConcentricInner 3.2s ease-in-out infinite;
+}
+
+@keyframes morphConcentricOuter {
+  0% { transform: rotate(0deg); border-radius: 6px; }
+  50% { transform: rotate(180deg) scale(0.88); border-radius: 50%; }
+  100% { transform: rotate(360deg); border-radius: 6px; }
+}
+
+@keyframes morphConcentricInner {
+  0% { transform: rotate(0deg) scale(1); border-radius: 50%; }
+  50% { transform: rotate(-180deg) scale(1.15); border-radius: 4px; }
+  100% { transform: rotate(-360deg) scale(1); border-radius: 50%; }
+}
+
+/* Color Palettes */
+.morph-color-gold .morph-tile,
+.morph-color-gold.morph-square-single,
+.morph-color-gold .concentric-inner {
+  background: linear-gradient(135deg, #DFCDB2 0%, #C5A880 100%);
+  box-shadow: 0 0 14px rgba(197, 168, 128, 0.45);
+}
+.morph-color-gold .concentric-outer {
+  border-color: #C5A880;
+  box-shadow: 0 0 12px rgba(197, 168, 128, 0.35);
+}
+
+.morph-color-teal .morph-tile,
+.morph-color-teal.morph-square-single,
+.morph-color-teal .concentric-inner {
+  background: linear-gradient(135deg, #2DD4BF 0%, #1E4E4E 100%);
+  box-shadow: 0 0 14px rgba(45, 212, 191, 0.4);
+}
+.morph-color-teal .concentric-outer {
+  border-color: #2DD4BF;
+  box-shadow: 0 0 12px rgba(45, 212, 191, 0.3);
+}
+
+.morph-color-dual .morph-tile:nth-child(odd) {
+  background: linear-gradient(135deg, #DFCDB2 0%, #C5A880 100%);
+  box-shadow: 0 0 16px rgba(197, 168, 128, 0.45);
+}
+.morph-color-dual .morph-tile:nth-child(even) {
+  background: linear-gradient(135deg, #2DD4BF 0%, #1E4E4E 100%);
+  box-shadow: 0 0 16px rgba(45, 212, 191, 0.45);
+}
+.morph-color-dual.morph-square-single {
+  background: linear-gradient(135deg, #C5A880 0%, #1E4E4E 100%);
+  box-shadow: 0 0 16px rgba(197, 168, 128, 0.35), 0 0 12px rgba(45, 212, 191, 0.25);
+}
+.morph-color-dual .concentric-outer {
+  border-color: #C5A880;
+  box-shadow: 0 0 14px rgba(197, 168, 128, 0.4);
+}
+.morph-color-dual .concentric-inner {
+  background: #1E4E4E;
+  box-shadow: 0 0 12px rgba(45, 212, 191, 0.5);
+}
+
+/* Dark Mode Luminance */
+html.dark .morph-color-gold .morph-tile,
+html.dark .morph-color-gold.morph-square-single,
+html.dark .morph-color-gold .concentric-inner {
+  background: linear-gradient(135deg, #F3E5D0 0%, #C5A880 100%);
+  box-shadow: 0 0 20px rgba(197, 168, 128, 0.7);
+}
+html.dark .morph-color-dual .morph-tile:nth-child(odd) {
+  background: linear-gradient(135deg, #F3E5D0 0%, #C5A880 100%);
+  box-shadow: 0 0 20px rgba(197, 168, 128, 0.7);
+}
+html.dark .morph-color-dual .morph-tile:nth-child(even) {
+  background: linear-gradient(135deg, #2DD4BF 0%, #115E59 100%);
+  box-shadow: 0 0 20px rgba(45, 212, 191, 0.7);
+}
+
+.morph-label {
+  margin-top: 16px;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  color: #5A524A;
+  animation: morphPulseLabel 2s ease-in-out infinite;
+}
+
+html.dark .morph-label {
+  color: #C5A880;
+}
+
+@keyframes morphPulseLabel {
+  0%, 100% { opacity: 0.65; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.02); }
+}
+
 

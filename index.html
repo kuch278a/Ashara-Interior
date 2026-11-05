@@ -82,28 +82,175 @@
 
     <noscript><style>#ashara-loader{display:none !important}</style></noscript>
 
+    <!-- Critical Inlined Preloader CSS (Zero-latency instant render before bundle downloads) -->
+    <style id="ashara-critical-preloader-css">
+      #ashara-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #FAF6EF;
+        color: #3A322B;
+        user-select: none;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+        transition: opacity 0.65s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.65s ease;
+      }
+      html.dark #ashara-loader {
+        background: #0A1525;
+        color: #EDE4D6;
+      }
+      #ashara-loader.fade-out {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      .morphing-square-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        user-select: none;
+        perspective: 900px;
+        margin-bottom: 28px;
+      }
+      .morph-square-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+        position: relative;
+        transform-style: preserve-3d;
+        animation: morphGridOrbit 6s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+      }
+      .morph-square-grid .morph-tile {
+        display: block;
+        transform-style: preserve-3d;
+        will-change: transform, border-radius;
+        animation: morphQuadrant 2.4s ease-in-out infinite both;
+        animation-delay: calc(var(--sq-i, 0) * 0.22s);
+      }
+      .morph-size-lg.morph-square-grid {
+        width: 76px;
+        height: 76px;
+        gap: 6px;
+      }
+      .morph-size-lg.morph-square-grid .morph-tile {
+        width: 35px;
+        height: 35px;
+      }
+      .morph-color-dual .morph-tile:nth-child(odd) {
+        background: linear-gradient(135deg, #DFCDB2 0%, #C5A880 100%);
+        box-shadow: 0 0 16px rgba(197, 168, 128, 0.45);
+      }
+      .morph-color-dual .morph-tile:nth-child(even) {
+        background: linear-gradient(135deg, #2DD4BF 0%, #1E4E4E 100%);
+        box-shadow: 0 0 16px rgba(45, 212, 191, 0.45);
+      }
+      html.dark .morph-color-dual .morph-tile:nth-child(odd) {
+        background: linear-gradient(135deg, #F3E5D0 0%, #C5A880 100%);
+        box-shadow: 0 0 20px rgba(197, 168, 128, 0.7);
+      }
+      html.dark .morph-color-dual .morph-tile:nth-child(even) {
+        background: linear-gradient(135deg, #2DD4BF 0%, #115E59 100%);
+        box-shadow: 0 0 20px rgba(45, 212, 191, 0.7);
+      }
+      @keyframes morphGridOrbit {
+        0% { transform: rotate(0deg); }
+        25% { transform: rotate(90deg); }
+        50% { transform: rotate(180deg); }
+        75% { transform: rotate(270deg); }
+        100% { transform: rotate(360deg); }
+      }
+      @keyframes morphQuadrant {
+        0% {
+          transform: translate(0, 0) scale(1) rotate(0deg);
+          border-radius: 5px;
+        }
+        25% {
+          transform: translate(-3px, -3px) scale(0.82) rotate(45deg);
+          border-radius: 50%;
+        }
+        50% {
+          transform: translate(0, 0) scale(1.08) rotate(90deg);
+          border-radius: 12px;
+        }
+        75% {
+          transform: translate(3px, 3px) scale(0.88) rotate(180deg);
+          border-radius: 50%;
+        }
+        100% {
+          transform: translate(0, 0) scale(1) rotate(360deg);
+          border-radius: 5px;
+        }
+      }
+      .loader-brand {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        opacity: 1;
+      }
+      .loader-brand-name {
+        font-family: 'Source Serif 4', Georgia, serif;
+        font-weight: 600;
+        letter-spacing: 0.3em;
+        font-size: 26px;
+        text-transform: uppercase;
+        color: #1E4E4E;
+        line-height: 1.2;
+        margin-bottom: 6px;
+        padding-left: 0.3em;
+      }
+      html.dark .loader-brand-name {
+        color: #C5A880;
+      }
+      .loader-brand-sub {
+        font-family: 'Source Serif 4', Georgia, serif;
+        font-weight: 400;
+        letter-spacing: 0.32em;
+        font-size: 12px;
+        text-transform: uppercase;
+        color: #5F5A54;
+        opacity: 0.9;
+        line-height: 1.2;
+        padding-left: 0.32em;
+      }
+      html.dark .loader-brand-sub {
+        color: #DFCDB2;
+        opacity: 0.8;
+      }
+      .loader-tagline {
+        margin-top: 16px;
+        font-family: 'Source Serif 4', Georgia, serif;
+        font-style: italic;
+        font-weight: 300;
+        font-size: 13.5px;
+        letter-spacing: 0.12em;
+        color: #8C8275;
+        opacity: 1;
+      }
+      html.dark .loader-tagline {
+        color: rgba(255, 255, 255, 0.7);
+      }
+    </style>
+
     <!-- Consolidated Single Application Stylesheet -->
     <link rel="stylesheet" href="/src/index.css" />
   </head>
   <body class="bg-white text-ashara-charcoal font-sans antialiased selection:bg-ashara-teal selection:text-white">
 
-    <!-- Premium Loading Screen (shows instantly, removed by React) -->
+    <!-- Premium Architectural CSS Morphing Square Loading Screen -->
     <div id="ashara-loader" role="status" aria-live="polite">
-      <div class="dna-helix dna-horizontal dna-helix-h-md" style="margin-bottom: 28px;">
-        <div class="dna-rung" style="--i: 0"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
-        <div class="dna-rung" style="--i: 1"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
-        <div class="dna-rung" style="--i: 2"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
-        <div class="dna-rung" style="--i: 3"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
-        <div class="dna-rung" style="--i: 4"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
-        <div class="dna-rung" style="--i: 5"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
-        <div class="dna-rung" style="--i: 6"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
-        <div class="dna-rung" style="--i: 7"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
-        <div class="dna-rung" style="--i: 8"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
-        <div class="dna-rung" style="--i: 9"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
-        <div class="dna-rung" style="--i: 10"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
-        <div class="dna-rung" style="--i: 11"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
-        <div class="dna-rung" style="--i: 12"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
-        <div class="dna-rung" style="--i: 13"><span class="dna-dot strand-a"></span><span class="dna-bar"></span><span class="dna-dot strand-b"></span></div>
+      <div class="morphing-square-container">
+        <div class="morph-square-grid morph-size-lg morph-color-dual">
+          <span class="morph-tile" style="--sq-i: 0"></span>
+          <span class="morph-tile" style="--sq-i: 1"></span>
+          <span class="morph-tile" style="--sq-i: 2"></span>
+          <span class="morph-tile" style="--sq-i: 3"></span>
+        </div>
       </div>
       <div class="loader-brand">
         <span class="loader-brand-name">Ashara</span>
