@@ -15,11 +15,11 @@ const AdminPortal = lazy(() => import('./pages/AdminPortal'));
 
 import AsharaMorphingLoader from './components/AsharaMorphingLoader';
 
-// Bespoke Ashara Logo Morphing fallback for route transitions
+// Bespoke Ashara Logo Morphing fallback for route transitions (full-screen overlay concealing footer/content)
 function PageLoadingFallback() {
   return (
-    <div className="min-h-[60vh] flex flex-col items-center justify-center py-20 animate-fade-in">
-      <AsharaMorphingLoader size="md" variant="full" label="Curating Luxury Spaces" />
+    <div className="fixed inset-0 z-40 flex flex-col items-center justify-center bg-[#FAF6EF] dark:bg-[#0A1525] animate-fade-in">
+      <AsharaMorphingLoader size="lg" variant="full" label="Curating Luxury Spaces" />
     </div>
   );
 }
