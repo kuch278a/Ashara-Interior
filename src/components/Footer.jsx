@@ -294,7 +294,7 @@ export default function Footer({ onNavigate }) {
 
         {/* Bottom Copyright Center */}
         <div className="flex justify-center text-xs text-white/60">
-          <p>© Ashara Interior Design and Building 2026 | All rights reserved</p>
+          <p>© Ashara Interior Design and Building | All rights reserved</p>
         </div>
 
       </div>
