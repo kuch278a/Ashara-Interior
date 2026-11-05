@@ -37,7 +37,7 @@
 ### Visual & Architectural Highlights
 - **Harmonious Dual Themes**: Initializes in an airy, warm Light Mode (`#E8EDF2` / `#FAF8F5`) with custom geometric tile background patterns (`bg_pattern.svg`), alongside a one-click toggle to a luxury Dark Mode (`#0A1525` sapphire night with `bg_pattern_dark.svg`).
 - **Editorial Typography**: *Source Serif 4* variable font — serif display headings and interface typography in one family.
-- **Pure CSS 3D DNA Helix Preloader**: A horizontal double-helix loader with rotating strand nodes and smooth fade-out state.
+- **Ashara Logo Morphing Preloader**: Pure CSS architectural emblem loader featuring concentric pulsating squircle frames, shimmering gold ridge sweep across the Ashara fingerprint mark, and brand typography.
 - **Social Interaction Row**: Brand-colored reveals on hover, floating tooltip labels, and an interactive "Copy Link" button with an animated confirmation pill badge.
 - **Distortion-Free Logo Rendering**: Clean vector & transparent PNG client emblems with dedicated optical outline exclusions.
 
@@ -89,7 +89,7 @@ The studio CMS is hidden from the public navigation and protected via a secret U
 
 ## 🧬 Micro-Interactions & Loaders
 
-- **DNA Helix Preloader** (`DnaHelixLoader.jsx`): Pure CSS 3D rotating double helix with horizontal strand nodes, dynamic perspective, and clean white-mode aesthetic.
+- **Ashara Logo Morphing Loader** (`AsharaMorphingLoader.jsx`): Pure CSS architectural emblem loader with squircle liquid morphing, animated corner brackets, ambient radial glow, and fingerprint ridge light sweeps.
 - **Top Scroll Progress Indicator**: Real-time fixed gradient bar (`ashara-teal` → `ashara-gold` → `ashara-terracotta`) tracking viewport scroll depth.
 - **Social Media Share Buttons**:
   - Brand-colored hover reveals: Instagram (`#E1306C`), Facebook (`#1877F2`), LinkedIn (`#0A66C2`), TikTok (`#000000`), WhatsApp (`#25D366`).
@@ -133,7 +133,7 @@ Ashara-Interior/
 │   ├── components/
 │   │   ├── AsharaLogo.jsx          # Vector/PNG responsive brand emblem
 │   │   ├── ClientsSection.jsx      # Clean 5-column responsive client logo grid
-│   │   ├── DnaHelixLoader.jsx      # 3D Horizontal DNA double helix loader
+│   │   ├── AsharaMorphingLoader.jsx # Architectural logo morphing preloader
 │   │   ├── Footer.jsx              # Footer with social share reveals & copy link
 │   │   ├── Navbar.jsx              # Header, scroll progress bar, theme switcher
 │   │   ├── ProjectCard.jsx         # Shared Our Works project card (mobile & desktop grids)
@@ -166,7 +166,7 @@ Ashara-Interior/
 ├── AGENTS.md                        # Conventions & contracts for AI coding agents
 ├── eslint.config.js                 # ESLint flat config (correctness-focused rules)
 ├── playwright.config.js             # Playwright config (boots dev server, Chromium)
-├── index.html                       # HTML5 template, DNA preloader & SEO metadata
+├── index.html                       # HTML5 template, critical inlined preloader & SEO metadata
 ├── firestore.rules                 # Firestore security rules (admin allowlist, public reads)
 ├── storage.rules                   # Cloud Storage security rules (admin-only image uploads)
 ├── firebase.json                   # Rules deployment wiring for the Firebase CLI

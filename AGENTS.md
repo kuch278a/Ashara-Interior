@@ -28,5 +28,5 @@ The CMS is gated by a URL key: `http://localhost:5173/?key=<VITE_ADMIN_ACCESS_KE
 
 - Tailwind utility classes with custom `ashara-*` color tokens from `tailwind.config.js`; dark mode via the `dark:` class strategy.
 - Keep Firebase credentials in `.env` / GitHub secrets only — never commit keys.
-- `src/index.css` contains hand-written loader/animation/tooltip rules that JSX depends on by class name (`social-tooltip-wrapper`, `social-share-btn`, `is-copied`, `dna-*`, `#ashara-loader`); renaming any of them breaks the UI.
+- `src/index.css` contains hand-written loader/animation/tooltip rules that JSX depends on by class name (`social-tooltip-wrapper`, `social-share-btn`, `is-copied`, `ashara-morph-*`, `morph-*`, `#ashara-loader`); renaming any of them breaks the UI.
 - Deployment is GitHub Pages via `.github/workflows/deploy.yml` on push to `main`; `vite.config.js` uses `base: './'` for the subpath.
