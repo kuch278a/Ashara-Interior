@@ -186,7 +186,7 @@ export default function ContactPage() {
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+              <form onSubmit={handleSubmit} className="space-y-4">
                 {validationError && (
                   <div role="alert" aria-live="assertive" className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs rounded-sm flex items-center gap-2">
                     <AlertCircle className="w-4 h-4 shrink-0" aria-hidden="true" />

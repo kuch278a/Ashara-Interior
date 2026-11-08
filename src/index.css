@@ -135,21 +135,96 @@ html.dark ::-webkit-scrollbar-thumb:hover {
 /* ==================================================== */
 /* ARCHITECTURAL COMPONENT PRIMITIVES                   */
 /* ==================================================== */
-@layer components {
-  /* Primary Luxury Atelier Button */
-  .btn-ashara-primary {
-    @apply inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-[11px] uppercase tracking-[0.2em] font-semibold transition-all duration-300 hover:bg-ashara-teal-hover dark:hover:bg-ashara-gold/90 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-sm disabled:opacity-50 cursor-pointer;
-  }
+/* Primary Luxury Atelier Button */
+.btn-ashara-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 2rem;
+  background-color: #1E4E4E;
+  color: #FFFFFF;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border-radius: 0.125rem;
+  cursor: pointer;
+}
+.btn-ashara-primary:hover {
+  background-color: #163B3B;
+}
+.btn-ashara-primary:focus {
+  outline: none;
+}
+.btn-ashara-primary:focus-visible {
+  outline: 2px solid #C5A880;
+  outline-offset: 2px;
+}
+.btn-ashara-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+html.dark .btn-ashara-primary {
+  background-color: #C5A880;
+  color: #0A1525;
+}
+html.dark .btn-ashara-primary:hover {
+  background-color: rgba(197, 168, 128, 0.9);
+}
 
-  /* Elegant Outline Button */
+/* Elegant Outline Button */
+.btn-ashara-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.875rem 2.5rem;
+  border: 1px solid #9CA3AF;
+  color: #1E4E4E;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 0.125rem;
+}
+@media (min-width: 640px) {
   .btn-ashara-outline {
-    @apply inline-flex items-center justify-center px-10 py-3.5 border border-gray-400 dark:border-white/30 text-ashara-teal dark:text-white text-xs sm:text-[13px] uppercase tracking-[0.25em] font-medium transition-all duration-300 hover:bg-ashara-teal hover:text-white hover:border-ashara-teal dark:hover:bg-white dark:hover:text-ashara-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-sm;
+    font-size: 13px;
   }
+}
+.btn-ashara-outline:hover {
+  background-color: #1E4E4E;
+  color: #FFFFFF;
+  border-color: #1E4E4E;
+}
+.btn-ashara-outline:focus {
+  outline: none;
+}
+.btn-ashara-outline:focus-visible {
+  outline: 2px solid #C5A880;
+  outline-offset: 2px;
+}
+html.dark .btn-ashara-outline {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #FFFFFF;
+}
+html.dark .btn-ashara-outline:hover {
+  background-color: #FFFFFF;
+  color: #0A1525;
+  border-color: #FFFFFF;
+}
 
-  /* Architectural Hairline Divider Rule */
-  .section-hairline {
-    @apply h-[5px] bg-gray-300 dark:bg-white/15 flex-1;
-  }
+/* Architectural Hairline Divider Rule */
+.section-hairline {
+  height: 5px;
+  background-color: #D1D5DB;
+  flex: 1 1 0%;
+}
+html.dark .section-hairline {
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
 /* ==================================================== */

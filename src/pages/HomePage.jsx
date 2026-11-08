@@ -203,7 +203,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                   alt={work.title}
                   loading={index === 0 ? 'eager' : 'lazy'}
                   decoding="async"
-                  fetchPriority={index === 0 ? "high" : "auto"}
+                  fetchpriority={index === 0 ? "high" : "auto"}
                   onError={(e) => handleImageError(e, work.fallbackImage)}
                   className="w-full h-full object-cover"
                   style={{

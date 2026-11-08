@@ -83,7 +83,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
           alt={`${activeProject.title} Hero`}
           loading="eager"
           decoding="async"
-          fetchPriority="high"
+          fetchpriority="high"
           onError={handleImageError}
           className="w-full h-full object-cover object-center"
         />
