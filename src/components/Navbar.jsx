@@ -93,23 +93,27 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
 
         {/* Right Side Nav Links */}
         <div className="flex items-center gap-6 lg:gap-10">
-          <nav className="hidden lg:flex items-center gap-6 lg:gap-8">
-            {navLinks.map((link) => {
-              const isActive = activePage === link.id || (activePage === 'project-detail' && link.id === 'projects');
-              return (
-                <button
-                  key={link.id}
-                  onClick={() => handleNavClick(link.id)}
-                  className={`text-[12px] uppercase tracking-[0.2em] font-bold transition-colors duration-200 ${
-                    isActive
-                      ? 'text-ashara-teal dark:text-white border-b border-ashara-teal dark:border-white pb-1'
-                      : 'text-ashara-teal/60 dark:text-white/60 hover:text-ashara-teal dark:hover:text-white pb-1'
-                  }`}
-                >
-                  {link.label}
-                </button>
-              );
-            })}
+          <nav className="hidden lg:flex items-center" aria-label="Main navigation">
+            <ul role="list" className="flex items-center gap-6 lg:gap-8">
+              {navLinks.map((link) => {
+                const isActive = activePage === link.id || (activePage === 'project-detail' && link.id === 'projects');
+                return (
+                  <li key={link.id}>
+                    <button
+                      onClick={() => handleNavClick(link.id)}
+                      aria-current={isActive ? 'page' : undefined}
+                      className={`text-[12px] uppercase tracking-[0.2em] font-bold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-sm ${
+                        isActive
+                          ? 'text-ashara-teal dark:text-white border-b border-ashara-teal dark:border-white pb-1'
+                          : 'text-ashara-teal/60 dark:text-white/60 hover:text-ashara-teal dark:hover:text-white pb-1'
+                      }`}
+                    >
+                      {link.label}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
           </nav>
 
           {/* Action Buttons */}
@@ -151,29 +155,35 @@ export default function Navbar({ activePage, setActivePage, theme, toggleTheme }
             onClick={() => setMobileMenuOpen(false)}
             aria-hidden="true"
           />
-          <div id="mobile-menu" className="pointer-events-auto lg:hidden w-full absolute top-full left-0 z-50 bg-white/95 dark:bg-ashara-dark/95 backdrop-blur-md border-b border-gray-200 dark:border-white/10 shadow-xl animate-fade-in">
-            <div className="px-6 py-4 space-y-1.5">
+          <nav
+            id="mobile-menu"
+            aria-label="Mobile navigation"
+            className="pointer-events-auto lg:hidden w-full absolute top-full left-0 z-50 bg-white/95 dark:bg-ashara-dark/95 backdrop-blur-md border-b border-gray-200 dark:border-white/10 shadow-xl animate-fade-in"
+          >
+            <ul role="list" className="px-6 py-4 space-y-1.5">
               {navLinks.map((link) => {
                 const isActive = activePage === link.id || (activePage === 'project-detail' && link.id === 'projects');
                 return (
-                  <button
-                    key={link.id}
-                    onClick={() => handleNavClick(link.id)}
-                    className={`relative block w-full text-left px-4 py-3 rounded-sm text-[12px] uppercase tracking-[0.2em] font-bold transition-all duration-200 focus-visible:ring-2 focus-visible:ring-ashara-gold ${
-                      isActive
-                        ? 'bg-ashara-teal/10 dark:bg-white/10 text-ashara-teal dark:text-white pl-6'
-                        : 'text-ashara-teal/60 dark:text-white/60 hover:bg-ashara-teal/5 dark:hover:bg-white/5 hover:text-ashara-teal dark:hover:text-white'
-                    }`}
-                  >
-                    {isActive && (
-                      <span className="absolute left-2.5 top-1/2 -translate-y-1/2 w-1 h-4 bg-ashara-gold rounded-full" />
-                    )}
-                    {link.label}
-                  </button>
+                  <li key={link.id}>
+                    <button
+                      onClick={() => handleNavClick(link.id)}
+                      aria-current={isActive ? 'page' : undefined}
+                      className={`relative block w-full text-left px-4 py-3 rounded-sm text-[12px] uppercase tracking-[0.2em] font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold ${
+                        isActive
+                          ? 'bg-ashara-teal/10 dark:bg-white/10 text-ashara-teal dark:text-white pl-6'
+                          : 'text-ashara-teal/60 dark:text-white/60 hover:bg-ashara-teal/5 dark:hover:bg-white/5 hover:text-ashara-teal dark:hover:text-white'
+                      }`}
+                    >
+                      {isActive && (
+                        <span className="absolute left-2.5 top-1/2 -translate-y-1/2 w-1 h-4 bg-ashara-gold rounded-full" />
+                      )}
+                      {link.label}
+                    </button>
+                  </li>
                 );
               })}
-            </div>
-          </div>
+            </ul>
+          </nav>
         </>
       )}
     </header>

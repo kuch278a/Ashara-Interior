@@ -42,16 +42,20 @@ const CLIENTS = [
 export default function ClientsSection() {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-8 gap-y-10 sm:gap-x-12 sm:gap-y-14 items-center justify-items-center">
+      <ul
+        role="list"
+        aria-label="Client organizations"
+        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-8 gap-y-10 sm:gap-x-12 sm:gap-y-14 items-center justify-items-center"
+      >
         {CLIENTS.map((client, index) => (
-          <div
+          <li
             key={index}
             className={`flex items-center justify-center w-full h-24 sm:h-28 md:h-32 p-2 ${index === CLIENTS.length - 1 ? 'col-span-2 sm:col-span-1' : ''}`}
           >
             {/* Light Mode image */}
             <img
               src={client.image}
-              alt={client.alt}
+              alt={`${client.name} logo`}
               loading="lazy"
               decoding="async"
               className={`h-20 sm:h-24 md:h-28 ${client.darkImage ? 'dark:hidden' : ''} w-auto max-w-full object-contain transition-all duration-300 hover:scale-110 no-outline client-logo-img outline-none border-0 shadow-none`}
@@ -60,15 +64,15 @@ export default function ClientsSection() {
             {client.darkImage && (
               <img
                 src={client.darkImage}
-                alt={client.alt}
+                alt={`${client.name} logo`}
                 loading="lazy"
                 decoding="async"
                 className={`h-20 sm:h-24 md:h-28 hidden dark:block w-auto max-w-full object-contain transition-all duration-300 hover:scale-110 no-outline client-logo-img outline-none border-0 shadow-none`}
               />
             )}
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }

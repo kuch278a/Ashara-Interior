@@ -130,6 +130,57 @@ export default function App() {
     }
   }, []);
 
+  // Route-aware dynamic document title, description, and Open Graph metadata
+  useEffect(() => {
+    let title = 'Ashara Interior Design and Building | Curated Luxury Spaces in Addis Ababa';
+    let desc = "Addis Ababa's premier luxury interior design firm crafting bespoke governmental, corporate, and residential spaces across Ethiopia.";
+
+    switch (activePage) {
+      case 'projects':
+        title = 'Architectural Projects | Ashara Interior Design and Building';
+        desc = "Explore Ashara Interiors' curated portfolio of governmental bureaus, corporate headquarters, and luxury residential spaces.";
+        break;
+      case 'services':
+        title = 'Atelier Services & Architectural Process | Ashara Interiors';
+        desc = "From bespoke interior architecture to turnkey building and spatial design, discover Ashara's atelier services.";
+        break;
+      case 'about':
+        title = 'About Us & Studio Lineage | Ashara Interior Design and Building';
+        desc = 'Founded by architect Michael Dessalegn, Ashara Interiors pairs monumental civic heritage with contemporary luxury craftsmanship.';
+        break;
+      case 'contact':
+        title = 'Contact & Consultation Enquiries | Ashara Interiors';
+        desc = 'Discuss your upcoming interior, architectural, or commercial project with our Addis Ababa design atelier.';
+        break;
+      case 'project-detail':
+        if (selectedProject?.title) {
+          title = `${selectedProject.title} | Ashara Interiors Portfolio`;
+          if (selectedProject.description) {
+            desc = selectedProject.description.slice(0, 155) + '...';
+          }
+        }
+        break;
+      case 'admin':
+        title = 'Director Atelier Portal | Ashara Interiors CMS';
+        desc = 'Studio director management portal for portfolio curation and client enquiries.';
+        break;
+      case '404':
+        title = 'Page Not Found | Ashara Interiors';
+        desc = 'The requested architectural page could not be located.';
+        break;
+      default:
+        break;
+    }
+
+    document.title = title;
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute('content', desc);
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.setAttribute('content', title);
+    const ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) ogDesc.setAttribute('content', desc);
+  }, [activePage, selectedProject]);
+
   useEffect(() => {
     const root = window.document.documentElement;
     if (theme === 'dark') {
@@ -166,6 +217,14 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col bg-white text-ashara-teal dark:bg-ashara-dark dark:text-white font-sans antialiased transition-colors duration-300">
       
+      {/* Keyboard Accessible Skip Link */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100000] focus:px-4 focus:py-2 focus:bg-ashara-teal focus:text-white focus:font-medium focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-ashara-gold rounded"
+      >
+        Skip to main content
+      </a>
+
       {/* 1. Figma Header Navigation Bar (hidden on admin portal) */}
       {activePage !== 'admin' && (
         <Navbar 
@@ -177,7 +236,7 @@ export default function App() {
       )}
 
       {/* 2. Main Page View Router with Suspense */}
-      <main className="flex-1">
+      <main id="main-content" tabIndex={-1} className="flex-1 focus:outline-none">
         <Suspense fallback={<PageLoadingFallback />}>
           {activePage === 'home' && (
             <HomePage onNavigate={handleNavigate} onSelectProject={(p) => handleSelectProject(p, 'home')} />
@@ -220,7 +279,7 @@ export default function App() {
               </p>
               <button
                 onClick={() => handleNavigate('home')}
-                className="mt-4 px-8 py-3 bg-ashara-teal hover:bg-ashara-teal/90 text-white text-xs tracking-[0.2em] uppercase font-medium rounded-full transition-all duration-200 hover:scale-105"
+                className="mt-4 btn-ashara-primary rounded-full hover:scale-105"
               >
                 Back to Home
               </button>

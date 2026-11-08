@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import SectionTitle from '../components/SectionTitle';
 import { DEFAULT_PROJECTS_LIST } from '../data/defaultData';
 import { getInitialProjects, subscribeToProjects } from '../services/firebaseService';
 import { handleImageError as sharedImageError } from '../utils/imageFallback';
@@ -218,23 +219,19 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
         <div className="text-center pt-16 sm:pt-20 pb-20 sm:pb-24">
           <button
             onClick={() => onNavigate('contact')}
-            className="inline-flex items-center justify-center px-10 py-3.5 border border-gray-400 dark:border-white/30 text-ashara-teal dark:text-white text-xs sm:text-[13px] uppercase tracking-[0.25em] font-sans font-medium transition-all duration-300 hover:bg-ashara-teal hover:text-white hover:border-ashara-teal dark:hover:bg-white dark:hover:text-ashara-dark"
+            className="btn-ashara-outline"
           >
             INQUIRE NOW
           </button>
         </div>
 
         {/* 5. "YOU MAY LIKE" SECTION */}
-        <section className="pb-28 sm:pb-36 text-center">
+        <section aria-labelledby="you-may-like-heading" className="pb-28 sm:pb-36 text-center">
           
           {/* Hairline Divider Title */}
-          <div className="flex items-center justify-center gap-6 sm:gap-10 mb-12 sm:mb-16 w-full">
-            <div className="h-px bg-gray-300 dark:bg-white/20 flex-1"></div>
-            <h3 className="font-serif text-2xl sm:text-3xl text-ashara-teal dark:text-white font-normal whitespace-nowrap px-4">
-              You May Like
-            </h3>
-            <div className="h-px bg-gray-300 dark:bg-white/20 flex-1"></div>
-          </div>
+          <SectionTitle id="you-may-like-heading">
+            You May Like
+          </SectionTitle>
 
           {/* 2 Project Cards Grid matching Figma */}
           <div className="max-w-[1700px] mx-auto grid grid-cols-1 sm:grid-cols-2 gap-8 lg:gap-12 text-left">
@@ -243,6 +240,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
                 key={rec.id}
                 role="button"
                 tabIndex={0}
+                aria-label={`View recommended project: ${rec.title}`}
                 onClick={() => handleRecommendationClick(rec)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -250,7 +248,7 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
                     handleRecommendationClick(rec);
                   }
                 }}
-                className="group cursor-pointer block"
+                className="group cursor-pointer block focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-sm"
               >
                 <div className="w-full aspect-[4/3] sm:aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
                   <img
@@ -265,9 +263,9 @@ export default function ProjectDetailPage({ onNavigate, onSelectProject, project
                 
                 {/* Title Below the Image */}
                 <div className="mt-4">
-                  <h4 className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white font-normal group-hover:text-ashara-teal-light dark:group-hover:text-ashara-gold transition-colors">
+                  <h3 className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white font-normal group-hover:text-ashara-teal-light dark:group-hover:text-ashara-gold transition-colors">
                     {rec.title}
-                  </h4>
+                  </h3>
                 </div>
               </article>
             ))}

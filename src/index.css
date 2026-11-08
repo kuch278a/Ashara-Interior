@@ -133,6 +133,26 @@ html.dark ::-webkit-scrollbar-thumb:hover {
 }
 
 /* ==================================================== */
+/* ARCHITECTURAL COMPONENT PRIMITIVES                   */
+/* ==================================================== */
+@layer components {
+  /* Primary Luxury Atelier Button */
+  .btn-ashara-primary {
+    @apply inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-[11px] uppercase tracking-[0.2em] font-semibold transition-all duration-300 hover:bg-ashara-teal-hover dark:hover:bg-ashara-gold/90 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-sm disabled:opacity-50 cursor-pointer;
+  }
+
+  /* Elegant Outline Button */
+  .btn-ashara-outline {
+    @apply inline-flex items-center justify-center px-10 py-3.5 border border-gray-400 dark:border-white/30 text-ashara-teal dark:text-white text-xs sm:text-[13px] uppercase tracking-[0.25em] font-medium transition-all duration-300 hover:bg-ashara-teal hover:text-white hover:border-ashara-teal dark:hover:bg-white dark:hover:text-ashara-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-sm;
+  }
+
+  /* Architectural Hairline Divider Rule */
+  .section-hairline {
+    @apply h-[5px] bg-gray-300 dark:bg-white/15 flex-1;
+  }
+}
+
+/* ==================================================== */
 /* PRELOADER & ARCHITECTURAL LOADING SCREEN STYLES      */
 /* ==================================================== */
 #ashara-loader {

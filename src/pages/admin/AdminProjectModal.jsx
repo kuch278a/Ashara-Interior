@@ -58,15 +58,15 @@ export default function AdminProjectModal({
   };
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/75 backdrop-blur-sm animate-fade-in">
-      <div className="bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 w-full max-w-4xl max-h-[92vh] overflow-y-auto rounded-sm shadow-2xl space-y-6 p-6 sm:p-8">
+      <div role="dialog" aria-modal="true" aria-labelledby="project-modal-title" className="bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 w-full max-w-4xl max-h-[92vh] overflow-y-auto rounded-sm shadow-2xl space-y-6 p-6 sm:p-8">
         <div className="flex items-center justify-between pb-4 border-b border-gray-200 dark:border-white/10">
           <div>
             <span className="text-[10px] uppercase tracking-[0.25em] text-ashara-teal dark:text-white font-bold">PROJECT SHOWCASE CURATOR</span>
-            <h3 className="font-serif text-2xl sm:text-3xl text-ashara-teal dark:text-white mt-0.5">
+            <h2 id="project-modal-title" className="font-serif text-2xl sm:text-3xl text-ashara-teal dark:text-white mt-0.5">
               {editingProject.id ? 'Edit Architectural Project' : 'Curate New Project'}
-            </h3>
+            </h2>
           </div>
-          <button onClick={onClose} disabled={uploadStatus.active} className="text-ashara-teal dark:text-white hover:text-ashara-teal dark:hover:text-white p-2 transition">
+          <button onClick={onClose} disabled={uploadStatus.active} aria-label="Close project modal" className="text-ashara-teal dark:text-white hover:text-ashara-teal dark:hover:text-white p-2 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-sm">
             <X className="w-6 h-6" />
           </button>
         </div>

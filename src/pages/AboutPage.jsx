@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import SectionTitle from '../components/SectionTitle';
 import { getInitialProjects, subscribeToProjects } from '../services/firebaseService';
 import sortProjects from '../utils/sortProjects';
 import { handleImageError } from '../utils/imageFallback';
@@ -106,9 +107,9 @@ export default function AboutPage({ onNavigate, onSelectProject }) {
               />
               <div className="mt-5 text-left space-y-3">
                 <div>
-                  <h4 className="text-base sm:text-lg font-bold tracking-wider text-ashara-teal dark:text-white uppercase font-sans">
+                  <p className="text-base sm:text-lg font-bold tracking-wider text-ashara-teal dark:text-white uppercase font-sans">
                     Michael Dessalegn
-                  </h4>
+                  </p>
                   <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 font-light mt-0.5">
                     Founder, CEO and Architect
                   </p>
@@ -120,8 +121,8 @@ export default function AboutPage({ onNavigate, onSelectProject }) {
           {/* Text Content */}
           <div className="p-10 lg:p-16 flex flex-col justify-center">
             <div className="flex items-center gap-6 mb-4">
-              <h3 className="font-serif text-2xl text-ashara-teal dark:text-white font-normal whitespace-nowrap">CEO Statement</h3>
-              <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1"></div>
+              <h2 className="font-serif text-2xl text-ashara-teal dark:text-white font-normal whitespace-nowrap">CEO Statement</h2>
+              <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1" aria-hidden="true" />
             </div>
 
             <p className="text-[11px] uppercase tracking-[0.25em] text-ashara-teal/70 dark:text-ashara-gold font-medium mb-6">
@@ -149,8 +150,8 @@ export default function AboutPage({ onNavigate, onSelectProject }) {
         <div className="bg-[#EBF2F2] dark:bg-white/5 grid grid-cols-1 md:grid-cols-2 rounded-sm overflow-hidden group">
           <div className="p-10 lg:p-16 flex flex-col justify-center">
             <div className="flex items-center gap-6 mb-6">
-              <h3 className="font-serif text-2xl text-ashara-teal dark:text-white font-normal whitespace-nowrap">Our Mission</h3>
-              <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1"></div>
+              <h2 className="font-serif text-2xl text-ashara-teal dark:text-white font-normal whitespace-nowrap">Our Mission</h2>
+              <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1" aria-hidden="true" />
             </div>
             <div className="space-y-4 text-[15px] leading-relaxed text-ashara-teal dark:text-white font-normal">
               <p>
@@ -185,8 +186,8 @@ export default function AboutPage({ onNavigate, onSelectProject }) {
           </div>
           <div className="p-10 lg:p-16 flex flex-col justify-center">
             <div className="flex items-center gap-6 mb-6">
-              <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1"></div>
-              <h3 className="font-serif text-2xl text-ashara-teal dark:text-white font-normal whitespace-nowrap">Our Vision</h3>
+              <div className="h-[1px] bg-gray-300 dark:bg-white/15 flex-1" aria-hidden="true" />
+              <h2 className="font-serif text-2xl text-ashara-teal dark:text-white font-normal whitespace-nowrap">Our Vision</h2>
             </div>
             <div className="space-y-4 text-[15px] leading-relaxed text-ashara-teal dark:text-white font-normal">
               <p>
@@ -202,14 +203,12 @@ export default function AboutPage({ onNavigate, onSelectProject }) {
 
       {/* 6. RECENT PROJECTS SECTION */}
       {recentProjects.length > 0 && (
-        <section className="max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-16 pt-8 pb-24 space-y-12 text-center">
+        <section aria-labelledby="about-recent-projects" className="max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-16 pt-8 pb-24 space-y-12 text-center">
 
           {/* Title with horizontal lines */}
-          <div className="flex items-center justify-center gap-6 mb-12 w-full">
-            <div className="h-[5px] bg-gray-300 dark:bg-white/15 flex-1"></div>
-            <h2 className="font-serif text-3xl sm:text-4xl text-ashara-teal dark:text-white font-normal h-[72px] px-2 flex items-center justify-center whitespace-nowrap">Recent Projects</h2>
-            <div className="h-[5px] bg-gray-300 dark:bg-white/15 flex-1"></div>
-          </div>
+          <SectionTitle id="about-recent-projects">
+            Recent Projects
+          </SectionTitle>
 
           {/* 2 Project Cards Grid matching Figma (text below image) */}
           <div className="max-w-[1400px] mx-auto grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-16 text-left">
@@ -218,6 +217,7 @@ export default function AboutPage({ onNavigate, onSelectProject }) {
                 key={item.id}
                 role="button"
                 tabIndex={0}
+                aria-label={`View project details for ${item.title}`}
                 onClick={() => handleProjectClick(item)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -225,9 +225,9 @@ export default function AboutPage({ onNavigate, onSelectProject }) {
                     handleProjectClick(item);
                   }
                 }}
-                className="group cursor-pointer block"
+                className="group cursor-pointer block focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-sm"
               >
-                <div className="w-full aspect-[4/3] sm:aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-gray-200 mb-4">
+                <div className="w-full aspect-[4/3] sm:aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-gray-200 mb-4 rounded-sm">
                   <img
                     src={item.image}
                     alt={item.title}
@@ -238,9 +238,9 @@ export default function AboutPage({ onNavigate, onSelectProject }) {
                   />
                 </div>
                 <div>
-                  <h4 className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white mb-1 group-hover:text-ashara-teal transition-colors">
+                  <h3 className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white mb-1 group-hover:text-ashara-teal transition-colors">
                     {item.title}
-                  </h4>
+                  </h3>
                 </div>
               </article>
             ))}

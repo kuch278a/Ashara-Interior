@@ -83,16 +83,19 @@ export default function ContactPage() {
     <div className="bg-[#EBF2F2] dark:bg-ashara-dark min-h-screen animate-fade-in transition-colors duration-300">
       
       {/* 1. HERO HEADER matching Figma */}
-      <section className="w-full py-16 sm:py-24 lg:py-32 px-5 sm:px-6 lg:px-12 text-center">
-        <div className="max-w-3xl mx-auto">
-          <p className="font-serif text-xl sm:text-2xl lg:text-3xl text-ashara-teal dark:text-white leading-relaxed">
+      <section aria-labelledby="contact-page-heading" className="w-full py-16 sm:py-24 lg:py-32 px-5 sm:px-6 lg:px-12 text-center">
+        <div className="max-w-3xl mx-auto space-y-4">
+          <h1 id="contact-page-heading" className="font-serif text-3xl sm:text-4xl lg:text-5xl text-ashara-teal dark:text-white font-normal">
+            Contact Us
+          </h1>
+          <p className="font-serif text-xl sm:text-2xl text-ashara-teal/80 dark:text-white/80 leading-relaxed">
             If you would like to discuss your project, schedule an appointment or arrange to view more of our extensive portfolio please contact us on the details below.
           </p>
         </div>
       </section>
 
       {/* Horizontal Divider */}
-      <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16">
+      <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16" aria-hidden="true">
         <div className="h-[1px] bg-gray-300 dark:bg-white/15 w-full mb-12"></div>
       </div>
 
@@ -108,28 +111,28 @@ export default function ContactPage() {
             
             <div className="space-y-5 text-[13px] sm:text-sm text-ashara-teal dark:text-white font-light">
               <div className="flex items-start gap-3.5">
-                <Phone className="w-4 h-4 text-ashara-teal dark:text-white mt-1 shrink-0 stroke-[1.5]" />
+                <Phone className="w-4 h-4 text-ashara-teal dark:text-white mt-1 shrink-0 stroke-[1.5]" aria-hidden="true" />
                 <p className="leading-snug">
                   Telephone <span className="font-normal text-ashara-teal dark:text-white">+251 91 219 5768</span>
                 </p>
               </div>
               
               <div className="flex items-start gap-3.5">
-                <Mail className="w-4 h-4 text-ashara-teal dark:text-white mt-1 shrink-0 stroke-[1.5]" />
+                <Mail className="w-4 h-4 text-ashara-teal dark:text-white mt-1 shrink-0 stroke-[1.5]" aria-hidden="true" />
                 <p className="leading-snug">
-                  Email <a href="mailto:birukesayas911@gmail.com" className="hover:text-ashara-teal dark:hover:text-white transition">birukesayas911@gmail.com</a>
+                  Email <a href="mailto:birukesayas911@gmail.com" className="hover:text-ashara-teal dark:hover:text-white transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-sm">birukesayas911@gmail.com</a>
                 </p>
               </div>
               
               <div className="flex items-start gap-3.5">
-                <MessageSquare className="w-4 h-4 text-ashara-teal dark:text-white mt-1 shrink-0 stroke-[1.5]" />
+                <MessageSquare className="w-4 h-4 text-ashara-teal dark:text-white mt-1 shrink-0 stroke-[1.5]" aria-hidden="true" />
                 <p className="leading-snug">
-                  WhatsApp <a href="https://wa.me/251907636463" target="_blank" rel="noopener noreferrer" className="hover:text-ashara-teal dark:hover:text-white transition">+251 90 763 6463</a>
+                  WhatsApp <a href="https://wa.me/251907636463" target="_blank" rel="noopener noreferrer" className="hover:text-ashara-teal dark:hover:text-white transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-sm">+251 90 763 6463</a>
                 </p>
               </div>
               
               <div className="flex items-start gap-3.5 pt-2">
-                <MapPin className="w-4 h-4 text-ashara-teal dark:text-white mt-1 shrink-0 stroke-[1.5]" />
+                <MapPin className="w-4 h-4 text-ashara-teal dark:text-white mt-1 shrink-0 stroke-[1.5]" aria-hidden="true" />
                 <div className="leading-relaxed text-ashara-teal dark:text-white">
                   <p className="font-medium text-ashara-teal dark:text-white">Ashara Interiors</p>
                   <p>Megenagna</p>
@@ -148,8 +151,8 @@ export default function ContactPage() {
             </h2>
 
             {submitted ? (
-              <div className="bg-white/50 dark:bg-white/5 p-8 border border-ashara-teal/30 dark:border-ashara-gold/20 text-center space-y-4 shadow-sm animate-fade-in">
-                <div className="w-12 h-12 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark rounded-full flex items-center justify-center mx-auto">
+              <div role="status" aria-live="polite" className="bg-white/50 dark:bg-white/5 p-8 border border-ashara-teal/30 dark:border-ashara-gold/20 text-center space-y-4 shadow-sm animate-fade-in">
+                <div className="w-12 h-12 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark rounded-full flex items-center justify-center mx-auto" aria-hidden="true">
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
                 <h3 className="font-serif text-2xl text-ashara-teal dark:text-white">Enquiry Submitted Successfully</h3>
@@ -161,14 +164,14 @@ export default function ContactPage() {
                     setSubmitted(false);
                     setForm({ fullName: '', email: '', telephone: '', enquiry: '' });
                   }}
-                  className="mt-4 px-6 py-2 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-[11px] uppercase tracking-[0.2em] font-medium hover:bg-ashara-teal/90 transition"
+                  className="mt-4 px-6 py-2 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-[11px] uppercase tracking-[0.2em] font-medium hover:bg-ashara-teal/90 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-sm"
                 >
                   Send Another Enquiry
                 </button>
               </div>
             ) : submitError ? (
-              <div className="bg-white/50 dark:bg-white/5 p-8 border border-red-300 dark:border-red-400/30 text-center space-y-4 shadow-sm animate-fade-in">
-                <div className="w-12 h-12 bg-red-500 text-white rounded-full flex items-center justify-center mx-auto">
+              <div role="alert" aria-live="assertive" className="bg-white/50 dark:bg-white/5 p-8 border border-red-300 dark:border-red-400/30 text-center space-y-4 shadow-sm animate-fade-in">
+                <div className="w-12 h-12 bg-red-500 text-white rounded-full flex items-center justify-center mx-auto" aria-hidden="true">
                   <AlertCircle className="w-6 h-6" />
                 </div>
                 <h3 className="font-serif text-2xl text-ashara-teal dark:text-white">Enquiry Submission Failed</h3>
@@ -177,16 +180,16 @@ export default function ContactPage() {
                 </p>
                 <button
                   onClick={() => setSubmitError(false)}
-                  className="mt-4 px-6 py-2 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-[11px] uppercase tracking-[0.2em] font-medium hover:bg-ashara-teal/90 transition"
+                  className="mt-4 px-6 py-2 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-[11px] uppercase tracking-[0.2em] font-medium hover:bg-ashara-teal/90 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-sm"
                 >
                   Try Again
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4" noValidate>
                 {validationError && (
-                  <div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs rounded-sm flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4 shrink-0" />
+                  <div role="alert" aria-live="assertive" className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs rounded-sm flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0" aria-hidden="true" />
                     <span>{validationError}</span>
                   </div>
                 )}
@@ -206,7 +209,9 @@ export default function ContactPage() {
                 </div>
 
                 <div>
+                  <label htmlFor="fullName" className="sr-only">Full Name</label>
                   <input
+                    id="fullName"
                     type="text"
                     required
                     maxLength={200}
@@ -214,13 +219,15 @@ export default function ContactPage() {
                     placeholder="Full Name"
                     value={form.fullName}
                     onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-                    className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-base sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition"
+                    className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-base sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition rounded-sm"
                   />
                 </div>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
+                    <label htmlFor="email" className="sr-only">Email Address</label>
                     <input
+                      id="email"
                       type="email"
                       required
                       maxLength={320}
@@ -228,24 +235,28 @@ export default function ContactPage() {
                       placeholder="Email Address"
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-base sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition"
+                      className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-base sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition rounded-sm"
                     />
                   </div>
                   <div>
+                    <label htmlFor="telephone" className="sr-only">Telephone</label>
                     <input
+                      id="telephone"
                       type="tel"
                       maxLength={40}
                       aria-label="Telephone"
                       placeholder="Telephone"
                       value={form.telephone}
                       onChange={(e) => setForm({ ...form, telephone: e.target.value })}
-                      className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-base sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition"
+                      className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-base sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition rounded-sm"
                     />
                   </div>
                 </div>
                 
                 <div>
+                  <label htmlFor="enquiry" className="sr-only">Enquiry</label>
                   <textarea
+                    id="enquiry"
                     rows="6"
                     required
                     maxLength={5000}
@@ -253,7 +264,7 @@ export default function ContactPage() {
                     placeholder="Tell us about your enquiry - New construction / renovation / remodel."
                     value={form.enquiry}
                     onChange={(e) => setForm({ ...form, enquiry: e.target.value })}
-                    className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-base sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition resize-none"
+                    className="w-full px-4 py-3.5 bg-[#EBF2F2]/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-base sm:text-sm placeholder-gray-500 dark:placeholder-gray-400 text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus:bg-white dark:focus:bg-ashara-charcoal transition resize-none rounded-sm"
                   ></textarea>
                 </div>
                 
@@ -261,11 +272,11 @@ export default function ContactPage() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="inline-flex items-center gap-2 px-8 py-3.5 bg-ashara-teal dark:bg-ashara-gold text-white dark:text-ashara-dark text-[11px] uppercase tracking-[0.2em] font-semibold hover:bg-ashara-teal-hover dark:hover:bg-ashara-gold/80 transition duration-200 shadow-sm disabled:opacity-60 cursor-pointer"
+                    className="btn-ashara-primary"
                   >
                     {isSubmitting ? (
                       <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
                         <span>SUBMITTING...</span>
                       </>
                     ) : (

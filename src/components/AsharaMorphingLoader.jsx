@@ -31,6 +31,7 @@ export default function AsharaMorphingLoader({
       aria-live="polite"
       className={`ashara-morph-stage ${sizeClass} ${className}`}
     >
+      <span className="sr-only">Loading, please wait...</span>
       {/* Morphing Visual Core */}
       <div className="ashara-morph-frame-box">
         {/* Ambient Halo Glow */}

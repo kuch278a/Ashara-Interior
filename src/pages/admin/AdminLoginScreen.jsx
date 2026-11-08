@@ -30,28 +30,28 @@ export default function AdminLoginScreen({
           </div>
           <form onSubmit={onSubmit} className="space-y-5">
             {loginError && (
-              <div className="p-3.5 bg-rose-500/10 border border-rose-500/25 text-rose-600 dark:text-rose-400 text-xs flex items-center gap-2.5 rounded-sm">
-                <AlertCircle className="w-4 h-4 shrink-0" />
+              <div role="alert" aria-live="assertive" className="p-3.5 bg-rose-500/10 border border-rose-500/25 text-rose-600 dark:text-rose-400 text-xs flex items-center gap-2.5 rounded-sm">
+                <AlertCircle className="w-4 h-4 shrink-0" aria-hidden="true" />
                 <span className="font-medium">{loginError}</span>
               </div>
             )}
             <div className="space-y-1.5">
-              <label className="block text-[10px] uppercase tracking-widest font-semibold text-ashara-teal dark:text-white">Director Email / ID</label>
-              <input type="text" required value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} placeholder="Enter director email or ID"
-                className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm text-ashara-teal dark:text-white placeholder-gray-400 rounded-sm focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold transition shadow-inner" />
+              <label htmlFor="loginEmail" className="block text-[10px] uppercase tracking-widest font-semibold text-ashara-teal dark:text-white">Director Email / ID</label>
+              <input id="loginEmail" type="text" required value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} placeholder="Enter director email or ID"
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm text-ashara-teal dark:text-white placeholder-gray-400 rounded-sm focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus-visible:ring-2 focus-visible:ring-ashara-gold transition shadow-inner" />
             </div>
             <div className="space-y-1.5">
-              <label className="block text-[10px] uppercase tracking-widest font-semibold text-ashara-teal dark:text-white">Security Passcode</label>
-              <input type="password" required value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} placeholder="passcode"
-                className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm text-ashara-teal dark:text-white placeholder-gray-400 rounded-sm focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold transition shadow-inner" />
+              <label htmlFor="loginPassword" className="block text-[10px] uppercase tracking-widest font-semibold text-ashara-teal dark:text-white">Security Passcode</label>
+              <input id="loginPassword" type="password" required value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} placeholder="passcode"
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs sm:text-sm text-ashara-teal dark:text-white placeholder-gray-400 rounded-sm focus:outline-none focus:border-ashara-teal dark:focus:border-ashara-gold focus-visible:ring-2 focus-visible:ring-ashara-gold transition shadow-inner" />
             </div>
             <button type="submit" disabled={isLoggingIn}
-              className="w-full py-3.5 bg-ashara-teal hover:bg-ashara-teal-hover dark:bg-ashara-gold dark:hover:bg-ashara-gold/90 text-white dark:text-ashara-dark text-[11px] uppercase tracking-[0.25em] font-semibold transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 rounded-sm">
-              {isLoggingIn ? (<><Loader2 className="w-4 h-4 animate-spin" /><span>AUTHENTICATING DIRECTOR...</span></>) : (<><ShieldCheck className="w-4 h-4" /><span>UNLOCK ATELIER PORTAL</span></>)}
+              className="w-full py-3.5 bg-ashara-teal hover:bg-ashara-teal-hover dark:bg-ashara-gold dark:hover:bg-ashara-gold/90 text-white dark:text-ashara-dark text-[11px] uppercase tracking-[0.25em] font-semibold transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold">
+              {isLoggingIn ? (<><Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /><span>AUTHENTICATING DIRECTOR...</span></>) : (<><ShieldCheck className="w-4 h-4" aria-hidden="true" /><span>UNLOCK ATELIER PORTAL</span></>)}
             </button>
           </form>
           <div className="pt-4 border-t border-gray-100 dark:border-white/5 flex items-center justify-between text-xs">
-            <button onClick={() => onNavigate('home')} className="text-ashara-teal dark:text-white hover:text-ashara-teal dark:hover:text-white font-medium transition flex items-center gap-1.5">
+            <button onClick={() => onNavigate('home')} className="text-ashara-teal dark:text-white hover:text-ashara-teal dark:hover:text-white font-medium transition flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-sm">
               ← Return to Public Gallery
             </button>
             <span className="text-[10px] font-mono text-ashara-teal dark:text-white">v2.4 Atelier</span>

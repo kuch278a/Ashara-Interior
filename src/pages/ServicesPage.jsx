@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Minus } from 'lucide-react';
+import SectionTitle from '../components/SectionTitle';
 import { getInitialProjects, subscribeToProjects } from '../services/firebaseService';
 import sortProjects from '../utils/sortProjects';
 import { handleImageError } from '../utils/imageFallback';
@@ -84,10 +85,10 @@ export default function ServicesPage({ onNavigate, onSelectProject }) {
       </section>
 
       {/* 2. "How We Can Help" Section with Numbered Accordion */}
-      <section className="max-w-4xl mx-auto px-6 sm:px-10 pt-16 sm:pt-24 pb-16 space-y-12">
-        <h3 className="font-serif text-3xl sm:text-4xl text-center text-ashara-teal dark:text-white font-normal tracking-wide transition-colors duration-300">
+      <section aria-labelledby="how-we-can-help-heading" className="max-w-4xl mx-auto px-6 sm:px-10 pt-16 sm:pt-24 pb-16 space-y-12">
+        <h2 id="how-we-can-help-heading" className="font-serif text-3xl sm:text-4xl text-center text-ashara-teal dark:text-white font-normal tracking-wide transition-colors duration-300">
           How We Can Help
-        </h3>
+        </h2>
 
         {/* Accordion List */}
         <div className="divide-y divide-gray-200 dark:divide-white/10 max-w-2xl mx-auto border-t border-b border-gray-200 dark:border-white/10">
@@ -96,8 +97,11 @@ export default function ServicesPage({ onNavigate, onSelectProject }) {
             return (
               <div key={item.id} className="py-6 transition duration-200">
                 <button
+                  id={`accordion-header-${item.id}`}
+                  aria-expanded={isOpen}
+                  aria-controls={`accordion-panel-${item.id}`}
                   onClick={() => toggleAccordion(item.id)}
-                  className="w-full flex items-center justify-between text-left group"
+                  className="w-full flex items-center justify-between text-left group focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-sm"
                 >
                   <div className="flex items-baseline gap-4 sm:gap-6">
                     <span className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white font-light">
@@ -109,16 +113,21 @@ export default function ServicesPage({ onNavigate, onSelectProject }) {
                   </div>
                   <span className="text-ashara-teal dark:text-white group-hover:text-ashara-teal transition-colors duration-200">
                     {isOpen ? (
-                      <Minus className="w-4 h-4 transition-transform duration-300" />
+                      <Minus className="w-4 h-4 transition-transform duration-300" aria-hidden="true" />
                     ) : (
-                      <Plus className="w-4 h-4 transition-transform duration-300" />
+                      <Plus className="w-4 h-4 transition-transform duration-300" aria-hidden="true" />
                     )}
                   </span>
                 </button>
 
                 {/* Animated Body Content */}
                 {isOpen && (
-                  <div className="pt-4 pl-8 sm:pl-12 pr-4 animate-fade-in">
+                  <div
+                    id={`accordion-panel-${item.id}`}
+                    role="region"
+                    aria-labelledby={`accordion-header-${item.id}`}
+                    className="pt-4 pl-8 sm:pl-12 pr-4 animate-fade-in"
+                  >
                     <p className="text-base leading-relaxed text-ashara-teal dark:text-white font-light transition-colors duration-300">
                       {item.content}
                     </p>
@@ -133,7 +142,7 @@ export default function ServicesPage({ onNavigate, onSelectProject }) {
         <div className="text-center pt-4">
           <button
             onClick={() => onNavigate && onNavigate('contact')}
-            className="inline-flex items-center justify-center w-[210px] h-[60px] border border-gray-300 dark:border-white/30 text-ashara-teal dark:text-white text-xs sm:text-sm uppercase tracking-[0.2em] font-bold transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl hover:bg-ashara-teal hover:text-white dark:hover:bg-ashara-gold dark:hover:text-ashara-dark hover:border-transparent"
+            className="btn-ashara-outline"
           >
             ENQUIRE NOW
           </button>
@@ -142,16 +151,12 @@ export default function ServicesPage({ onNavigate, onSelectProject }) {
 
       {/* 4. "Recent Projects" Section matching Figma */}
       {recentProjects.length > 0 && (
-        <section className="max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-16 pt-8 pb-24 space-y-12 text-center">
+        <section aria-labelledby="services-recent-projects" className="max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-16 pt-8 pb-24 space-y-12 text-center">
 
           {/* Title with horizontal lines */}
-          <div className="flex items-center justify-center gap-6 mb-12 w-full">
-            <div className="h-[5px] bg-gray-300 dark:bg-white/15 flex-1"></div>
-            <h3 className="font-serif text-3xl sm:text-4xl text-ashara-teal dark:text-white font-normal h-[72px] px-2 flex items-center justify-center whitespace-nowrap">
-              Recent Projects
-            </h3>
-            <div className="h-[5px] bg-gray-300 dark:bg-white/15 flex-1"></div>
-          </div>
+          <SectionTitle id="services-recent-projects">
+            Recent Projects
+          </SectionTitle>
 
           {/* 2 Project Cards Grid matching Figma (text below image) */}
           <div className="max-w-[1400px] mx-auto grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-16 text-left">
@@ -160,6 +165,7 @@ export default function ServicesPage({ onNavigate, onSelectProject }) {
                 key={item.id}
                 role="button"
                 tabIndex={0}
+                aria-label={`View project details for ${item.title}`}
                 onClick={() => handleProjectClick(item)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -167,9 +173,9 @@ export default function ServicesPage({ onNavigate, onSelectProject }) {
                     handleProjectClick(item);
                   }
                 }}
-                className="group cursor-pointer block"
+                className="group cursor-pointer block focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-sm"
               >
-                <div className="w-full aspect-[4/3] sm:aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-gray-200 mb-4">
+                <div className="w-full aspect-[4/3] sm:aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-gray-200 mb-4 rounded-sm">
                   <img
                     src={item.image}
                     alt={item.title}
@@ -180,9 +186,9 @@ export default function ServicesPage({ onNavigate, onSelectProject }) {
                   />
                 </div>
                 <div>
-                  <h4 className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white mb-1 group-hover:text-ashara-teal transition-colors">
+                  <h3 className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white mb-1 group-hover:text-ashara-teal transition-colors">
                     {item.title}
-                  </h4>
+                  </h3>
                 </div>
               </article>
             ))}

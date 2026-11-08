@@ -5,15 +5,15 @@ export default function AdminTestimonialModal({ editingTestimonial, setEditingTe
   if (!editingTestimonial) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fade-in">
-      <div className="bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-sm shadow-2xl p-6 sm:p-8 space-y-5">
+      <div role="dialog" aria-modal="true" aria-labelledby="testimonial-modal-title" className="bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-sm shadow-2xl p-6 sm:p-8 space-y-5">
         <div className="flex items-center justify-between pb-3 border-b border-gray-200 dark:border-white/10">
           <div>
             <span className="text-[10px] uppercase tracking-[0.25em] text-ashara-teal dark:text-white font-bold">CLIENT SOCIAL PROOF</span>
-            <h3 className="font-serif text-2xl text-ashara-teal dark:text-white">
+            <h2 id="testimonial-modal-title" className="font-serif text-2xl text-ashara-teal dark:text-white">
               {editingTestimonial.id ? 'Edit Testimonial' : 'Add Client Testimonial'}
-            </h3>
+            </h2>
           </div>
-          <button onClick={onClose} className="text-ashara-teal dark:text-white hover:text-ashara-teal dark:hover:text-white p-1"><X className="w-5 h-5" /></button>
+          <button onClick={onClose} aria-label="Close testimonial modal" className="text-ashara-teal dark:text-white hover:text-ashara-teal dark:hover:text-white p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-sm"><X className="w-5 h-5" /></button>
         </div>
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

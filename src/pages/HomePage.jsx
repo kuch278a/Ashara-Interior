@@ -170,6 +170,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
       {/* 1. HERO SLIDESHOW */}
       <section
         id="real-hero"
+        aria-label="Featured Projects Carousel"
         className="relative w-full h-screen supports-[height:100svh]:h-[100svh] overflow-hidden touch-pan-y"
         onMouseEnter={() => setIsHeroPaused(true)}
         onMouseLeave={() => setIsHeroPaused(false)}
@@ -210,7 +211,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                     transition: 'transform 6000ms ease-out'
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent pointer-events-none"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent pointer-events-none" aria-hidden="true" />
               </div>
             );
           })}
@@ -228,7 +229,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
           type="button"
           aria-label="Previous Project"
           onClick={(e) => { e.stopPropagation(); prevSlide(); }}
-          className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-30 text-white/60 hover:text-white transition-colors duration-300 focus:outline-none drop-shadow-xl"
+          className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-30 text-white/60 hover:text-white transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-full drop-shadow-xl p-1"
         >
           <ChevronLeft className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 stroke-[1]" />
         </button>
@@ -236,22 +237,22 @@ export default function HomePage({ onNavigate, onSelectProject }) {
           type="button"
           aria-label="Next Project"
           onClick={(e) => { e.stopPropagation(); nextSlide(); }}
-          className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-30 text-white/60 hover:text-white transition-colors duration-300 focus:outline-none drop-shadow-xl"
+          className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-30 text-white/60 hover:text-white transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-full drop-shadow-xl p-1"
         >
           <ChevronRight className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 stroke-[1]" />
         </button>
 
         <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2">
-          <div className="flex gap-1.5">
+          <div className="flex gap-1.5" role="tablist" aria-label="Hero project slides">
             {heroWorks.map((_, i) => (
               <button
                 key={i}
                 type="button"
                 onClick={(e) => { e.stopPropagation(); setCurrentSlide(i); }}
-                className={`h-2.5 sm:h-3 transition-colors duration-500 ring-1 ${activeHeroSlide === i ? 'bg-[#165A5B] ring-white/70 w-10 sm:w-12' : 'w-2.5 sm:w-3 bg-[#165A5B]/60 ring-white/40 hover:bg-[#165A5B]'}`}
-                aria-label={`Go to slide ${i + 1}`}
+                className={`h-2.5 sm:h-3 transition-colors duration-500 ring-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold ${activeHeroSlide === i ? 'bg-[#165A5B] ring-white/70 w-10 sm:w-12' : 'w-2.5 sm:w-3 bg-[#165A5B]/60 ring-white/40 hover:bg-[#165A5B]'}`}
+                aria-label={`Go to slide ${i + 1} of ${heroWorks.length}: ${heroWorks[i]?.title}`}
                 aria-current={activeHeroSlide === i ? 'true' : 'false'}
-              ></button>
+              />
             ))}
           </div>
           <button
@@ -270,7 +271,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
       </section>
 
       {/* 2. PHILOSOPHY QUOTE (White background) */}
-      <section className="max-w-6xl mx-auto px-5 sm:px-6 text-center pt-16 pb-16 sm:pt-28 sm:pb-28 lg:pt-44 lg:pb-48">
+      <section aria-label="Studio Philosophy" className="max-w-6xl mx-auto px-5 sm:px-6 text-center pt-16 pb-16 sm:pt-28 sm:pb-28 lg:pt-44 lg:pb-48">
         <span className="block text-[14px] sm:text-[20px] uppercase tracking-[0.3em] font-semibold text-ashara-teal dark:text-white mb-4 sm:mb-6">
           WELCOME
         </span>
@@ -282,9 +283,9 @@ export default function HomePage({ onNavigate, onSelectProject }) {
       </section>
 
       {/* 3. OUR WORKS - Title with lines & Accordion */}
-      <section className="max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 text-center pt-8 sm:pt-12 pb-14 sm:pb-24">
+      <section aria-labelledby="our-works-heading" className="max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 text-center pt-8 sm:pt-12 pb-14 sm:pb-24">
 
-        <SectionTitle>Our Works</SectionTitle>
+        <SectionTitle id="our-works-heading">Our Works</SectionTitle>
 
         {/* Mobile: Two-by-Two Card Grid with Slide-Up Caption on Hover */}
         <div className="md:hidden grid grid-cols-2 gap-2">
@@ -313,18 +314,21 @@ export default function HomePage({ onNavigate, onSelectProject }) {
       </section>
 
       {/* 4. OUR CLIENTS */}
-      <section className="max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 text-center pt-8 sm:pt-16 pb-12 sm:pb-24">
-        <SectionTitle>Our Clients</SectionTitle>
+      <section aria-labelledby="our-clients-heading" className="max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 text-center pt-8 sm:pt-16 pb-12 sm:pb-24">
+        <SectionTitle id="our-clients-heading">Our Clients</SectionTitle>
         <ClientsSection />
       </section>
 
       {/* 5. TESTIMONIAL CAROUSEL */}
       <section
+        aria-labelledby="testimonials-heading"
         className="max-w-4xl mx-auto px-6 text-center pt-12 sm:pt-24 pb-20 sm:pb-40 relative touch-pan-y"
         onMouseEnter={() => setIsTestimonialPaused(true)}
         onMouseLeave={() => setIsTestimonialPaused(false)}
         {...testimonialSwipe.handlers}
       >
+        <h2 id="testimonials-heading" className="sr-only">Client Testimonials</h2>
+
         {/* Left Arrow */}
         <button
           type="button"
@@ -333,7 +337,7 @@ export default function HomePage({ onNavigate, onSelectProject }) {
             setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
             pauseAndResumeTestimonials();
           }}
-          className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-300 hover:text-ashara-teal transition-colors z-10 p-1"
+          className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-300 hover:text-ashara-teal transition-colors z-10 p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-full"
         >
           <ChevronLeft className="w-6 h-6 sm:w-8 sm:h-8 stroke-1" />
         </button>
@@ -371,13 +375,13 @@ export default function HomePage({ onNavigate, onSelectProject }) {
             setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
             pauseAndResumeTestimonials();
           }}
-          className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-300 hover:text-ashara-teal transition-colors z-10 p-1"
+          className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-300 hover:text-ashara-teal transition-colors z-10 p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-full"
         >
           <ChevronRight className="w-6 h-6 sm:w-8 sm:h-8 stroke-1" />
         </button>
 
         {/* Pagination Indicators */}
-        <div className="flex justify-center items-center gap-2 mt-8">
+        <div className="flex justify-center items-center gap-2 mt-8" role="tablist" aria-label="Testimonial slides">
           {testimonials.map((_, idx) => (
             <button
               key={idx}
@@ -386,14 +390,14 @@ export default function HomePage({ onNavigate, onSelectProject }) {
                 setCurrentTestimonial(idx);
                 pauseAndResumeTestimonials();
               }}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
+              className={`h-1.5 rounded-full transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold ${
                 activeTestimonial === idx
                   ? 'w-8 bg-ashara-teal dark:bg-ashara-gold'
                   : 'w-2 bg-gray-300 dark:bg-white/20 hover:bg-gray-400 dark:hover:bg-white/40'
               }`}
-              aria-label={`Go to testimonial ${idx + 1}`}
+              aria-label={`Go to testimonial ${idx + 1} of ${testimonials.length}: ${testimonials[idx]?.author}`}
               aria-current={activeTestimonial === idx ? 'true' : 'false'}
-            ></button>
+            />
           ))}
         </div>
       </section>

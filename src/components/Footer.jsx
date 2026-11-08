@@ -151,6 +151,7 @@ export default function Footer({ onNavigate }) {
 
   return (
     <footer className="bg-ashara-teal text-white pt-16 pb-8 px-6 sm:px-10 lg:px-16 mt-auto">
+      <h2 className="sr-only">Footer Information</h2>
       <div className="max-w-7xl mx-auto flex flex-col space-y-16">
 
         {/* Main Footer Row matching Figma */}
@@ -160,7 +161,7 @@ export default function Footer({ onNavigate }) {
           <div className="flex-shrink-0 col-span-2 sm:col-span-1">
             <button
               onClick={() => onNavigate('home')}
-              className="group focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold hover:opacity-90 transition"
+              className="group focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold hover:opacity-90 transition rounded-sm"
               aria-label="Ashara Interior Design and Building Home"
             >
               <AsharaLogo size={80} light={true} hideText={true} />
@@ -169,14 +170,14 @@ export default function Footer({ onNavigate }) {
 
           {/* 2. Contact Info */}
           <div className="space-y-2 text-xs text-white/90">
-            <h4 className="font-bold text-[16px] text-white mb-4">Contact</h4>
+            <h3 className="font-bold text-[16px] text-white mb-4">Contact</h3>
             <p>
-              <a href={SOCIAL_LINKS.phone} className="hover:text-white hover:underline transition">
+              <a href={SOCIAL_LINKS.phone} className="hover:text-white hover:underline transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-sm">
                 +251 911 123 892
               </a>
             </p>
             <p className="pt-1">
-              <a href={SOCIAL_LINKS.email} className="hover:text-white hover:underline transition">
+              <a href={SOCIAL_LINKS.email} className="hover:text-white hover:underline transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-sm">
                 info@ashara.com
               </a>
             </p>
@@ -184,7 +185,7 @@ export default function Footer({ onNavigate }) {
 
           {/* 3. Address */}
           <div className="space-y-2 text-xs text-white/90">
-            <h4 className="font-bold text-[16px] text-white mb-4">Address</h4>
+            <h3 className="font-bold text-[16px] text-white mb-4">Address</h3>
             <p>Megenagna</p>
             <p>Infront of Ethio Ceramics</p>
             <p>Bete Sahlite-Mihret Building, 4th Floor</p>
@@ -192,19 +193,41 @@ export default function Footer({ onNavigate }) {
           </div>
 
           {/* 4. Navigation */}
-          <nav className="flex flex-col space-y-3 text-xs uppercase tracking-widest text-white/90 font-medium">
-            <button onClick={() => onNavigate('projects')} className="text-left hover:text-white transition">
-              PROJECTS
-            </button>
-            <button onClick={() => onNavigate('services')} className="text-left hover:text-white transition">
-              OUR SERVICES
-            </button>
-            <button onClick={() => onNavigate('about')} className="text-left hover:text-white transition">
-              ABOUT US
-            </button>
-            <button onClick={() => onNavigate('contact')} className="text-left hover:text-white transition">
-              CONTACT
-            </button>
+          <nav aria-label="Footer navigation">
+            <ul role="list" className="flex flex-col space-y-3 text-xs uppercase tracking-widest text-white/90 font-medium">
+              <li>
+                <button
+                  onClick={() => onNavigate('projects')}
+                  className="text-left hover:text-white transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-sm"
+                >
+                  PROJECTS
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onNavigate('services')}
+                  className="text-left hover:text-white transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-sm"
+                >
+                  OUR SERVICES
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onNavigate('about')}
+                  className="text-left hover:text-white transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-sm"
+                >
+                  ABOUT US
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onNavigate('contact')}
+                  className="text-left hover:text-white transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-sm"
+                >
+                  CONTACT
+                </button>
+              </li>
+            </ul>
           </nav>
 
           {/* 5. Social Links with Brand-Colour Reveals, Floating Tooltips & URL Copy */}

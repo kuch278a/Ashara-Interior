@@ -452,15 +452,20 @@ export default function AdminPortal({ onNavigate }) {
         </div>
 
         {/* Navigation */}
-        <nav className="p-3 space-y-1">
+        <nav className="p-3 space-y-1" aria-label="Admin management tabs" role="tablist">
           <p className="px-3 pt-2 pb-1.5 text-[9px] uppercase tracking-[0.25em] font-bold text-white/35">Manage</p>
           {NAV_CONFIG.map(({ key, label, icon: Icon, count, badge }) => (
-            <button key={key} onClick={() => { setActiveTab(key); setSearchQuery(''); setIsSidebarOpen(false); }}
-              className={`relative w-full flex items-center gap-3 px-3 py-2.5 rounded-sm text-xs uppercase tracking-wider font-semibold transition-all ${activeTab === key ? 'bg-white/10 text-white' : 'text-white/55 hover:text-white hover:bg-white/5'}`}>
+            <button
+              key={key}
+              role="tab"
+              aria-selected={activeTab === key}
+              onClick={() => { setActiveTab(key); setSearchQuery(''); setIsSidebarOpen(false); }}
+              className={`relative w-full flex items-center gap-3 px-3 py-2.5 rounded-sm text-xs uppercase tracking-wider font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold ${activeTab === key ? 'bg-white/10 text-white' : 'text-white/55 hover:text-white hover:bg-white/5'}`}
+            >
               {activeTab === key && <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-ashara-gold rounded-full" />}
-              <Icon className="w-4 h-4 shrink-0" />
+              <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />
               <span className="flex-1 text-left truncate">{label}</span>
-              {badge > 0 && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />}
+              {badge > 0 && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" aria-label="New items" />}
               <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold shrink-0 ${badge > 0 ? 'bg-emerald-500 text-white' : activeTab === key ? 'bg-ashara-gold/20 text-ashara-gold' : 'bg-white/10 text-white/60'}`}>{count}</span>
             </button>
           ))}
