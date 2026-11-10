@@ -19,23 +19,17 @@ import AdminTestimonialsTab  from './admin/AdminTestimonialsTab';
 import AdminProjectModal     from './admin/AdminProjectModal';
 import AdminTestimonialModal from './admin/AdminTestimonialModal';
 import AdminDeleteConfirm    from './admin/AdminDeleteConfirm';
+import AdminRestoreModal     from './admin/AdminRestoreModal';
 
 const FILTER_OPTION_CLASS = 'bg-white dark:bg-[#0D151C] text-ashara-teal dark:text-white';
 
-// Toolbar filter dropdown shared by the projects, testimonials, and leads tabs
 function FilterSelect({ icon: Icon, value, onChange, options }) {
   return (
     <div className="flex items-center gap-1.5 text-xs text-ashara-teal dark:text-white">
       <Icon className="w-3.5 h-3.5" />
-      <select
-        value={value}
-        onChange={onChange}
-        className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-sm text-xs text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal"
-      >
-        {options.map((option) => (
-          <option key={option.value} value={option.value} className={FILTER_OPTION_CLASS}>
-            {option.label}
-          </option>
+      <select value={value} onChange={onChange} className="px-3 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-sm text-xs text-ashara-teal dark:text-white focus:outline-none focus:border-ashara-teal">
+        {options.map((opt) => (
+          <option key={opt.value} value={opt.value} className={FILTER_OPTION_CLASS}>{opt.label}</option>
         ))}
       </select>
     </div>
@@ -43,14 +37,10 @@ function FilterSelect({ icon: Icon, value, onChange, options }) {
 }
 
 const PROJECT_CATEGORY_OPTIONS = [
-  { value: 'INTERIOR', label: 'Interior' },
-  { value: 'LANDSCAPE', label: 'Landscape' },
-  { value: 'ARCHITECTURE', label: 'Architecture' },
-  { value: 'GOVERNMENTAL', label: 'Governmental' },
-  { value: 'PRIVATE', label: 'Private Entities' },
-  { value: 'CORPORATION', label: 'Corporations' },
-  { value: 'COMMERCIAL', label: 'Commercial' },
-  { value: 'RESIDENTIAL', label: 'Residential' }
+  { value: 'INTERIOR', label: 'Interior' }, { value: 'LANDSCAPE', label: 'Landscape' },
+  { value: 'ARCHITECTURE', label: 'Architecture' }, { value: 'GOVERNMENTAL', label: 'Governmental' },
+  { value: 'PRIVATE', label: 'Private Entities' }, { value: 'CORPORATION', label: 'Corporations' },
+  { value: 'COMMERCIAL', label: 'Commercial' }, { value: 'RESIDENTIAL', label: 'Residential' }
 ];
 
 export default function AdminPortal({ onNavigate }) {
@@ -59,48 +49,50 @@ export default function AdminPortal({ onNavigate }) {
       const saved = sessionStorage.getItem('ashara_admin_auth');
       if (!saved) return null;
       const parsed = JSON.parse(saved);
-      if (parsed && parsed.email) return parsed;
+      if (parsed?.email) return parsed;
       sessionStorage.removeItem('ashara_admin_auth');
       return null;
-    } catch {
-      return null;
-    }
+    } catch { return null; }
   });
-  const [loginEmail,    setLoginEmail]    = useState('');
+
+  const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
-  const [loginError,    setLoginError]    = useState('');
-  const [isLoggingIn,   setIsLoggingIn]   = useState(false);
-  const [activeTab,    setActiveTab]    = useState('projects');
-  const [leads,        setLeads]        = useState([]);
-  const [projects,     setProjects]     = useState([]);
+  const [loginError, setLoginError] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  const [activeTab, setActiveTab] = useState('projects');
+  const [leads, setLeads] = useState([]);
+  const [projects, setProjects] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [notification,  setNotification]  = useState(null);
-  const [searchQuery,           setSearchQuery]           = useState('');
+  const [notification, setNotification] = useState(null);
+
+  const [searchQuery, setSearchQuery] = useState('');
   const [projectCategoryFilter, setProjectCategoryFilter] = useState('ALL');
-  const [leadStatusFilter,      setLeadStatusFilter]      = useState('ALL');
-  const [testimonialFilter,     setTestimonialFilter]     = useState('ALL');
-  const [editingProject,          setEditingProject]          = useState(null);
-  const [isProjectModalOpen,      setIsProjectModalOpen]      = useState(false);
-  const [projectImageFile,        setProjectImageFile]        = useState(null);
-  const [projectImagePreview,     setProjectImagePreview]     = useState('');
-  const [projectGalleryFiles,     setProjectGalleryFiles]     = useState([]);
-  const [editingTestimonial,     setEditingTestimonial]     = useState(null);
+  const [leadStatusFilter, setLeadStatusFilter] = useState('ALL');
+  const [testimonialFilter, setTestimonialFilter] = useState('ALL');
+
+  const [editingProject, setEditingProject] = useState(null);
+  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
+  const [projectImageFile, setProjectImageFile] = useState(null);
+  const [projectImagePreview, setProjectImagePreview] = useState('');
+  const [projectGalleryFiles, setProjectGalleryFiles] = useState([]);
+
+  const [editingTestimonial, setEditingTestimonial] = useState(null);
   const [isTestimonialModalOpen, setIsTestimonialModalOpen] = useState(false);
+
   const [deleteConfirm, setDeleteConfirm] = useState(null);
-  const [uploadStatus,  setUploadStatus]  = useState({ active: false, stage: '', percent: 0 });
-  const [copiedId,      setCopiedId]      = useState(null);
+  const [uploadStatus, setUploadStatus] = useState({ active: false, stage: '', percent: 0 });
+  const [copiedId, setCopiedId] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isDeleting,    setIsDeleting]    = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const fileRestoreInputRef = useRef(null);
   const [restoreCandidate, setRestoreCandidate] = useState(null);
   const [isRestoring, setIsRestoring] = useState(false);
   const toastTimerRef = useRef(null);
-  // Id of the lead whose status update is in flight (guards concurrent updates)
   const updatingLeadRef = useRef(null);
 
-  // Defined before the effects below, which reference them in dependency
-  // arrays — a const referenced before its declaration throws (TDZ).
   const showToast = useCallback((message, type = 'success') => {
     setNotification({ message, type });
     if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
@@ -113,8 +105,7 @@ export default function AdminPortal({ onNavigate }) {
       const [leadsData, projectsData, testimonialsData] = await Promise.all([
         getConsultations(), getDynamicProjects(), getDynamicTestimonials()
       ]);
-      setLeads(leadsData || []); setProjects(projectsData || []);
-      setTestimonials(testimonialsData || []);
+      setLeads(leadsData || []); setProjects(projectsData || []); setTestimonials(testimonialsData || []);
       if (isManualRefresh) showToast('Atelier database synchronized');
     } catch { showToast('Could not sync remote data. Offline cache active.', 'error'); }
     finally { setIsRefreshing(false); }
@@ -123,11 +114,7 @@ export default function AdminPortal({ onNavigate }) {
   useEffect(() => {
     if (!adminUser) return;
     loadAllData();
-    const unsub = subscribeToTestimonials((list) => {
-      // Empty lists are legitimate (e.g. last testimonial deleted in
-      // another tab) and must propagate instead of being dropped.
-      if (Array.isArray(list)) setTestimonials(list);
-    });
+    const unsub = subscribeToTestimonials((list) => { if (Array.isArray(list)) setTestimonials(list); });
     return () => { if (typeof unsub === 'function') unsub(); };
   }, [adminUser, loadAllData]);
 
@@ -140,17 +127,16 @@ export default function AdminPortal({ onNavigate }) {
       setCopiedId(id);
       setTimeout(() => setCopiedId(null), 2000);
       showToast('Copied to clipboard', 'info');
-    } catch {
-      // Also catches origins where navigator.clipboard is unavailable
-      showToast('Could not copy to clipboard', 'error');
-    }
+    } catch { showToast('Could not copy to clipboard', 'error'); }
   };
+
   const formatFileSize = (bytes) => {
     if (!bytes) return '';
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
+
   const handleLoginSubmit = async (e) => {
     e.preventDefault(); setLoginError(''); setIsLoggingIn(true);
     try {
@@ -160,13 +146,13 @@ export default function AdminPortal({ onNavigate }) {
     } catch { setLoginError('Authentication failed. Please verify connection and credentials.'); }
     finally { setIsLoggingIn(false); }
   };
+
   const handleLogout = async () => {
     await logoutAdminUser(); setAdminUser(null); setLoginEmail(''); setLoginPassword('');
     showToast('Signed out of Studio Atelier', 'info');
   };
+
   const handleUpdateLeadStatus = async (leadId, newStatus) => {
-    // Ignore a second change while the first is still in flight, so the UI
-    // can never end up showing a status that was not the last one persisted
     if (updatingLeadRef.current === leadId) return;
     updatingLeadRef.current = leadId;
     try {
@@ -176,15 +162,18 @@ export default function AdminPortal({ onNavigate }) {
     } catch { showToast('Failed to update lead status', 'error'); }
     finally { updatingLeadRef.current = null; }
   };
+
   const handleOpenNewProject = () => {
     setEditingProject({ title: '', category: 'GOVERNMENTAL', tag: 'GOVERNMENTAL', subtitle: '', image: '', description: '' });
     setProjectImageFile(null); setProjectImagePreview(''); setProjectGalleryFiles([]);
     setIsProjectModalOpen(true);
   };
+
   const handleOpenEditProject = (proj) => {
     setEditingProject({ ...proj }); setProjectImageFile(null); setProjectImagePreview('');
     setProjectGalleryFiles([]); setIsProjectModalOpen(true);
   };
+
   const handleSaveProject = async (e) => {
     e.preventDefault(); if (!editingProject) return;
     setUploadStatus({ active: true, stage: 'Preparing project data...', percent: 5 });
@@ -205,28 +194,19 @@ export default function AdminPortal({ onNavigate }) {
           const r = await uploadImage(projectGalleryFiles[i], 'projects', (p) => {
             const fp = p.stage === 'done' ? 100 : p.percent;
             setUploadStatus({
-              active: true,
-              stage: `Uploading gallery image ${i + 1} of ${projectGalleryFiles.length}...`,
+              active: true, stage: `Uploading gallery image ${i + 1} of ${projectGalleryFiles.length}...`,
               percent: 40 + Math.round(((i + fp / 100) / projectGalleryFiles.length) * 50)
             });
           });
           if (r.success) { galleryUrls.push(r.url); }
           else { failed++; console.warn(`Gallery image ${i + 1} failed:`, r.error || 'Unknown error'); }
         }
-        // Keep what succeeded so one bad file never blocks the whole save
-        if (failed > 0) {
-          showToast(`${failed} of ${projectGalleryFiles.length} gallery image(s) failed to upload and were skipped`, 'error');
-        }
-        if (galleryUrls.length > 0) {
-          projectData.gallery = [...(projectData.gallery || []), ...galleryUrls];
-        }
+        if (failed > 0) showToast(`${failed} of ${projectGalleryFiles.length} gallery image(s) failed to upload and were skipped`, 'error');
+        if (galleryUrls.length > 0) projectData.gallery = [...(projectData.gallery || []), ...galleryUrls];
       }
       setUploadStatus({ active: true, stage: 'Syncing with atelier database...', percent: 95 });
       const result = await saveProject(projectData);
-      if (result.success === false) {
-        showToast('Error saving project: ' + (result.error || 'Please try again.'), 'error');
-        return;
-      }
+      if (result.success === false) return showToast('Error saving project: ' + (result.error || 'Please try again.'), 'error');
       setIsProjectModalOpen(false); setEditingProject(null);
       setProjectImageFile(null); setProjectImagePreview(''); setProjectGalleryFiles([]);
       showToast(`Project "${projectData.title}" saved successfully` + (result.isLive === false ? ' (saved locally only — cloud unavailable)' : ''));
@@ -234,19 +214,18 @@ export default function AdminPortal({ onNavigate }) {
     } catch { showToast('Error saving project. Please try again.', 'error'); }
     finally { setUploadStatus({ active: false, stage: '', percent: 0 }); }
   };
+
   const handleOpenNewTestimonial = () => {
     setEditingTestimonial({ clientName: '', role: '', organization: '', projectId: '', rating: 5, quote: '', isFeatured: true });
     setIsTestimonialModalOpen(true);
   };
   const handleOpenEditTestimonial = (t) => { setEditingTestimonial({ ...t }); setIsTestimonialModalOpen(true); };
+
   const handleSaveTestimonial = async (e) => {
     e.preventDefault(); if (!editingTestimonial) return;
     try {
       const result = await saveTestimonial(editingTestimonial);
-      if (result.success === false) {
-        showToast('Error saving testimonial: ' + (result.error || 'Please try again.'), 'error');
-        return;
-      }
+      if (result.success === false) return showToast('Error saving testimonial: ' + (result.error || 'Please try again.'), 'error');
       setIsTestimonialModalOpen(false); setEditingTestimonial(null);
       showToast('Client testimonial saved successfully' + (result.isLive === false ? ' (saved locally only — cloud unavailable)' : ''));
       await loadAllData();
@@ -261,7 +240,7 @@ export default function AdminPortal({ onNavigate }) {
       if (deleteConfirm.type === 'project')     { result = await deleteProject(deleteConfirm.id);      message = 'Project removed from portfolio'; }
       if (deleteConfirm.type === 'testimonial') { result = await deleteTestimonial(deleteConfirm.id);  message = 'Testimonial removed from studio records'; }
       if (deleteConfirm.type === 'lead')        { result = await deleteConsultation(deleteConfirm.id); message = 'Inquiry removed from records'; }
-      if (result.success === false) { showToast('Failed to delete item: ' + (result.error || 'Please try again.'), 'error'); return; }
+      if (result.success === false) return showToast('Failed to delete item: ' + (result.error || 'Please try again.'), 'error');
       showToast(message + (result.isLive === false ? ' (saved locally only — cloud unavailable)' : ''));
       setDeleteConfirm(null); await loadAllData();
     } catch { showToast('Failed to delete item', 'error'); }
@@ -271,20 +250,11 @@ export default function AdminPortal({ onNavigate }) {
   const handleExportCatalog = () => {
     try {
       const backupData = {
-        format: 'ashara-interiors-catalog-backup',
-        version: '1.0',
-        exportedAt: new Date().toISOString(),
-        counts: {
-          projects: projects.length,
-          testimonials: testimonials.length,
-          leads: leads.length,
-        },
-        projects,
-        testimonials,
-        leads,
+        format: 'ashara-interiors-catalog-backup', version: '1.0', exportedAt: new Date().toISOString(),
+        counts: { projects: projects.length, testimonials: testimonials.length, leads: leads.length },
+        projects, testimonials, leads
       };
-      const dataStr = JSON.stringify(backupData, null, 2);
-      const blob = new Blob([dataStr], { type: 'application/json;charset=utf-8;' });
+      const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -294,16 +264,13 @@ export default function AdminPortal({ onNavigate }) {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
       showToast('Studio catalog backup downloaded successfully');
-    } catch {
-      showToast('Failed to export catalog backup', 'error');
-    }
+    } catch { showToast('Failed to export catalog backup', 'error'); }
   };
 
   const handleFileSelectForRestore = (e) => {
     const file = e.target.files?.[0];
     e.target.value = '';
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
@@ -311,21 +278,14 @@ export default function AdminPortal({ onNavigate }) {
         const hasProjects = Array.isArray(parsed.projects) && parsed.projects.length > 0;
         const hasTestimonials = Array.isArray(parsed.testimonials) && parsed.testimonials.length > 0;
         const hasLeads = Array.isArray(parsed.leads) && parsed.leads.length > 0;
-
-        if (!hasProjects && !hasTestimonials && !hasLeads) {
-          showToast('Invalid backup file: no projects, testimonials, or leads found', 'error');
-          return;
-        }
-
+        if (!hasProjects && !hasTestimonials && !hasLeads) return showToast('Invalid backup file: no data found', 'error');
         setRestoreCandidate({
           projects: hasProjects ? parsed.projects : [],
           testimonials: hasTestimonials ? parsed.testimonials : [],
           leads: hasLeads ? parsed.leads : [],
           exportedAt: parsed.exportedAt || null,
         });
-      } catch {
-        showToast('Could not parse JSON backup file', 'error');
-      }
+      } catch { showToast('Could not parse JSON backup file', 'error'); }
     };
     reader.readAsText(file);
   };
@@ -336,60 +296,42 @@ export default function AdminPortal({ onNavigate }) {
     try {
       let restoredProjectsCount = 0;
       let restoredTestimonialsCount = 0;
-
-      if (restoreCandidate.projects.length > 0) {
-        for (const proj of restoreCandidate.projects) {
-          if (proj && (proj.title || proj.id)) {
-            const res = await saveProject(proj);
-            if (res.success !== false) restoredProjectsCount++;
-          }
+      for (const proj of restoreCandidate.projects) {
+        if (proj && (proj.title || proj.id)) {
+          const res = await saveProject(proj);
+          if (res.success !== false) restoredProjectsCount++;
         }
       }
-
-      if (restoreCandidate.testimonials.length > 0) {
-        for (const test of restoreCandidate.testimonials) {
-          if (test && (test.clientName || test.id)) {
-            const res = await saveTestimonial(test);
-            if (res.success !== false) restoredTestimonialsCount++;
-          }
+      for (const test of restoreCandidate.testimonials) {
+        if (test && (test.clientName || test.id)) {
+          const res = await saveTestimonial(test);
+          if (res.success !== false) restoredTestimonialsCount++;
         }
       }
-
       if (restoreCandidate.leads.length > 0) {
         try {
           const currentLeads = [...(leads || [])];
           const existingIds = new Set(currentLeads.map((l) => String(l.id)));
           let addedLeads = 0;
           restoreCandidate.leads.forEach((l) => {
-            if (l && l.id && !existingIds.has(String(l.id))) {
-              currentLeads.push(l);
-              addedLeads++;
-            }
+            if (l?.id && !existingIds.has(String(l.id))) { currentLeads.push(l); addedLeads++; }
           });
-          if (addedLeads > 0) {
-            localStorage.setItem('ashara_consultations', JSON.stringify(currentLeads));
-          }
-        } catch (err) {
-          console.warn('Leads restore cache error:', err);
-        }
+          if (addedLeads > 0) localStorage.setItem('ashara_consultations', JSON.stringify(currentLeads));
+        } catch (err) { console.warn('Leads restore cache error:', err); }
       }
-
       await loadAllData(true);
-      showToast(
-        `Catalog restored: ${restoredProjectsCount} project(s), ${restoredTestimonialsCount} review(s) merged.`
-      );
+      showToast(`Catalog restored: ${restoredProjectsCount} project(s), ${restoredTestimonialsCount} review(s) merged.`);
       setRestoreCandidate(null);
-    } catch {
-      showToast('Error restoring catalog data', 'error');
-    } finally {
-      setIsRestoring(false);
-    }
+    } catch { showToast('Error restoring catalog data', 'error'); }
+    finally { setIsRestoring(false); }
   };
+
   const newLeadsCount = useMemo(() => leads.filter(l => (l.status || 'new').toLowerCase() === 'new').length, [leads]);
   const filteredProjects = useMemo(() => projects.filter(p => {
     const s = !searchQuery || (p.title||'').toLowerCase().includes(searchQuery.toLowerCase()) || (p.subtitle||'').toLowerCase().includes(searchQuery.toLowerCase()) || (p.description||'').toLowerCase().includes(searchQuery.toLowerCase());
     return s && (projectCategoryFilter === 'ALL' || (p.category||p.tag||'').toUpperCase().includes(projectCategoryFilter));
   }), [projects, searchQuery, projectCategoryFilter]);
+
   const filteredLeads = useMemo(() => leads.filter(l => {
     const s = !searchQuery || (l.fullName||'').toLowerCase().includes(searchQuery.toLowerCase()) || (l.email||'').toLowerCase().includes(searchQuery.toLowerCase()) || (l.telephone||'').toLowerCase().includes(searchQuery.toLowerCase()) || (l.enquiry||l.message||'').toLowerCase().includes(searchQuery.toLowerCase());
     return s && (leadStatusFilter === 'ALL' || (l.status||'new').toLowerCase() === leadStatusFilter.toLowerCase());
@@ -413,28 +355,20 @@ export default function AdminPortal({ onNavigate }) {
   }
 
   const NAV_CONFIG = [
-    { key: 'projects',     label: 'Projects Showcase', icon: Layers, count: projects.length },
-    { key: 'leads',        label: 'Client Enquiries',  icon: Users,  count: leads.length, badge: newLeadsCount },
-    { key: 'testimonials', label: 'Client Voices',     icon: Quote,  count: testimonials.length },
+    { key: 'projects', label: 'Projects Showcase', icon: Layers, count: projects.length },
+    { key: 'leads', label: 'Client Enquiries', icon: Users, count: leads.length, badge: newLeadsCount },
+    { key: 'testimonials', label: 'Client Voices', icon: Quote, count: testimonials.length },
   ];
   const activeNav = NAV_CONFIG.find((n) => n.key === activeTab);
 
   return (
     <div className="min-h-screen lg:h-screen lg:overflow-hidden bg-[#F7F6F2] dark:bg-[#070E18] transition-colors duration-300 lg:grid lg:grid-cols-[270px_minmax(0,1fr)] lg:grid-rows-[auto_minmax(0,1fr)] lg:[grid-template-areas:'sidebar_header''sidebar_main']">
+      {isSidebarOpen && <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden" onClick={() => setIsSidebarOpen(false)} />}
 
-      {/* Mobile backdrop behind the sidebar drawer */}
-      {isSidebarOpen && (
-        <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden" onClick={() => setIsSidebarOpen(false)} />
-      )}
-
-      {/* ==================== SIDEBAR ==================== */}
+      {/* SIDEBAR */}
       <aside className={`[grid-area:sidebar] fixed inset-y-0 left-0 z-50 w-[280px] lg:w-auto lg:static lg:translate-x-0 bg-ashara-teal dark:bg-[#0C1726] border-r border-black/10 dark:border-white/10 flex flex-col overflow-y-auto transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-
-        {/* Brand */}
         <div className="p-5 border-b border-white/10 relative">
-          <button onClick={() => setIsSidebarOpen(false)} className="absolute top-4 right-4 p-1.5 text-white/60 hover:text-white transition lg:hidden" aria-label="Close menu">
-            <X className="w-4 h-4" />
-          </button>
+          <button onClick={() => setIsSidebarOpen(false)} className="absolute top-4 right-4 p-1.5 text-white/60 hover:text-white transition lg:hidden" aria-label="Close menu"><X className="w-4 h-4" /></button>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-sm bg-ashara-gold/15 border border-ashara-gold/30 flex items-center justify-center shrink-0">
               <Building2 className="w-5 h-5 text-ashara-gold" />
@@ -451,14 +385,11 @@ export default function AdminPortal({ onNavigate }) {
           </div>
         </div>
 
-        {/* Navigation */}
         <nav className="p-3 space-y-1" aria-label="Admin management tabs" role="tablist">
           <p className="px-3 pt-2 pb-1.5 text-[9px] uppercase tracking-[0.25em] font-bold text-white/35">Manage</p>
           {NAV_CONFIG.map(({ key, label, icon: Icon, count, badge }) => (
             <button
-              key={key}
-              role="tab"
-              aria-selected={activeTab === key}
+              key={key} role="tab" aria-selected={activeTab === key}
               onClick={() => { setActiveTab(key); setSearchQuery(''); setIsSidebarOpen(false); }}
               className={`relative w-full flex items-center gap-3 px-3 py-2.5 rounded-sm text-xs uppercase tracking-wider font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold ${activeTab === key ? 'bg-white/10 text-white' : 'text-white/55 hover:text-white hover:bg-white/5'}`}
             >
@@ -471,7 +402,6 @@ export default function AdminPortal({ onNavigate }) {
           ))}
         </nav>
 
-        {/* User + Sign Out */}
         <div className="mt-auto p-4 border-t border-white/10 space-y-3">
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="w-8 h-8 rounded-full bg-ashara-gold text-ashara-dark text-xs font-bold flex items-center justify-center shrink-0">
@@ -482,46 +412,28 @@ export default function AdminPortal({ onNavigate }) {
               <p className="text-[10px] font-mono text-white/50 truncate">{adminUser.email || 'Director'}</p>
             </div>
           </div>
-          <button onClick={handleLogout}
-            className="w-full inline-flex items-center justify-center gap-2 px-3.5 py-2 bg-rose-500/15 hover:bg-rose-500 border border-rose-400/25 hover:border-rose-500 text-rose-300 hover:text-white text-xs uppercase tracking-wider font-semibold rounded-sm transition duration-200">
+          <button onClick={handleLogout} className="w-full inline-flex items-center justify-center gap-2 px-3.5 py-2 bg-rose-500/15 hover:bg-rose-500 border border-rose-400/25 hover:border-rose-500 text-rose-300 hover:text-white text-xs uppercase tracking-wider font-semibold rounded-sm transition duration-200">
             <LogOut className="w-3.5 h-3.5" /><span>Sign Out</span>
           </button>
         </div>
       </aside>
 
-      {/* ==================== HEADER ==================== */}
+      {/* HEADER */}
       <header className="[grid-area:header] sticky top-0 z-30 bg-white/85 dark:bg-[#0C1726]/85 backdrop-blur-xl border-b border-gray-200/80 dark:border-white/10 px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-3 sm:gap-4">
-        <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden p-2 -ml-1 text-ashara-teal dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-sm transition" aria-label="Open menu">
-          <Menu className="w-5 h-5" />
-        </button>
+        <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden p-2 -ml-1 text-ashara-teal dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-sm transition" aria-label="Open menu"><Menu className="w-5 h-5" /></button>
         <div className="min-w-0">
           <p className="text-[9px] uppercase tracking-[0.3em] font-bold text-ashara-teal/60 dark:text-ashara-gold">Studio Management Atelier</p>
           <h1 className="font-serif text-lg sm:text-xl text-ashara-teal dark:text-white font-normal truncate">{activeNav ? activeNav.label : 'Dashboard'}</h1>
         </div>
         <div className="ml-auto flex items-center gap-2">
-          {/* Backup & Restore Controls */}
           <div className="flex items-center gap-1 border-r border-gray-200 dark:border-white/10 pr-2 mr-0.5">
-            <button
-              onClick={handleExportCatalog}
-              title="Export Studio Catalog Backup (JSON)"
-              className="p-2 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 text-ashara-teal dark:text-white rounded-sm transition"
-            >
+            <button onClick={handleExportCatalog} title="Export Studio Catalog Backup (JSON)" className="p-2 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 text-ashara-teal dark:text-white rounded-sm transition">
               <Download className="w-4 h-4" />
             </button>
-            <button
-              onClick={() => fileRestoreInputRef.current?.click()}
-              title="Restore Studio Catalog (JSON)"
-              className="p-2 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 text-ashara-teal dark:text-white rounded-sm transition"
-            >
+            <button onClick={() => fileRestoreInputRef.current?.click()} title="Restore Studio Catalog (JSON)" className="p-2 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 text-ashara-teal dark:text-white rounded-sm transition">
               <UploadCloud className="w-4 h-4" />
             </button>
-            <input
-              type="file"
-              ref={fileRestoreInputRef}
-              accept=".json,application/json"
-              onChange={handleFileSelectForRestore}
-              className="hidden"
-            />
+            <input type="file" ref={fileRestoreInputRef} accept=".json,application/json" onChange={handleFileSelectForRestore} className="hidden" />
           </div>
 
           {(activeTab === 'projects' || activeTab === 'testimonials') && (
@@ -531,29 +443,25 @@ export default function AdminPortal({ onNavigate }) {
               <span className="hidden sm:inline">{activeTab === 'projects' ? 'Add Project' : 'Add Testimonial'}</span>
             </button>
           )}
-          <button onClick={() => loadAllData(true)} disabled={isRefreshing} title="Synchronize database"
-            className="p-2 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 text-ashara-teal dark:text-white rounded-sm transition disabled:opacity-50">
+          <button onClick={() => loadAllData(true)} disabled={isRefreshing} title="Synchronize database" className="p-2 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 text-ashara-teal dark:text-white rounded-sm transition disabled:opacity-50">
             <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
           </button>
-          <button onClick={() => onNavigate('home')} title="View live site"
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 border border-gray-300 dark:border-white/15 text-xs uppercase tracking-wider font-semibold text-ashara-teal dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-sm transition">
+          <button onClick={() => onNavigate('home')} title="View live site" className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 border border-gray-300 dark:border-white/15 text-xs uppercase tracking-wider font-semibold text-ashara-teal dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-sm transition">
             <span className="hidden md:inline">View Site</span><ArrowUpRight className="w-3.5 h-3.5" />
           </button>
         </div>
       </header>
 
-      {/* ==================== MAIN ==================== */}
+      {/* MAIN */}
       <main className="[grid-area:main] lg:overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 animate-fade-in">
-
         {/* Stat Cards */}
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[
-            { tab: 'leads',        label: 'Client Inquiries',      count: leads.length,        icon: <Users className="w-5 h-5" />,    color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20', sub: <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />{newLeadsCount} New Leads</span>, action: 'View matrix' },
-            { tab: 'projects',     label: 'Portfolio Showcase',    count: projects.length,     icon: <Layers className="w-5 h-5" />,   color: 'bg-ashara-teal/10 dark:bg-ashara-gold/15 text-ashara-teal dark:text-white border-ashara-teal/20 dark:border-ashara-gold/30', sub: <span className="text-ashara-teal dark:text-white font-light truncate">Gov • Corp • Commercial</span>, action: 'Manage' },
-            { tab: 'testimonials', label: 'Client Voices',         count: testimonials.length, icon: <Quote className="w-5 h-5" />,   color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20', sub: <span className="text-ashara-teal dark:text-white font-light truncate">Project Reviews</span>, action: 'Manage' },
+            { tab: 'leads', label: 'Client Inquiries', count: leads.length, icon: <Users className="w-5 h-5" />, color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20', sub: <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />{newLeadsCount} New Leads</span>, action: 'View matrix' },
+            { tab: 'projects', label: 'Portfolio Showcase', count: projects.length, icon: <Layers className="w-5 h-5" />, color: 'bg-ashara-teal/10 dark:bg-ashara-gold/15 text-ashara-teal dark:text-white border-ashara-teal/20 dark:border-ashara-gold/30', sub: <span className="text-ashara-teal dark:text-white font-light truncate">Gov • Corp • Commercial</span>, action: 'Manage' },
+            { tab: 'testimonials', label: 'Client Voices', count: testimonials.length, icon: <Quote className="w-5 h-5" />, color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20', sub: <span className="text-ashara-teal dark:text-white font-light truncate">Project Reviews</span>, action: 'Manage' },
           ].map(({ tab, label, count, icon, color, sub, action }) => (
-            <div key={tab} onClick={() => setActiveTab(tab)}
-              className={`p-5 bg-white dark:bg-[#0C1726] border rounded-sm shadow-sm hover:shadow-md transition-all cursor-pointer group ${activeTab === tab ? 'border-ashara-teal dark:border-ashara-gold ring-1 ring-ashara-teal dark:ring-ashara-gold' : 'border-gray-200 dark:border-white/10'}`}>
+            <div key={tab} onClick={() => setActiveTab(tab)} className={`p-5 bg-white dark:bg-[#0C1726] border rounded-sm shadow-sm hover:shadow-md transition-all cursor-pointer group ${activeTab === tab ? 'border-ashara-teal dark:border-ashara-gold ring-1 ring-ashara-teal dark:ring-ashara-gold' : 'border-gray-200 dark:border-white/10'}`}>
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-[10px] uppercase tracking-[0.25em] font-semibold text-ashara-teal dark:text-white">{label}</p>
@@ -563,7 +471,7 @@ export default function AdminPortal({ onNavigate }) {
               </div>
               <div className="mt-3 pt-3 border-t border-gray-100 dark:border-white/5 flex items-center justify-between text-xs">
                 {sub}
-                <span className="text-[10px] text-ashara-teal dark:text-white group-hover:text-ashara-teal dark:group-hover:text-ashara-teal transition flex items-center gap-0.5">{action}<ChevronRight className="w-3 h-3" /></span>
+                <span className="text-[10px] text-ashara-teal dark:text-white group-hover:text-ashara-teal transition flex items-center gap-0.5">{action}<ChevronRight className="w-3 h-3" /></span>
               </div>
             </div>
           ))}
@@ -580,45 +488,24 @@ export default function AdminPortal({ onNavigate }) {
           </div>
           <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 sm:ml-auto">
             {activeTab === 'projects' && (
-              <FilterSelect
-                icon={Filter}
-                value={projectCategoryFilter}
-                onChange={(e) => setProjectCategoryFilter(e.target.value)}
-                options={[{ value: 'ALL', label: `All Categories (${projects.length})` }, ...PROJECT_CATEGORY_OPTIONS]}
-              />
+              <FilterSelect icon={Filter} value={projectCategoryFilter} onChange={(e) => setProjectCategoryFilter(e.target.value)}
+                options={[{ value: 'ALL', label: `All Categories (${projects.length})` }, ...PROJECT_CATEGORY_OPTIONS]} />
             )}
             {activeTab === 'testimonials' && (
-              <FilterSelect
-                icon={Filter}
-                value={testimonialFilter}
-                onChange={(e) => setTestimonialFilter(e.target.value)}
-                options={[
-                  { value: 'ALL', label: `All Project Links (${testimonials.length})` },
-                  ...projects.map((p) => ({ value: p.id, label: p.title }))
-                ]}
-              />
+              <FilterSelect icon={Filter} value={testimonialFilter} onChange={(e) => setTestimonialFilter(e.target.value)}
+                options={[{ value: 'ALL', label: `All Project Links (${testimonials.length})` }, ...projects.map((p) => ({ value: p.id, label: p.title }))]} />
             )}
             {activeTab === 'leads' && (
-              <FilterSelect
-                icon={SlidersHorizontal}
-                value={leadStatusFilter}
-                onChange={(e) => setLeadStatusFilter(e.target.value)}
-                options={[
-                  { value: 'ALL', label: `All Inquiries (${leads.length})` },
-                  { value: 'new', label: `New Inquiries (${newLeadsCount})` },
-                  { value: 'contacted', label: 'Contacted' },
-                  { value: 'completed', label: 'Completed' }
-                ]}
-              />
+              <FilterSelect icon={SlidersHorizontal} value={leadStatusFilter} onChange={(e) => setLeadStatusFilter(e.target.value)}
+                options={[{ value: 'ALL', label: `All Inquiries (${leads.length})` }, { value: 'new', label: `New Inquiries (${newLeadsCount})` }, { value: 'contacted', label: 'Contacted' }, { value: 'completed', label: 'Completed' }]} />
             )}
           </div>
         </div>
 
         {/* Tab Content */}
-        {activeTab === 'projects'     && <AdminProjectsTab     filteredProjects={filteredProjects}       searchQuery={searchQuery} onOpenNew={handleOpenNewProject}     onOpenEdit={handleOpenEditProject}     onDelete={setDeleteConfirm} />}
-        {activeTab === 'leads'        && <AdminLeadsTab        filteredLeads={filteredLeads}              searchQuery={searchQuery} copiedId={copiedId}                   onCopy={handleCopy}                    onUpdateStatus={handleUpdateLeadStatus} onDelete={setDeleteConfirm} />}
-        {activeTab === 'testimonials' && <AdminTestimonialsTab filteredTestimonials={filteredTestimonials} searchQuery={searchQuery} projects={projects}                  onOpenNew={handleOpenNewTestimonial}   onOpenEdit={handleOpenEditTestimonial} onDelete={setDeleteConfirm} />}
-
+        {activeTab === 'projects' && <AdminProjectsTab filteredProjects={filteredProjects} searchQuery={searchQuery} onOpenNew={handleOpenNewProject} onOpenEdit={handleOpenEditProject} onDelete={setDeleteConfirm} />}
+        {activeTab === 'leads' && <AdminLeadsTab filteredLeads={filteredLeads} searchQuery={searchQuery} copiedId={copiedId} onCopy={handleCopy} onUpdateStatus={handleUpdateLeadStatus} onDelete={setDeleteConfirm} />}
+        {activeTab === 'testimonials' && <AdminTestimonialsTab filteredTestimonials={filteredTestimonials} searchQuery={searchQuery} projects={projects} onOpenNew={handleOpenNewTestimonial} onOpenEdit={handleOpenEditTestimonial} onDelete={setDeleteConfirm} />}
       </main>
 
       {/* Toast Notification */}
@@ -649,6 +536,7 @@ export default function AdminPortal({ onNavigate }) {
           onSubmit={handleSaveTestimonial}
         />
       )}
+
       <AdminDeleteConfirm
         deleteConfirm={deleteConfirm}
         onCancel={() => setDeleteConfirm(null)}
@@ -656,67 +544,12 @@ export default function AdminPortal({ onNavigate }) {
         isDeleting={isDeleting}
       />
 
-      {/* Restore Catalog Confirmation Modal */}
-      {restoreCandidate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white dark:bg-[#0C1726] border border-gray-200 dark:border-white/10 rounded-sm shadow-2xl p-6 sm:p-8 max-w-md w-full space-y-5">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-ashara-teal/10 dark:bg-ashara-gold/15 text-ashara-teal dark:text-ashara-gold flex items-center justify-center shrink-0">
-                <UploadCloud className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="font-serif text-lg font-bold text-ashara-teal dark:text-white">
-                  Restore Studio Catalog
-                </h3>
-                <p className="text-xs text-ashara-teal/70 dark:text-white/70">
-                  Confirm catalog data import
-                </p>
-              </div>
-            </div>
-
-            <div className="p-4 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-sm space-y-2 text-xs text-ashara-teal dark:text-white">
-              <p className="font-semibold uppercase tracking-wider text-[10px] text-ashara-teal/70 dark:text-ashara-gold">
-                Found in backup file:
-              </p>
-              <ul className="space-y-1 font-mono text-xs">
-                <li>• {restoreCandidate.projects.length} Architectural Project(s)</li>
-                <li>• {restoreCandidate.testimonials.length} Client Testimonial(s)</li>
-                <li>• {restoreCandidate.leads.length} Consultation Lead(s)</li>
-              </ul>
-              {restoreCandidate.exportedAt && (
-                <p className="text-[10px] text-gray-400 dark:text-white/40 pt-1">
-                  Created: {new Date(restoreCandidate.exportedAt).toLocaleString()}
-                </p>
-              )}
-            </div>
-
-            <p className="text-xs text-ashara-teal/80 dark:text-white/80 leading-relaxed">
-              This will merge the backup items with your current studio catalog and sync them with both local cache and Firestore.
-            </p>
-
-            <div className="flex items-center justify-end gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() => setRestoreCandidate(null)}
-                disabled={isRestoring}
-                className="px-4 py-2 text-xs uppercase tracking-wider font-semibold text-ashara-teal dark:text-white hover:opacity-75 transition"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleExecuteRestore}
-                disabled={isRestoring}
-                className="inline-flex items-center gap-2 px-5 py-2 bg-ashara-teal hover:bg-ashara-teal-hover dark:bg-ashara-gold dark:hover:bg-ashara-gold/90 text-white dark:text-ashara-dark text-xs uppercase tracking-wider font-bold rounded-sm transition shadow-sm disabled:opacity-50"
-              >
-                {isRestoring ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <UploadCloud className="w-3.5 h-3.5" />}
-                <span>{isRestoring ? 'Restoring...' : 'Confirm & Restore'}</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
+      <AdminRestoreModal
+        candidate={restoreCandidate}
+        isRestoring={isRestoring}
+        onCancel={() => setRestoreCandidate(null)}
+        onConfirm={handleExecuteRestore}
+      />
     </div>
   );
 }

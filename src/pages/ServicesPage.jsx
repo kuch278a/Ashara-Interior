@@ -1,36 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Minus } from 'lucide-react';
 import SectionTitle from '../components/SectionTitle';
+import ProjectCard from '../components/ProjectCard';
 import { getInitialProjects, subscribeToProjects } from '../services/firebaseService';
 import sortProjects from '../utils/sortProjects';
-import { handleImageError } from '../utils/imageFallback';
 import asset_1 from '../assets/our_service.jpg';
 
-const ACCORDION_ITEMS = [
-  {
-    id: 1,
-    number: '1.',
-    title: 'Interior Design',
-    content: 'Comprehensive spatial planning, luxury material curation, tailored color palettes, and end-to-end styling.'
-  },
-  {
-    id: 2,
-    number: '2.',
-    title: 'Architecture Design',
-    content: 'Master planning, spatial articulation, facade development, and structural coordination blending classical proportions with modern sustainable engineering.'
-  },
-  {
-    id: 3,
-    number: '3.',
-    title: 'Office Layouts',
-    content: 'Transforming existing office architecture through structural re-modelling, spatial flow optimization, and harmonized lighting schemas.'
-  },
-  {
-    id: 4,
-    number: '4.',
-    title: 'Retail Space',
-    content: 'Strategic acoustic appraisals, luxury FF&E procurement advisory, lighting design consultations, and spatial branding.'
-  }
+const ACCORDIONS = [
+  { id: 1, number: '1.', title: 'Interior Design', content: 'Comprehensive spatial planning, luxury material curation, tailored color palettes, and end-to-end styling.' },
+  { id: 2, number: '2.', title: 'Architecture Design', content: 'Master planning, spatial articulation, facade development, and structural coordination blending classical proportions with modern sustainable engineering.' },
+  { id: 3, number: '3.', title: 'Office Layouts', content: 'Transforming existing office architecture through structural re-modelling, spatial flow optimization, and harmonized lighting schemas.' },
+  { id: 4, number: '4.', title: 'Retail Space', content: 'Strategic acoustic appraisals, luxury FF&E procurement advisory, lighting design consultations, and spatial branding.' }
 ];
 
 export default function ServicesPage({ onNavigate, onSelectProject }) {
@@ -38,61 +18,36 @@ export default function ServicesPage({ onNavigate, onSelectProject }) {
   const [projects, setProjects] = useState(() => getInitialProjects());
 
   useEffect(() => {
-    const unsubscribe = subscribeToProjects((data) => {
-      if (Array.isArray(data)) {
-        setProjects(sortProjects(data));
-      }
-    });
-    return () => {
-      if (typeof unsubscribe === 'function') unsubscribe();
-    };
+    const unsub = subscribeToProjects((data) => Array.isArray(data) && setProjects(sortProjects(data)));
+    return () => typeof unsub === 'function' && unsub();
   }, []);
 
   const recentProjects = projects.slice(0, 2);
 
-  const toggleAccordion = (id) => {
-    setOpenIndex(openIndex === id ? null : id);
-  };
-
-  const handleProjectClick = (project) => {
-    if (onSelectProject) {
-      onSelectProject(project);
-    } else if (onNavigate) {
-      onNavigate('projects');
-    }
-  };
-
   return (
     <div className="bg-[#FAF8F5] dark:bg-ashara-dark min-h-screen animate-fade-in transition-colors duration-300">
-      
-      {/* 1. HERO with 'How We Work' Text */}
+      {/* 1. HERO */}
       <section className="w-full">
         <div className="relative w-full h-screen supports-[height:100svh]:h-[100svh] min-h-[500px] bg-black flex flex-col items-center justify-center text-center px-6">
-          <div
-            className="absolute inset-0 bg-cover bg-center opacity-40"
-            style={{ backgroundImage: `url(${asset_1})` }}
-          />
+          <div className="absolute inset-0 bg-cover bg-center opacity-40" style={{ backgroundImage: `url(${asset_1})` }} />
           <div className="relative z-10 max-w-4xl mx-auto space-y-6">
-            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-white font-normal">
-              How We Work
-            </h1>
+            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-white font-normal">How We Work</h1>
             <p className="text-lg sm:text-base leading-relaxed text-white font-light max-w-3xl mx-auto">
               Ashara Interiors is an interior design, architecture, and build company passionate about creating inspiring spaces that radiate positivity and reflect our clients' unique identities.
-              Specializing in governmental bureaus, commercial spaces, hotels, residential projects, and cultural landmarks, we offer comprehensive services ranging from stand-alone interior design to complete turnkey solutions. On larger projects, we seamlessly integrate with your existing team of architects and contractors, or provide end-to-end project management from concept to completion.
+              Specializing in governmental bureaus, commercial spaces, hotels, residential projects, and cultural landmarks, we offer comprehensive services ranging from stand-alone interior design to complete turnkey solutions.
             </p>
           </div>
         </div>
       </section>
 
-      {/* 2. "How We Can Help" Section with Numbered Accordion */}
+      {/* 2. ACCORDION */}
       <section aria-labelledby="how-we-can-help-heading" className="max-w-4xl mx-auto px-6 sm:px-10 pt-16 sm:pt-24 pb-16 space-y-12">
-        <h2 id="how-we-can-help-heading" className="font-serif text-3xl sm:text-4xl text-center text-ashara-teal dark:text-white font-normal tracking-wide transition-colors duration-300">
+        <h2 id="how-we-can-help-heading" className="font-serif text-3xl sm:text-4xl text-center text-ashara-teal dark:text-white font-normal tracking-wide">
           How We Can Help
         </h2>
 
-        {/* Accordion List */}
         <div className="divide-y divide-gray-200 dark:divide-white/10 max-w-2xl mx-auto border-t border-b border-gray-200 dark:border-white/10">
-          {ACCORDION_ITEMS.map((item) => {
+          {ACCORDIONS.map((item) => {
             const isOpen = openIndex === item.id;
             return (
               <div key={item.id} className="py-6 transition duration-200">
@@ -100,37 +55,20 @@ export default function ServicesPage({ onNavigate, onSelectProject }) {
                   id={`accordion-header-${item.id}`}
                   aria-expanded={isOpen}
                   aria-controls={`accordion-panel-${item.id}`}
-                  onClick={() => toggleAccordion(item.id)}
+                  onClick={() => setOpenIndex(isOpen ? null : item.id)}
                   className="w-full flex items-center justify-between text-left group focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-sm"
                 >
                   <div className="flex items-baseline gap-4 sm:gap-6">
-                    <span className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white font-light">
-                      {item.number}
-                    </span>
-                    <span className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white font-normal group-hover:text-ashara-teal transition-colors duration-300">
-                      {item.title}
-                    </span>
+                    <span className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white font-light">{item.number}</span>
+                    <span className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white font-normal">{item.title}</span>
                   </div>
-                  <span className="text-ashara-teal dark:text-white group-hover:text-ashara-teal transition-colors duration-200">
-                    {isOpen ? (
-                      <Minus className="w-4 h-4 transition-transform duration-300" aria-hidden="true" />
-                    ) : (
-                      <Plus className="w-4 h-4 transition-transform duration-300" aria-hidden="true" />
-                    )}
+                  <span className="text-ashara-teal dark:text-white">
+                    {isOpen ? <Minus className="w-4 h-4" aria-hidden="true" /> : <Plus className="w-4 h-4" aria-hidden="true" />}
                   </span>
                 </button>
-
-                {/* Animated Body Content */}
                 {isOpen && (
-                  <div
-                    id={`accordion-panel-${item.id}`}
-                    role="region"
-                    aria-labelledby={`accordion-header-${item.id}`}
-                    className="pt-4 pl-8 sm:pl-12 pr-4 animate-fade-in"
-                  >
-                    <p className="text-base leading-relaxed text-ashara-teal dark:text-white font-light transition-colors duration-300">
-                      {item.content}
-                    </p>
+                  <div id={`accordion-panel-${item.id}`} role="region" aria-labelledby={`accordion-header-${item.id}`} className="pt-4 pl-8 sm:pl-12 pr-4 animate-fade-in">
+                    <p className="text-base leading-relaxed text-ashara-teal dark:text-white font-light">{item.content}</p>
                   </div>
                 )}
               </div>
@@ -138,76 +76,27 @@ export default function ServicesPage({ onNavigate, onSelectProject }) {
           })}
         </div>
 
-        {/* Enquire Now Button */}
         <div className="text-center pt-4">
-          <button
-            onClick={() => onNavigate && onNavigate('contact')}
-            className="btn-ashara-outline"
-          >
-            ENQUIRE NOW
-          </button>
+          <button onClick={() => onNavigate && onNavigate('contact')} className="btn-ashara-outline">ENQUIRE NOW</button>
         </div>
       </section>
 
-      {/* 4. "Recent Projects" Section matching Figma */}
+      {/* 3. RECENT PROJECTS */}
       {recentProjects.length > 0 && (
         <section aria-labelledby="services-recent-projects" className="max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-16 pt-8 pb-24 space-y-12 text-center">
-
-          {/* Title with horizontal lines */}
-          <SectionTitle id="services-recent-projects">
-            Recent Projects
-          </SectionTitle>
-
-          {/* 2 Project Cards Grid matching Figma (text below image) */}
+          <SectionTitle id="services-recent-projects">Recent Projects</SectionTitle>
           <div className="max-w-[1400px] mx-auto grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-16 text-left">
             {recentProjects.map((item) => (
-              <article
-                key={item.id}
-                role="button"
-                tabIndex={0}
-                aria-label={`View project details for ${item.title}`}
-                onClick={() => handleProjectClick(item)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    if (e.key === ' ') e.preventDefault();
-                    handleProjectClick(item);
-                  }
-                }}
-                className="group cursor-pointer block focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-sm"
-              >
-                <div className="w-full aspect-[4/3] sm:aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-gray-200 mb-4 rounded-sm">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    loading="lazy"
-                    decoding="async"
-                    onError={(e) => handleImageError(e, item.fallbackImage)}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                  />
-                </div>
-                <div>
-                  <h3 className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white mb-1 group-hover:text-ashara-teal transition-colors">
-                    {item.title}
-                  </h3>
-                </div>
-              </article>
+              <ProjectCard key={item.id} work={item} onSelect={onSelectProject || (() => onNavigate && onNavigate('projects'))} variant="detail" />
             ))}
           </div>
-
-          {/* View All Projects Link */}
           <div className="pt-12 text-center">
-            <button
-              type="button"
-              onClick={() => onNavigate && onNavigate('projects')}
-              className="text-[16px] uppercase tracking-[0.2em] font-bold transition-colors duration-200 text-ashara-teal/60 dark:text-white/60 hover:text-ashara-teal dark:hover:text-white pb-1 border-b border-transparent hover:border-ashara-teal dark:hover:border-white focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold"
-            >
+            <button type="button" onClick={() => onNavigate && onNavigate('projects')} className="text-[16px] uppercase tracking-[0.2em] font-bold transition-colors duration-200 text-ashara-teal/60 dark:text-white/60 hover:text-ashara-teal dark:hover:text-white pb-1 border-b border-transparent hover:border-ashara-teal dark:hover:border-white focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold">
               VIEW ALL PROJECTS
             </button>
           </div>
-
         </section>
       )}
-
     </div>
   );
 }

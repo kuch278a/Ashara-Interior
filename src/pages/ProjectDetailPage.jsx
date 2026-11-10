@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import SectionTitle from '../components/SectionTitle';
+import ProjectCard from '../components/ProjectCard';
 import { DEFAULT_PROJECTS_LIST } from '../data/defaultData';
 import { getInitialProjects, subscribeToProjects } from '../services/firebaseService';
-import { handleImageError as sharedImageError } from '../utils/imageFallback';
 
-// Curated luxury architectural and interior photography fallbacks ensuring every project
-// displays the full, magazine-grade 8-image architectural layout in both desktop and mobile viewports.
-const EDITORIAL_FALLBACK_IMAGES = [
+const EDITORIAL_FALLBACKS = [
   'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=90',
   'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85',
   'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=85',
@@ -18,263 +16,97 @@ const EDITORIAL_FALLBACK_IMAGES = [
 ];
 
 export default function ProjectDetailPage({ onNavigate, onSelectProject, project }) {
-  // Live project resolution: fallback to first project or live project in storage
   const [allProjects, setAllProjects] = useState(() => getInitialProjects());
 
   useEffect(() => {
-    const unsubProjects = subscribeToProjects((list) => {
-      if (Array.isArray(list)) setAllProjects(list);
-    });
-    return () => {
-      if (typeof unsubProjects === 'function') unsubProjects();
-    };
+    const unsub = subscribeToProjects((list) => Array.isArray(list) && setAllProjects(list));
+    return () => typeof unsub === 'function' && unsub();
   }, []);
 
-  // Find latest active project from live data if project prop has matching id
   const activeProject = (project && allProjects.find((p) => String(p.id) === String(project.id))) || project || allProjects[0] || DEFAULT_PROJECTS_LIST[0];
 
-  // 1. Gather all unique valid project images starting with the main hero image
   const projectImages = Array.from(new Set([
     activeProject.image || activeProject.fallbackImage,
     ...(Array.isArray(activeProject.gallery) ? activeProject.gallery : [])
   ].filter(Boolean)));
 
-  // 2. Pad up to at least 9 images so all editorial slots (Hero + 8 layout images) are fully populated
   const fullGallery = [...projectImages];
   let fallbackIdx = 0;
   while (fullGallery.length < 9) {
-    fullGallery.push(EDITORIAL_FALLBACK_IMAGES[fallbackIdx % EDITORIAL_FALLBACK_IMAGES.length]);
+    fullGallery.push(EDITORIAL_FALLBACKS[fallbackIdx % EDITORIAL_FALLBACKS.length]);
     fallbackIdx++;
   }
 
-  // 3. Map into the exact 8 editorial slots
-  const heroImage = fullGallery[0];
-  const featuredWide1 = fullGallery[1];
-  const pair1 = [fullGallery[2], fullGallery[3]];
-  const pair2 = [fullGallery[4], fullGallery[5]];
-  const featuredWide2 = fullGallery[6];
-  const pair3 = [fullGallery[7], fullGallery[8]];
-  const remainingImages = fullGallery.slice(9);
-
-  // Dynamic recommendations: Other live projects from the list
+  const [heroImage, featuredWide1, p1a, p1b, p2a, p2b, featuredWide2, p3a, p3b, ...remainingImages] = fullGallery;
   const recommendations = allProjects.filter((p) => String(p.id) !== String(activeProject.id)).slice(0, 2);
-
-  const handleRecommendationClick = (recProject) => {
-    if (onSelectProject) {
-      onSelectProject(recProject);
-    }
-  };
 
   const handleImageError = (e) => {
     e.target.onerror = null;
     const fallback = activeProject.fallbackImage || activeProject.image || DEFAULT_PROJECTS_LIST[0].image;
-    if (fallback && e.target.src !== fallback) {
-      e.target.src = fallback;
-    }
+    if (fallback && e.target.src !== fallback) e.target.src = fallback;
   };
+
+  const renderWide = (src, alt) => (
+    <div className="w-full aspect-[4/3] sm:aspect-[16/9] lg:aspect-[16/10] max-h-[360px] sm:max-h-[520px] lg:max-h-[640px] overflow-hidden bg-gray-100 dark:bg-gray-800 shadow-sm">
+      <img src={src} alt={alt} loading="lazy" decoding="async" onError={handleImageError} className="w-full h-full object-cover object-center" />
+    </div>
+  );
+
+  const renderPair = (imgs, isVertical = false) => (
+    <div className="max-w-[1400px] mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
+      {imgs.map((imgUrl, idx) => (
+        <div key={idx} className={`w-full overflow-hidden bg-gray-100 dark:bg-gray-800 shadow-sm ${isVertical ? 'h-[60vh] sm:h-[75vh]' : 'aspect-[4/3] sm:aspect-[16/10] lg:aspect-[16/9]'}`}>
+          <img src={imgUrl} alt={`${activeProject.title} Detail ${idx + 1}`} loading="lazy" decoding="async" onError={handleImageError} className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700 ease-out" />
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <div className="bg-white dark:bg-ashara-dark min-h-screen animate-fade-in transition-colors duration-300">
-      
-      {/* 1. FULL SCREEN HERO IMAGE */}
       <section className="relative w-full h-screen supports-[height:100svh]:h-[100svh] overflow-hidden bg-gray-100 dark:bg-gray-800">
-        <img
-          src={heroImage}
-          alt={`${activeProject.title} Hero`}
-          loading="eager"
-          decoding="async"
-          fetchpriority="high"
-          onError={handleImageError}
-          className="w-full h-full object-cover object-center"
-        />
+        <img src={heroImage} alt={`${activeProject.title} Hero`} loading="eager" decoding="async" fetchpriority="high" onError={handleImageError} className="w-full h-full object-cover object-center" />
       </section>
 
-      {/* Page Container matching Navbar and Footer alignment */}
       <div className="w-full px-6 sm:px-10 lg:px-16">
-
-        {/* 2. PROJECT TITLE & ARCHITECTURAL NARRATIVE (2-Column Layout matching Figma) */}
         <section className="py-14 sm:py-20 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 lg:gap-20 items-start">
-            
-            {/* Left: Title */}
             <div className="md:col-span-5">
-              <h1 className="font-serif text-4xl sm:text-5xl lg:text-[52px] leading-tight text-ashara-teal dark:text-white font-normal">
-                {activeProject.title}
-              </h1>
+              <h1 className="font-serif text-4xl sm:text-5xl lg:text-[52px] leading-tight text-ashara-teal dark:text-white font-normal">{activeProject.title}</h1>
             </div>
-
-            {/* Right: Architectural Narrative */}
             <div className="md:col-span-7">
-              <p className="text-lg sm:text-xl leading-relaxed text-gray-700 dark:text-gray-300 font-light">
-                {activeProject.description}
-              </p>
+              <p className="text-lg sm:text-xl leading-relaxed text-gray-700 dark:text-gray-300 font-light">{activeProject.description}</p>
             </div>
-
           </div>
         </section>
 
-        {/* 3. EDITORIAL GALLERY FLOW */}
         <section className="space-y-6 lg:space-y-8 -mx-6 sm:-mx-10 lg:-mx-16">
-          
-          {/* Featured Wide Image 1 */}
-          <div className="w-full aspect-[4/3] sm:aspect-[16/9] lg:aspect-[16/10] max-h-[360px] sm:max-h-[520px] lg:max-h-[640px] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
-            <img
-              src={featuredWide1}
-              alt={`${activeProject.title} View 1`}
-              loading="lazy"
-              decoding="async"
-              onError={handleImageError}
-              className="w-full h-full object-cover object-center"
-            />
-          </div>
-
-          {/* Horizontal Pair 1 (2 columns) */}
-          <div className="max-w-[1400px] mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
-            {pair1.map((imgUrl, idx) => (
-              <div key={idx} className="w-full aspect-[4/3] sm:aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
-                <img
-                  src={imgUrl}
-                  alt={`${activeProject.title} Detail ${idx + 2}`}
-                  loading="lazy"
-                  decoding="async"
-                  onError={handleImageError}
-                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700 ease-out"
-                />
-              </div>
-            ))}
-          </div>
-
-          {/* Editorial Philosophy Quote */}
+          {renderWide(featuredWide1, `${activeProject.title} View 1`)}
+          {renderPair([p1a, p1b])}
           <div className="py-20 sm:py-28 text-center max-w-4xl mx-auto px-4">
             <blockquote className="font-serif italic font-normal text-2xl sm:text-3xl lg:text-[34px] leading-relaxed text-ashara-teal dark:text-white">
               “Design with passion, authenticity, and positivity to create spaces that inspire and uplift the soul.”
             </blockquote>
           </div>
-
-          {/* Portrait Pair 2 (2 columns, vertical aspect ratio matching Figma) */}
-          <div className="max-w-[1400px] mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
-            {pair2.map((imgUrl, idx) => (
-              <div key={idx} className="w-full h-[60vh] sm:h-[75vh] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
-                <img
-                  src={imgUrl}
-                  alt={`${activeProject.title} Vertical ${idx + 4}`}
-                  loading="lazy"
-                  decoding="async"
-                  onError={handleImageError}
-                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700 ease-out"
-                />
-              </div>
-            ))}
-          </div>
-
-          {/* Featured Wide Image 2 */}
-          <div className="w-full aspect-[4/3] sm:aspect-[16/9] lg:aspect-[16/10] max-h-[360px] sm:max-h-[520px] lg:max-h-[640px] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
-            <img
-              src={featuredWide2}
-              alt={`${activeProject.title} Panoramic`}
-              loading="lazy"
-              decoding="async"
-              onError={handleImageError}
-              className="w-full h-full object-cover object-center"
-            />
-          </div>
-
-          {/* Additional Pair 3 (2 columns) */}
-          <div className="max-w-[1400px] mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 pt-2">
-            {pair3.map((imgUrl, idx) => (
-              <div key={idx} className="w-full aspect-[4/3] sm:aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
-                <img
-                  src={imgUrl}
-                  alt={`${activeProject.title} Extra ${idx + 7}`}
-                  loading="lazy"
-                  decoding="async"
-                  onError={handleImageError}
-                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700 ease-out"
-                />
-              </div>
-            ))}
-          </div>
-
-          {/* Any remaining images beyond 9 */}
-          {remainingImages.length > 0 && (
-            <div className="max-w-[1400px] mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 pt-2">
-              {remainingImages.map((imgUrl, idx) => (
-                <div key={idx} className="w-full aspect-[4/3] sm:aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
-                  <img
-                    src={imgUrl}
-                    alt={`${activeProject.title} Extra ${idx + 9}`}
-                    loading="lazy"
-                    decoding="async"
-                    onError={handleImageError}
-                    className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700 ease-out"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-
+          {renderPair([p2a, p2b], true)}
+          {renderWide(featuredWide2, `${activeProject.title} Panoramic`)}
+          {renderPair([p3a, p3b])}
+          {remainingImages.length > 0 && renderPair(remainingImages)}
         </section>
 
-        {/* 4. INQUIRE NOW BUTTON */}
         <div className="text-center pt-16 sm:pt-20 pb-20 sm:pb-24">
-          <button
-            onClick={() => onNavigate('contact')}
-            className="btn-ashara-outline"
-          >
-            INQUIRE NOW
-          </button>
+          <button onClick={() => onNavigate && onNavigate('contact')} className="btn-ashara-outline">INQUIRE NOW</button>
         </div>
 
-        {/* 5. "YOU MAY LIKE" SECTION */}
         <section aria-labelledby="you-may-like-heading" className="pb-28 sm:pb-36 text-center">
-          
-          {/* Hairline Divider Title */}
-          <SectionTitle id="you-may-like-heading">
-            You May Like
-          </SectionTitle>
-
-          {/* 2 Project Cards Grid matching Figma */}
+          <SectionTitle id="you-may-like-heading">You May Like</SectionTitle>
           <div className="max-w-[1700px] mx-auto grid grid-cols-1 sm:grid-cols-2 gap-8 lg:gap-12 text-left">
             {recommendations.map((rec) => (
-              <article 
-                key={rec.id}
-                role="button"
-                tabIndex={0}
-                aria-label={`View recommended project: ${rec.title}`}
-                onClick={() => handleRecommendationClick(rec)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    if (e.key === ' ') e.preventDefault();
-                    handleRecommendationClick(rec);
-                  }
-                }}
-                className="group cursor-pointer block focus:outline-none focus-visible:ring-2 focus-visible:ring-ashara-gold rounded-sm"
-              >
-                <div className="w-full aspect-[4/3] sm:aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-none shadow-sm">
-                  <img
-                    src={rec.image}
-                    loading="lazy"
-                    decoding="async"
-                    onError={(e) => sharedImageError(e, rec.fallbackImage)}
-                    alt={rec.title}
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
-                  />
-                </div>
-                
-                {/* Title Below the Image */}
-                <div className="mt-4">
-                  <h3 className="font-serif text-xl sm:text-2xl text-ashara-teal dark:text-white font-normal group-hover:text-ashara-teal-light dark:group-hover:text-ashara-gold transition-colors">
-                    {rec.title}
-                  </h3>
-                </div>
-              </article>
+              <ProjectCard key={rec.id} work={rec} onSelect={onSelectProject} variant="detail" />
             ))}
           </div>
-
         </section>
-
       </div>
-
     </div>
   );
 }

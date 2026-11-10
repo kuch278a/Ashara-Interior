@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useLayoutEffect, lazy, Suspense } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import AsharaMorphingLoader from './components/AsharaMorphingLoader';
 import { DEFAULT_PROJECTS_LIST } from './data/defaultData';
 import { getInitialProjects } from './services/localCache';
 
-// Lazy-loaded Pages for instant initial load and optimal code-splitting
 const HomePage = lazy(() => import('./pages/HomePage'));
 const ProjectsPage = lazy(() => import('./pages/ProjectsPage'));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
@@ -13,9 +13,6 @@ const ContactPage = lazy(() => import('./pages/ContactPage'));
 const ProjectDetailPage = lazy(() => import('./pages/ProjectDetailPage'));
 const AdminPortal = lazy(() => import('./pages/AdminPortal'));
 
-import AsharaMorphingLoader from './components/AsharaMorphingLoader';
-
-// Bespoke Ashara Logo Morphing fallback for route transitions (full-screen overlay concealing footer/content)
 function PageLoadingFallback() {
   return (
     <div className="fixed inset-0 z-40 flex flex-col items-center justify-center bg-[#FAF6EF] dark:bg-[#0A1525] animate-fade-in">
@@ -24,188 +21,135 @@ function PageLoadingFallback() {
   );
 }
 
-// Public pages — 'admin' is intentionally excluded
 const VALID_PAGES = ['home', 'projects', 'services', 'about', 'contact', 'project-detail'];
-
-// Access key required to reach the admin portal (an obscurity layer only —
-// the real protection is Firebase Auth + Firestore/Storage rules).
-// Set VITE_ADMIN_ACCESS_KEY in .env (local) and GitHub secrets (CI).
-// Access via: yoursite.com/?key=<VITE_ADMIN_ACCESS_KEY>#admin
 const ADMIN_SECRET_KEY = import.meta.env?.VITE_ADMIN_ACCESS_KEY || '';
 
 function canAccessAdmin() {
   if (!ADMIN_SECRET_KEY) return false;
-  const params = new URLSearchParams(window.location.search);
-  return params.get('key') === ADMIN_SECRET_KEY;
+  return new URLSearchParams(window.location.search).get('key') === ADMIN_SECRET_KEY;
 }
 
 function getInitialPage() {
-  const rawHash = window.location.hash.replace(/^#\/?/, '');
-  const hash = rawHash.toLowerCase();
+  const hash = window.location.hash.replace(/^#\/?/, '').toLowerCase();
+  if (hash === 'admin') return canAccessAdmin() ? 'admin' : '404';
+  if (/^project-detail(\/|$)/.test(hash)) return 'project-detail';
+  if (VALID_PAGES.includes(hash)) return hash;
 
-  // Admin is only accessible with the secret key
-  if (hash === 'admin') {
-    return canAccessAdmin() ? 'admin' : '404';
-  }
+  const pageParam = new URLSearchParams(window.location.search).get('page');
+  if (pageParam && VALID_PAGES.includes(pageParam.toLowerCase())) return pageParam.toLowerCase();
 
-  // Project detail accepts an id in the hash: #project-detail/<id>
-  if (/^project-detail(\/|$)/.test(hash)) {
-    return 'project-detail';
-  }
-
-  if (VALID_PAGES.includes(hash)) {
-    return hash;
-  }
-  const searchParams = new URLSearchParams(window.location.search);
-  const pageParam = searchParams.get('page');
-  if (pageParam && VALID_PAGES.includes(pageParam.toLowerCase())) {
-    return pageParam.toLowerCase();
-  }
   const path = window.location.pathname.toLowerCase();
-  if (path.endsWith('/admin') || path.endsWith('/admin/')) {
-    return canAccessAdmin() ? 'admin' : '404';
-  }
-  // Unknown hash — treat as 404
-  if (hash && !VALID_PAGES.includes(hash)) {
-    return '404';
-  }
-  return 'home';
+  if (path.endsWith('/admin') || path.endsWith('/admin/')) return canAccessAdmin() ? 'admin' : '404';
+  return hash ? '404' : 'home';
 }
 
 function findProjectById(id) {
   if (id === null || id === undefined) return DEFAULT_PROJECTS_LIST[0];
   const list = getInitialProjects();
-  const found = list.find((p) => String(p.id) === String(id));
-  return found || DEFAULT_PROJECTS_LIST[0];
+  return list.find((p) => String(p.id) === String(id)) || DEFAULT_PROJECTS_LIST[0];
 }
 
 function getInitialSelectedProject() {
-  const rawHash = window.location.hash.replace(/^#\/?/, '');
-  const match = rawHash.match(/^project-detail\/(.+)$/i);
+  const match = window.location.hash.replace(/^#\/?/, '').match(/^project-detail\/(.+)$/i);
   if (match) {
-    // Malformed percent sequences (e.g. "#project-detail/50%") must never
-    // crash the app — fall back to the default project instead.
     let id = match[1];
-    try {
-      id = decodeURIComponent(match[1]);
-    } catch {
-      // keep the raw id when decoding fails
-    }
+    try { id = decodeURIComponent(match[1]); } catch { /* raw */ }
     return findProjectById(id);
   }
   return DEFAULT_PROJECTS_LIST[0];
 }
 
+const PAGE_META = {
+  projects: {
+    title: 'Architectural Projects | Ashara Interior Design and Building',
+    desc: "Explore Ashara Interiors' curated portfolio of governmental bureaus, corporate headquarters, and luxury residential spaces."
+  },
+  services: {
+    title: 'Atelier Services & Architectural Process | Ashara Interiors',
+    desc: "From bespoke interior architecture to turnkey building and spatial design, discover Ashara's atelier services."
+  },
+  about: {
+    title: 'About Us & Studio Lineage | Ashara Interior Design and Building',
+    desc: 'Founded by architect Michael Dessalegn, Ashara Interiors pairs monumental civic heritage with contemporary luxury craftsmanship.'
+  },
+  contact: {
+    title: 'Contact & Consultation Enquiries | Ashara Interiors',
+    desc: 'Discuss your upcoming interior, architectural, or commercial project with our Addis Ababa design atelier.'
+  },
+  admin: {
+    title: 'Director Atelier Portal | Ashara Interiors CMS',
+    desc: 'Studio director management portal for portfolio curation and client enquiries.'
+  },
+  404: {
+    title: 'Page Not Found | Ashara Interiors',
+    desc: 'The requested architectural page could not be located.'
+  }
+};
+
 export default function App() {
-  const [activePage, setActivePage] = useState(getInitialPage); // 'home' | 'projects' | 'services' | 'about' | 'contact' | 'admin' | 'project-detail'
+  const [activePage, setActivePage] = useState(getInitialPage);
   const [selectedProject, setSelectedProject] = useState(getInitialSelectedProject);
   const [theme, setTheme] = useState('light');
 
   useEffect(() => {
-    const handleHashChange = () => {
+    const onHashChange = () => {
       const page = getInitialPage();
       setActivePage(page);
-      if (page === 'project-detail') {
-        setSelectedProject(getInitialSelectedProject());
-      }
+      if (page === 'project-detail') setSelectedProject(getInitialSelectedProject());
     };
-    window.addEventListener('hashchange', handleHashChange);
-    window.addEventListener('popstate', handleHashChange);
+    window.addEventListener('hashchange', onHashChange);
+    window.addEventListener('popstate', onHashChange);
     return () => {
-      window.removeEventListener('hashchange', handleHashChange);
-      window.removeEventListener('popstate', handleHashChange);
+      window.removeEventListener('hashchange', onHashChange);
+      window.removeEventListener('popstate', onHashChange);
     };
   }, []);
 
-  // Dismiss the HTML loading screen once React has mounted
   useEffect(() => {
     const loader = document.getElementById('ashara-loader');
     if (loader) {
-      // Small delay so the loading animation is visible briefly
-      const timer = setTimeout(() => {
+      const t = setTimeout(() => {
         loader.classList.add('fade-out');
         setTimeout(() => loader.remove(), 600);
       }, 800);
-      return () => clearTimeout(timer);
+      return () => clearTimeout(t);
     }
   }, []);
 
-  // Route-aware dynamic document title, description, and Open Graph metadata
   useEffect(() => {
-    let title = 'Ashara Interior Design and Building | Curated Luxury Spaces in Addis Ababa';
-    let desc = "Addis Ababa's premier luxury interior design firm crafting bespoke governmental, corporate, and residential spaces across Ethiopia.";
+    let {
+      title = 'Ashara Interior Design and Building | Curated Luxury Spaces in Addis Ababa',
+      desc = "Addis Ababa's premier luxury interior design firm crafting bespoke governmental, corporate, and residential spaces across Ethiopia."
+    } = PAGE_META[activePage] || {};
 
-    switch (activePage) {
-      case 'projects':
-        title = 'Architectural Projects | Ashara Interior Design and Building';
-        desc = "Explore Ashara Interiors' curated portfolio of governmental bureaus, corporate headquarters, and luxury residential spaces.";
-        break;
-      case 'services':
-        title = 'Atelier Services & Architectural Process | Ashara Interiors';
-        desc = "From bespoke interior architecture to turnkey building and spatial design, discover Ashara's atelier services.";
-        break;
-      case 'about':
-        title = 'About Us & Studio Lineage | Ashara Interior Design and Building';
-        desc = 'Founded by architect Michael Dessalegn, Ashara Interiors pairs monumental civic heritage with contemporary luxury craftsmanship.';
-        break;
-      case 'contact':
-        title = 'Contact & Consultation Enquiries | Ashara Interiors';
-        desc = 'Discuss your upcoming interior, architectural, or commercial project with our Addis Ababa design atelier.';
-        break;
-      case 'project-detail':
-        if (selectedProject?.title) {
-          title = `${selectedProject.title} | Ashara Interiors Portfolio`;
-          if (selectedProject.description) {
-            desc = selectedProject.description.slice(0, 155) + '...';
-          }
-        }
-        break;
-      case 'admin':
-        title = 'Director Atelier Portal | Ashara Interiors CMS';
-        desc = 'Studio director management portal for portfolio curation and client enquiries.';
-        break;
-      case '404':
-        title = 'Page Not Found | Ashara Interiors';
-        desc = 'The requested architectural page could not be located.';
-        break;
-      default:
-        break;
+    if (activePage === 'project-detail' && selectedProject?.title) {
+      title = `${selectedProject.title} | Ashara Interiors Portfolio`;
+      if (selectedProject.description) desc = selectedProject.description.slice(0, 155) + '...';
     }
 
     document.title = title;
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) metaDesc.setAttribute('content', desc);
+    ['meta[name="description"]', 'meta[property="og:description"]'].forEach((sel) => {
+      const el = document.querySelector(sel);
+      if (el) el.setAttribute('content', desc);
+    });
     const ogTitle = document.querySelector('meta[property="og:title"]');
     if (ogTitle) ogTitle.setAttribute('content', title);
-    const ogDesc = document.querySelector('meta[property="og:description"]');
-    if (ogDesc) ogDesc.setAttribute('content', desc);
   }, [activePage, selectedProject]);
 
   useEffect(() => {
     const root = window.document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
+    if (theme === 'dark') root.classList.add('dark');
+    else root.classList.remove('dark');
   }, [theme]);
 
-  // Every view or project change must start from the top of the page
-  useLayoutEffect(() => {
-    window.scrollTo(0, 0);
-  }, [activePage, selectedProject]);
+  useLayoutEffect(() => { window.scrollTo(0, 0); }, [activePage, selectedProject]);
 
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
-  };
+  const toggleTheme = () => setTheme((p) => (p === 'light' ? 'dark' : 'light'));
 
   const handleNavigate = (page) => {
     setActivePage(page);
-    if (page === 'home') {
-      history.pushState(null, '', window.location.pathname);
-    } else {
-      window.location.hash = page;
-    }
+    if (page === 'home') history.pushState(null, '', window.location.pathname);
+    else window.location.hash = page;
   };
 
   const handleSelectProject = (project) => {
@@ -216,60 +160,23 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white text-ashara-teal dark:bg-ashara-dark dark:text-white font-sans antialiased transition-colors duration-300">
-      
-      {/* Keyboard Accessible Skip Link */}
-      <a
-        href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100000] focus:px-4 focus:py-2 focus:bg-ashara-teal focus:text-white focus:font-medium focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-ashara-gold rounded"
-      >
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100000] focus:px-4 focus:py-2 focus:bg-ashara-teal focus:text-white focus:font-medium focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-ashara-gold rounded">
         Skip to main content
       </a>
 
-      {/* 1. Figma Header Navigation Bar (hidden on admin portal) */}
       {activePage !== 'admin' && (
-        <Navbar 
-          activePage={activePage} 
-          setActivePage={handleNavigate} 
-          theme={theme} 
-          toggleTheme={toggleTheme} 
-        />
+        <Navbar activePage={activePage} setActivePage={handleNavigate} theme={theme} toggleTheme={toggleTheme} />
       )}
 
-      {/* 2. Main Page View Router with Suspense */}
       <main id="main-content" tabIndex={-1} className="flex-1 focus:outline-none">
         <Suspense fallback={<PageLoadingFallback />}>
-          {activePage === 'home' && (
-            <HomePage onNavigate={handleNavigate} onSelectProject={(p) => handleSelectProject(p, 'home')} />
-          )}
-
-          {activePage === 'projects' && (
-            <ProjectsPage onNavigate={handleNavigate} onSelectProject={(p) => handleSelectProject(p, 'projects')} />
-          )}
-          
-          {activePage === 'services' && (
-            <ServicesPage onNavigate={handleNavigate} onSelectProject={handleSelectProject} />
-          )}
-
-          {activePage === 'about' && (
-            <AboutPage onNavigate={handleNavigate} onSelectProject={handleSelectProject} />
-          )}
-
-          {activePage === 'contact' && (
-            <ContactPage onNavigate={handleNavigate} />
-          )}
-
-          {activePage === 'admin' && (
-            <AdminPortal onNavigate={handleNavigate} />
-          )}
-
-          {activePage === 'project-detail' && (
-            <ProjectDetailPage
-              project={selectedProject}
-              onNavigate={handleNavigate}
-              onSelectProject={handleSelectProject}
-            />
-          )}
-
+          {activePage === 'home' && <HomePage onNavigate={handleNavigate} onSelectProject={handleSelectProject} />}
+          {activePage === 'projects' && <ProjectsPage onNavigate={handleNavigate} onSelectProject={handleSelectProject} />}
+          {activePage === 'services' && <ServicesPage onNavigate={handleNavigate} onSelectProject={handleSelectProject} />}
+          {activePage === 'about' && <AboutPage onNavigate={handleNavigate} onSelectProject={handleSelectProject} />}
+          {activePage === 'contact' && <ContactPage onNavigate={handleNavigate} />}
+          {activePage === 'admin' && <AdminPortal onNavigate={handleNavigate} />}
+          {activePage === 'project-detail' && <ProjectDetailPage project={selectedProject} onNavigate={handleNavigate} onSelectProject={handleSelectProject} />}
           {activePage === '404' && (
             <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-6 py-24 space-y-6 animate-fade-in">
               <p className="text-[11px] uppercase tracking-[0.35em] text-ashara-teal dark:text-white font-semibold">404 — Page Not Found</p>
@@ -277,10 +184,7 @@ export default function App() {
               <p className="text-sm text-ashara-teal dark:text-white max-w-md font-light leading-relaxed">
                 The page you're looking for doesn't exist. It may have been moved, deleted, or you may have mistyped the URL.
               </p>
-              <button
-                onClick={() => handleNavigate('home')}
-                className="mt-4 btn-ashara-primary rounded-full hover:scale-105"
-              >
+              <button onClick={() => handleNavigate('home')} className="mt-4 btn-ashara-primary rounded-full hover:scale-105">
                 Back to Home
               </button>
             </div>
@@ -288,9 +192,7 @@ export default function App() {
         </Suspense>
       </main>
 
-      {/* 3. Figma Solid Deep Forest Teal Footer (hidden on admin portal and home) */}
       {activePage !== 'admin' && activePage !== 'home' && <Footer onNavigate={handleNavigate} />}
-
     </div>
   );
 }
